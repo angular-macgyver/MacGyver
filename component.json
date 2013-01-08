@@ -1,0 +1,8 @@
+{
+  "name":    "AngularUtil",
+  "version": "0.0.0",
+  "main":    "lib/angular-util.js",
+  "dependencies": {
+    "angular": "*"
+  }
+}
