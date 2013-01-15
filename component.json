@@ -1,8 +1,9 @@
 {
-  "name":    "angular-util",
+  "name": "angular-util",
   "version": "0.0.0",
-  "main":    "lib/angular-util.js",
+  "main": "lib/angular-util.js",
   "dependencies": {
-    "angular": "*"
+    "angular": "*",
+    "chosen": "~0.9.11"
   }
 }
