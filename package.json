@@ -1,12 +1,12 @@
 {
-  "author": "Your Name",
-  "name": "package-name",
-  "description": "Package description",
+  "author": "SHIFT",
+  "name": "angular-util",
+  "description": "A library of shared directives",
   "version": "0.0.1",
   "homepage": "",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "git@github.com:StartTheShift/angular-util.git"
   },
   "engines": {
     "node": "~0.6.10 || 0.8 || 0.9"
@@ -26,7 +26,11 @@
     "handlebars-brunch":    ">= 1.0 < 1.5",
 
     "uglify-js-brunch":     ">= 1.0 < 1.5",
-    "clean-css-brunch":     ">= 1.0 < 1.5"
+    "clean-css-brunch":     ">= 1.0 < 1.5",
+    "testacular":           ">=0.4.0",
+
+    "bower":                "0.6.6",
+    "underscore":           ">= 1.4.0 < 1.5"
   },
   "devDependencies": {
     "chai": "1.2.0",
