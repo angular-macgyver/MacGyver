@@ -223,6 +223,34 @@ angular.module("Util").factory("Util.keys", function() {
     META: 224
   };
 });
+var __hasProp = {}.hasOwnProperty;
+
+angular.module("Util").directive("utilSpinner", function() {
+  return {
+    restrict: "EA",
+    compile: function(element, attributes) {
+      var k, key, options, spinner, value;
+      element.addClass("ge-spinner");
+      options = {};
+      options.lines = 10;
+      options.width = 2;
+      for (key in attributes) {
+        if (!__hasProp.call(attributes, key)) continue;
+        value = attributes[key];
+        if (key.indexOf("spinner") === 0 && key !== "spinner") {
+          k = key.slice("spinner".length + 1);
+          if (k === "Size") {
+            options.radius = value / 5;
+            options.length = value / 5;
+          } else {
+            options[k.toLowerCase()] = value;
+          }
+        }
+      }
+      return spinner = new Spinner(options).spin(element[0]);
+    }
+  };
+});
 
 angular.module("Util").directive("utilTagInput", [
   "$rootScope", function($rootScope) {
@@ -234,15 +262,18 @@ angular.module("Util").directive("utilTagInput", [
         tagsList = attr.tagsList || [];
         tags = attr.tags || [];
         placeholder = attr.placeholder || "";
-        noResult = attr.noResult || "";
+        noResult = attr.noResult;
         options = {};
-        element.attr("placeholder", placeholder);
+        element.attr("data-placeholder", placeholder);
         for (_i = 0, _len = tagsList.length; _i < _len; _i++) {
           tag = tagsList[_i];
           element.append($("<option>").attr(tag).text(tag));
         }
         return function($scope, element, attr) {
-          return element.chosen();
+          if (noResult != null) {
+            options.no_results_text = noResult;
+          }
+          return element.chosen(options);
         };
       }
     };
