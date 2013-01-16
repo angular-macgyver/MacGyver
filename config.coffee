@@ -20,6 +20,10 @@ vendorPath = (filename) ->
   else
     false
 
+beforePaths = _(bowerPaths).union([
+    'app/main.coffee'
+  ])
+
 exports.config =
   # See http://brunch.readthedocs.org/en/latest/config.html for documentation.
   modules:
@@ -36,10 +40,7 @@ exports.config =
       order:
         # Files in `vendor` directories are compiled before other files
         # even if they aren't specified in order.before.
-        before: [
-          'vendor/bower/chosen/chosen.jquery.js'
-          'app/main.coffee'
-        ]
+        before: beforePaths
 
     stylesheets:
       joinTo:
