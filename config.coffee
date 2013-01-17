@@ -21,7 +21,7 @@ vendorPath = (filename) ->
     false
 
 beforePaths = _(bowerPaths).union([
-    'app/main.coffee'
+    'src/main.coffee'
   ])
 
 exports.config =
@@ -32,10 +32,15 @@ exports.config =
 
   paths:
     public: "example"
+    app:    "src"
+
+  conventions:
+    ignored: -> false
+
   files:
     javascripts:
       joinTo:
-        'js/angular-util.js': /^app/
+        'js/angular-util.js': /^src/
         'js/vendor.js': vendorPath
       order:
         # Files in `vendor` directories are compiled before other files
@@ -46,6 +51,19 @@ exports.config =
       joinTo:
         'css/app.css': (filename) ->
           /^vendor\/bower\//.exec(filename)? or vendorPath filename
+
+    templates:
+      joinTo:
+        'js/templates.js': /^src/
+
+  plugins:
+    jade:
+      pretty: yes
+    static_jade:
+      extension: '.jade'
+      path: [/^src\/template/]
+      asset: "example"
+      pages: []
 
   server:
     port: 4545
