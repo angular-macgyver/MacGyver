@@ -32,8 +32,21 @@ task "test", "Run tests with testacular", ->
 
 task "build", "Build the latest angular util", ->
   spawn brunchPath, ["build"], ->
-    fromFile  = path.join examplePath, "js/angular-util.js"
-    writeFile = path.join finalBuildPath, "angular-util.js"
-    fs.createReadStream(fromFile).pipe(fs.createWriteStream(writeFile))
-    
-    console.log "Angular util built successfully"
+
+    fromFile         = path.join examplePath, "js/angular-util.js"
+    writeFile        = path.join finalBuildPath, "angular-util.js"
+    templateUrlRegex = /templateUrl: "([^"]+)"/g
+
+    fs.readFile fromFile, "utf8", (err, data) ->
+      throw err if err?
+
+      updatedCode = data
+
+      while match = templateUrlRegex.exec data
+        toReplace    = match[0]
+        filePath     = path.join examplePath, match[1]
+        compiledHtml = fs.readFileSync filePath, "utf8"
+        updatedCode = updatedCode.replace toReplace, "template: \"\"\"#{compiledHtml}\"\"\""
+
+      fs.writeFile writeFile, updatedCode, "utf8", (err, data) ->
+        console.log "Angular util built successfully"
