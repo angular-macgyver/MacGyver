@@ -1,12 +1,12 @@
 {
   "author": "SHIFT",
-  "name": "angular-util",
+  "name": "MacGyver",
   "description": "A library of shared directives",
   "version": "0.0.1",
   "homepage": "",
   "repository": {
     "type": "git",
-    "url": "git@github.com:StartTheShift/angular-util.git"
+    "url": "git@github.com:StartTheShift/MacGyver.git"
   },
   "engines": {
     "node": "~0.6.10 || 0.8 || 0.9"
