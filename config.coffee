@@ -2,8 +2,9 @@ fs   = require 'fs'
 path = require 'path'
 _    = require 'underscore'
 
-bowerPathMap = JSON.parse fs.readFileSync('bower-paths.json', 'utf8')
-bowerPaths = _(for name, filename of bowerPathMap
+bowerVendorPath = "vendor/bower/"
+bowerPathMap    = JSON.parse fs.readFileSync('bower-paths.json', 'utf8')
+bowerPaths      = _(for name, filename of bowerPathMap
   if /(\.js$)|(\.coffee$)|(\.css$)|(\.styl$)|(\.less$)/.exec filename
     filename
   else
@@ -12,13 +13,16 @@ bowerPaths = _(for name, filename of bowerPathMap
 
 vendorPath = (filename) ->
   if filename.indexOf('vendor/') is 0
-    if filename.indexOf('vendor/bower/') is 0
+    if filename.indexOf(bowerVendorPath) is 0
       filename in bowerPaths
     else
       filename.indexOf("brunch_JavaScriptCompiler_") < 0
 
   else
     false
+
+# Specify css of certain vendor modules to ignore
+cssIgnoreModules = [/jquery\.ui/]
 
 beforePaths = _(bowerPaths).union([
     'src/main.coffee'
@@ -50,7 +54,9 @@ exports.config =
     stylesheets:
       joinTo:
         'css/app.css': (filename) ->
-          /^vendor\/bower\//.exec(filename)? or vendorPath filename
+          results     = (not module.test(filename) for module in cssIgnoreModules)
+          noneIgnored = _(results).every (result) -> result
+          (/^vendor\/bower\//.exec(filename)? or vendorPath filename) and noneIgnored
 
     templates:
       joinTo:
