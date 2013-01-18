@@ -53,10 +53,11 @@ exports.config =
 
     stylesheets:
       joinTo:
-        'css/app.css': (filename) ->
+        'css/vendor.css': (filename) ->
           results     = (not module.test(filename) for module in cssIgnoreModules)
           noneIgnored = _(results).every (result) -> result
           (/^vendor\/bower\//.exec(filename)? or vendorPath filename) and noneIgnored
+        'css/app.css': /^src\/css/
 
     templates:
       joinTo:
