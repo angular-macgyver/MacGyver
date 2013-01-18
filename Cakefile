@@ -30,11 +30,11 @@ task "update:paths", "Update bower paths file", -> updateBowerPaths()
 task "test", "Run tests with testacular", ->
   spawn testacularPath, ["start", "test/testacular.conf.js"]
 
-task "build", "Build the latest angular util", ->
+task "build", "Build the latest MacGyver", ->
   spawn brunchPath, ["build"], ->
 
-    fromFile         = path.join examplePath, "js/angular-util.js"
-    writeFile        = path.join finalBuildPath, "angular-util.js"
+    fromFile         = path.join examplePath, "js/macgyver.js"
+    writeFile        = path.join finalBuildPath, "macgyver.js"
     templateUrlRegex = /templateUrl: "([^"]+)"/g
 
     fs.readFile fromFile, "utf8", (err, data) ->
@@ -49,4 +49,4 @@ task "build", "Build the latest angular util", ->
         updatedCode = updatedCode.replace toReplace, "template: \"\"\"#{compiledHtml}\"\"\""
 
       fs.writeFile writeFile, updatedCode, "utf8", (err, data) ->
-        console.log "Angular util built successfully"
+        console.log "MacGyver built successfully"

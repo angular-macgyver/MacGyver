@@ -44,7 +44,7 @@ exports.config =
   files:
     javascripts:
       joinTo:
-        'js/angular-util.js': /^src/
+        'js/macgyver.js': /^src/
         'js/vendor.js': vendorPath
       order:
         # Files in `vendor` directories are compiled before other files

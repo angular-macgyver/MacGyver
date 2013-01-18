@@ -247,6 +247,58 @@ angular.module("Util").directive("utilSpinner", function() {
     }
   };
 });
+/*
+ Table view
+
+ A directive for generating a lazy rendered table
+
+ Example data:
+  stat_data - array of stat objects
+  columns   - array of column object
+
+  column = {name, key, index, sort}
+
+
+
+ Attributes:
+  - has-header: true
+  - has-footer: true
+  - width:
+  - height:
+  - row-height:
+*/
+
+angular.module("Util").directive("utilTableView", [
+  function() {
+    return {
+      restrict: "EA",
+      scope: {},
+      replace: true,
+      templateUrl: "/template/table_view.html",
+      compile: function(element, attrs) {
+        var defaults, opts;
+        defaults = {
+          "has-header": true,
+          "has-footer": true,
+          "width": 500,
+          "height": 500,
+          "row-height": 20
+        };
+        opts = angular.extend(defaults, attrs);
+        element.css({
+          height: opts.height,
+          width: opts.width
+        });
+        return function($scope, element, attrs) {
+          var data, tableDataName;
+          tableDataName = attrs.tableData;
+          data = tableDataName != null ? $scope.$parent[tableDataName] : [];
+          return console.log(data);
+        };
+      }
+    };
+  }
+]);
 
 angular.module("Util").directive("utilTagInput", [
   "$rootScope", function($rootScope) {
@@ -263,14 +315,12 @@ angular.module("Util").directive("utilTagInput", [
         element.attr("data-placeholder", placeholder);
         for (_i = 0, _len = tagsList.length; _i < _len; _i++) {
           tag = tagsList[_i];
-          element.append($("<option>").attr(tag).text(tag));
+          element.append($("<option>").attr("value", tag).text(tag));
         }
-        return function($scope, element, attr) {
-          if (noResult != null) {
-            options.no_results_text = noResult;
-          }
-          return element.chosen(options);
-        };
+        if (noResult != null) {
+          options.no_results_text = noResult;
+        }
+        return element.chosen(options);
       }
     };
   }
