@@ -27,10 +27,9 @@ angular.module("Util").directive "utilTagInput", [
       element.attr "data-placeholder", placeholder
 
       for tag in tagsList
-        element.append $("<option>").attr(tag).text tag
+        element.append $("<option>").attr("value", tag).text tag
 
-      ($scope, element, attr) ->
-        options.no_results_text = noResult if noResult?
+      options.no_results_text = noResult if noResult?
 
-        element.chosen options
+      element.chosen options
 ]
