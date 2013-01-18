@@ -4,6 +4,7 @@
   "main": "lib/angular-util.js",
   "dependencies": {
     "angular": "*",
-    "chosen": "~0.9.11"
+    "chosen": "~0.9.11",
+    "jquery.ui": "~1.10.0"
   }
 }
