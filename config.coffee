@@ -70,10 +70,7 @@ exports.config =
       extension: '.jade'
       path: [/^src/]
       asset: "example"
-      pages: [
-        main: "src/index.jade"
-        dependencies: /^src\/template/
-      ]
+      pages: []
 
   server:
     port: 4545
