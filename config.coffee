@@ -68,9 +68,12 @@ exports.config =
       pretty: yes
     static_jade:
       extension: '.jade'
-      path: [/^src\/template/]
+      path: [/^src/]
       asset: "example"
-      pages: []
+      pages: [
+        main: "src/index.jade"
+        dependencies: /^src\/template/
+      ]
 
   server:
     port: 4545
