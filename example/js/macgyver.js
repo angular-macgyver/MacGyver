@@ -257,6 +257,8 @@ angular.module("Util").directive("utilSpinner", function() {
   columns   - array of column object
 
   column = {name, key, index, sort}
+    - name: display name on header
+    -
 
 
 
@@ -269,31 +271,131 @@ angular.module("Util").directive("utilSpinner", function() {
 */
 
 angular.module("Util").directive("utilTableView", [
-  function() {
+  "$rootScope", "$compile", function($rootScope, $compile) {
     return {
       restrict: "EA",
       scope: {},
       replace: true,
+      transclude: true,
       templateUrl: "/template/table_view.html",
-      compile: function(element, attrs) {
-        var defaults, opts;
+      compile: function(element, attrs, transclude) {
+        var bodyBlock, bodyHeightBlock, bodyWrapperBlock, cellOuterHeight, defaults, emptyCell, footerBlock, headerBlock, opts, transcludedBlock;
         defaults = {
-          "has-header": true,
-          "has-footer": true,
-          "width": 500,
-          "height": 500,
-          "row-height": 20
+          hasHeader: true,
+          hasFooter: true,
+          width: 800,
+          rowHeight: 20,
+          numDisplayRows: 10,
+          cellPadding: 8
         };
+        transcludedBlock = $(".table-transclude", element);
+        headerBlock = $(".table-header", element);
+        bodyWrapperBlock = $(".table-body-wrapper", element);
+        bodyBlock = $(".table-body", element);
+        bodyHeightBlock = $(".table-body-height", element);
+        footerBlock = $(".table-footer", element);
+        emptyCell = $("<div>").addClass("cell");
         opts = angular.extend(defaults, attrs);
+        cellOuterHeight = opts.rowHeight + opts.cellPadding * 2;
         element.css({
-          height: opts.height,
+          height: cellOuterHeight * opts.numDisplayRows,
           width: opts.width
         });
         return function($scope, element, attrs) {
-          var data, tableDataName;
+          var columns, createCellTemplate, data, numColumns, numDisplayRows, numRows, tableColumns, tableDataName;
           tableDataName = attrs.tableData;
           data = tableDataName != null ? $scope.$parent[tableDataName] : [];
-          return console.log(data);
+          tableColumns = attrs.tableColumns;
+          columns = tableColumns != null ? $scope.$parent[tableColumns] : [];
+          numColumns = columns.length;
+          numRows = data.length;
+          numDisplayRows = opts.numDisplayRows - opts.hasHeader;
+          createCellTemplate = function(section, column) {
+            var templateCell, templateSelector;
+            if (section == null) {
+              section = "";
+            }
+            if (column == null) {
+              column = "";
+            }
+            templateSelector = ".table-" + section + "-template .cell[column=\"" + column + "\"]";
+            templateCell = $(templateSelector, transcludedBlock).clone();
+            if (templateCell.length === 0) {
+              templateCell = emptyCell.clone();
+            }
+            templateCell.css({
+              padding: opts.cellPadding,
+              height: opts.rowHeight,
+              width: opts.width / numColumns - opts.cellPadding * 2 - 1
+            });
+            return templateCell;
+          };
+          $scope.drawHeader = function() {
+            var column, contentText, templateColumn, _i, _len, _results;
+            _results = [];
+            for (_i = 0, _len = columns.length; _i < _len; _i++) {
+              column = columns[_i];
+              templateColumn = createCellTemplate("header", column);
+              contentText = templateColumn.text();
+              if (contentText.length === 0) {
+                templateColumn.text(column);
+              }
+              _results.push($(".table-row", headerBlock).append(templateColumn));
+            }
+            return _results;
+          };
+          $scope.calculateBodyDimension = function() {
+            bodyHeightBlock.css({
+              height: data.length * cellOuterHeight
+            });
+            return bodyWrapperBlock.css({
+              height: numDisplayRows * cellOuterHeight
+            });
+          };
+          $scope.drawBody = function() {
+            var column, emptyRows, emptyTemplateRow, endIndex, i, templateRow, _i, _j, _len, _ref, _results;
+            templateRow = $("<div>").addClass("table-row").attr("ng-repeat", "row in displayRows");
+            emptyTemplateRow = $("<div>").addClass("table-row");
+            endIndex = this.index + numDisplayRows - 1;
+            $scope.displayRows = data.slice(this.index, +endIndex + 1 || 9e9);
+            for (_i = 0, _len = columns.length; _i < _len; _i++) {
+              column = columns[_i];
+              templateRow.append(createCellTemplate("body", column));
+              emptyTemplateRow.append(createCellTemplate());
+            }
+            bodyBlock.append(templateRow);
+            $compile(bodyBlock)($scope);
+            emptyRows = numDisplayRows - $scope.displayRows.length;
+            if (emptyRows > 0) {
+              _results = [];
+              for (i = _j = 0, _ref = emptyRows - 1; 0 <= _ref ? _j <= _ref : _j >= _ref; i = 0 <= _ref ? ++_j : --_j) {
+                _results.push(bodyBlock.append(emptyTemplateRow.clone()));
+              }
+              return _results;
+            }
+          };
+          bodyWrapperBlock.scroll(function() {
+            var $this, scrollTop;
+            $this = $(this);
+            scrollTop = $this.scrollTop();
+            bodyBlock.css("top", scrollTop);
+            return $scope.$apply(function() {
+              return $scope.index = Math.floor(scrollTop / cellOuterHeight);
+            });
+          });
+          $scope.$watch("index", function(newValue, oldValue) {
+            var endIndex;
+            endIndex = newValue + numDisplayRows - 1;
+            return $scope.displayRows = data.slice(newValue, +endIndex + 1 || 9e9);
+          });
+          $scope.reset = function() {
+            $scope.displayRows = [];
+            $scope.index = 0;
+            $scope.drawHeader();
+            $scope.calculateBodyDimension();
+            return $scope.drawBody();
+          };
+          return $scope.reset();
         };
       }
     };
