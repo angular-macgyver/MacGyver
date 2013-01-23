@@ -1,4 +1,67 @@
-.tables-container
-  background black
-  width      200px
-  height     200px
+border-color     = #dddddd
+hover-background = #f5f5f5
+odd-background   = #f9f9f9
+border-radius    = 4px
+
+.table-container
+  border        1px solid border-color
+  border-radius border-radius
+
+  .table-row
+    clear both
+    float left
+
+    .cell
+      text-align  left
+      float       left
+
+      &:hover
+        background-color hover-background
+
+  .table-header
+    .table-row:first-child
+      .cell
+        border-top 0
+
+    .cell
+      font-weight bold
+
+  .table-body-wrapper
+    overflow-y auto
+    position   relative
+    width      100%
+
+    .table-body
+      position absolute
+
+      .table-row:nth-child(odd)
+        background-color odd-background
+
+    .table-body-height
+      position absolute
+      top      0px
+      width    50px
+
+  .table-header:first-child
+    .table-row:first-child
+      .cell:first-child
+        border-top-left-radius border-radius
+
+      .cell:last-child
+        border-top-right-radius border-radius
+
+  .table-header:last-child,
+  .table-body:last-child,
+  .table-footer:last-child
+    .table-row:last-child
+      .cell:first-child
+        border-bottom-left-radius border-radius
+
+      .cell:last-child
+        border-bottom-right-radius border-radius
+
+  .table-transclude
+    display none
+
+
+
