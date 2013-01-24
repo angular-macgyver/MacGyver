@@ -63,7 +63,7 @@ exports.config =
 
   plugins:
     jade:
-      pretty: yes
+      pretty: no
     static_jade:
       extension: '.jade'
       path: [/^src/]
