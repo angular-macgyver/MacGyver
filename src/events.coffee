@@ -1,6 +1,6 @@
 ##
 ## scripts/directives/events.coffee
-## 
+##
 ## A directive for handling basic html events (e.g., blur, keyup, focus, etc.)
 ##
 
@@ -29,11 +29,9 @@ for key in ["Enter", "Escape", "Space", "Left", "Up", "Right", "Down"]
 
 angular.module("Util").directive "utilModelBlur", ["$parse", ($parse) ->
   restrict: "A"
-  require: "ngModel"
   link: (scope, element, attributes, controller) ->
     element.on "blur", (event) ->
-      if controller.$valid
-        scope.$apply $parse(attributes.utilModelBlur)(scope, $event: event)
+      scope.$apply $parse(attributes.utilModelBlur)(scope, $event: event)
 ]
 
 angular.module("Util").directive "utilPauseTyping", ["$parse", ($parse) ->

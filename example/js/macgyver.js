@@ -62,14 +62,11 @@ angular.module("Util").directive("utilModelBlur", [
   "$parse", function($parse) {
     return {
       restrict: "A",
-      require: "ngModel",
       link: function(scope, element, attributes, controller) {
         return element.on("blur", function(event) {
-          if (controller.$valid) {
-            return scope.$apply($parse(attributes.utilModelBlur)(scope, {
-              $event: event
-            }));
-          }
+          return scope.$apply($parse(attributes.utilModelBlur)(scope, {
+            $event: event
+          }));
         });
       }
     };
@@ -279,7 +276,7 @@ angular.module("Util").directive("utilTableView", [
       transclude: true,
       templateUrl: "/template/table_view.html",
       compile: function(element, attrs, transclude) {
-        var bodyBlock, bodyHeightBlock, bodyWrapperBlock, cellOuterHeight, defaults, emptyCell, footerBlock, headerBlock, opts, transcludedBlock;
+        var bodyBlock, bodyHeightBlock, bodyWrapperBlock, cellOuterHeight, defaults, emptyCell, footerBlock, headerBlock, headerRow, opts, transcludedBlock;
         defaults = {
           hasHeader: true,
           hasFooter: true,
@@ -290,6 +287,7 @@ angular.module("Util").directive("utilTableView", [
         };
         transcludedBlock = $(".table-transclude", element);
         headerBlock = $(".table-header", element);
+        headerRow = $(".table-row", headerBlock);
         bodyWrapperBlock = $(".table-body-wrapper", element);
         bodyBlock = $(".table-body", element);
         bodyHeightBlock = $(".table-body-height", element);
@@ -302,12 +300,12 @@ angular.module("Util").directive("utilTableView", [
           width: opts.width
         });
         return function($scope, element, attrs) {
-          var columns, createCellTemplate, data, numColumns, numDisplayRows, numRows, tableColumns, tableDataName;
+          var createCellTemplate, data, numColumns, numDisplayRows, numRows, tableColumns, tableDataName;
           tableDataName = attrs.tableData;
           data = tableDataName != null ? $scope.$parent[tableDataName] : [];
           tableColumns = attrs.tableColumns;
-          columns = tableColumns != null ? $scope.$parent[tableColumns] : [];
-          numColumns = columns.length;
+          $scope.columns = tableColumns != null ? $scope.$parent[tableColumns] : [];
+          numColumns = $scope.columns.length;
           numRows = data.length;
           numDisplayRows = opts.numDisplayRows - opts.hasHeader;
           createCellTemplate = function(section, column) {
@@ -323,6 +321,7 @@ angular.module("Util").directive("utilTableView", [
             if (templateCell.length === 0) {
               templateCell = emptyCell.clone();
             }
+            templateCell.prop("column", column);
             templateCell.css({
               padding: opts.cellPadding,
               height: opts.rowHeight,
@@ -331,16 +330,29 @@ angular.module("Util").directive("utilTableView", [
             return templateCell;
           };
           $scope.drawHeader = function() {
-            var column, contentText, templateColumn, _i, _len, _results;
+            var column, contentText, templateColumn, _i, _len, _ref, _results;
+            _ref = $scope.columns;
             _results = [];
-            for (_i = 0, _len = columns.length; _i < _len; _i++) {
-              column = columns[_i];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              column = _ref[_i];
               templateColumn = createCellTemplate("header", column);
               contentText = templateColumn.text();
               if (contentText.length === 0) {
                 templateColumn.text(column);
               }
-              _results.push($(".table-row", headerBlock).append(templateColumn));
+              _results.push(headerRow.append(templateColumn).sortable({
+                items: "> .cell",
+                update: function(event, ui) {
+                  var newOrder;
+                  newOrder = [];
+                  $(".cell", headerRow).each(function(i, e) {
+                    return newOrder.push($(e).prop("column"));
+                  });
+                  return $scope.$apply(function() {
+                    return $scope.columns = newOrder;
+                  });
+                }
+              }));
             }
             return _results;
           };
@@ -353,22 +365,24 @@ angular.module("Util").directive("utilTableView", [
             });
           };
           $scope.drawBody = function() {
-            var column, emptyRows, emptyTemplateRow, endIndex, i, templateRow, _i, _j, _len, _ref, _results;
-            templateRow = $("<div>").addClass("table-row").attr("ng-repeat", "row in displayRows");
+            var column, emptyRows, emptyTemplateRow, endIndex, i, tableCell, templateCell, _i, _j, _len, _ref, _ref1, _results;
+            tableCell = $(".table-cell", bodyBlock);
             emptyTemplateRow = $("<div>").addClass("table-row");
             endIndex = this.index + numDisplayRows - 1;
             $scope.displayRows = data.slice(this.index, +endIndex + 1 || 9e9);
-            for (_i = 0, _len = columns.length; _i < _len; _i++) {
-              column = columns[_i];
-              templateRow.append(createCellTemplate("body", column));
+            _ref = $scope.columns;
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              column = _ref[_i];
+              templateCell = createCellTemplate("body", column);
+              templateCell.prop("ng-switch-when", column);
+              tableCell.append(templateCell);
               emptyTemplateRow.append(createCellTemplate());
             }
-            bodyBlock.append(templateRow);
             $compile(bodyBlock)($scope);
             emptyRows = numDisplayRows - $scope.displayRows.length;
             if (emptyRows > 0) {
               _results = [];
-              for (i = _j = 0, _ref = emptyRows - 1; 0 <= _ref ? _j <= _ref : _j >= _ref; i = 0 <= _ref ? ++_j : --_j) {
+              for (i = _j = 0, _ref1 = emptyRows - 1; 0 <= _ref1 ? _j <= _ref1 : _j >= _ref1; i = 0 <= _ref1 ? ++_j : --_j) {
                 _results.push(bodyBlock.append(emptyTemplateRow.clone()));
               }
               return _results;
