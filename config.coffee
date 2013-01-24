@@ -12,7 +12,7 @@ bowerPaths      = _(for name, filename of bowerPathMap
 ).flatten()
 
 vendorPath = (filename) ->
-  return false unless filename.indexOf('vendor') is 0
+  return false unless filename.indexOf(bowerVendorPath) is 0
 
   if filename.indexOf(bowerVendorPath) is 0
     filename in bowerPaths
@@ -20,7 +20,7 @@ vendorPath = (filename) ->
     filename.indexOf("brunch_JavaScriptCompiler_") < 0
 
 # Specify css of certain vendor modules to ignore
-cssIgnoreModules = [/jquery\.ui/]
+cssIgnoreModules = []
 
 beforePaths = _(bowerPaths).union([
     'src/main.coffee'
@@ -42,7 +42,7 @@ exports.config =
   files:
     javascripts:
       joinTo:
-        'js/macgyver.js': /^src/
+        'js/macgyver.js': /^src|vendor\/[^\/]+.js/
         'js/vendor.js': vendorPath
       order:
         # Files in `vendor` directories are compiled before other files

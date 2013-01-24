@@ -23,7 +23,6 @@ spawn = (command, args = [], callback = ->) ->
 updateBowerPaths = ->
   bower.commands.list(paths: true).on "data", (files) ->
     files.chosen       = path.join files.chosen, "chosen", "chosen.jquery.js"
-    files["jquery.ui"] = path.join files["jquery.ui"], "dist", "jquery-ui.js"
     fs.writeFile "bower-paths.json", JSON.stringify(files), "utf8"
 
 task "update:paths", "Update bower paths file", -> updateBowerPaths()
