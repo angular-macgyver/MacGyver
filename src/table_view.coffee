@@ -43,6 +43,7 @@ angular.module("Util").directive "utilTableView", [
 
       transcludedBlock = $(".table-transclude", element)
       headerBlock      = $(".table-header", element)
+      headerRow        = $(".table-row", headerBlock)
       bodyWrapperBlock = $(".table-body-wrapper", element)
       bodyBlock        = $(".table-body", element)
       bodyHeightBlock  = $(".table-body-height", element)
@@ -67,17 +68,19 @@ angular.module("Util").directive "utilTableView", [
 
         # Get the attribute name for the order of columns
         # Access the array of columns on parent scope
-        tableColumns = attrs.tableColumns
-        columns      = if tableColumns? then $scope.$parent[tableColumns] else []
+        tableColumns   = attrs.tableColumns
+        $scope.columns = if tableColumns? then $scope.$parent[tableColumns] else []
 
-        numColumns     = columns.length
-        numRows        = data.length
+        numColumns     = $scope.columns.length
         numDisplayRows = opts.numDisplayRows - opts.hasHeader
 
         createCellTemplate = (section="", column="")->
           templateSelector = """.table-#{section}-template .cell[column="#{column}"]"""
           templateCell     = $(templateSelector, transcludedBlock).clone()
           templateCell     = emptyCell.clone() if templateCell.length is 0
+
+          # Set column property again
+          templateCell.prop "column", column
 
           templateCell.css
             padding: opts.cellPadding
@@ -88,11 +91,27 @@ angular.module("Util").directive "utilTableView", [
 
         # Create table header
         $scope.drawHeader = ->
-          for column in columns
+          for column in $scope.columns
             templateColumn = createCellTemplate "header", column
             contentText    = templateColumn.text()
             templateColumn.text column if contentText.length is 0
-            $(".table-row", headerBlock).append templateColumn
+
+            templateColumn.resizable
+              ghost: true
+            headerRow.append(templateColumn)
+
+          # Enable drag and drop on heaer cell
+          headerRow.sortable
+            items:       "> .cell"
+            cursor:      "move"
+            containment: "parent"
+            opacity:     0.8
+            tolerance:   "pointer"
+            update:      (event, ui) ->
+              newOrder = []
+              $(".cell", headerRow).each (i, e) ->
+                newOrder.push $(e).prop "column"
+              $scope.$apply -> $scope.columns = newOrder
 
         $scope.calculateBodyDimension = ->
           # Calculate the height to display scrollbar correctly
@@ -105,20 +124,33 @@ angular.module("Util").directive "utilTableView", [
         # Create table body
         $scope.drawBody = ->
           # Create template row
-          templateRow      = $("<div>").addClass("table-row")
-                                       .attr "ng-repeat", "row in displayRows"
+          tableRow = $("<div>").addClass "table-row"
+          tableRow.attr "ng-repeat", "row in displayRows"
+
+          tableCell = $("<div>").addClass "table-cell"
+          tableCell.attr
+            "ng-switch": ""
+            "on":        "column"
+            "ng-repeat": "column in columns"
+
           emptyTemplateRow = $("<div>").addClass "table-row"
 
           endIndex           = @index + numDisplayRows - 1
           $scope.displayRows = data[@index..endIndex]
 
-          for column in columns
-            templateRow.append      createCellTemplate("body", column)
+          for column in $scope.columns
+            templateCell = createCellTemplate("body", column)
+            templateCell.attr "ng-switch-when", column
+            tableCell.append templateCell
+
             emptyTemplateRow.append createCellTemplate()
 
-          bodyBlock.append templateRow
+          tableRow.append tableCell
+          bodyBlock.append tableRow
+
           $compile(bodyBlock) $scope
 
+          # Generate empty rows to fill up the table
           emptyRows = numDisplayRows - $scope.displayRows.length
           if emptyRows > 0
             bodyBlock.append(emptyTemplateRow.clone()) for i in [0..emptyRows - 1]

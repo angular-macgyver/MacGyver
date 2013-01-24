@@ -11,12 +11,13 @@ border-radius    = 4px
     clear both
     float left
 
-    .cell
+    .table-cell
       text-align  left
       float       left
 
-      &:hover
-        background-color hover-background
+      .cell
+        &:hover
+          background-color hover-background
 
   .table-header
     .table-row:first-child
@@ -24,7 +25,12 @@ border-radius    = 4px
         border-top 0
 
     .cell
+      text-align  left
+      float       left
       font-weight bold
+
+      &.ui-sortable-placeholder
+        background-color hover-background
 
   .table-body-wrapper
     overflow-y auto
