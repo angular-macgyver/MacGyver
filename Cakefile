@@ -46,7 +46,8 @@ task "build", "Build the latest MacGyver", ->
         toReplace    = match[0]
         filePath     = path.join examplePath, match[1]
         compiledHtml = fs.readFileSync filePath, "utf8"
-        updatedCode = updatedCode.replace toReplace, "template: \"\"\"#{compiledHtml}\"\"\""
+        compiledHtml = compiledHtml.replace /"/g, "\\\""
+        updatedCode  = updatedCode.replace toReplace, "template: \"#{compiledHtml}\""
 
       fs.writeFile writeFile, updatedCode, "utf8", (err, data) ->
         console.log "MacGyver built successfully"
