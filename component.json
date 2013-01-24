@@ -1,7 +1,7 @@
 {
   "name": "angular-util",
   "version": "0.0.0",
-  "main": "lib/angular-util.js",
+  "main": "lib/macgyver.js",
   "dependencies": {
     "angular": "*",
     "chosen": "~0.9.11"
