@@ -12,14 +12,12 @@ bowerPaths      = _(for name, filename of bowerPathMap
 ).flatten()
 
 vendorPath = (filename) ->
-  if filename.indexOf('vendor/') is 0
-    if filename.indexOf(bowerVendorPath) is 0
-      filename in bowerPaths
-    else
-      filename.indexOf("brunch_JavaScriptCompiler_") < 0
+  return false unless filename.indexOf('vendor') is 0
 
+  if filename.indexOf(bowerVendorPath) is 0
+    filename in bowerPaths
   else
-    false
+    filename.indexOf("brunch_JavaScriptCompiler_") < 0
 
 # Specify css of certain vendor modules to ignore
 cssIgnoreModules = [/jquery\.ui/]
