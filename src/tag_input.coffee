@@ -1,28 +1,30 @@
 ##
 ## Tag Input
-## 
+##
 ## A directive for generating tag input.
 ##
 ## Attributes:
-## - tags-list:   the list of elements to populate the select input
-## - tags:        the list of elements selected by the user
-## - placeholder: placeholder text for tag input
-## - no-result:   custom text when there is no search result
+## - util-tag-input:             the list of elements to populate the select input
+## - util-tag-input-selected:    the list of elements selected by the user
+## - util-tag-input-placeholder: placeholder text for tag input
+## - util-tag-input-no-result:   custom text when there is no search result
 ##
 ##
 
 angular.module("Util").directive "utilTagInput", [
-  "$rootScope", 
-  ($rootScope) ->
+  "$rootScope",
+  "$parse",
+  ($rootScope, $parse) ->
     restrict:   "A"
-    scope:      false
+    scope:      {}
 
     compile: (element, attr) ->
-      tagsList    = attr.tagsList    or []
-      tags        = attr.tags        or []
-      placeholder = attr.placeholder or ""
-      noResult    = attr.noResult
+      tagsList    = attr.utilTagInput            or []
+      selectedExp = attr.utilTagInputSelected
+      placeholder = attr.utilTagInputPlaceholder or ""
+      noResult    = attr.utilTagInputNoResult
       options     = {}
+      getSelected = $parse selectedExp
 
       element.attr "data-placeholder", placeholder
 
@@ -31,5 +33,24 @@ angular.module("Util").directive "utilTagInput", [
 
       options.no_results_text = noResult if noResult?
 
-      element.chosen options
+      chosenElement = element.chosen(options)
+
+      ($scope, element, attr) ->
+        Object.defineProperty $scope, "selected",
+          get:        -> getSelected $scope.$parent
+          set: (list) -> getSelected.assign $scope.$parent, list
+
+        chosenElement.change (event, object)->
+          $scope.$apply ->
+            list = $scope.selected
+            if object.selected?
+              list.push object.selected
+            else if object.deselected?
+              # Find the element that need to be removed
+              index = list.indexOf object.deselected
+              return if index is -1
+
+              list[index..index] = []
+              $scope.selected    = list
+
 ]
