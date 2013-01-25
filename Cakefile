@@ -22,7 +22,6 @@ spawn = (command, args = [], callback = ->) ->
 
 updateBowerPaths = ->
   bower.commands.list(paths: true).on "data", (files) ->
-    files.chosen       = path.join files.chosen, "chosen", "chosen.jquery.js"
     fs.writeFile "bower-paths.json", JSON.stringify(files), "utf8"
 
 task "update:paths", "Update bower paths file", -> updateBowerPaths()
@@ -51,3 +50,7 @@ task "build", "Build the latest MacGyver", ->
 
       fs.writeFile writeFile, updatedCode, "utf8", (err, data) ->
         console.log "MacGyver built successfully"
+
+    fromCssFile  = path.join examplePath, "css/macgyver.css"
+    writeCssFile = path.join finalBuildPath, "macgyver.css"
+    fs.createReadStream(fromCssFile).pipe fs.createWriteStream(writeCssFile)

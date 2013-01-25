@@ -42,7 +42,7 @@ exports.config =
   files:
     javascripts:
       joinTo:
-        'js/macgyver.js': /^src|vendor\/[^\/]+.js/
+        'js/macgyver.js': /^src|vendor\/js\/[^\/]+.js/
         'js/vendor.js': vendorPath
       order:
         # Files in `vendor` directories are compiled before other files
@@ -52,10 +52,13 @@ exports.config =
     stylesheets:
       joinTo:
         'css/vendor.css': (filename) ->
+          # Check for ignored css module files
           results     = (not module.test(filename) for module in cssIgnoreModules)
           noneIgnored = _(results).every (result) -> result
+
           (/^vendor\/bower\//.exec(filename)? or vendorPath filename) and noneIgnored
-        'css/app.css': /^src\/css/
+
+        'css/app.css': /(^src\/css)|(vendor\/css\/[^\/]+.css)/
 
     templates:
       joinTo:

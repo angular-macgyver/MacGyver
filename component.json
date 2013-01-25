@@ -1,9 +1,9 @@
 {
-  "name": "angular-util",
+  "name": "MacGyver",
   "version": "0.0.0",
   "main": "lib/macgyver.js",
   "dependencies": {
     "angular": "*",
-    "chosen": "~0.9.11"
+    "spin.js": "latest"
   }
 }

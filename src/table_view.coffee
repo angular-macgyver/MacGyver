@@ -21,7 +21,7 @@
   - row-height:
 ###
 
-angular.module("Mac").directive "macTableView", [
+angular.module("Mac").directive "macTable", [
   "$rootScope"
   "$compile"
   ($rootScope, $compile) ->

@@ -4,28 +4,41 @@
 ## A directive for generating tag input.
 ##
 ## Attributes:
-## - mac-tag-input:             the list of elements to populate the select input
+## - mac-tag-input-tags:        the list of elements to populate the select input
 ## - mac-tag-input-selected:    the list of elements selected by the user
 ## - mac-tag-input-placeholder: placeholder text for tag input
 ## - mac-tag-input-no-result:   custom text when there is no search result
+## - mac-tag-input-value:       the value to be sent back upon selection
+## - mac-tag-input-label:       the label to display to the users
 ##
 
 angular.module("Mac").directive "macTagInput", [
   "$rootScope",
   "$parse",
   ($rootScope, $parse) ->
-    restrict: "A"
-    scope:    {}
+    restrict:    "E"
+    scope:       {}
+    templateUrl: "template/tag_input.html"
+    transclude:  true
+    replace:     true
 
     compile: (element, attr) ->
-      tagsListName = attr.macTagInput
-      selectedExp  = attr.macTagInputSelected
-      placeholder  = attr.macTagInputPlaceholder or ""
-      noResult     = attr.macTagInputNoResult
-      options      = {}
-      getSelected  = $parse selectedExp
+      tagsListExp = attr.macTagInputTags
+      selectedExp = attr.macTagInputSelected
+      placeholder = attr.macTagInputPlaceholder or ""
+      noResult    = attr.macTagInputNoResult
+      valueKey    = attr.macTagInputValue       or "id"
+      textKey     = attr.macTagInputLabel
+      options     = {}
+      getSelected = $parse selectedExp
+      getTagsList = $parse tagsListExp
 
       element.attr "data-placeholder", placeholder
+
+      itemValueKey = if valueKey? then ".#{valueKey}" else ""
+      itemTextKey  = if textKey?  then ".#{textKey}" else ""
+      $("option", element).attr("value", "{{item#{itemValueKey}}}")
+                          .text("{{item#{itemTextKey}}}")
 
       options.no_results_text = noResult if noResult?
 
@@ -38,13 +51,17 @@ angular.module("Mac").directive "macTagInput", [
           get:        -> getSelected $scope.$parent
           set: (list) -> getSelected.assign $scope.$parent, list
 
-        # Get an array from the parent scope
-        tagsList = $scope.$parent[tagsListName] or []
-        for tag in tagsList
-          element.append $("<option>").attr("value", tag).text tag
+        Object.defineProperty $scope, "items",
+          get: ->
+            getTagsList $scope.$parent
+
+        $scope.$on "updateTagInput", ->
+          chosenElement.trigger "liszt:updated"
 
         # Update tag input after adding new option DOM element
-        chosenElement.trigger "liszt:updated"
+        setTimeout (->
+          chosenElement.trigger "liszt:updated"
+        ), 0
 
         chosenElement.change (event, object)->
           $scope.$apply ->
