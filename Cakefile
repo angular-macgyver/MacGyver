@@ -51,6 +51,6 @@ task "build", "Build the latest MacGyver", ->
       fs.writeFile writeFile, updatedCode, "utf8", (err, data) ->
         console.log "MacGyver built successfully"
 
-    fromCssFile  = path.join examplePath, "css/macgyver.css"
+    fromCssFile  = path.join examplePath, "css/app.css"
     writeCssFile = path.join finalBuildPath, "macgyver.css"
     fs.createReadStream(fromCssFile).pipe fs.createWriteStream(writeCssFile)
