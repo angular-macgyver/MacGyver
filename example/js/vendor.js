@@ -14528,9 +14528,7 @@ var styleDirective = valueFn({
   });
 
 })(window, document);
-angular.element(document).find('head').append('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak{display:none;}ng\\:form{display:block;}</style>');;
-
-// Chosen, a Select Box Enhancer for jQuery and Protoype
+angular.element(document).find('head').append('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak{display:none;}ng\\:form{display:block;}</style>');// Chosen, a Select Box Enhancer for jQuery and Protoype
 // by Patrick Filler for Harvest, http://getharvest.com
 // 
 // Version 0.9.11
@@ -15612,8 +15610,6 @@ Copyright (c) 2011 by Harvest
   root.get_side_border_padding = get_side_border_padding;
 
 }).call(this);
-;
-
 //fgnass.github.com/spin.js#v1.2.7
 !function(window, document, undefined) {
 
@@ -15934,5 +15930,3 @@ Copyright (c) 2011 by Harvest
     window.Spinner = Spinner
 
 }(window, document);
-;
-
