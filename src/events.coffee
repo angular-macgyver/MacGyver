@@ -6,10 +6,10 @@
 
 for event in ["Blur", "Focus", "Keydown", "Keyup", "Mouseenter", "Mouseleave"]
   do (event) ->
-    angular.module("Util").directive "util#{event}", ["$parse", ($parse) ->
+    angular.module("Mac").directive "mac#{event}", ["$parse", ($parse) ->
       restrict: "A"
       link: (scope, element, attributes) ->
-        expression = $parse attributes["util#{event}"]
+        expression = $parse attributes["mac#{event}"]
         element.on event.toLowerCase(), (event) ->
           scope.$apply -> expression scope, $event: event
           true
@@ -17,30 +17,30 @@ for event in ["Blur", "Focus", "Keydown", "Keyup", "Mouseenter", "Mouseleave"]
 
 for key in ["Enter", "Escape", "Space", "Left", "Up", "Right", "Down"]
   do (key) ->
-    angular.module("Util").directive "utilKeydown#{key}", ["$parse", "Util.keys", ($parse, keys) ->
+    angular.module("Mac").directive "macKeydown#{key}", ["$parse", "Mac.keys", ($parse, keys) ->
       restrict: "A"
       link: (scope, element, attributes) ->
-        expression = $parse attributes["utilKeydown#{key}"]
+        expression = $parse attributes["macKeydown#{key}"]
         element.on "keydown", (event) ->
           if event.which is keys["#{key.toUpperCase()}"]
             event.preventDefault()
             scope.$apply -> expression scope, $event: event
     ]
 
-angular.module("Util").directive "utilModelBlur", ["$parse", ($parse) ->
+angular.module("Mac").directive "macModelBlur", ["$parse", ($parse) ->
   restrict: "A"
   link: (scope, element, attributes, controller) ->
     element.on "blur", (event) ->
-      scope.$apply $parse(attributes.utilModelBlur)(scope, $event: event)
+      scope.$apply $parse(attributes.macModelBlur)(scope, $event: event)
 ]
 
-angular.module("Util").directive "utilPauseTyping", ["$parse", ($parse) ->
+angular.module("Mac").directive "macPauseTyping", ["$parse", ($parse) ->
   # Fires when the user stops typing for more than (delay) milliseconds
-  # To change the delay, add a util-pause-typing-delay="500" attribute to the element
+  # To change the delay, add a mac-pause-typing-delay="500" attribute to the element
   restrict: "A"
   link: (scope, element, attributes) ->
-    expression = $parse attributes["utilPauseTyping"]
-    delay      = scope.$eval(attributes["utilPauseTypingDelay"]) or 800
+    expression = $parse attributes["macPauseTyping"]
+    delay      = scope.$eval(attributes["macPauseTypingDelay"]) or 800
     keyupTimer = ""
     element.on "keyup", (event) ->
       clearTimeout keyupTimer

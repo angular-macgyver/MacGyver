@@ -4,14 +4,14 @@
 ## A directive for generating tag input.
 ##
 ## Attributes:
-## - util-tag-input:             the list of elements to populate the select input
-## - util-tag-input-selected:    the list of elements selected by the user
-## - util-tag-input-placeholder: placeholder text for tag input
-## - util-tag-input-no-result:   custom text when there is no search result
+## - mac-tag-input:             the list of elements to populate the select input
+## - mac-tag-input-selected:    the list of elements selected by the user
+## - mac-tag-input-placeholder: placeholder text for tag input
+## - mac-tag-input-no-result:   custom text when there is no search result
 ##
 ##
 
-angular.module("Util").directive "utilTagInput", [
+angular.module("Mac").directive "macTagInput", [
   "$rootScope",
   "$parse",
   ($rootScope, $parse) ->
@@ -19,10 +19,10 @@ angular.module("Util").directive "utilTagInput", [
     scope:      {}
 
     compile: (element, attr) ->
-      tagsList    = attr.utilTagInput            or []
-      selectedExp = attr.utilTagInputSelected
-      placeholder = attr.utilTagInputPlaceholder or ""
-      noResult    = attr.utilTagInputNoResult
+      tagsList    = attr.macTagInput            or []
+      selectedExp = attr.macTagInputSelected
+      placeholder = attr.macTagInputPlaceholder or ""
+      noResult    = attr.macTagInputNoResult
       options     = {}
       getSelected = $parse selectedExp
 

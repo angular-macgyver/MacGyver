@@ -1,4 +1,4 @@
-angular.module("Util").factory "Util.keys", ->
+angular.module("Mac").factory "Mac.keys", ->
   CANCEL:        3
   HELP:          6
   BACKSPACE:     8

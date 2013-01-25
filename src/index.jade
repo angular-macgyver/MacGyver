@@ -10,7 +10,7 @@ html
         body {
           padding: 40px 0px 100px 0px;
         }
-  body(ng-app='Util')
+  body(ng-app='Mac')
     .container
       .row
         #nav.span3
@@ -24,7 +24,7 @@ html
           .page-header: h1 Table view
           h2 Example
           .table-view-wrapper(
-            util-table-view
+            mac-table-view
             table-data    = "data"
             table-columns = "columnOrder"
           )
@@ -38,10 +38,10 @@ html
           .page-header: h1 Tag Input
           h2 Example
           select(
-            util-tag-input
+            mac-tag-input
             multiple                   = "multiple"
-            util-tag-input-placeholder = "Select all target countries"
-            util-tag-input-selected    = "selected"
+            mac-tag-input-placeholder = "Select all target countries"
+            mac-tag-input-selected    = "selected"
 
           )
             option(value='')
@@ -299,11 +299,11 @@ html
 
           .page-header: h1 Spinner
           h2 Example
-          div(util-spinner)
+          div(mac-spinner)
 
           .page-header: h1 Blur
           h2 Example
-          input(type="text", util-model-blur="onTextBlur()")
+          input(type="text", mac-model-blur="onTextBlur()")
 
     script(src='//cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js', type='text/javascript')
     script(src='//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/bootstrap.js', type="text/javascript")
