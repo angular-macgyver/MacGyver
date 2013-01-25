@@ -14850,6 +14850,8 @@ $.widget( "ui.tooltip", {
 });
 
 }( jQuery ) );
+;
+
 var event, key, _fn, _fn1, _i, _j, _len, _len1, _ref, _ref1;
 
 _ref = ["Blur", "Focus", "Keydown", "Keyup", "Mouseenter", "Mouseleave"];
