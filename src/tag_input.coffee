@@ -9,36 +9,42 @@
 ## - mac-tag-input-placeholder: placeholder text for tag input
 ## - mac-tag-input-no-result:   custom text when there is no search result
 ##
-##
 
 angular.module("Mac").directive "macTagInput", [
   "$rootScope",
   "$parse",
   ($rootScope, $parse) ->
-    restrict:   "A"
-    scope:      {}
+    restrict: "A"
+    scope:    {}
 
     compile: (element, attr) ->
-      tagsList    = attr.macTagInput            or []
-      selectedExp = attr.macTagInputSelected
-      placeholder = attr.macTagInputPlaceholder or ""
-      noResult    = attr.macTagInputNoResult
-      options     = {}
-      getSelected = $parse selectedExp
+      tagsListName = attr.macTagInput
+      selectedExp  = attr.macTagInputSelected
+      placeholder  = attr.macTagInputPlaceholder or ""
+      noResult     = attr.macTagInputNoResult
+      options      = {}
+      getSelected  = $parse selectedExp
 
       element.attr "data-placeholder", placeholder
 
-      for tag in tagsList
-        element.append $("<option>").attr("value", tag).text tag
-
       options.no_results_text = noResult if noResult?
 
+      # initialize the element in compile
+      # as initializing in link will break other directives
       chosenElement = element.chosen(options)
 
       ($scope, element, attr) ->
         Object.defineProperty $scope, "selected",
           get:        -> getSelected $scope.$parent
           set: (list) -> getSelected.assign $scope.$parent, list
+
+        # Get an array from the parent scope
+        tagsList = $scope.$parent[tagsListName] or []
+        for tag in tagsList
+          element.append $("<option>").attr("value", tag).text tag
+
+        # Update tag input after adding new option DOM element
+        chosenElement.trigger "liszt:updated"
 
         chosenElement.change (event, object)->
           $scope.$apply ->
