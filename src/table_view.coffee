@@ -63,12 +63,12 @@ angular.module("Mac").directive "macTable", [
       ($scope, element, attrs) ->
         # Get the attribute name for table data
         # Access the array of data on parent scope
-        tableDataName = attrs.tableData
+        tableDataName = attrs.macTableData
         data          = if tableDataName? then $scope.$parent[tableDataName] else []
 
         # Get the attribute name for the order of columns
         # Access the array of columns on parent scope
-        tableColumns   = attrs.tableColumns
+        tableColumns   = attrs.macTableColumns
         $scope.columns = if tableColumns? then $scope.$parent[tableColumns] else []
 
         numColumns     = $scope.columns.length
