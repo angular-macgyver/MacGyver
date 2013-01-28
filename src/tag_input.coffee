@@ -3,6 +3,9 @@
 ##
 ## A directive for generating tag input.
 ##
+## Dependencies
+## - Chosen
+##
 ## Attributes:
 ## - mac-tag-input-tags:        the list of elements to populate the select input
 ## - mac-tag-input-selected:    the list of elements selected by the user
