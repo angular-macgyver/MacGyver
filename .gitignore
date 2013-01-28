@@ -1,5 +1,12 @@
+# Node packages
 node_modules
-vendor
 
+# Bower vendor files
+test/vendor
+vendor/bower
+
+# Logs
 test-results.xml
+
+# System file types
 .DS_Store
