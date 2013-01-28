@@ -3,7 +3,6 @@
   "version": "0.0.1",
   "main": ["lib/macgyver.js", "lib/macgyver.css"],
   "dependencies": {
-    "angular": "*",
-    "spin.js": "latest"
+    "angular": "*"
   }
 }
