@@ -1,0 +1,44 @@
+.mac-tag-autocomplete
+  position   relative
+  display    inline-block
+  border     1px solid #aaaaaa
+  background #ffffff
+  margin     0
+  padding    0
+
+  .tag-list
+    margin-left 0px
+
+    .tag
+      padding       3px 20px 3px 5px
+      margin        3px 0px 3px 5px
+      position      relative
+      float         left
+      list-style    none
+      font-size     13px
+      line-height   13px
+      border-radius 3px
+      box-shadow    0px 0px 2px #ffffff inset, 0 1px 0 rgba(0,0,0,0.05);
+
+      .tag-close
+        position    absolute
+        right       6px
+        color       #000000
+        text-shadow 0px 1px 0px #ffffff
+        opacity     0.2
+        cursor      pointer
+
+      &.input-tag
+        white-space nowrap
+        margin      0
+        padding     0
+
+        input.text-input
+          color         #666
+          background    transparent
+          height        15px
+          font-size     100%
+          padding       5px
+          margin        1px 0px
+          border        0px !important
+

@@ -1,0 +1,7 @@
+.mac-tag-autocomplete
+  ul.tag-list
+    li.tag.label(ng-repeat="tag in tags")
+      .tag-close(ng-click="removeTag(tag)") X
+      span.tag-label
+    li.tag.input-tag
+      input.text-input(type="text")
