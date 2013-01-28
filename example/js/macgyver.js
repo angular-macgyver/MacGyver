@@ -1089,6 +1089,8 @@ Copyright (c) 2011 by Harvest
   root.get_side_border_padding = get_side_border_padding;
 
 }).call(this);
+;
+
 /*! jQuery UI - v1.10.0 - 2013-01-17
 * http://jqueryui.com
 * Includes: jquery.ui.core.js, jquery.ui.widget.js, jquery.ui.mouse.js, jquery.ui.position.js, jquery.ui.accordion.js, jquery.ui.autocomplete.js, jquery.ui.button.js, jquery.ui.datepicker.js, jquery.ui.dialog.js, jquery.ui.draggable.js, jquery.ui.droppable.js, jquery.ui.effect.js, jquery.ui.effect-blind.js, jquery.ui.effect-bounce.js, jquery.ui.effect-clip.js, jquery.ui.effect-drop.js, jquery.ui.effect-explode.js, jquery.ui.effect-fade.js, jquery.ui.effect-fold.js, jquery.ui.effect-highlight.js, jquery.ui.effect-pulsate.js, jquery.ui.effect-scale.js, jquery.ui.effect-shake.js, jquery.ui.effect-slide.js, jquery.ui.effect-transfer.js, jquery.ui.menu.js, jquery.ui.progressbar.js, jquery.ui.resizable.js, jquery.ui.selectable.js, jquery.ui.slider.js, jquery.ui.sortable.js, jquery.ui.spinner.js, jquery.ui.tabs.js, jquery.ui.tooltip.js
@@ -15939,6 +15941,8 @@ $.widget( "ui.tooltip", {
 });
 
 }( jQuery ) );
+;
+
 //fgnass.github.com/spin.js#v1.2.8
 !function(window, document, undefined) {
 
@@ -16259,6 +16263,8 @@ $.widget( "ui.tooltip", {
     window.Spinner = Spinner
 
 }(window, document);
+;
+
 var event, key, _fn, _fn1, _i, _j, _len, _len1, _ref, _ref1;
 
 _ref = ["Blur", "Focus", "Keydown", "Keyup", "Mouseenter", "Mouseleave"];
@@ -16719,22 +16725,32 @@ angular.module("Mac").directive("macTagAutocomplete", [
               return getUrl.assign($scope.$parent, url);
             }
           });
+          Object.defineProperty($scope, "tags", {
+            get: function() {
+              return getSelected($scope.$parent);
+            },
+            set: function(_tags) {
+              var outputTags;
+              outputTags = _(_tags).map(function(item, i) {
+                var output;
+                output = {};
+                output[labelKey] = item[labelKey];
+                output[valueKey] = item[valueKey];
+                return output;
+              });
+              return getSelected.assign($scope.$parent, outputTags);
+            }
+          });
+          $scope.$on("resetTagAutocomplete", function() {
+            return $scope.reset();
+          });
           $scope.removeTag = function(tag) {
             var index, _ref;
             index = $scope.tags.indexOf(tag);
-            [].splice.apply($scope.tags, [index, index - index + 1].concat(_ref = [])), _ref;
-            return $scope.updateSelectedArrary();
-          };
-          $scope.updateSelectedArrary = function() {
-            var outputTags;
-            outputTags = _($scope.tags).map(function(item, i) {
-              if (valueKey != null) {
-                return item[valueKey];
-              } else {
-                return item;
-              }
-            });
-            return getSelected.assign($scope.$parent, outputTags);
+            if (index === -1) {
+              return;
+            }
+            return ([].splice.apply($scope.tags, [index, index - index + 1].concat(_ref = [])), _ref);
           };
           textInput.bind("keydown", function(event) {
             var stroke;
@@ -16743,8 +16759,7 @@ angular.module("Mac").directive("macTagAutocomplete", [
               case key.BACKSPACE:
                 if ($(this).val().length === 0) {
                   $scope.$apply(function() {
-                    $scope.tags.pop();
-                    return $scope.updateSelectedArrary();
+                    return $scope.tags.pop();
                   });
                 }
             }
@@ -16785,8 +16800,7 @@ angular.module("Mac").directive("macTagAutocomplete", [
                 item = _($scope.currentAutocomplete).find(function(item) {
                   return item[labelKey] === ui.item.label;
                 });
-                $scope.tags.push(item);
-                return $scope.updateSelectedArrary();
+                return $scope.tags.push(item);
               });
               return setTimeout((function() {
                 return textInput.val("");
@@ -16794,7 +16808,6 @@ angular.module("Mac").directive("macTagAutocomplete", [
             }
           });
           $scope.reset = function() {
-            $scope.tags = [];
             return $scope.currentAutocomplete = [];
           };
           return $scope.reset();
