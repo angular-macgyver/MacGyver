@@ -48,24 +48,30 @@ angular.module("Mac").directive "macTagAutocomplete", [
           get:       -> getUrl $scope.$parent
           set: (url) -> getUrl.assign $scope.$parent, url
 
+        Object.defineProperty $scope, "tags",
+          get:         -> getSelected $scope.$parent
+          set: (_tags) ->
+            outputTags = _(_tags).map (item, i) ->
+              output           = {}
+              output[labelKey] = item[labelKey]
+              output[valueKey] = item[valueKey]
+              return output
+            getSelected.assign $scope.$parent, outputTags
+
+        $scope.$on "resetTagAutocomplete", -> $scope.reset()
+
         $scope.removeTag = (tag) ->
           index = $scope.tags.indexOf tag
-          $scope.tags[index..index] = []
-          $scope.updateSelectedArrary()
+          return if index is -1
 
-        # function to update array on parent scope with tag value
-        $scope.updateSelectedArrary = ->
-          outputTags = _($scope.tags).map (item, i) -> if valueKey? then item[valueKey] else item
-          getSelected.assign $scope.$parent, outputTags
+          $scope.tags[index..index] = []
 
         textInput.bind "keydown", (event) ->
           stroke = event.which or event.keyCode
           switch stroke
             when key.BACKSPACE
               if $(this).val().length is 0
-                $scope.$apply ->
-                  $scope.tags.pop()
-                  $scope.updateSelectedArrary()
+                $scope.$apply -> $scope.tags.pop()
           return true
 
         textInput.autocomplete
@@ -95,14 +101,12 @@ angular.module("Mac").directive "macTagAutocomplete", [
             $scope.$apply ->
               item = _($scope.currentAutocomplete).find (item) -> item[labelKey] is ui.item.label
               $scope.tags.push item
-              $scope.updateSelectedArrary()
 
             setTimeout (->
               textInput.val ""
             ), 0
 
         $scope.reset = ->
-          $scope.tags                = []
           $scope.currentAutocomplete = []
 
         $scope.reset()
