@@ -14601,9 +14601,7 @@ var styleDirective = valueFn({
   });
 
 })(window, document);
-angular.element(document).find('head').append('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak{display:none;}ng\\:form{display:block;}</style>');;
-
-//fgnass.github.com/spin.js#v1.2.7
+angular.element(document).find('head').append('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak{display:none;}ng\\:form{display:block;}</style>');//fgnass.github.com/spin.js#v1.2.7
 !function(window, document, undefined) {
 
   /**
@@ -14923,5 +14921,3 @@ angular.element(document).find('head').append('<style type="text/css">@charset "
     window.Spinner = Spinner
 
 }(window, document);
-;
-
