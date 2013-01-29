@@ -21,19 +21,19 @@ angular.module("Mac").directive "macTagAutocomplete", [
   "keys",
   ($parse, $http, key) ->
     restrict:    "E"
-    scope:       {}
+    scope:
+      autocompleteUrl: "=macTagAutocompleteUrl"
+
     templateUrl: "template/tag_autocomplete.html"
     replace:     true
 
     compile: (element, attr) ->
-      urlExp      = attr.macTagAutocompleteUrl
       valueKey    = attr.macTagAutocompleteValue      or "id"
       labelKey    = attr.macTagAutocompleteLabel      or "name"
       selectedExp = attr.macTagAutocompleteSelected
       queryKey    = attr.macTagAutocompleteQuery      or "q"
       delay       = attr.macTagAutocompleteDelay      or 800
 
-      getUrl      = $parse urlExp
       getSelected = $parse selectedExp
 
       textInput = $(".text-input", element)
@@ -44,10 +44,6 @@ angular.module("Mac").directive "macTagAutocomplete", [
 
       ($scope, element, attrs) ->
         # Getting autocomplete url from parent scope
-        Object.defineProperty $scope, "autocompleteUrl",
-          get:       -> getUrl $scope.$parent
-          set: (url) -> getUrl.assign $scope.$parent, url
-
         Object.defineProperty $scope, "tags",
           get:         -> getSelected $scope.$parent
           set: (_tags) ->
