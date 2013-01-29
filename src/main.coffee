@@ -1,1 +1,1 @@
-angular.module "Mac", []
+angular.module "Mac", ["Mac.Util"]
