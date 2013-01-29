@@ -1607,6 +1607,7 @@ body .ui-tooltip {
   text-align: left;
   float: left;
   font-weight: bold;
+  border-right: 1px solid #000;
 }
 .table-container .table-header .cell.ui-sortable-placeholder {
   background-color: #f5f5f5;

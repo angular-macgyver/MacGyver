@@ -1,5 +1,5 @@
 
-angular.module("Mac", []);
+angular.module("Mac", ["Mac.Util"]);
 // Chosen, a Select Box Enhancer for jQuery and Protoype
 // by Patrick Filler for Harvest, http://getharvest.com
 //
@@ -16514,16 +16514,6 @@ angular.module("Mac").directive("macSpinner", function() {
 
  A directive for generating a lazy rendered table
 
- Example data:
-  stat_data - array of stat objects
-  columns   - array of column object
-
-  column = {name, key, index, sort}
-    - name: display name on header
-    -
-
-
-
  Attributes:
   - has-header: true
   - has-footer: true
@@ -16604,7 +16594,10 @@ angular.module("Mac").directive("macTable", [
                 templateColumn.text(column);
               }
               templateColumn.resizable({
-                ghost: true
+                containment: "parent",
+                minHeight: opts.rowHeight,
+                maxHeight: opts.rowHeight,
+                handler: "e, w"
               });
               headerRow.append(templateColumn);
             }
@@ -16887,3 +16880,129 @@ angular.module("Mac").directive("macTagInput", [
     };
   }
 ]);
+
+angular.module("Mac").filter("pluralize", [
+  "util", function(util) {
+    return function(string, count, includeCount) {
+      if (includeCount == null) {
+        includeCount = true;
+      }
+      return util.pluralize(string, count, includeCount);
+    };
+  }
+]);
+
+angular.module("Mac").filter("timestamp", [
+  "util", function(util) {
+    var _createTimestamp;
+    _createTimestamp = function(count, noun) {
+      noun = util.pluralize(noun, count);
+      return "" + count + " " + noun + " ago";
+    };
+    return function(time) {
+      var currentTime, days, hours, minutes, months, secondsAgo, weeks, years;
+      time = +time;
+      currentTime = Math.round(Date.now() / 1000);
+      secondsAgo = currentTime - time;
+      if (secondsAgo < 45) {
+        return "just now";
+      } else if (secondsAgo < 120) {
+        return "about a minute ago";
+      } else {
+        years = Math.floor(secondsAgo / (365 * 24 * 60 * 60));
+        if (years > 0) {
+          return _createTimestamp(years, "year");
+        }
+        months = Math.floor(secondsAgo / (31 * 24 * 60 * 60));
+        if (months > 0) {
+          return _createTimestamp(months, "month");
+        }
+        weeks = Math.floor(secondsAgo / (7 * 24 * 60 * 60));
+        if (weeks > 0) {
+          return _createTimestamp(weeks, "week");
+        }
+        days = Math.floor(secondsAgo / (24 * 60 * 60));
+        if (days > 0) {
+          return _createTimestamp(days, "day");
+        }
+        hours = Math.floor(secondsAgo / (60 * 60));
+        if (hours > 0) {
+          return _createTimestamp(hours, "hour");
+        }
+        minutes = Math.floor(secondsAgo / 60);
+        if (minutes > 0) {
+          return _createTimestamp(minutes, "min");
+        }
+        return "" + secondsAgo + " seconds ago";
+      }
+    };
+  }
+]);
+var util;
+
+util = angular.module("Mac.Util", []);
+
+util.factory("util", function() {
+  return {
+    _inflectionConstants: {
+      uncountables: ["sheep", "fish", "moose", "series", "species", "money", "rice", "information", "info", "equipment", "min"],
+      irregulars: {
+        child: "children",
+        man: "men",
+        woman: "women",
+        person: "people",
+        ox: "oxen",
+        goose: "geese"
+      },
+      pluralizers: [[/(quiz)$/i, "$1zes"], [/([m|l])ouse$/i, "$1ice"], [/(matr|vert|ind)(ix|ex)$/i, "$1ices"], [/(x|ch|ss|sh)$/i, "$1es"], [/([^aeiouy]|qu)y$/i, "$1ies"], [/(?:([^f])fe|([lr])f)$/i, "$1$2ves"], [/sis$/i, "ses"], [/([ti])um$/i, "$1a"], [/(buffal|tomat)o$/i, "$1oes"], [/(bu)s$/i, "$1ses"], [/(alias|status)$/i, "$1es"], [/(octop|vir)us$/i, "$1i"], [/(ax|test)is$/i, "$1es"], [/x$/i, "xes"], [/s$/i, "s"], [/$/, "s"]]
+    },
+    pluralize: function(string, count, includeCount) {
+      var irregulars, isUppercase, lowercaseWord, pluralizedString, pluralizedWord, pluralizer, pluralizers, uncountables, word, _i, _len, _ref;
+      if (count == null) {
+        count = 2;
+      }
+      if (includeCount == null) {
+        includeCount = false;
+      }
+      if (!((string != null ? string.trim().length : void 0) > 0)) {
+        return string;
+      }
+      _ref = this._inflectionConstants, pluralizers = _ref.pluralizers, uncountables = _ref.uncountables, irregulars = _ref.irregulars;
+      word = string.split(/\s/).pop();
+      isUppercase = word.toUpperCase() === word;
+      lowercaseWord = word.toLowerCase();
+      pluralizedWord = count === 1 || uncountables.indexOf(lowercaseWord) >= 0 ? word : null;
+      if (pluralizedWord == null) {
+        if (irregulars[lowercaseWord] != null) {
+          pluralizedWord = irregulars[lowercaseWord];
+        }
+      }
+      if (pluralizedWord == null) {
+        for (_i = 0, _len = pluralizers.length; _i < _len; _i++) {
+          pluralizer = pluralizers[_i];
+          if (!(pluralizer[0].test(lowercaseWord))) {
+            continue;
+          }
+          pluralizedWord = word.replace(pluralizer[0], pluralizer[1]);
+          break;
+        }
+      }
+      pluralizedWord || (pluralizedWord = word);
+      if (isUppercase) {
+        pluralizedWord = pluralizedWord.toUpperCase();
+      }
+      pluralizedString = string.slice(0, -word.length) + pluralizedWord;
+      if (includeCount) {
+        return "" + count + " " + pluralizedString;
+      } else {
+        return pluralizedString;
+      }
+    },
+    capitalize: function(string) {
+      return string[0].toUpperCase() + string.slice(1);
+    },
+    uncapitalize: function(string) {
+      return string[0].toLowerCase() + string.slice(1);
+    }
+  };
+});
