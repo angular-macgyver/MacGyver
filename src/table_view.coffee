@@ -3,16 +3,6 @@
 
  A directive for generating a lazy rendered table
 
- Example data:
-  stat_data - array of stat objects
-  columns   - array of column object
-
-  column = {name, key, index, sort}
-    - name: display name on header
-    -
-
-
-
  Attributes:
   - has-header: true
   - has-footer: true
@@ -97,7 +87,10 @@ angular.module("Mac").directive "macTable", [
             templateColumn.text column if contentText.length is 0
 
             templateColumn.resizable
-              ghost: true
+              containment: "parent"
+              minHeight:   opts.rowHeight
+              maxHeight:   opts.rowHeight
+              handler:     "e, w"
             headerRow.append(templateColumn)
 
           # Enable drag and drop on heaer cell
