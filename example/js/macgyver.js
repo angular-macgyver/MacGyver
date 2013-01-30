@@ -16265,6 +16265,110 @@ $.widget( "ui.tooltip", {
 }(window, document);
 ;
 
+
+angular.module("Mac").directive("macAutocomplete", [
+  "$http", "$parse", function($http, $parse) {
+    return {
+      restrict: "E",
+      templateUrl: "template/autocomplete.html",
+      replace: true,
+      scope: {
+        autocompleteUrl: "=macAutocompleteUrl",
+        onSelect: "&macAutocompleteOnSelect",
+        onSuccess: "&macAutocompleteOnSuccess",
+        onError: "&macAutocompleteOnError",
+        onKeyDown: "&macAutocompleteOnKeyDown"
+      },
+      compile: function(element, attrs) {
+        var clearOnSelect, delay, labelKey, queryKey, textInput, valueKey;
+        valueKey = attrs.macAutocompleteValue || "id";
+        labelKey = attrs.macAutocompleteLabel || "name";
+        queryKey = attrs.macAutocompleteQuery || "q";
+        delay = +attrs.macAutocompleteDelay || 800;
+        clearOnSelect = attrs.macAutocompleteClearOnSelect === "true";
+        textInput = $("input", element);
+        return function($scope, element, attrs) {
+          if (attrs.macAutocompleteOnKeyDown) {
+            element.bind("keydown", function(event) {
+              return $scope.onKeyDown({
+                event: event,
+                value: $(this).val()
+              });
+            });
+          }
+          element.autocomplete({
+            delay: delay,
+            autoFocus: true,
+            source: function(req, resp) {
+              var options;
+              options = {
+                method: "GET",
+                url: $scope.autocompleteUrl,
+                params: {}
+              };
+              options.params[queryKey] = req.term;
+              return $http(options).success(function(data, status, headers, config) {
+                var list;
+                if (attrs.macAutocompleteOnSuccess != null) {
+                  list = $scope.onSuccess({
+                    data: data,
+                    status: status,
+                    headers: headers
+                  });
+                }
+                if (list == null) {
+                  list = data.data;
+                }
+                resp(_(list).map(function(item) {
+                  var label, value;
+                  label = value = labelKey != null ? item[labelKey] : item;
+                  return {
+                    label: label,
+                    value: value
+                  };
+                }));
+                return $scope.currentAutocomplete = data.data;
+              }).error(function(data, status, headers, config) {
+                if (attrs.macAutocompleteOnError != null) {
+                  return $scope.onError({
+                    data: data,
+                    status: status,
+                    headers: headers
+                  });
+                }
+              });
+            },
+            select: function(event, ui) {
+              $scope.$apply(function() {
+                var selected;
+                selected = _($scope.currentAutocomplete).find(function(item) {
+                  return item[labelKey] === ui.item.label;
+                });
+                if (attrs.macAutocompleteOnSelect != null) {
+                  return $scope.onSelect({
+                    selected: selected
+                  });
+                }
+              });
+              if (clearOnSelect) {
+                return setTimeout((function() {
+                  return element.val("");
+                }), 0);
+              }
+            }
+          });
+          $scope.$on("resetAutocomplete", function() {
+            return $scope.reset();
+          });
+          $scope.reset = function() {
+            return $scope.currentAutocomplete = [];
+          };
+          return $scope.reset();
+        };
+      }
+    };
+  }
+]);
 var event, key, _fn, _fn1, _i, _j, _len, _len1, _ref, _ref1;
 
 _ref = ["Blur", "Focus", "Keydown", "Keyup", "Mouseenter", "Mouseleave"];
@@ -16693,31 +16797,32 @@ angular.module("Mac").directive("macTagAutocomplete", [
   "$parse", "$http", "keys", function($parse, $http, key) {
     return {
       restrict: "E",
-      scope: {},
+      scope: {
+        autocompleteUrl: "=macTagAutocompleteUrl",
+        autocompleteValue: "=macTagAutocompleteValue",
+        autocompleteLabel: "=macTagAutocompleteLabel",
+        autocompleteQuery: "=macTagAutocompleteQuery",
+        autocompleteDelay: "=macTagAutocompleteDelay"
+      },
       templateUrl: "template/tag_autocomplete.html",
       replace: true,
       compile: function(element, attr) {
-        var delay, getSelected, getUrl, labelKey, queryKey, selectedExp, tagLabelKey, textInput, urlExp, valueKey;
-        urlExp = attr.macTagAutocompleteUrl;
+        var delay, getSelected, labelKey, queryKey, selectedExp, tagLabelKey, valueKey;
         valueKey = attr.macTagAutocompleteValue || "id";
         labelKey = attr.macTagAutocompleteLabel || "name";
-        selectedExp = attr.macTagAutocompleteSelected;
         queryKey = attr.macTagAutocompleteQuery || "q";
-        delay = attr.macTagAutocompleteDelay || 800;
-        getUrl = $parse(urlExp);
+        delay = +attr.macTagAutocompleteDelay || 800;
+        selectedExp = attr.macTagAutocompleteSelected;
         getSelected = $parse(selectedExp);
-        textInput = $(".text-input", element);
         tagLabelKey = labelKey != null ? "." + labelKey : "";
         $(".tag-label", element).text("{{tag" + tagLabelKey + "}}");
+        $(".text-input", element).attr({
+          "mac-autocomplete-value": valueKey,
+          "mac-autocomplete-label": labelKey,
+          "mac-autocomplete-query": queryKey,
+          "mac-autocomplete-delay": delay
+        });
         return function($scope, element, attrs) {
-          Object.defineProperty($scope, "autocompleteUrl", {
-            get: function() {
-              return getUrl($scope.$parent);
-            },
-            set: function(url) {
-              return getUrl.assign($scope.$parent, url);
-            }
-          });
           Object.defineProperty($scope, "tags", {
             get: function() {
               return getSelected($scope.$parent);
@@ -16734,9 +16839,6 @@ angular.module("Mac").directive("macTagAutocomplete", [
               return getSelected.assign($scope.$parent, outputTags);
             }
           });
-          $scope.$on("resetTagAutocomplete", function() {
-            return $scope.reset();
-          });
           $scope.removeTag = function(tag) {
             var index, _ref;
             index = $scope.tags.indexOf(tag);
@@ -16745,65 +16847,30 @@ angular.module("Mac").directive("macTagAutocomplete", [
             }
             return ([].splice.apply($scope.tags, [index, index - index + 1].concat(_ref = [])), _ref);
           };
-          textInput.bind("keydown", function(event) {
+          $scope.onKeyDown = function(event, value) {
             var stroke;
             stroke = event.which || event.keyCode;
             switch (stroke) {
               case key.BACKSPACE:
-                if ($(this).val().length === 0) {
+                if (value.length === 0) {
                   $scope.$apply(function() {
                     return $scope.tags.pop();
                   });
                 }
             }
             return true;
-          });
-          textInput.autocomplete({
-            delay: delay,
-            autoFocus: true,
-            source: function(req, resp) {
-              var options;
-              options = {
-                method: "GET",
-                url: $scope.autocompleteUrl,
-                params: {}
-              };
-              options.params[queryKey] = req.term;
-              return $http(options).success(function(data, status, headers, config) {
-                var existingValues, list;
-                existingValues = _($scope.tags).pluck(valueKey);
-                list = _(data.data).reject(function(item) {
-                  var _ref;
-                  return _ref = item[valueKey] || item, __indexOf.call(existingValues, _ref) >= 0;
-                });
-                resp(_(list).map(function(item) {
-                  var label, value;
-                  label = value = labelKey != null ? item[labelKey] : item;
-                  return {
-                    label: label,
-                    value: value
-                  };
-                }));
-                return $scope.currentAutocomplete = data.data;
-              });
-            },
-            select: function(event, ui) {
-              $scope.$apply(function() {
-                var item;
-                item = _($scope.currentAutocomplete).find(function(item) {
-                  return item[labelKey] === ui.item.label;
-                });
-                return $scope.tags.push(item);
-              });
-              return setTimeout((function() {
-                return textInput.val("");
-              }), 0);
-            }
-          });
-          $scope.reset = function() {
-            return $scope.currentAutocomplete = [];
           };
-          return $scope.reset();
+          $scope.onSuccess = function(data) {
+            var existingValues;
+            existingValues = _($scope.tags).pluck(valueKey);
+            return _(data.data).reject(function(item) {
+              var _ref;
+              return _ref = item[valueKey] || item, __indexOf.call(existingValues, _ref) >= 0;
+            });
+          };
+          return $scope.onSelect = function(item) {
+            return $scope.tags.push(item);
+          };
         };
       }
     };

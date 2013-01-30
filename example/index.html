@@ -1,23 +1,18 @@
 <!DOCTYPE html><html><head><meta charset="utf-8"><title>Example</title><link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css" rel="stylesheet"><link href="css/vendor.css" rel="stylesheet"><link href="css/app.css" rel="stylesheet"><style type="text/css">body {
   padding: 40px 0px 100px 0px;
-}</style></head><body ng-app="Mac"><div class="container"><div class="row"><div id="nav" class="span3"><ul class="nav nav-tabs nav-stacked"><li><a href="#table-view">Table View</a></li><li><a href="#">Tag Input</a></li><li><a href="#spinner">Spinner</a></li></ul></div><div id="example" ng-controller="exampleCtrl" class="span9"><div class="page-header"><h1>Tag Autocomplete</h1></div><h2>Example</h2><mac-tag-autocomplete mac-tag-autocomplete-url="autocompleteUrl" mac-tag-autocomplete-query="q" mac-tag-autocomplete-selected="selected" mac-tag-autocomplete-value="id" mac-tag-autocomplete-label="name"></mac-tag-autocomplete><div class="page-header"><h1>Table view</h1></div><h2>Example</h2><div mac-table mac-table-data="data" mac-table-columns="columnOrder" ng-cloak class="table-view-wrapper"><div class="table-header-template"></div><div class="table-body-template"><div column="Name" class="cell">{{row.name}}</div><div column="Clicks" class="cell">{{row.clicks}}</div><div column="CPM" class="cell">{{row.cpm}}</div><div column="Spent" class="cell">{{row.spent | currency}}</div></div></div><div class="page-header"><h1>Tag Input</h1></div><h2>Example</h2><mac-tag-input mac-tag-input-tags="extraTagInputs" mac-tag-input-placeholder="Select all target countries" mac-tag-input-selected="selected" mac-tag-input-value="id" mac-tag-input-label="name"></mac-tag-input><div class="page-header"><h1>Spinner</h1></div><h2>Example</h2><div mac-spinner></div><div class="page-header"><h1>Blur</h1></div><h2>Example</h2><input type="text" mac-model-blur="onTextBlur()"></div></div></div><script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js" type="text/javascript"></script><script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.3/underscore-min.js" text="text/javascript"></script><script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/bootstrap.js" type="text/javascript"></script><script src="js/vendor.js" type="text/javascript"></script><script src="js/macgyver.js" type="text/javascript"></script><script type="text/javascript">function exampleCtrl($scope){
+}</style></head><body ng-app="Mac"><div class="container"><div class="row"><div id="nav" class="span3"><ul class="nav nav-tabs nav-stacked"><li><a href="#table-view">Table View</a></li><li><a href="#">Tag Input</a></li><li><a href="#spinner">Spinner</a></li></ul></div><div id="example" ng-controller="exampleCtrl" class="span9"><div class="page-header"><h1>Autocomplete</h1></div><h2>Example</h2><mac-autocomplete mac-autocomplete-url="autocompleteUrl" mac-autocomplete-query="q" mac-autocomplete-on-success="hello(data)"></mac-autocomplete><div class="page-header"><h1>Tag Autocomplete</h1></div><h2>Example</h2><mac-tag-autocomplete mac-tag-autocomplete-url="autocompleteUrl" mac-tag-autocomplete-query="q" mac-tag-autocomplete-selected="selected" mac-tag-autocomplete-value="id" mac-tag-autocomplete-label="name"></mac-tag-autocomplete><div class="page-header"><h1>Table view</h1></div><h2>Example</h2><div mac-table mac-table-data="data" mac-table-columns="columnOrder" ng-cloak class="table-view-wrapper"><div class="table-header-template"></div><div class="table-body-template"><div column="Name" class="cell">{{row.name}}</div><div column="Clicks" class="cell">{{row.clicks}}</div><div column="CPM" class="cell">{{row.cpm}}</div><div column="Spent" class="cell">{{row.spent | currency}}</div></div></div><div class="page-header"><h1>Tag Input</h1></div><h2>Example</h2><mac-tag-input mac-tag-input-tags="extraTagInputs" mac-tag-input-placeholder="Select all target countries" mac-tag-input-selected="selected" mac-tag-input-value="id" mac-tag-input-label="name"></mac-tag-input><div class="page-header"><h1>Spinner</h1></div><h2>Example</h2><div mac-spinner></div><div class="page-header"><h1>Blur</h1></div><h2>Example</h2><input type="text" mac-model-blur="onTextBlur()"></div></div></div><script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js" type="text/javascript"></script><script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.3/underscore-min.js" text="text/javascript"></script><script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/bootstrap.js" type="text/javascript"></script><script src="js/vendor.js" type="text/javascript"></script><script src="js/macgyver.js" type="text/javascript"></script><script type="text/javascript">function exampleCtrl($scope){
   var i=0;
-  $scope.data = [
-    {"name": "Test 1", "clicks":7487, "spent":1473.86, "cpm":0.4},
-    {"name": "Test 2", "clicks":7427, "spent":1473.86, "cpm":0.4},
-    {"name": "Test 3", "clicks":7127, "spent":1473.86, "cpm":0.4},
-    {"name": "Test 4", "clicks":7437, "spent":1473.86, "cpm":0.4},
-    {"name": "Test 5", "clicks":12387, "spent":1473.86, "cpm":0.4},
-    {"name": "Test 6", "clicks":71287, "spent":1473.86, "cpm":0.4},
-    {"name": "Test 7", "clicks":741237, "spent":1473.86, "cpm":0.4},
-    {"name": "Test 8", "clicks":187, "spent":1473.86, "cpm":0.4},
-    {"name": "Test 9", "clicks":71487, "spent":1473.86, "cpm":0.4},
-    {"name": "Test 10", "clicks":7127, "spent":1473.86, "cpm":0.4},
-    {"name": "Test 11", "clicks":7499, "spent":1473.86, "cpm":0.4},
-    {"name": "Test 12", "clicks":3387, "spent":1473.86, "cpm":0.4},
-    {"name": "Test 13", "clicks":74587, "spent":1473.86, "cpm":0.4},
-    {"name": "Test 14", "clicks":7482, "spent":1473.869, "cpm":0.4}
-  ];
+  $scope.data = []
+  for (i=0; i<10000; i++) {
+    obj = {
+      "name": "Test " + i,
+      "clicks": Math.random() * 100000,
+      "spent": Math.random() * 10000,
+      "cpm": Math.random()
+    }
+    $scope.data.push(obj);
+  };
+  $scope.hello           = function(data){ return data.data;}
   $scope.columnOrder     = ["Name", "Clicks", "CPM", "Spent"]
   $scope.onTextBlur      = function(){alert("You just blurred out of text input");}
   $scope.autocompleteUrl = "data.json"
