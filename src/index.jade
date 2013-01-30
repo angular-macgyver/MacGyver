@@ -21,6 +21,14 @@ html
 
         #example.span9(ng-controller='exampleCtrl')
 
+          .page-header: h1 Autocomplete
+          h2 Example
+          mac-autocomplete(
+            mac-autocomplete-url        = "autocompleteUrl"
+            mac-autocomplete-query      = "q"
+            mac-autocomplete-on-success = "hello(data)"
+          )
+
           .page-header: h1 Tag Autocomplete
           h2 Example
           mac-tag-autocomplete(
@@ -72,22 +80,17 @@ html
     script(type='text/javascript')
       function exampleCtrl($scope){
         var i=0;
-        $scope.data = [
-          {"name": "Test 1", "clicks":7487, "spent":1473.86, "cpm":0.4},
-          {"name": "Test 2", "clicks":7427, "spent":1473.86, "cpm":0.4},
-          {"name": "Test 3", "clicks":7127, "spent":1473.86, "cpm":0.4},
-          {"name": "Test 4", "clicks":7437, "spent":1473.86, "cpm":0.4},
-          {"name": "Test 5", "clicks":12387, "spent":1473.86, "cpm":0.4},
-          {"name": "Test 6", "clicks":71287, "spent":1473.86, "cpm":0.4},
-          {"name": "Test 7", "clicks":741237, "spent":1473.86, "cpm":0.4},
-          {"name": "Test 8", "clicks":187, "spent":1473.86, "cpm":0.4},
-          {"name": "Test 9", "clicks":71487, "spent":1473.86, "cpm":0.4},
-          {"name": "Test 10", "clicks":7127, "spent":1473.86, "cpm":0.4},
-          {"name": "Test 11", "clicks":7499, "spent":1473.86, "cpm":0.4},
-          {"name": "Test 12", "clicks":3387, "spent":1473.86, "cpm":0.4},
-          {"name": "Test 13", "clicks":74587, "spent":1473.86, "cpm":0.4},
-          {"name": "Test 14", "clicks":7482, "spent":1473.869, "cpm":0.4}
-        ];
+        $scope.data = []
+        for (i=0; i<10000; i++) {
+          obj = {
+            "name": "Test " + i,
+            "clicks": Math.random() * 100000,
+            "spent": Math.random() * 10000,
+            "cpm": Math.random()
+          }
+          $scope.data.push(obj);
+        };
+        $scope.hello           = function(data){ return data.data;}
         $scope.columnOrder     = ["Name", "Clicks", "CPM", "Spent"]
         $scope.onTextBlur      = function(){alert("You just blurred out of text input");}
         $scope.autocompleteUrl = "data.json"
