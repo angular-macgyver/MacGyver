@@ -4,4 +4,10 @@
       .tag-close(ng-click="removeTag(tag)") X
       span.tag-label
     li.tag.input-tag
-      input.text-input(type="text")
+      mac-autocomplete.text-input(
+        mac-autocomplete-url             = "autocompleteUrl"
+        mac-autocomplete-on-select       = "onSelect(selected)"
+        mac-autocomplete-on-success      = "onSuccess(data)"
+        mac-autocomplete-on-key-down     = "onKeyDown(event, value)"
+        mac-autocomplete-clear-on-select = "true"
+      )

@@ -22,25 +22,33 @@ angular.module("Mac").directive "macTagAutocomplete", [
   ($parse, $http, key) ->
     restrict:    "E"
     scope:
-      autocompleteUrl: "=macTagAutocompleteUrl"
+      autocompleteUrl:   "=macTagAutocompleteUrl"
+      autocompleteValue: "=macTagAutocompleteValue"
+      autocompleteLabel: "=macTagAutocompleteLabel"
+      autocompleteQuery: "=macTagAutocompleteQuery"
+      autocompleteDelay: "=macTagAutocompleteDelay"
 
     templateUrl: "template/tag_autocomplete.html"
     replace:     true
 
     compile: (element, attr) ->
-      valueKey    = attr.macTagAutocompleteValue      or "id"
-      labelKey    = attr.macTagAutocompleteLabel      or "name"
+      valueKey    = attr.macTagAutocompleteValue     or "id"
+      labelKey    = attr.macTagAutocompleteLabel     or "name"
+      queryKey    = attr.macTagAutocompleteQuery     or "q"
+      delay       = +attr.macTagAutocompleteDelay    or 800
       selectedExp = attr.macTagAutocompleteSelected
-      queryKey    = attr.macTagAutocompleteQuery      or "q"
-      delay       = attr.macTagAutocompleteDelay      or 800
 
       getSelected = $parse selectedExp
-
-      textInput = $(".text-input", element)
 
       # Update template on label variable name
       tagLabelKey = if labelKey? then ".#{labelKey}" else ""
       $(".tag-label", element).text "{{tag#{tagLabelKey}}}"
+
+      $(".text-input", element).attr
+        "mac-autocomplete-value": valueKey
+        "mac-autocomplete-label": labelKey
+        "mac-autocomplete-query": queryKey
+        "mac-autocomplete-delay": delay
 
       ($scope, element, attrs) ->
         # Getting autocomplete url from parent scope
@@ -54,56 +62,26 @@ angular.module("Mac").directive "macTagAutocomplete", [
               return output
             getSelected.assign $scope.$parent, outputTags
 
-        $scope.$on "resetTagAutocomplete", -> $scope.reset()
-
         $scope.removeTag = (tag) ->
           index = $scope.tags.indexOf tag
           return if index is -1
 
           $scope.tags[index..index] = []
 
-        textInput.bind "keydown", (event) ->
+        $scope.onKeyDown = (event, value) ->
           stroke = event.which or event.keyCode
           switch stroke
             when key.BACKSPACE
-              if $(this).val().length is 0
+              if value.length is 0
                 $scope.$apply -> $scope.tags.pop()
           return true
 
-        textInput.autocomplete
-          delay:     delay
-          autoFocus: true
-          source: (req, resp) ->
-            options =
-              method: "GET"
-              url:    $scope.autocompleteUrl
-              params: {}
-            options.params[queryKey] = req.term
+        $scope.onSuccess = (data) ->
+          # get all selected values
+          existingValues = _($scope.tags).pluck valueKey
+          # remove selected tags on autocomplete dropdown
+          return _(data.data).reject (item) -> (item[valueKey] or item) in existingValues
 
-            $http(options)
-              .success (data, status, headers, config) ->
-                # get all selected values
-                existingValues = _($scope.tags).pluck valueKey
-                # remove selected tags on autocomplete dropdown
-                list           = _(data.data).reject (item) -> (item[valueKey] or item) in existingValues
-                # convert tags to jquery ui autocomplete format
-                resp _(list).map (item) ->
-                  label = value = if labelKey? then item[labelKey] else item
-                  return {label, value}
-                # store the current data for revert lookup
-                $scope.currentAutocomplete = data.data
-
-          select: (event, ui) ->
-            $scope.$apply ->
-              item = _($scope.currentAutocomplete).find (item) -> item[labelKey] is ui.item.label
-              $scope.tags.push item
-
-            setTimeout (->
-              textInput.val ""
-            ), 0
-
-        $scope.reset = ->
-          $scope.currentAutocomplete = []
-
-        $scope.reset()
+        $scope.onSelect = (item) ->
+          $scope.tags.push item
 ]
