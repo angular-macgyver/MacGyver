@@ -73,6 +73,8 @@ exports.config =
       pages: []
 
   server:
+    path: 'server.coffee'
     port: 4545
-    run: true
+    base: ''
+    run: yes
 

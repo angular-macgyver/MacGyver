@@ -17175,6 +17175,49 @@ var module;
 
 module = angular.module("Mac");
 
+module.controller("ExampleController", [
+  "$scope", function($scope) {
+    var i, obj, _i;
+    $scope.data = [];
+    for (i = _i = 1; _i <= 10000; i = ++_i) {
+      obj = {
+        name: "Test " + i,
+        clicks: Math.random() * 100000,
+        spent: Math.random() * 10000,
+        cpm: Math.random(),
+        cpc: Math.random(),
+        created: (new Date()).getTime()
+      };
+      $scope.data.push(obj);
+    }
+    $scope.hello = function(data) {
+      return data.data;
+    };
+    $scope.onTextBlur = function() {
+      return alert("You just blurred out of text input");
+    };
+    $scope.columnOrder = ["Name", "Clicks", "CPC", "CPM", "Spent", "Created"];
+    $scope.autocompleteUrl = "data.json";
+    $scope.extraTagInputs = [
+      {
+        "name": "United States",
+        "id": "123"
+      }, {
+        "name": "United Kingdom",
+        "id": "234"
+      }, {
+        "name": "United Arab Emirates",
+        "id": "345"
+      }
+    ];
+    $scope.selected = [];
+    return $scope.uploadRoute = "http://www.some-site.org/api/upload_some_stuff";
+  }
+]);
+var module;
+
+module = angular.module("Mac");
+
 module.filter("boolean", function() {
   return function(boolean, trueString, falseString) {
     if (trueString == null) {

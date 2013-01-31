@@ -1,11 +1,11 @@
 # mac-upload
-# mac-upload-route:    The route we're uploading our files
-# mac-upload-previews: Do we even need this
-# mac-upload-submit:   function to call on submit
-# mac-upload-success:  upload success callback
-# mac-upload-error:    upload error callback
-# mac-upload-selector
-# mac-upload-drop-zone = ".share-field-wrap, .footer-button.attach"
+# mac-upload-route:     The route we're uploading our files
+# mac-upload-previews:  ????
+# mac-upload-submit:    function to call on submit
+# mac-upload-success:   upload success callback
+# mac-upload-error:     upload error callback
+# mac-upload-selector:  ????
+# mac-upload-drop-zone: The selector that we can drop files onto
 
 angular.module("Mac").directive "macUploader", [ ->
     link: (scope, element, attributes) ->
