@@ -43,16 +43,20 @@ html
           h2 Example
           .table-view-wrapper(
             mac-table
-            mac-table-data    = "data"
-            mac-table-columns = "columnOrder"
+            mac-table-data              = "data"
+            mac-table-columns           = "columnOrder"
+            mac-table-resizable         = "false"
+            mac-table-lock-first-column = "false"
             ng-cloak
           )
             .table-header-template
             .table-body-template
               .cell(column="Name") {{row.name}}
-              .cell(column="Clicks") {{row.clicks}}
-              .cell(column="CPM") {{row.cpm}}
+              .cell(column="Clicks") {{row.clicks | number: 0}}
+              .cell(column="CPM") {{row.cpm | number: 4}}
+              .cell(column="CPC") {{row.cpc | number: 4}}
               .cell(column="Spent") {{row.spent | currency}}
+              .cell(column="Created") {{row.created | date: 'mediumDate'}}
 
           .page-header: h1 Tag Input
           h2 Example
@@ -86,12 +90,14 @@ html
             "name": "Test " + i,
             "clicks": Math.random() * 100000,
             "spent": Math.random() * 10000,
-            "cpm": Math.random()
+            "cpm": Math.random(),
+            "cpc": Math.random(),
+            "created": (new Date()).getTime()
           }
           $scope.data.push(obj);
         };
         $scope.hello           = function(data){ return data.data;}
-        $scope.columnOrder     = ["Name", "Clicks", "CPM", "Spent"]
+        $scope.columnOrder     = ["Name", "Clicks", "CPC", "CPM", "Spent", "Created"]
         $scope.onTextBlur      = function(){alert("You just blurred out of text input");}
         $scope.autocompleteUrl = "data.json"
         $scope.extraTagInputs  = [{"name": "United States", "id": "123"},{"name": "United Kingdom", "id": "234"},{"name": "United Arab Emirates", "id": "345"}]
