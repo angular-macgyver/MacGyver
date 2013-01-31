@@ -54,3 +54,5 @@ task "build", "Build the latest MacGyver", ->
     fromCssFile  = path.join examplePath, "css/app.css"
     writeCssFile = path.join finalBuildPath, "macgyver.css"
     fs.createReadStream(fromCssFile).pipe fs.createWriteStream(writeCssFile)
+
+  # Generate documentation from source code
