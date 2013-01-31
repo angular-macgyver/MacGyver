@@ -2048,6 +2048,9 @@ div.wijmo-wijmenu .wijmo-wijmenu-child .wijmo-wijmenu-text
   background: #ffe2e2;
   border: solid 1px #dea9a9;
 }
+.docs-example {
+  min-height: 25px;
+}
 i {
   background: url("images/sprite-icons.png") no-repeat;
   text-indent: -9999px;
