@@ -55,8 +55,7 @@ exports.config =
           # Check for ignored css module files
           results     = (not module.test(filename) for module in cssIgnoreModules)
           noneIgnored = _(results).every (result) -> result
-
-          (/^vendor\/bower\//.exec(filename)? or vendorPath filename) and noneIgnored
+          (/^vendor\/bower\//.exec(filename)? or vendorPath filename) and (results.length is 0 or noneIgnored)
 
         'css/app.css': /(^src\/css)|(vendor\/css\/[^\/]+.css)/
 
