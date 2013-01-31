@@ -1588,6 +1588,7 @@ body .ui-tooltip {
 .table-container {
   border: 1px solid #ddd;
   border-radius: 4px;
+  overflow-x: hidden;
 }
 .table-container .table-row {
   clear: both;
@@ -1600,28 +1601,43 @@ body .ui-tooltip {
 .table-container .table-row .table-cell .cell:hover {
   background-color: #f5f5f5;
 }
+.table-container .table-header {
+  float: left;
+}
 .table-container .table-header .table-row:first-child .cell {
   border-top: 0;
+}
+.table-container .table-header .locked-cell {
+  position: absolute;
+  background: #fff;
 }
 .table-container .table-header .cell {
   text-align: left;
   float: left;
   font-weight: bold;
-  border-right: 1px solid #000;
+  text-overflow: ellipsis;
 }
 .table-container .table-header .cell.ui-sortable-placeholder {
   background-color: #f5f5f5;
+}
+.table-container .table-header .cell.resizable {
+  border-right: 1px solid #000;
 }
 .table-container .table-body-wrapper {
   overflow-y: auto;
   position: relative;
   width: 100%;
 }
-.table-container .table-body-wrapper .table-body {
+.table-container .table-body-wrapper .table-body,
+.table-container .table-body-wrapper .title-column {
   position: absolute;
 }
-.table-container .table-body-wrapper .table-body .table-row:nth-child(odd) {
+.table-container .table-body-wrapper .table-body .table-row:nth-child(odd),
+.table-container .table-body-wrapper .title-column .table-row:nth-child(odd) {
   background-color: #f9f9f9;
+}
+.table-container .table-body-wrapper .table-body {
+  overflow-x: auto;
 }
 .table-container .table-body-wrapper .table-body-height {
   position: absolute;
