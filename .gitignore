@@ -3,10 +3,13 @@ node_modules
 
 # Bower vendor files
 test/vendor
-vendor/bower
+vendor/bower/*
 
 # Logs
 test-results.xml
 
 # System file types
 .DS_Store
+
+# Except these files
+!/vendor/bower/vendor.styl
