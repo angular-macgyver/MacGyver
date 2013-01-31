@@ -6,6 +6,7 @@ border-radius    = 4px
 .table-container
   border        1px solid border-color
   border-radius border-radius
+  overflow-x    hidden
 
   .table-row
     clear both
@@ -20,29 +21,41 @@ border-radius    = 4px
           background-color hover-background
 
   .table-header
+    float left
+
     .table-row:first-child
       .cell
         border-top 0
 
+    .locked-cell
+      position   absolute
+      background #ffffff
+
     .cell
-      text-align  left
-      float       left
-      font-weight bold
-      border-right 1px solid #000000
+      text-align    left
+      float         left
+      font-weight   bold
+      text-overflow ellipsis
 
       &.ui-sortable-placeholder
         background-color hover-background
+
+      &.resizable
+        border-right 1px solid #000000
 
   .table-body-wrapper
     overflow-y auto
     position   relative
     width      100%
 
-    .table-body
+    .table-body, .title-column
       position absolute
 
       .table-row:nth-child(odd)
         background-color odd-background
+
+    .table-body
+      overflow-x auto
 
     .table-body-height
       position absolute
