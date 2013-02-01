@@ -11,20 +11,18 @@
 ## @attributes
 ## - mac-autocomplete-url:             url to fetch autocomplete dropdown list data
 ## - mac-autocomplete-on-select:       function called when user select on an item
-##                                     @params:
-##                                        selected - the item selected
+##                                       @params {Object} selected The item selected
 ## - mac-autocomplete-on-success:      function called on success ajax request
-##                                     @params:
-##                                        data   - data returned from the request
-##                                        others - status, headers
+##                                       @params {Object} data Data returned from the request
+##                                       @params {Number} status The status code of the response
+##                                       @params {Object} headeres Header of the response
 ## - mac-autocomplete-on-error:        function called on ajax request error
-##                                     @params:
-##                                        data   - data returned from the request
-##                                        others - status, headers
+##                                       @params {Object} data Data returned from the request
+##                                       @params {Number} status The status code of the response
+##                                       @params {Object} headeres Header of the response
 ## - mac-autocomplete-on-key-down:     function called on key down
-##                                     @params:
-##                                        event - jQuery event
-##                                        value - the value in the input text
+##                                       @params {Object} event jQuery event
+##                                       @params {String} value Value in the input text
 ## - mac-autocomplete-value:           the value to be sent back upon selection               (default "id")
 ## - mac-autocomplete-label:           the label to display to the users                      (default "name")
 ## - mac-autocomplete-query:           the query parameter on GET command                     (default "q")
