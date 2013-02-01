@@ -30,7 +30,7 @@ angular.module("Mac").directive "macTable", [
   "$compile"
   "util"
   ($rootScope, $compile, util) ->
-    restrict:    "EA"
+    restrict: "EA"
     scope:
       data:            "=macTableData"
       columns:         "=macTableColumns"
@@ -65,15 +65,7 @@ angular.module("Mac").directive "macTable", [
       emptyCell        = $("<div>").addClass "cell"
 
       # Calculate all the options based on defaults
-      opts = {}
-      for own key, value of defaults
-        opts[key] = attrs["macTable#{util.capitalize key}"] or value
-
-        # Convert to true boolean if passing in boolean string
-        if opts[key] in ["true", "false"]
-          opts[key] = opts[key] is "true"
-        else if +opts[key] isnt NaN
-          opts[key] = +opts[key]
+      opts = util.extendAttributes "macTable", defaults, attrs
 
       cellOuterHeight = opts.rowHeight + opts.cellPadding * 2
 
