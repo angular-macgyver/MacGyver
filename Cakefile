@@ -2,6 +2,7 @@ fs            = require "fs"
 path          = require "path"
 child_process = require "child_process"
 bower         = require "bower"
+wrench        = require "wrench"
 
 testacularPath = "./node_modules/.bin/testacular"
 brunchPath     = "./node_modules/brunch/bin/brunch"
@@ -24,14 +25,23 @@ updateBowerPaths = ->
   bower.commands.list(paths: true).on "data", (files) ->
     fs.writeFile "bower-paths.json", JSON.stringify(files), "utf8"
 
+copyImagesDirectory = ->
+  fromDir = path.join examplePath, "css/images"
+  toDir   = path.join finalBuildPath, "images"
+  wrench.copyDirSyncRecursive fromDir, toDir
+
 task "update:paths", "Update bower paths file", -> updateBowerPaths()
 
 task "test", "Run tests with testacular", ->
   spawn testacularPath, ["start", "test/testacular.conf.js"]
 
+task "build:images", "Copy images to build directory", -> copyImagesDirectory()
+
 task "build", "Build the latest MacGyver", ->
   spawn brunchPath, ["build"], ->
 
+    # Copy macgyver js to lib
+    # Replace templateUrl with actual html
     fromFile         = path.join examplePath, "js/macgyver.js"
     writeFile        = path.join finalBuildPath, "macgyver.js"
     templateUrlRegex = /templateUrl: "([^"]+)"/g
@@ -51,8 +61,11 @@ task "build", "Build the latest MacGyver", ->
       fs.writeFile writeFile, updatedCode, "utf8", (err, data) ->
         console.log "MacGyver built successfully"
 
+    # Copy macgyver css
     fromCssFile  = path.join examplePath, "css/app.css"
     writeCssFile = path.join finalBuildPath, "macgyver.css"
     fs.createReadStream(fromCssFile).pipe fs.createWriteStream(writeCssFile)
+
+    copyImagesDirectory()
 
   # Generate documentation from source code
