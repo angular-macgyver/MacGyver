@@ -66,3 +66,32 @@ util.factory "util", ->
 
   capitalize:   (string) -> string[0].toUpperCase() + string[1..]
   uncapitalize: (string) -> string[0].toLowerCase() + string[1..]
+
+  ##
+  ## @name
+  ## extendAttributes
+  ##
+  ## @description
+  ## Extend default values with attributes
+  ##
+  ## @param {String} prefix Prefix of all attributes
+  ## @param {Object} defaults Default set of attributes
+  ## @param {Object} attributes User set attributes
+  ##
+  extendAttributes: (prefix, defaults, attributes) ->
+    output = {}
+    for own key, value of defaults
+      output[key] = attributes["#{prefix}#{@capitalize key}"] or value
+
+      # Convert to true boolean if passing in boolean string
+      if output[key] in ["true", "false"]
+        output[key] = output[key] is "true"
+      # Convert to integer or numbers from strings
+      else if +output[key] isnt NaN
+        output[key] = +output[key]
+
+    return output
+
+
+
+
