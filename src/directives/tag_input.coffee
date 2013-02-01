@@ -1,17 +1,19 @@
 ##
+## @name
 ## Tag Input
 ##
+## @description
 ## A directive for generating tag input.
 ##
-## Dependencies
+## @dependencies
 ## - Chosen
 ##
-## Attributes:
+## @attributes
 ## - mac-tag-input-tags:        the list of elements to populate the select input
 ## - mac-tag-input-selected:    the list of elements selected by the user
-## - mac-tag-input-placeholder: placeholder text for tag input
+## - mac-tag-input-placeholder: placeholder text for tag input                    (default "")
 ## - mac-tag-input-no-result:   custom text when there is no search result
-## - mac-tag-input-value:       the value to be sent back upon selection
+## - mac-tag-input-value:       the value to be sent back upon selection          (default "id")
 ## - mac-tag-input-label:       the label to display to the users
 ##
 
@@ -20,21 +22,19 @@ angular.module("Mac").directive "macTagInput", [
   "$parse",
   ($rootScope, $parse) ->
     restrict:    "E"
-    scope:       {}
+    scope:
+      selected: "=macTagInputSelected"
+      items:    "=macTagInputTags"
     templateUrl: "template/tag_input.html"
     transclude:  true
     replace:     true
 
     compile: (element, attr) ->
-      tagsListExp = attr.macTagInputTags
-      selectedExp = attr.macTagInputSelected
       placeholder = attr.macTagInputPlaceholder or ""
       noResult    = attr.macTagInputNoResult
       valueKey    = attr.macTagInputValue       or "id"
       textKey     = attr.macTagInputLabel
       options     = {}
-      getSelected = $parse selectedExp
-      getTagsList = $parse tagsListExp
 
       element.attr "data-placeholder", placeholder
 
@@ -50,14 +50,6 @@ angular.module("Mac").directive "macTagInput", [
       chosenElement = element.chosen(options)
 
       ($scope, element, attr) ->
-        Object.defineProperty $scope, "selected",
-          get:        -> getSelected $scope.$parent
-          set: (list) -> getSelected.assign $scope.$parent, list
-
-        Object.defineProperty $scope, "items",
-          get: ->
-            getTagsList $scope.$parent
-
         updateTagInput = ->
           chosenElement.trigger "liszt:updated"
 

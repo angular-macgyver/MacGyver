@@ -1,7 +1,11 @@
 ##
-## scripts/directives/events.coffee
+## @name
+## Events
 ##
+## @description
 ## A directive for handling basic html events (e.g., blur, keyup, focus, etc.)
+##
+##
 ##
 
 for event in ["Blur", "Focus", "Keydown", "Keyup", "Mouseenter", "Mouseleave"]

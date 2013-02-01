@@ -1,18 +1,20 @@
 ##
+## @name
 ## Tag Autocomplete
 ##
+## @description
 ## A directive for generating tag input with autocomplete support on text input
 ##
-## Dependencies
+## @dependencies
 ## - jQuery UI autocomplete
 ##
-## Attributes
+## @attributes
 ## - mac-tag-autocomplete-url:      url to fetch autocomplete dropdown list data
-## - mac-tag-autocomplete-value:    the value to be sent back upon selection
-## - mac-tag-autocomplete-label:    the label to display to the users
+## - mac-tag-autocomplete-value:    the value to be sent back upon selection                (default "id")
+## - mac-tag-autocomplete-label:    the label to display to the users                       (default "name")
 ## - mac-tag-autocomplete-selected: the list of elements selected by the user
-## - mac-tag-autocomplete-query:    the query parameter on GET command
-## - mac-tag-autocomplete-delay:    time delayed on fetching autocomplete data after keyup
+## - mac-tag-autocomplete-query:    the query parameter on GET command                      (defualt "q")
+## - mac-tag-autocomplete-delay:    time delayed on fetching autocomplete data after keyup  (default 800)
 ##
 
 angular.module("Mac").directive "macTagAutocomplete", [

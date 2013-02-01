@@ -1,32 +1,35 @@
 ##
+## @name
 ## Autocomplete
 ##
+## @description
 ## A directive for providing suggestions while typing into the field
 ##
-## Dpendencies
+## @dependencies
 ## - jQuery UI autocomplete
 ##
-## Attributes
-## - mac-autocomplete-url:         url to fetch autocomplete dropdown list data
-## - mac-autocomplete-on-select:   function called when user select on an item
-##                                 params:
-##                                    selected - the item selected
-## - mac-autocomplete-on-success:  function called on success ajax request
-##                                 params:
-##                                    data   - data returned from the request
-##                                    others - status, headers
-## - mac-autocomplete-on-error:    function called on ajax request error
-##                                 params:
-##                                    data   - data returned from the request
-##                                    others - status, headers
-## - mac-autocomplete-on-key-down: function called on key down
-##                                 params:
-##                                    event - jQuery event
-##                                    value - the value in the input text
-## - mac-autocomplete-value:       the value to be sent back upon selection
-## - mac-autocomplete-label:       the label to display to the users
-## - mac-autocomplete-query:       the query parameter on GET command
-## - mac-autocomplete-delay:       time delayed on fetching autocomplete data after keyup
+## @attributes
+## - mac-autocomplete-url:             url to fetch autocomplete dropdown list data
+## - mac-autocomplete-on-select:       function called when user select on an item
+##                                     @params:
+##                                        selected - the item selected
+## - mac-autocomplete-on-success:      function called on success ajax request
+##                                     @params:
+##                                        data   - data returned from the request
+##                                        others - status, headers
+## - mac-autocomplete-on-error:        function called on ajax request error
+##                                     @params:
+##                                        data   - data returned from the request
+##                                        others - status, headers
+## - mac-autocomplete-on-key-down:     function called on key down
+##                                     @params:
+##                                        event - jQuery event
+##                                        value - the value in the input text
+## - mac-autocomplete-value:           the value to be sent back upon selection               (default "id")
+## - mac-autocomplete-label:           the label to display to the users                      (default "name")
+## - mac-autocomplete-query:           the query parameter on GET command                     (default "q")
+## - mac-autocomplete-delay:           time delayed on fetching autocomplete data after keyup (default 800)
+## - mac-autocomplete-clear-on-select: Clear text input on select                             (default false)
 ##
 
 angular.module("Mac").directive "macAutocomplete", [
