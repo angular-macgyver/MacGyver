@@ -1,26 +1,29 @@
-###
- Table view
-
- A directive for generating a lazy rendered table
-
- Dependencies
- - jQuery UI Sortable
- - jQuery UI Resizable
-
- Attributes:
-  - mac-table-data:              Array of objects with table data
-  - mac-table-columns:           Array of columns to display
-  - mac-table-has-header:        A boolean value to determine if header should be shown
-  - mac-table-has-footer:        A boolean value to determine if footer should be shown
-  - mac-table-width:             The width of the whole table
-  - mac-table-column-width:      The minimum width of a column
-  - mac-table-row-height:        The height of each row in the table
-  - mac-table-num-display-rows:  The total number of rows to display
-  - mac-table-cell-padding:      Should match the css padding value on each cell
-  - mac-table-sortable:          Allow user to change the order of columns
-  - mac-table-resizable:         Allow each column to be resized by the user
-  - mac-table-lock-first-column: Lock first column to a static position
-###
+##
+## @name
+## Table view
+##
+## @description
+## A directive for generating a lazy rendered table
+##
+## @dependencies
+## - jQuery UI Sortable
+## - jQuery UI Resizable
+##
+## @attributes
+## - mac-table-data:              Array of objects with table data
+## - mac-table-columns:           Array of columns to display
+## - mac-table-has-header:        A boolean value to determine if header should be shown (default true)
+## - mac-table-has-footer:        A boolean value to determine if footer should be shown (default true)
+## - mac-table-width:             The width of the whole table                           (default 800)
+## - mac-table-column-width:      The minimum width of a column                          (default 140)
+## - mac-table-row-height:        The height of each row in the table                    (default 20)
+## - mac-table-num-display-rows:  The total number of rows to display                    (default 10)
+## - mac-table-cell-padding:      Should match the css padding value on each cell        (default 8)
+## - mac-table-border-width:      Should match the css border width value on each cell   (default 1)
+## - mac-table-sortable:          Allow user to change the order of columns              (default false)
+## - mac-table-resizable:         Allow each column to be resized by the user            (default false)
+## - mac-table-lock-first-column: Lock first column to a static position                 (default false)
+##
 
 angular.module("Mac").directive "macTable", [
   "$rootScope"
@@ -47,8 +50,8 @@ angular.module("Mac").directive "macTable", [
         numDisplayRows:  10
         cellPadding:     8
         borderWidth:     1
-        sortable:        true
-        resizable:       true
+        sortable:        false
+        resizable:       false
         lockFirstColumn: false
 
       transcludedBlock = $(".table-transclude", element)
@@ -91,8 +94,11 @@ angular.module("Mac").directive "macTable", [
           # Set column property again
           templateCell.prop "column", column
 
+          # Calculate the relative width of each cell
           calculatedWidth = (opts.width / numColumns) - opts.cellPadding * 2 - opts.borderWidth
-          width           = Math.max calculatedWidth, opts.columnWidth
+
+          # Use minimum width if the relative width is too small
+          width = Math.max calculatedWidth, opts.columnWidth
 
           templateCell.css
             padding: opts.cellPadding
@@ -132,6 +138,7 @@ angular.module("Mac").directive "macTable", [
           # Set the header to be the width of all columns
           headerRow.width rowWidth
 
+          # Create a separate cell if the first cell is locked
           if opts.lockFirstColumn
             fcTemplateCell = createHeaderCellTemplate $scope.columns[0]
             fcTemplateCell.addClass "locked-cell"
@@ -195,9 +202,10 @@ angular.module("Mac").directive "macTable", [
             # Calculate the width of each row
             rowWidth += templateCell.outerWidth() + opts.borderWidth
 
-            emptyTemplateRow.append createCellTemplate()
+            emptyTemplateRow.append createCellTemplate().addClass "table-cell"
 
           tableRow.append(tableCell).width rowWidth
+          emptyTemplateRow.width rowWidth
           bodyBlock.append tableRow
 
           # Compile the body block to bind all values correctly
