@@ -43,6 +43,15 @@ html
               )
 
           section
+            .page-header: h1 Datepicker
+            h2 Example
+            .docs-example
+              mac-datepicker(
+                mac-datepicker-id    = "input-start-date"
+                mac-datepicker-model = "startDate"
+              )
+
+          section
             .page-header: h1 Table view
             h2 Example
             .docs-example
@@ -51,8 +60,9 @@ html
                 mac-table-data              = "data"
                 mac-table-width             = "750"
                 mac-table-columns           = "columnOrder"
+                mac-table-sortable          = "true"
                 mac-table-resizable         = "false"
-                mac-table-lock-first-column = "false"
+                mac-table-lock-first-column = "true"
                 ng-cloak
               )
                 .table-header-template
@@ -114,4 +124,5 @@ html
         $scope.autocompleteUrl = "data.json"
         $scope.extraTagInputs  = [{"name": "United States", "id": "123"},{"name": "United Kingdom", "id": "234"},{"name": "United Arab Emirates", "id": "345"}]
         $scope.selected        = []
+        $scope.startDate       = ""
       }
