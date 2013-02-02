@@ -9,9 +9,12 @@
 
 angular.module("Mac").directive "macUpload", [ () ->
     scope: {
-      macUploadSubmit:  "&macUploadSubmit"
-      macUploadError:   "&macUploadError"
-      macUploadSuccess: "&macUploadSuccess"
+      macUploadSubmit:    "&macUploadSubmit"
+      macUploadError:     "&macUploadError"
+      macUploadSuccess:   "&macUploadSuccess"
+      macUploadRoute:     "=macUploadRoute"
+      macUploadEnableOn:  "=macUploadEnableOn"
+      macUploadDisableOn: "=macUploadDisableOn"
     }
     link: (scope, element, attributes) ->
       disableOn = attributes.macUploadDisableOn if attributes.macUploadDisableOn?
@@ -33,17 +36,15 @@ angular.module("Mac").directive "macUpload", [ () ->
       scope.$on(disableOn, -> element.fileupload "disable") if disableOn?
       scope.$on(enableOn,  -> element.fileupload "enable")  if enableOn?
 
-      scope.$watch attributes.macUploadRoute, (route) ->
+      scope.$watch "macUploadRoute", (route) ->
         return if disabled
         options =
           url:              route
           replaceFileInput: true
 
           submit: (event, response) ->
-            runExpression = ->
-              if attributes.macUploadSubmit?
-                scope.$apply scope.macUploadSubmit $event: event, $response: response
-              runExpression()
+            if attributes.macUploadSubmit?
+              scope.$apply scope.macUploadSubmit $event: event, $response: response
 
           error: (response, status) ->
             if attributes.macUploadError?
