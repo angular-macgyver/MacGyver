@@ -7,7 +7,12 @@
 # mac-upload-selector:  ????
 # mac-upload-drop-zone: The selector that we can drop files onto
 
-angular.module("Mac").directive "macUpload", ["$parse", ($parse)->
+angular.module("Mac").directive "macUpload", [ () ->
+    scope: {
+      macUploadSubmit:  "&macUploadSubmit"
+      macUploadError:   "&macUploadError"
+      macUploadSuccess: "&macUploadSuccess"
+    }
     link: (scope, element, attributes) ->
       disableOn = attributes.macUploadDisableOn if attributes.macUploadDisableOn?
       enableOn  = attributes.macUploadEnableOn  if attributes.macUploadEnableOn?
@@ -37,21 +42,16 @@ angular.module("Mac").directive "macUpload", ["$parse", ($parse)->
           submit: (event, response) ->
             runExpression = ->
               if attributes.macUploadSubmit?
-                expression = $parse attributes.macUploadSubmit
-                scope.$apply expression scope, $event: event, $response: response
-
+                scope.$apply scope.macUploadSubmit $event: event, $response: response
               runExpression()
 
           error: (response, status) ->
-            $rootScope.$broadcast "showError", "Failed to upload file. Please try again."
             if attributes.macUploadError?
-              expression = $parse attributes.macUploadError
-              scope.$apply expression scope, $response: response, $data: response.data, $status: status
+              scope.$apply scope.macUploadError $response: response, $data: response.data, $status: status
 
           success: (response, status) ->
             if attributes.macUploadSuccess?
-              expression = $parse attributes.macUploadSuccess
-              scope.$apply expression scope, $response: response, $data: response.data, $status: status
+              scope.$apply scope.macUploadSuccess $response: response, $data: response.data, $status: status
 
         options.dropZone = if attributes.macUploadDropZone? then $(attributes.macUploadDropZone) else null
 
