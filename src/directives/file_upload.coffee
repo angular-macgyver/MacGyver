@@ -7,11 +7,10 @@
 # mac-upload-selector:  ????
 # mac-upload-drop-zone: The selector that we can drop files onto
 
-angular.module("Mac").directive "macUploader", [ ->
+angular.module("Mac").directive "macUpload", ["$parse", ($parse)->
     link: (scope, element, attributes) ->
       disableOn = attributes.macUploadDisableOn if attributes.macUploadDisableOn?
       enableOn  = attributes.macUploadEnableOn  if attributes.macUploadEnableOn?
-
       disabled = attributes.macUploadDisabled is "true"
 
       if attributes.macUploadSelector?
@@ -41,34 +40,6 @@ angular.module("Mac").directive "macUploader", [ ->
                 expression = $parse attributes.macUploadSubmit
                 scope.$apply expression scope, $event: event, $response: response
 
-            # Handle previews.
-            if attributes.macUploadPreviews? and response.files?.length > 0
-              for file in response.files
-                if file.type.match /image.*/
-                  fileType = "image"
-                else
-                  fileType = "generic"
-                do (file) ->
-                  reader = new FileReader
-                  previews = $parse(attributes.macUploadPreviews) scope
-                  reader.onload = (event) ->
-                    previews?.push
-                      fileName:  file.name
-                      src:       if fileType is "image" then event.target.result else "/images/file_icon.png"
-                      isGeneric: if fileType is "generic" then true else false
-                    runExpression()
-                    scope.$digest()
-                  reader.onerror = (evt) ->
-                    # Fail to read the file locally, but should upload the file to S3
-                    previews?.push
-                      fileName:  file.name
-                      src:       "/images/file_icon.png"
-                      isGeneric: true
-                    runExpression()
-                    scope.$digest()
-
-                  reader.readAsDataURL file
-            else
               runExpression()
 
           error: (response, status) ->
@@ -85,4 +56,9 @@ angular.module("Mac").directive "macUploader", [ ->
         options.dropZone = if attributes.macUploadDropZone? then $(attributes.macUploadDropZone) else null
 
         element.fileupload options
+
+        element.fileupload(
+          add: (event, data) ->
+            data.submit()
+        )
   ]

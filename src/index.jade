@@ -101,20 +101,22 @@ html
           section
             .page-header: h1 File Upload
             h2 Example
-            .docs-example
-            form(action="...", method="post", enctype="multipart/form-data", name="upload-example")
-              input(
-                type                 = "file"
-                name                 = "file"
-                mac-upload
-                mac-upload-route      = "uploadRoute"
-                mac-upload-success    = "avatarUploadSuccess($data, $status)"
-                mac-upload-error      = "avatarUploadError($data, $status)"
-                mac-upload-submit     = "avatarUploadSubmit($event, $response)"
-                mac-upload-disable-on = "closedUserSettingsModal"
-                mac-upload-enable-on  = "openedUserSettingsModal"
-                mac-upload-drop-zone  = "#user-settings .avatar"
-              )
+            .docs-example.example-hit-area
+              form(action="...", method="post", enctype="multipart/form-data", name="upload-example")
+                span.example-upload-button.btn.fileinput-button
+                  span Upload
+                  input(
+                    type                 = "file"
+                    name                 = "files[]"
+                    multiple
+                    mac-upload
+                    mac-upload-route      = "uploadRoute"
+                    mac-upload-success    = "fileUploadSuccess($data, $status)"
+                    mac-upload-error      = "fileUploadError($data, $status)"
+                    mac-upload-submit     = "fileUploadSubmit($event, $response)"
+                    mac-upload-enable-on  = "fileUploaderEndabled"
+                    mac-upload-drop-zone  = ".example-hit-area"
+                  )
 
 
     script(src='//cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js', type='text/javascript')

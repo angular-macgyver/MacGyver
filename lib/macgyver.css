@@ -2051,6 +2051,21 @@ div.wijmo-wijmenu .wijmo-wijmenu-child .wijmo-wijmenu-text
 .docs-example {
   min-height: 25px;
 }
+.example-hit-area .example-upload-button {
+  position: relative;
+  height: 21px;
+  width: 65px;
+  overflow: hidden;
+  font-weight: bold;
+}
+.example-hit-area input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  cursor: pointer;
+  padding: 0px 0px 100px 200px;
+}
 i {
   background: url("images/sprite-icons.png") no-repeat;
   text-indent: -9999px;

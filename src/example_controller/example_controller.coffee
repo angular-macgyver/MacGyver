@@ -29,6 +29,13 @@ module.controller "ExampleController", ["$scope", ($scope) ->
   $scope.selected        = []
 
   # File Uploader handling
-  $scope.uploadRoute = "http://www.some-site.org/api/upload_some_stuff"
+  $scope.uploadRoute          = "/test_upload"
+  $scope.fileUploaderEndabled = true
+
+  $scope.fileUploadSubmit = ($event, $response) ->
+    console.log "submitted"
+
+  $scope.fileUploadSuccess = ($data, $status) ->
+    console.log "success"
 
 ]
