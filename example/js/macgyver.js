@@ -1089,6 +1089,8 @@ Copyright (c) 2011 by Harvest
   root.get_side_border_padding = get_side_border_padding;
 
 }).call(this);
+;
+
 /*! jQuery UI - v1.10.0 - 2013-01-17
 * http://jqueryui.com
 * Includes: jquery.ui.core.js, jquery.ui.widget.js, jquery.ui.mouse.js, jquery.ui.position.js, jquery.ui.accordion.js, jquery.ui.autocomplete.js, jquery.ui.button.js, jquery.ui.datepicker.js, jquery.ui.dialog.js, jquery.ui.draggable.js, jquery.ui.droppable.js, jquery.ui.effect.js, jquery.ui.effect-blind.js, jquery.ui.effect-bounce.js, jquery.ui.effect-clip.js, jquery.ui.effect-drop.js, jquery.ui.effect-explode.js, jquery.ui.effect-fade.js, jquery.ui.effect-fold.js, jquery.ui.effect-highlight.js, jquery.ui.effect-pulsate.js, jquery.ui.effect-scale.js, jquery.ui.effect-shake.js, jquery.ui.effect-slide.js, jquery.ui.effect-transfer.js, jquery.ui.menu.js, jquery.ui.progressbar.js, jquery.ui.resizable.js, jquery.ui.selectable.js, jquery.ui.slider.js, jquery.ui.sortable.js, jquery.ui.spinner.js, jquery.ui.tabs.js, jquery.ui.tooltip.js
@@ -15939,6 +15941,8 @@ $.widget( "ui.tooltip", {
 });
 
 }( jQuery ) );
+;
+
 //fgnass.github.com/spin.js#v1.2.8
 !function(window, document, undefined) {
 
@@ -16259,6 +16263,8 @@ $.widget( "ui.tooltip", {
     window.Spinner = Spinner
 
 }(window, document);
+;
+
 
 angular.module("Mac").directive("macAutocomplete", [
   "$http", "$parse", function($http, $parse) {
@@ -16358,6 +16364,67 @@ angular.module("Mac").directive("macAutocomplete", [
             return $scope.currentAutocomplete = [];
           };
           return $scope.reset();
+        };
+      }
+    };
+  }
+]);
+
+angular.module("Mac").directive("macDatepicker", [
+  "util", function(util) {
+    return {
+      restrict: "E",
+      scope: {
+        model: "=macDatepickerModel",
+        onBeforeSelect: "&macDatepickerOnBeforeSelect",
+        onBeforeClose: "&macDatepickerOnBeforeClose"
+      },
+      replace: true,
+      templateUrl: "template/datepicker.html",
+      compile: function(element, attrs) {
+        var defaults, inputElement, opts;
+        defaults = {
+          id: "input-date",
+          appendText: "",
+          autoSize: false,
+          changeMonth: false,
+          changeYear: false,
+          constrainInputType: true,
+          currentText: "Today",
+          dateFormat: "mm/dd/yy",
+          defaultDate: null,
+          duration: "normal",
+          firstDay: 0,
+          maxDate: null,
+          minDate: null,
+          numberOfMonths: 1,
+          showOn: "focus",
+          yearRange: "c-10:c+10"
+        };
+        opts = util.extendAttributes("macDatepicker", defaults, attrs);
+        inputElement = $("input", element).attr("id", opts.id);
+        return function($scope, element, attrs) {
+          opts.onSelect = function(date, instance) {
+            return $scope.$apply(function() {
+              if (attrs.macDatepickerOnBeforeSelect != null) {
+                date = $scope.onBeforeSelect({
+                  data: data
+                });
+              }
+              return $scope.model = date;
+            });
+          };
+          opts.onClose = function(date, instance) {
+            return $scope.$apply(function() {
+              if (attrs.macDatepickerOnBeforeClose != null) {
+                return $scope.onBeforeClose({
+                  date: date,
+                  instance: instance
+                });
+              }
+            });
+          };
+          return inputElement.datepicker(opts);
         };
       }
     };
@@ -16609,31 +16676,6 @@ angular.module("Mac").directive("macSpinner", function() {
     }
   };
 });
-/*
- Table view
-
- A directive for generating a lazy rendered table
-
- Dependencies
- - jQuery UI Sortable
- - jQuery UI Resizable
-
- Attributes:
-  - mac-table-data:              Array of objects with table data
-  - mac-table-columns:           Array of columns to display
-  - mac-table-has-header:        A boolean value to determine if header should be shown
-  - mac-table-has-footer:        A boolean value to determine if footer should be shown
-  - mac-table-width:             The width of the whole table
-  - mac-table-column-width:      The minimum width of a column
-  - mac-table-row-height:        The height of each row in the table
-  - mac-table-num-display-rows:  The total number of rows to display
-  - mac-table-cell-padding:      Should match the css padding value on each cell
-  - mac-table-sortable:          Allow user to change the order of columns
-  - mac-table-resizable:         Allow each column to be resized by the user
-  - mac-table-lock-first-column: Lock first column to a static position
-*/
-
-var __hasProp = {}.hasOwnProperty;
 
 angular.module("Mac").directive("macTable", [
   "$rootScope", "$compile", "util", function($rootScope, $compile, util) {
@@ -16648,7 +16690,7 @@ angular.module("Mac").directive("macTable", [
       transclude: true,
       templateUrl: "/template/table_view.html",
       compile: function(element, attrs, transclude) {
-        var bodyBlock, bodyHeightBlock, bodyWrapperBlock, cellOuterHeight, defaults, emptyCell, firstColumn, footerBlock, headerBlock, headerRow, key, opts, transcludedBlock, value, _ref;
+        var bodyBlock, bodyHeightBlock, bodyWrapperBlock, cellOuterHeight, defaults, emptyCell, firstColumn, footerBlock, headerBlock, headerRow, opts, transcludedBlock;
         defaults = {
           hasHeader: true,
           hasFooter: true,
@@ -16658,8 +16700,8 @@ angular.module("Mac").directive("macTable", [
           numDisplayRows: 10,
           cellPadding: 8,
           borderWidth: 1,
-          sortable: true,
-          resizable: true,
+          sortable: false,
+          resizable: false,
           lockFirstColumn: false
         };
         transcludedBlock = $(".table-transclude", element);
@@ -16671,17 +16713,7 @@ angular.module("Mac").directive("macTable", [
         bodyHeightBlock = $(".table-body-height", element);
         footerBlock = $(".table-footer", element);
         emptyCell = $("<div>").addClass("cell");
-        opts = {};
-        for (key in defaults) {
-          if (!__hasProp.call(defaults, key)) continue;
-          value = defaults[key];
-          opts[key] = attrs["macTable" + (util.capitalize(key))] || value;
-          if ((_ref = opts[key]) === "true" || _ref === "false") {
-            opts[key] = opts[key] === "true";
-          } else if (+opts[key] !== NaN) {
-            opts[key] = +opts[key];
-          }
-        }
+        opts = util.extendAttributes("macTable", defaults, attrs);
         cellOuterHeight = opts.rowHeight + opts.cellPadding * 2;
         element.css({
           height: cellOuterHeight * opts.numDisplayRows,
@@ -16727,12 +16759,12 @@ angular.module("Mac").directive("macTable", [
             return cell;
           };
           $scope.drawHeader = function() {
-            var column, fcTemplateCell, rowWidth, startIndex, templateColumn, _i, _len, _ref1;
+            var column, fcTemplateCell, rowWidth, startIndex, templateColumn, _i, _len, _ref;
             rowWidth = 0;
             startIndex = opts.lockFirstColumn ? 1 : 0;
-            _ref1 = $scope.columns.slice(startIndex);
-            for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-              column = _ref1[_i];
+            _ref = $scope.columns.slice(startIndex);
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              column = _ref[_i];
               templateColumn = createHeaderCellTemplate(column);
               rowWidth += templateColumn.outerWidth() + opts.borderWidth;
               if (opts.resizable) {
@@ -16782,7 +16814,7 @@ angular.module("Mac").directive("macTable", [
             });
           };
           $scope.drawBody = function() {
-            var column, emptyRows, emptyTemplateRow, endIndex, fcTableRow, fcTemplateCell, i, rowWidth, startIndex, tableCell, tableRow, templateCell, _i, _j, _len, _ref1, _ref2, _results;
+            var column, emptyRows, emptyTemplateRow, endIndex, fcTableRow, fcTemplateCell, i, rowWidth, startIndex, tableCell, tableRow, templateCell, _i, _j, _len, _ref, _ref1, _results;
             tableRow = $("<div>").addClass("table-row");
             tableRow.attr("ng-repeat", "row in displayRows");
             tableCell = $("<div>").addClass("table-cell");
@@ -16796,16 +16828,17 @@ angular.module("Mac").directive("macTable", [
             $scope.displayRows = $scope.data.slice(this.index, +endIndex + 1 || 9e9);
             rowWidth = 0;
             startIndex = opts.lockFirstColumn ? 1 : 0;
-            _ref1 = $scope.columns.slice(startIndex);
-            for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-              column = _ref1[_i];
+            _ref = $scope.columns.slice(startIndex);
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              column = _ref[_i];
               templateCell = createCellTemplate("body", column);
               templateCell.attr("ng-switch-when", column);
               tableCell.append(templateCell);
               rowWidth += templateCell.outerWidth() + opts.borderWidth;
-              emptyTemplateRow.append(createCellTemplate());
+              emptyTemplateRow.append(createCellTemplate().addClass("table-cell"));
             }
             tableRow.append(tableCell).width(rowWidth);
+            emptyTemplateRow.width(rowWidth);
             bodyBlock.append(tableRow);
             $compile(bodyBlock)($scope);
             if (opts.lockFirstColumn) {
@@ -16822,7 +16855,7 @@ angular.module("Mac").directive("macTable", [
             emptyRows = numDisplayRows - $scope.displayRows.length;
             if (emptyRows > 0) {
               _results = [];
-              for (i = _j = 0, _ref2 = emptyRows - 1; 0 <= _ref2 ? _j <= _ref2 : _j >= _ref2; i = 0 <= _ref2 ? ++_j : --_j) {
+              for (i = _j = 0, _ref1 = emptyRows - 1; 0 <= _ref1 ? _j <= _ref1 : _j >= _ref1; i = 0 <= _ref1 ? ++_j : --_j) {
                 _results.push(bodyBlock.append(emptyTemplateRow.clone()));
               }
               return _results;
@@ -16958,21 +16991,20 @@ angular.module("Mac").directive("macTagInput", [
   "$rootScope", "$parse", function($rootScope, $parse) {
     return {
       restrict: "E",
-      scope: {},
+      scope: {
+        selected: "=macTagInputSelected",
+        items: "=macTagInputTags"
+      },
       templateUrl: "template/tag_input.html",
       transclude: true,
       replace: true,
       compile: function(element, attr) {
-        var chosenElement, getSelected, getTagsList, itemTextKey, itemValueKey, noResult, options, placeholder, selectedExp, tagsListExp, textKey, valueKey;
-        tagsListExp = attr.macTagInputTags;
-        selectedExp = attr.macTagInputSelected;
+        var chosenElement, itemTextKey, itemValueKey, noResult, options, placeholder, textKey, valueKey;
         placeholder = attr.macTagInputPlaceholder || "";
         noResult = attr.macTagInputNoResult;
         valueKey = attr.macTagInputValue || "id";
         textKey = attr.macTagInputLabel;
         options = {};
-        getSelected = $parse(selectedExp);
-        getTagsList = $parse(tagsListExp);
         element.attr("data-placeholder", placeholder);
         itemValueKey = valueKey != null ? "." + valueKey : "";
         itemTextKey = textKey != null ? "." + textKey : "";
@@ -16983,19 +17015,6 @@ angular.module("Mac").directive("macTagInput", [
         chosenElement = element.chosen(options);
         return function($scope, element, attr) {
           var updateTagInput;
-          Object.defineProperty($scope, "selected", {
-            get: function() {
-              return getSelected($scope.$parent);
-            },
-            set: function(list) {
-              return getSelected.assign($scope.$parent, list);
-            }
-          });
-          Object.defineProperty($scope, "items", {
-            get: function() {
-              return getTagsList($scope.$parent);
-            }
-          });
           updateTagInput = function() {
             return chosenElement.trigger("liszt:updated");
           };
@@ -17127,7 +17146,8 @@ angular.module("Mac").filter("timestamp", [
     };
   }
 ]);
-var util;
+var util,
+  __hasProp = {}.hasOwnProperty;
 
 util = angular.module("Mac.Util", []);
 
@@ -17192,6 +17212,21 @@ util.factory("util", function() {
     },
     uncapitalize: function(string) {
       return string[0].toLowerCase() + string.slice(1);
+    },
+    extendAttributes: function(prefix, defaults, attributes) {
+      var key, output, value, _ref;
+      output = {};
+      for (key in defaults) {
+        if (!__hasProp.call(defaults, key)) continue;
+        value = defaults[key];
+        output[key] = attributes["" + prefix + (this.capitalize(key))] || value;
+        if ((_ref = output[key]) === "true" || _ref === "false") {
+          output[key] = output[key] === "true";
+        } else if (!isNaN(+output[key])) {
+          output[key] = +output[key];
+        }
+      }
+      return output;
     }
   };
 });
