@@ -8,6 +8,7 @@ testacularPath = "./node_modules/.bin/testacular"
 brunchPath     = "./node_modules/brunch/bin/brunch"
 examplePath    = "example/"
 finalBuildPath = "lib/"
+componentFile  = "component.json"
 
 spawn = (command, args = [], callback = ->) ->
   ps = child_process.spawn command, args
@@ -67,5 +68,16 @@ task "build", "Build the latest MacGyver", ->
     fs.createReadStream(fromCssFile).pipe fs.createWriteStream(writeCssFile)
 
     copyImagesDirectory()
+
+    # Read all files in build folder and add to component.json
+    fileList = wrench.readdirSyncRecursive finalBuildPath
+    fs.readFile componentFile, "utf8", (err, data) ->
+      throw err if err?
+
+      newArray = JSON.stringify fileList
+      data     = data.replace /"main": \[[^\]]+]/, "\"main\": #{newArray}"
+
+      fs.writeFile componentFile, data, "utf8", (err, data) ->
+        console.log "Updated component.json"
 
   # Generate documentation from source code
