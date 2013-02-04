@@ -36,6 +36,9 @@ task "update:paths", "Update bower paths file", -> updateBowerPaths()
 task "test", "Run tests with testacular", ->
   spawn testacularPath, ["start", "test/testacular.conf.js"]
 
+task "watch", "Proxy brunch watch", ->
+  spawn brunchPath, ["watch"]
+
 task "build:images", "Copy images to build directory", -> copyImagesDirectory()
 
 task "build", "Build the latest MacGyver", ->
