@@ -26,6 +26,8 @@ Angular helpers for all your friends!
  - Underscore
  - jQuery
  - jQuery UI
+ - Chosen
+ - Spin.js
 
 ## Get Started ##
 MacGyver requires a few node modules for developer environment.
