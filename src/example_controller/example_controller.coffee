@@ -15,6 +15,8 @@ module.controller "ExampleController", ["$scope", ($scope) ->
       cpm: Math.random()
       cpc: Math.random()
       created: (new Date()).getTime()
+      attributes:
+        abc: Math.random() * 1000
 
     $scope.data.push obj
 

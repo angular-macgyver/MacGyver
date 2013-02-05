@@ -12,17 +12,19 @@
 ## @attributes
 ## - mac-table-data:              Array of objects with table data
 ## - mac-table-columns:           Array of columns to display
-## - mac-table-has-header:        A boolean value to determine if header should be shown (default true)
-## - mac-table-has-footer:        A boolean value to determine if footer should be shown (default true)
-## - mac-table-width:             The width of the whole table                           (default 800)
-## - mac-table-column-width:      The minimum width of a column                          (default 140)
-## - mac-table-row-height:        The height of each row in the table                    (default 20)
-## - mac-table-num-display-rows:  The total number of rows to display                    (default 10)
-## - mac-table-cell-padding:      Should match the css padding value on each cell        (default 8)
-## - mac-table-border-width:      Should match the css border width value on each cell   (default 1)
-## - mac-table-sortable:          Allow user to change the order of columns              (default false)
-## - mac-table-resizable:         Allow each column to be resized by the user            (default false)
-## - mac-table-lock-first-column: Lock first column to a static position                 (default false)
+## - mac-table-has-header:        A boolean value to determine if header should be shown        (default true)
+## - mac-table-has-footer:        A boolean value to determine if footer should be shown        (default true)
+## - mac-table-width:             The width of the whole table                                  (default 800)
+## - mac-table-column-width:      The minimum width of a column                                 (default 140)
+## - mac-table-row-height:        The height of each row in the table                           (default 20)
+## - mac-table-num-display-rows:  The total number of rows to display                           (default 10)
+## - mac-table-cell-padding:      Should match the css padding value on each cell               (default 8)
+## - mac-table-border-width:      Should match the css border width value on each cell          (default 1)
+## - mac-table-sortable:          Allow user to change the order of columns                     (default false)
+## - mac-table-resizable:         Allow each column to be resized by the user                   (default false)
+## - mac-table-lock-first-column: Lock first column to a static position                        (default false)
+## - mac-table-allow-reorder:     Allow user to click on the header to reorder rows             (default true)
+## - mac-table-object-prefix:     Useful when using backbone object where data is in attributes (default "")
 ##
 
 angular.module("Mac").directive "macTable", [
@@ -53,6 +55,8 @@ angular.module("Mac").directive "macTable", [
         sortable:        false
         resizable:       false
         lockFirstColumn: false
+        allowReorder:    true
+        objectPrefix:    ""
 
       transcludedBlock = $(".table-transclude", element)
       headerBlock      = $(".table-header", element)
@@ -89,7 +93,15 @@ angular.module("Mac").directive "macTable", [
             endIndex           = index + numDisplayRows - 1
             $scope.displayRows = $scope.data[index..endIndex]
 
-
+        #
+        # @name createCellTemplate
+        # @description
+        # Get the template cell user has defined in template, create empty cell if not found
+        # The width and height will be calculated and set before returning
+        #
+        # @params {String} section Either header, body or footer (default "")
+        # @params {String} column Column needed                  (default "")
+        #
         createCellTemplate = (section="", column="")->
           templateSelector = """.table-#{section}-template .cell[column="#{column}"]"""
           templateCell     = $(templateSelector, transcludedBlock).clone()
@@ -111,13 +123,50 @@ angular.module("Mac").directive "macTable", [
 
           return templateCell
 
+        #
+        # @name createHeaderCellTemplate
+        # @description
+        # This is a shortcut call for header version of createCellTemplate
+        # Caret is added to the cell before returning
+        # @params {String} column Column need (default "")
+        #
         createHeaderCellTemplate = (column = "") ->
           cell        = createCellTemplate "header", column
           contextText = cell.text()
-          cell.text column if contextText.length is 0
+          cell
+            .text(if contextText.length is 0 then column else contextText)
+            .attr("for", column)
+            .append $("<span>").attr
+                                  "ng-show": "predicate == '#{column.toLowerCase()}'"
+                                  "class": """caret {{reverse | boolean:"up":"down"}}"""
+
           return cell
 
-        # Create table header
+        #
+        # @name addOrderByFunction
+        # @description
+        # Add order by click event to an element which modify
+        # $scope.predicate and $scope.reverse
+        # @params {jQuery Object} column The element to bind click event to
+        #
+        addOrderByFunction = (column) ->
+          column.on "click", (event) ->
+            columnTitle  = opts.objectPrefix + $(this).attr("for").toLowerCase()
+
+            $scope.$apply ->
+              if columnTitle is $scope.predicate
+                $scope.reverse = not $scope.reverse
+              else
+                $scope.predicate = columnTitle
+                $scope.reverse   = false
+
+        #
+        # @name $scope.drawHeader
+        # @description
+        # Create table header.
+        # A separate header cell is created if first column is locked
+        # Enabling order by, resizable columns and drag and drop columns
+        #
         $scope.drawHeader = ->
           rowWidth = 0
 
@@ -128,6 +177,10 @@ angular.module("Mac").directive "macTable", [
 
             rowWidth += templateColumn.outerWidth() + opts.borderWidth
 
+            # Enable order by
+            if opts.allowReorder
+              addOrderByFunction templateColumn
+
             # Enable column resizing
             if opts.resizable
               templateColumn.resizable
@@ -137,7 +190,10 @@ angular.module("Mac").directive "macTable", [
                 handles:     "e, w"
               .addClass "resizable"
 
-            headerRow.append(templateColumn)
+            headerRow.append templateColumn
+
+          # Compile the column to render carets
+          $compile(headerRow) $scope
 
           # Set the header to be the width of all columns
           headerRow.width rowWidth
@@ -146,10 +202,16 @@ angular.module("Mac").directive "macTable", [
           if opts.lockFirstColumn
             fcTemplateCell = createHeaderCellTemplate $scope.columns[0]
             fcTemplateCell.addClass "locked-cell"
+
+            addOrderByFunction fcTemplateCell
+
             headerBlock.prepend fcTemplateCell
 
             headerRow.css
               "margin-left": fcTemplateCell.outerWidth()
+
+            # Compile the column to render carets
+            $compile(headerBlock) $scope
 
           # Enable drag and drop on header cell
           if opts.sortable
@@ -165,9 +227,20 @@ angular.module("Mac").directive "macTable", [
                   newOrder.push $(e).prop "column"
                 $scope.$apply -> $scope.columns = newOrder
 
+        #
+        # @name $scope.drawFooter
+        # @description
+        # To create the footer of the table. Not implemented yet.
+        # TODO Implement footer
+        #
         $scope.drawFooter = ->
 
 
+        #
+        # @name $scope.calculateBodyDimension
+        # @description
+        # Calculate the height and the scrolling height of the table
+        #
         $scope.calculateBodyDimension = ->
           data = $scope.data or []
           # Calculate the height to display scrollbar correctly
@@ -176,13 +249,21 @@ angular.module("Mac").directive "macTable", [
           bodyWrapperBlock.css
             height: numDisplayRows * cellOuterHeight
 
-        # Create table body
+        #
+        # @name $scope.drawBody
+        # @description
+        # Create table body with 2 ng-repeats
+        # One ng-repeat to render all the rows dispalyed based on the height
+        # Another ng-repeat to render all the columns correctly and to redraw when the order change
+        # Create a separate column if first column is locked with a ng-repeat
+        #
         $scope.drawBody = ->
-          data = $scope.data or []
+          data    = $scope.data or []
+          orderBy = if opts.allowReorder then "| orderBy:predicate:reverse" else ""
 
           # Create template row with ng-repeat
           tableRow = $("<div>").addClass "table-row"
-          tableRow.attr "ng-repeat", "row in displayRows"
+          tableRow.attr "ng-repeat", "row in displayRows #{orderBy}"
 
           # Create template cell with ng-repeat and ng-switch
           tableCell = $("<div>").addClass "table-cell"
@@ -218,8 +299,9 @@ angular.module("Mac").directive "macTable", [
           if opts.lockFirstColumn
             fcTableRow     = $(".table-row", firstColumn)
             fcTemplateCell = createCellTemplate("body", $scope.columns[0])
-            fcTableRow.attr("ng-repeat", "row in displayRows")
+            fcTableRow.attr("ng-repeat", "row in displayRows #{orderBy}")
                       .append fcTemplateCell
+            # Compile the column to render ng-repeat
             $compile(firstColumn) $scope
 
             $scope.headerLeftMargin = fcTemplateCell.outerWidth()
@@ -257,10 +339,21 @@ angular.module("Mac").directive "macTable", [
 
           headerRow.css "margin-left", $scope.headerLeftMargin - scrollLeft
 
+        #
+        # @name $scope.reset
+        # @description
+        # Reset table view scope
+        #
         $scope.reset = ->
           $scope.displayRows      = []
           $scope.index            = 0
           $scope.headerLeftMargin = 0
+
+          $scope.predicate =  if $scope.columns.length > 0
+                                "#{opts.objectPrefix}#{$scope.columns[0].toLowerCase()}"
+                              else
+                                ""
+          $scope.reverse   = false
 
           $scope.drawHeader() if opts.hasHeader
 
