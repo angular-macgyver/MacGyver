@@ -87,7 +87,7 @@ util.factory "util", ->
       if output[key] in ["true", "false"]
         output[key] = output[key] is "true"
       # Convert to integer or numbers from strings
-      else if not isNaN +output[key]
+      else if output[key]?.length > 0 and not isNaN +output[key]
         output[key] = +output[key]
 
     return output
