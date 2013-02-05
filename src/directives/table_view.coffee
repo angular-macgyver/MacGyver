@@ -77,7 +77,7 @@ angular.module("Mac").directive "macTable", [
       # Update the width and height of the whole table
       element.css
         height: cellOuterHeight * opts.numDisplayRows
-        width:  opts.width - 2
+        width:  opts.width - 2 * opts.borderWidth
 
       ($scope, element, attrs) ->
         # Make sure columns are defined
