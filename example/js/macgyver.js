@@ -17944,7 +17944,7 @@ angular.module("Mac").directive("macTable", [
       transclude: true,
       templateUrl: "/template/table_view.html",
       compile: function(element, attrs, transclude) {
-        var bodyBlock, bodyHeightBlock, bodyWrapperBlock, cellOuterHeight, defaults, emptyCell, firstColumn, footerBlock, headerBlock, headerRow, opts, transcludedBlock;
+        var bodyBackground, bodyBlock, bodyHeightBlock, bodyWrapperBlock, cellOuterHeight, defaults, emptyCell, firstColumn, footerBlock, headerBlock, headerRow, opts, transcludedBlock;
         defaults = {
           hasHeader: true,
           hasFooter: true,
@@ -17966,6 +17966,7 @@ angular.module("Mac").directive("macTable", [
         bodyBlock = $(".table-body", element);
         bodyHeightBlock = $(".table-body-height", element);
         footerBlock = $(".table-footer", element);
+        bodyBackground = $(".table-body-background", element);
         emptyCell = $("<div>").addClass("cell");
         opts = util.extendAttributes("macTable", defaults, attrs);
         cellOuterHeight = opts.rowHeight + opts.cellPadding * 2;
@@ -17975,8 +17976,20 @@ angular.module("Mac").directive("macTable", [
         });
         return function($scope, element, attrs) {
           var createCellTemplate, createHeaderCellTemplate, numColumns, numDisplayRows;
+          if ($scope.columns == null) {
+            throw "Table view missing columns";
+          }
           numColumns = $scope.columns.length;
           numDisplayRows = opts.numDisplayRows - opts.hasHeader;
+          $scope.$watch("data", function() {
+            var endIndex, index, scrollTop;
+            if ($scope.data != null) {
+              scrollTop = bodyWrapperBlock.scrollTop();
+              index = Math.floor(scrollTop / cellOuterHeight);
+              endIndex = index + numDisplayRows - 1;
+              return $scope.displayRows = $scope.data.slice(index, +endIndex + 1 || 9e9);
+            }
+          });
           createCellTemplate = function(section, column) {
             var calculatedWidth, templateCell, templateSelector, width;
             if (section == null) {
@@ -18062,13 +18075,16 @@ angular.module("Mac").directive("macTable", [
           };
           $scope.drawFooter = function() {};
           $scope.calculateBodyDimension = function() {
-            bodyHeightBlock.height($scope.data.length * cellOuterHeight);
+            var data;
+            data = $scope.data || [];
+            bodyHeightBlock.height(data.length * cellOuterHeight);
             return bodyWrapperBlock.css({
               height: numDisplayRows * cellOuterHeight
             });
           };
           $scope.drawBody = function() {
-            var column, emptyRows, emptyTemplateRow, endIndex, fcTableRow, fcTemplateCell, i, rowWidth, startIndex, tableCell, tableRow, templateCell, _i, _j, _len, _ref, _ref1, _results;
+            var column, data, emptyTemplateRow, endIndex, fcTableRow, fcTemplateCell, i, rowWidth, startIndex, tableCell, tableRow, templateCell, _i, _j, _len, _ref, _results;
+            data = $scope.data || [];
             tableRow = $("<div>").addClass("table-row");
             tableRow.attr("ng-repeat", "row in displayRows");
             tableCell = $("<div>").addClass("table-cell");
@@ -18077,9 +18093,8 @@ angular.module("Mac").directive("macTable", [
               "on": "column",
               "ng-repeat": "column in columns"
             });
-            emptyTemplateRow = $("<div>").addClass("table-row");
             endIndex = this.index + numDisplayRows - 1;
-            $scope.displayRows = $scope.data.slice(this.index, +endIndex + 1 || 9e9);
+            $scope.displayRows = data.slice(this.index, +endIndex + 1 || 9e9);
             rowWidth = 0;
             startIndex = opts.lockFirstColumn ? 1 : 0;
             _ref = $scope.columns.slice(startIndex);
@@ -18089,10 +18104,8 @@ angular.module("Mac").directive("macTable", [
               templateCell.attr("ng-switch-when", column);
               tableCell.append(templateCell);
               rowWidth += templateCell.outerWidth() + opts.borderWidth;
-              emptyTemplateRow.append(createCellTemplate().addClass("table-cell"));
             }
             tableRow.append(tableCell).width(rowWidth);
-            emptyTemplateRow.width(rowWidth);
             bodyBlock.append(tableRow);
             $compile(bodyBlock)($scope);
             if (opts.lockFirstColumn) {
@@ -18106,14 +18119,13 @@ angular.module("Mac").directive("macTable", [
               });
             }
             bodyBlock.width(opts.width - $scope.headerLeftMargin);
-            emptyRows = numDisplayRows - $scope.displayRows.length;
-            if (emptyRows > 0) {
-              _results = [];
-              for (i = _j = 0, _ref1 = emptyRows - 1; 0 <= _ref1 ? _j <= _ref1 : _j >= _ref1; i = 0 <= _ref1 ? ++_j : --_j) {
-                _results.push(bodyBlock.append(emptyTemplateRow.clone()));
-              }
-              return _results;
+            emptyTemplateRow = $("<div>").addClass("table-row");
+            emptyTemplateRow.height(cellOuterHeight);
+            _results = [];
+            for (i = _j = 0; 0 <= numDisplayRows ? _j <= numDisplayRows : _j >= numDisplayRows; i = 0 <= numDisplayRows ? ++_j : --_j) {
+              _results.push(bodyBackground.append(emptyTemplateRow.clone()));
             }
+            return _results;
           };
           bodyWrapperBlock.scroll(function() {
             var $this, scrollTop;
@@ -18124,10 +18136,11 @@ angular.module("Mac").directive("macTable", [
               firstColumn.css("top", scrollTop);
             }
             return $scope.$apply(function() {
-              var endIndex, index;
+              var data, endIndex, index;
+              data = $scope.data || [];
               index = Math.floor(scrollTop / cellOuterHeight);
               endIndex = index + numDisplayRows - 1;
-              return $scope.displayRows = $scope.data.slice(index, +endIndex + 1 || 9e9);
+              return $scope.displayRows = data.slice(index, +endIndex + 1 || 9e9);
             });
           });
           bodyBlock.scroll(function() {
@@ -18292,6 +18305,173 @@ angular.module("Mac").directive("macTagInput", [
               }
             });
           });
+        };
+      }
+    };
+  }
+]);
+
+angular.module("Mac").directive("macTime", [
+  "util", "keys", "$filter", function(util, keys, $filter) {
+    return {
+      restrict: "E",
+      scope: {
+        model: "=macTimeModel"
+      },
+      replace: true,
+      templateUrl: "template/time.html",
+      compile: function(element, attrs) {
+        var defaults, inputElement, opts;
+        defaults = {
+          id: "time-input",
+          placeholder: "--:--"
+        };
+        opts = util.extendAttributes("macTime", defaults, attrs);
+        inputElement = $("input", element);
+        inputElement.attr({
+          "placeholder": opts.placeholder,
+          "ng-model": "model"
+        });
+        return function($scope, element, attrs) {
+          var highlighActions, inputDOM, inputSelectAction, timeRegex, updateInput;
+          inputDOM = inputElement[0];
+          timeRegex = /(\d+):(\d+) ([AP]M)/;
+          highlighActions = {
+            hours: function() {
+              return inputDOM.setSelectionRange(0, 2);
+            },
+            minutes: function() {
+              return inputDOM.setSelectionRange(3, 5);
+            },
+            markers: function() {
+              return inputDOM.setSelectionRange(6, 8);
+            }
+          };
+          $scope.reset = function() {
+            $scope.time = new Date();
+            return $scope.time.setHours(0, 0, 0, 0);
+          };
+          inputSelectAction = function(index, endIndex, actions) {
+            if (endIndex == null) {
+              endIndex = index;
+            }
+            if (actions == null) {
+              actions = {};
+            }
+            if (typeof endIndex === "object") {
+              actions = endIndex;
+              endIndex = index;
+            }
+            if ((0 <= index && index < 3) && (0 <= endIndex && endIndex < 3)) {
+              if (typeof actions.hours === "function") {
+                actions.hours();
+              }
+            } else if ((3 <= index && index < 6) && (3 <= endIndex && endIndex < 6)) {
+              if (typeof actions.minutes === "function") {
+                actions.minutes();
+              }
+            } else if ((6 <= index && index < 9) && (6 <= index && index < 9)) {
+              if (typeof actions.markers === "function") {
+                actions.markers();
+              }
+            }
+            return typeof actions.all === "function" ? actions.all() : void 0;
+          };
+          updateInput = function(actions) {
+            var end, start;
+            if (actions == null) {
+              actions = {};
+            }
+            start = inputDOM.selectionStart;
+            end = inputDOM.selectionEnd;
+            if (actions !== {}) {
+              inputSelectAction(start, end, actions);
+            }
+            return $scope.$apply(function() {
+              var origModel;
+              origModel = $scope.model;
+              $scope.model = $filter("date")($scope.time.getTime(), "hh:mm a");
+              return setTimeout((function() {
+                if (origModel == null) {
+                  start = 0;
+                  end = 2;
+                }
+                return inputSelectAction(start, end, highlighActions);
+              }), 0);
+            });
+          };
+          inputElement.on("click", function(event) {
+            return updateInput();
+          }).on("keydown", function(event) {
+            var change, end, key, start;
+            key = event.which;
+            switch (key) {
+              case keys.UP:
+              case keys.DOWN:
+                event.preventDefault();
+                change = key === keys.UP ? 1 : -1;
+                return updateInput({
+                  hours: function() {
+                    return $scope.time.setHours($scope.time.getHours() + change);
+                  },
+                  minutes: function() {
+                    return $scope.time.setMinutes($scope.time.getMinutes() + change);
+                  },
+                  markers: function() {
+                    return $scope.time.setHours($scope.time.getHours() + change * 12);
+                  }
+                });
+              case keys.LEFT:
+              case keys.RIGHT:
+              case keys.TAB:
+                event.preventDefault();
+                change = key === keys.LEFT || (event.shiftKey && key === keys.TAB) ? -3 : 3;
+                start = inputDOM.selectionStart;
+                end = inputDOM.selectionEnd;
+                inputSelectAction(start, end, {
+                  hours: function() {
+                    if (key === keys.LEFT) {
+                      return change = 0;
+                    }
+                  },
+                  markers: function() {
+                    if (key === keys.RIGHT || key === keys.TAB) {
+                      return change = 0;
+                    }
+                  },
+                  all: function() {
+                    start += change;
+                    return end += change;
+                  }
+                });
+                inputDOM.setSelectionRange(start, end);
+                return updateInput();
+              default:
+                if (!((keys.NUMPAD0 <= key && key <= keys.NUMPAD9) || (keys.ZERO <= key && key <= keys.NINE))) {
+                  return event.preventDefault();
+                }
+            }
+          }).on("keyup", function(event) {
+            var hours, key, markers, minutes, timeMatch, userInput;
+            key = event.which;
+            if ((keys.NUMPAD0 <= key && key <= keys.NUMPAD9) || (keys.ZERO <= key && key <= keys.NINE)) {
+              userInput = $scope.model;
+              if (timeMatch = timeRegex.exec(userInput)) {
+                hours = +timeMatch[1];
+                minutes = +timeMatch[2];
+                markers = timeMatch[3];
+                if ((0 <= hours && hours <= 12) && (0 <= minutes && minutes <= 60)) {
+                  if (markers === "PM" && hours !== 12) {
+                    hours += 12;
+                  }
+                  return $scope.time.setHours(hours, minutes);
+                } else {
+                  return updateInput();
+                }
+              }
+            }
+          });
+          return $scope.reset();
         };
       }
     };

@@ -2138,6 +2138,7 @@ i.icon-fb-comment {
 .table-container {
   border: 1px solid #ddd;
   overflow-x: hidden;
+  position: relative;
 }
 .table-container .table-row {
   clear: both;
@@ -2189,10 +2190,6 @@ i.icon-fb-comment {
 .table-container .table-body-wrapper .title-column {
   position: absolute;
 }
-.table-container .table-body-wrapper .table-body .table-row:nth-child(even),
-.table-container .table-body-wrapper .title-column .table-row:nth-child(even) {
-  background-color: #f0f5ff;
-}
 .table-container .table-body-wrapper .table-body {
   overflow-x: auto;
 }
@@ -2200,6 +2197,18 @@ i.icon-fb-comment {
   position: absolute;
   top: 0px;
   width: 50px;
+}
+.table-container .table-body-background {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+}
+.table-container .table-body-background .table-row {
+  width: 100%;
+}
+.table-container .table-body-background .table-row:nth-child(even) {
+  background-color: #f0f5ff;
 }
 .table-container .table-header:first-child .table-row:first-child .cell:first-child {
   border-top-left-radius: 4px;
