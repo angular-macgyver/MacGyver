@@ -2072,6 +2072,8 @@ i {
 /*
   &.icon-calendar
     background-position -64px -96px
+  &.icon-time
+    background-position -96px -96px
   */
 }
 i.icon-male {
@@ -2107,9 +2109,6 @@ i.icon-detail:hover {
 i.icon-search {
   background-position: -32px -32px;
   opacity: 0.5;
-}
-i.icon-time {
-  background-position: -96px -96px;
 }
 i.icon-e {
   background-position: 0 -128px;

@@ -18333,9 +18333,9 @@ angular.module("Mac").directive("macTime", [
           "ng-model": "model"
         });
         return function($scope, element, attrs) {
-          var highlighActions, inputDOM, inputSelectAction, timeRegex, updateInput;
+          var highlighActions, inputDOM, inputSelectAction, timeRegex, updateInput, updateScopeTime;
           inputDOM = inputElement[0];
-          timeRegex = /(\d+):(\d+) ([AP]M)/;
+          timeRegex = /(\d+):(\d+) ([AP]M)?/;
           highlighActions = {
             hours: function() {
               return inputDOM.setSelectionRange(0, 2);
@@ -18388,20 +18388,35 @@ angular.module("Mac").directive("macTime", [
               inputSelectAction(start, end, actions);
             }
             return $scope.$apply(function() {
-              var origModel;
-              origModel = $scope.model;
               $scope.model = $filter("date")($scope.time.getTime(), "hh:mm a");
               return setTimeout((function() {
-                if (origModel == null) {
-                  start = 0;
-                  end = 2;
-                }
                 return inputSelectAction(start, end, highlighActions);
               }), 0);
             });
           };
+          updateScopeTime = function() {
+            var hours, markers, minutes, timeMatch;
+            if (timeMatch = timeRegex.exec($scope.model)) {
+              hours = +timeMatch[1];
+              minutes = +timeMatch[2];
+              markers = timeMatch[3] || "AM";
+              if ((0 < hours && hours <= 12) && (0 <= minutes && minutes <= 60)) {
+                if (markers === "PM" && hours !== 12) {
+                  hours += 12;
+                }
+                if (markers === "AM" && hours === 12) {
+                  hours = 0;
+                }
+                return $scope.time.setHours(hours, minutes);
+              } else {
+                return updateInput();
+              }
+            }
+          };
           inputElement.on("click", function(event) {
             return updateInput();
+          }).on("blur", function(event) {
+            return updateScopeTime();
           }).on("keydown", function(event) {
             var change, end, key, start;
             key = event.which;
@@ -18423,9 +18438,8 @@ angular.module("Mac").directive("macTime", [
                 });
               case keys.LEFT:
               case keys.RIGHT:
-              case keys.TAB:
                 event.preventDefault();
-                change = key === keys.LEFT || (event.shiftKey && key === keys.TAB) ? -3 : 3;
+                change = key === keys.LEFT ? -3 : 3;
                 start = inputDOM.selectionStart;
                 end = inputDOM.selectionEnd;
                 inputSelectAction(start, end, {
@@ -18435,7 +18449,7 @@ angular.module("Mac").directive("macTime", [
                     }
                   },
                   markers: function() {
-                    if (key === keys.RIGHT || key === keys.TAB) {
+                    if (key === keys.RIGHT) {
                       return change = 0;
                     }
                   },
@@ -18446,29 +18460,12 @@ angular.module("Mac").directive("macTime", [
                 });
                 inputDOM.setSelectionRange(start, end);
                 return updateInput();
-              default:
-                if (!((keys.NUMPAD0 <= key && key <= keys.NUMPAD9) || (keys.ZERO <= key && key <= keys.NINE))) {
-                  return event.preventDefault();
-                }
             }
           }).on("keyup", function(event) {
-            var hours, key, markers, minutes, timeMatch, userInput;
+            var key;
             key = event.which;
             if ((keys.NUMPAD0 <= key && key <= keys.NUMPAD9) || (keys.ZERO <= key && key <= keys.NINE)) {
-              userInput = $scope.model;
-              if (timeMatch = timeRegex.exec(userInput)) {
-                hours = +timeMatch[1];
-                minutes = +timeMatch[2];
-                markers = timeMatch[3];
-                if ((0 <= hours && hours <= 12) && (0 <= minutes && minutes <= 60)) {
-                  if (markers === "PM" && hours !== 12) {
-                    hours += 12;
-                  }
-                  return $scope.time.setHours(hours, minutes);
-                } else {
-                  return updateInput();
-                }
-              }
+              return updateScopeTime();
             }
           });
           return $scope.reset();
