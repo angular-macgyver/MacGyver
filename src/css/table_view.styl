@@ -6,8 +6,9 @@ even-background  = #f0f5ff
 border-radius    = 4px
 
 .table-container
-  border        1px solid border-color
-  overflow-x    hidden
+  border     1px solid border-color
+  overflow-x hidden
+  position   relative
 
   .table-row
     clear both
@@ -54,9 +55,6 @@ border-radius    = 4px
     .table-body, .title-column
       position absolute
 
-      .table-row:nth-child(even)
-        background-color even-background
-
     .table-body
       overflow-x auto
 
@@ -64,6 +62,18 @@ border-radius    = 4px
       position absolute
       top      0px
       width    50px
+
+  .table-body-background
+    position absolute
+    top      0px
+    left     0px
+    width    100%
+
+    .table-row
+      width  100%
+
+      &:nth-child(even)
+        background-color even-background
 
   .table-header:first-child
     .table-row:first-child

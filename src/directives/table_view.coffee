@@ -62,6 +62,7 @@ angular.module("Mac").directive "macTable", [
       bodyBlock        = $(".table-body", element)
       bodyHeightBlock  = $(".table-body-height", element)
       footerBlock      = $(".table-footer", element)
+      bodyBackground   = $(".table-body-background", element)
       emptyCell        = $("<div>").addClass "cell"
 
       # Calculate all the options based on defaults
@@ -75,8 +76,19 @@ angular.module("Mac").directive "macTable", [
         width:  opts.width
 
       ($scope, element, attrs) ->
+        # Make sure columns are defined
+        throw "Table view missing columns" unless $scope.columns?
+
         numColumns     = $scope.columns.length
         numDisplayRows = opts.numDisplayRows - opts.hasHeader
+
+        $scope.$watch "data", ->
+          if $scope.data?
+            scrollTop          = bodyWrapperBlock.scrollTop()
+            index              = Math.floor scrollTop / cellOuterHeight
+            endIndex           = index + numDisplayRows - 1
+            $scope.displayRows = $scope.data[index..endIndex]
+
 
         createCellTemplate = (section="", column="")->
           templateSelector = """.table-#{section}-template .cell[column="#{column}"]"""
@@ -157,14 +169,17 @@ angular.module("Mac").directive "macTable", [
 
 
         $scope.calculateBodyDimension = ->
+          data = $scope.data or []
           # Calculate the height to display scrollbar correctly
-          bodyHeightBlock.height $scope.data.length * cellOuterHeight
+          bodyHeightBlock.height data.length * cellOuterHeight
 
           bodyWrapperBlock.css
             height: numDisplayRows * cellOuterHeight
 
         # Create table body
         $scope.drawBody = ->
+          data = $scope.data or []
+
           # Create template row with ng-repeat
           tableRow = $("<div>").addClass "table-row"
           tableRow.attr "ng-repeat", "row in displayRows"
@@ -176,11 +191,9 @@ angular.module("Mac").directive "macTable", [
             "on":        "column"
             "ng-repeat": "column in columns"
 
-          emptyTemplateRow = $("<div>").addClass "table-row"
-
           # Set the first set of rows to show up
           endIndex           = @index + numDisplayRows - 1
-          $scope.displayRows = $scope.data[@index..endIndex]
+          $scope.displayRows = data[@index..endIndex]
 
           rowWidth   = 0
           startIndex = if opts.lockFirstColumn then 1 else 0
@@ -194,10 +207,7 @@ angular.module("Mac").directive "macTable", [
             # Calculate the width of each row
             rowWidth += templateCell.outerWidth() + opts.borderWidth
 
-            emptyTemplateRow.append createCellTemplate().addClass "table-cell"
-
           tableRow.append(tableCell).width rowWidth
-          emptyTemplateRow.width rowWidth
           bodyBlock.append tableRow
 
           # Compile the body block to bind all values correctly
@@ -220,10 +230,10 @@ angular.module("Mac").directive "macTable", [
 
           bodyBlock.width opts.width - $scope.headerLeftMargin
 
-          # Generate empty rows to fill up the table
-          emptyRows = numDisplayRows - $scope.displayRows.length
-          if emptyRows > 0
-            bodyBlock.append(emptyTemplateRow.clone()) for i in [0..emptyRows - 1]
+          # Generate empty rows to fill up table background
+          emptyTemplateRow = $("<div>").addClass "table-row"
+          emptyTemplateRow.height cellOuterHeight
+          bodyBackground.append(emptyTemplateRow.clone()) for i in [0..numDisplayRows]
 
         # Up and down scrolling
         bodyWrapperBlock.scroll ->
@@ -235,9 +245,10 @@ angular.module("Mac").directive "macTable", [
           firstColumn.css "top", scrollTop if opts.lockFirstColumn
 
           $scope.$apply ->
+            data               = $scope.data or []
             index              = Math.floor scrollTop / cellOuterHeight
             endIndex           = index + numDisplayRows - 1
-            $scope.displayRows = $scope.data[index..endIndex]
+            $scope.displayRows = data[index..endIndex]
 
         # Left and right scrolling
         bodyBlock.scroll ->
