@@ -2137,7 +2137,6 @@ i.icon-fb-comment {
 }
 .table-container {
   border: 1px solid #ddd;
-  border-radius: 4px;
   overflow-x: hidden;
 }
 .table-container .table-row {
@@ -2153,18 +2152,26 @@ i.icon-fb-comment {
 }
 .table-container .table-header {
   float: left;
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #fff), color-stop(1, #e6e6e6));
+  background: -webkit-linear-gradient(top, #fff 0%, #e6e6e6 100%);
+  background: -moz-linear-gradient(top, #fff 0%, #e6e6e6 100%);
+  background: -o-linear-gradient(top, #fff 0%, #e6e6e6 100%);
+  background: -ms-linear-gradient(top, #fff 0%, #e6e6e6 100%);
+  background: linear-gradient(top, #fff 0%, #e6e6e6 100%);
+  border-bottom: solid 1px #bebebe;
 }
 .table-container .table-header .table-row:first-child .cell {
   border-top: 0;
 }
 .table-container .table-header .locked-cell {
   position: absolute;
-  background: #fff;
 }
 .table-container .table-header .cell {
   text-align: left;
   float: left;
+  font-size: 12px;
   font-weight: bold;
+  -o-text-overflow: ellipsis;
   text-overflow: ellipsis;
 }
 .table-container .table-header .cell.ui-sortable-placeholder {
@@ -2182,9 +2189,9 @@ i.icon-fb-comment {
 .table-container .table-body-wrapper .title-column {
   position: absolute;
 }
-.table-container .table-body-wrapper .table-body .table-row:nth-child(odd),
-.table-container .table-body-wrapper .title-column .table-row:nth-child(odd) {
-  background-color: #f9f9f9;
+.table-container .table-body-wrapper .table-body .table-row:nth-child(even),
+.table-container .table-body-wrapper .title-column .table-row:nth-child(even) {
+  background-color: #f0f5ff;
 }
 .table-container .table-body-wrapper .table-body {
   overflow-x: auto;
