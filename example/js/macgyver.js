@@ -17956,7 +17956,9 @@ angular.module("Mac").directive("macTable", [
           borderWidth: 1,
           sortable: false,
           resizable: false,
-          lockFirstColumn: false
+          lockFirstColumn: false,
+          allowReorder: true,
+          objectPrefix: ""
         };
         transcludedBlock = $(".table-transclude", element);
         headerBlock = $(".table-header", element);
@@ -17975,7 +17977,7 @@ angular.module("Mac").directive("macTable", [
           width: opts.width
         });
         return function($scope, element, attrs) {
-          var createCellTemplate, createHeaderCellTemplate, numColumns, numDisplayRows;
+          var addOrderByFunction, createCellTemplate, createHeaderCellTemplate, numColumns, numDisplayRows;
           if ($scope.columns == null) {
             throw "Table view missing columns";
           }
@@ -18020,10 +18022,25 @@ angular.module("Mac").directive("macTable", [
             }
             cell = createCellTemplate("header", column);
             contextText = cell.text();
-            if (contextText.length === 0) {
-              cell.text(column);
-            }
+            cell.text(contextText.length === 0 ? column : contextText).attr("for", column).append($("<span>").attr({
+              "ng-show": "predicate == '" + (column.toLowerCase()) + "'",
+              "class": "caret {{reverse | boolean:\"up\":\"down\"}}"
+            }));
             return cell;
+          };
+          addOrderByFunction = function(column) {
+            return column.on("click", function(event) {
+              var columnTitle;
+              columnTitle = opts.objectPrefix + $(this).attr("for").toLowerCase();
+              return $scope.$apply(function() {
+                if (columnTitle === $scope.predicate) {
+                  return $scope.reverse = !$scope.reverse;
+                } else {
+                  $scope.predicate = columnTitle;
+                  return $scope.reverse = false;
+                }
+              });
+            });
           };
           $scope.drawHeader = function() {
             var column, fcTemplateCell, rowWidth, startIndex, templateColumn, _i, _len, _ref;
@@ -18034,6 +18051,9 @@ angular.module("Mac").directive("macTable", [
               column = _ref[_i];
               templateColumn = createHeaderCellTemplate(column);
               rowWidth += templateColumn.outerWidth() + opts.borderWidth;
+              if (opts.allowReorder) {
+                addOrderByFunction(templateColumn);
+              }
               if (opts.resizable) {
                 templateColumn.resizable({
                   containment: "parent",
@@ -18044,14 +18064,17 @@ angular.module("Mac").directive("macTable", [
               }
               headerRow.append(templateColumn);
             }
+            $compile(headerRow)($scope);
             headerRow.width(rowWidth);
             if (opts.lockFirstColumn) {
               fcTemplateCell = createHeaderCellTemplate($scope.columns[0]);
               fcTemplateCell.addClass("locked-cell");
+              addOrderByFunction(fcTemplateCell);
               headerBlock.prepend(fcTemplateCell);
               headerRow.css({
                 "margin-left": fcTemplateCell.outerWidth()
               });
+              $compile(headerBlock)($scope);
             }
             if (opts.sortable) {
               return headerRow.sortable({
@@ -18083,10 +18106,11 @@ angular.module("Mac").directive("macTable", [
             });
           };
           $scope.drawBody = function() {
-            var column, data, emptyTemplateRow, endIndex, fcTableRow, fcTemplateCell, i, rowWidth, startIndex, tableCell, tableRow, templateCell, _i, _j, _len, _ref, _results;
+            var column, data, emptyTemplateRow, endIndex, fcTableRow, fcTemplateCell, i, orderBy, rowWidth, startIndex, tableCell, tableRow, templateCell, _i, _j, _len, _ref, _results;
             data = $scope.data || [];
+            orderBy = opts.allowReorder ? "| orderBy:predicate:reverse" : "";
             tableRow = $("<div>").addClass("table-row");
-            tableRow.attr("ng-repeat", "row in displayRows");
+            tableRow.attr("ng-repeat", "row in displayRows " + orderBy);
             tableCell = $("<div>").addClass("table-cell");
             tableCell.attr({
               "ng-switch": "",
@@ -18111,7 +18135,7 @@ angular.module("Mac").directive("macTable", [
             if (opts.lockFirstColumn) {
               fcTableRow = $(".table-row", firstColumn);
               fcTemplateCell = createCellTemplate("body", $scope.columns[0]);
-              fcTableRow.attr("ng-repeat", "row in displayRows").append(fcTemplateCell);
+              fcTableRow.attr("ng-repeat", "row in displayRows " + orderBy).append(fcTemplateCell);
               $compile(firstColumn)($scope);
               $scope.headerLeftMargin = fcTemplateCell.outerWidth();
               bodyBlock.css({
@@ -18153,6 +18177,8 @@ angular.module("Mac").directive("macTable", [
             $scope.displayRows = [];
             $scope.index = 0;
             $scope.headerLeftMargin = 0;
+            $scope.predicate = $scope.columns.length > 0 ? "" + opts.objectPrefix + ($scope.columns[0].toLowerCase()) : "";
+            $scope.reverse = false;
             if (opts.hasHeader) {
               $scope.drawHeader();
             }
@@ -18489,18 +18515,22 @@ module.controller("ExampleController", [
         spent: Math.random() * 10000,
         cpm: Math.random(),
         cpc: Math.random(),
-        created: (new Date()).getTime()
+        created: (new Date()).getTime(),
+        attributes: {
+          abc: Math.random() * 1000
+        }
       };
       $scope.data.push(obj);
     }
-    $scope.hello = function(data) {
+    $scope.columnOrder = ["Name", "Clicks", "CPC", "CPM", "Spent", "Created"];
+    $scope.onSuccess = function(data) {
       return data.data;
     };
+    $scope.autocompleteUrl = "data.json";
+    $scope.tagAutocompleteSelected = [];
     $scope.onTextBlur = function() {
       return alert("You just blurred out of text input");
     };
-    $scope.columnOrder = ["Name", "Clicks", "CPC", "CPM", "Spent", "Created"];
-    $scope.autocompleteUrl = "data.json";
     $scope.extraTagInputs = [
       {
         "name": "United States",
@@ -18695,7 +18725,7 @@ util.factory("util", function() {
       return string[0].toLowerCase() + string.slice(1);
     },
     extendAttributes: function(prefix, defaults, attributes) {
-      var key, output, value, _ref;
+      var key, output, value, _ref, _ref1;
       output = {};
       for (key in defaults) {
         if (!__hasProp.call(defaults, key)) continue;
@@ -18703,7 +18733,7 @@ util.factory("util", function() {
         output[key] = attributes["" + prefix + (this.capitalize(key))] || value;
         if ((_ref = output[key]) === "true" || _ref === "false") {
           output[key] = output[key] === "true";
-        } else if (!isNaN(+output[key])) {
+        } else if (((_ref1 = output[key]) != null ? _ref1.length : void 0) > 0 && !isNaN(+output[key])) {
           output[key] = +output[key];
         }
       }

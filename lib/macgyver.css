@@ -2152,12 +2152,12 @@ i.icon-fb-comment {
 }
 .table-container .table-header {
   float: left;
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #fff), color-stop(1, #e6e6e6));
-  background: -webkit-linear-gradient(top, #fff 0%, #e6e6e6 100%);
-  background: -moz-linear-gradient(top, #fff 0%, #e6e6e6 100%);
-  background: -o-linear-gradient(top, #fff 0%, #e6e6e6 100%);
-  background: -ms-linear-gradient(top, #fff 0%, #e6e6e6 100%);
-  background: linear-gradient(top, #fff 0%, #e6e6e6 100%);
+  background: #fff -webkit-gradient(linear, left top, left bottom, color-stop(0, #fff), color-stop(1, #e6e6e6));
+  background: #fff -webkit-linear-gradient(top, #fff 0%, #e6e6e6 100%);
+  background: #fff -moz-linear-gradient(top, #fff 0%, #e6e6e6 100%);
+  background: #fff -o-linear-gradient(top, #fff 0%, #e6e6e6 100%);
+  background: #fff -ms-linear-gradient(top, #fff 0%, #e6e6e6 100%);
+  background: #fff linear-gradient(top, #fff 0%, #e6e6e6 100%);
   border-bottom: solid 1px #bebebe;
 }
 .table-container .table-header .table-row:first-child .cell {
@@ -2165,6 +2165,12 @@ i.icon-fb-comment {
 }
 .table-container .table-header .locked-cell {
   position: absolute;
+  background: #fff -webkit-gradient(linear, left top, left bottom, color-stop(0, #fff), color-stop(1, #e6e6e6));
+  background: #fff -webkit-linear-gradient(top, #fff 0%, #e6e6e6 100%);
+  background: #fff -moz-linear-gradient(top, #fff 0%, #e6e6e6 100%);
+  background: #fff -o-linear-gradient(top, #fff 0%, #e6e6e6 100%);
+  background: #fff -ms-linear-gradient(top, #fff 0%, #e6e6e6 100%);
+  background: #fff linear-gradient(top, #fff 0%, #e6e6e6 100%);
 }
 .table-container .table-header .cell {
   text-align: left;
@@ -2179,6 +2185,19 @@ i.icon-fb-comment {
 }
 .table-container .table-header .cell.resizable {
   border-right: 1px solid #000;
+}
+.table-container .table-header .cell .caret {
+  vertical-align: middle;
+  cursor: pointer;
+  margin-left: 5px;
+}
+.table-container .table-header .cell .caret.up {
+  border-bottom: 4px solid #000;
+  border-top: transparent;
+}
+.table-container .table-header .cell .caret.down {
+  border-top: 4px solid #000;
+  border-bottom: transparent;
 }
 .table-container .table-body-wrapper {
   overflow-y: auto;
@@ -2202,6 +2221,7 @@ i.icon-fb-comment {
   top: 0px;
   left: 0px;
   width: 100%;
+  pointer-events: none;
 }
 .table-container .table-body-background .table-row {
   width: 100%;
