@@ -60,19 +60,12 @@ angular.module("Mac").directive "macTagInput", [
             updateTagInput()
           ), 0
 
-        # Update tag input after adding new option DOM element
-        setTimeout (->
-          updateTagInput()
-        ), 0
-
         chosenElement.change (event, object)->
           $scope.$apply ->
             if object.selected?
-              $scope.selected.push object.selected
+              $scope.selected.push _($scope.items).find (item) ->
+                                    (item[valueKey] or item) is object.selected
             else if object.deselected?
-              # Find the element that need to be removed
-              index = list.indexOf object.deselected
-              return if index is -1
-
-              $scope.selected[index..index] = []
+              $scope.selected = _($scope.selected).reject (item) ->
+                                  (item[valueKey] or item) is object.deselected
 ]
