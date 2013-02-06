@@ -9,12 +9,13 @@
 ## - jQuery UI autocomplete
 ##
 ## @attributes
-## - mac-tag-autocomplete-url:      url to fetch autocomplete dropdown list data
-## - mac-tag-autocomplete-value:    the value to be sent back upon selection                (default "id")
-## - mac-tag-autocomplete-label:    the label to display to the users                       (default "name")
-## - mac-tag-autocomplete-selected: the list of elements selected by the user
-## - mac-tag-autocomplete-query:    the query parameter on GET command                      (defualt "q")
-## - mac-tag-autocomplete-delay:    time delayed on fetching autocomplete data after keyup  (default 800)
+## - mac-tag-autocomplete-url:         url to fetch autocomplete dropdown list data
+## - mac-tag-autocomplete-value:       the value to be sent back upon selection                (default "id")
+## - mac-tag-autocomplete-label:       the label to display to the users                       (default "name")
+## - mac-tag-autocomplete-selected:    the list of elements selected by the user
+## - mac-tag-autocomplete-query:       the query parameter on GET command                      (defualt "q")
+## - mac-tag-autocomplete-delay:       time delayed on fetching autocomplete data after keyup  (default 800)
+## - mac-tag-autocomplete-placeholder: Placeholder text of the text input                      (default "")
 ##
 
 angular.module("Mac").directive "macTagAutocomplete", [
@@ -34,11 +35,12 @@ angular.module("Mac").directive "macTagAutocomplete", [
     replace:     true
 
     compile: (element, attr) ->
-      valueKey    = attr.macTagAutocompleteValue     or "id"
-      labelKey    = attr.macTagAutocompleteLabel     or "name"
-      queryKey    = attr.macTagAutocompleteQuery     or "q"
-      delay       = +attr.macTagAutocompleteDelay    or 800
+      valueKey    = attr.macTagAutocompleteValue       or "id"
+      labelKey    = attr.macTagAutocompleteLabel       or "name"
+      queryKey    = attr.macTagAutocompleteQuery       or "q"
+      delay       = +attr.macTagAutocompleteDelay      or 800
       selectedExp = attr.macTagAutocompleteSelected
+      placeholder = attr.macTagAutocompletePlaceholder or ""
 
       getSelected = $parse selectedExp
 
@@ -47,10 +49,11 @@ angular.module("Mac").directive "macTagAutocomplete", [
       $(".tag-label", element).text "{{tag#{tagLabelKey}}}"
 
       $(".text-input", element).attr
-        "mac-autocomplete-value": valueKey
-        "mac-autocomplete-label": labelKey
-        "mac-autocomplete-query": queryKey
-        "mac-autocomplete-delay": delay
+        "mac-autocomplete-value":       valueKey
+        "mac-autocomplete-label":       labelKey
+        "mac-autocomplete-query":       queryKey
+        "mac-autocomplete-delay":       delay
+        "mac-autocomplete-placeholder": placeholder
 
       ($scope, element, attrs) ->
         # Getting autocomplete url from parent scope

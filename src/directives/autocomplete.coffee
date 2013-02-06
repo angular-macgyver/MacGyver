@@ -28,6 +28,7 @@
 ## - mac-autocomplete-query:           the query parameter on GET command                     (default "q")
 ## - mac-autocomplete-delay:           time delayed on fetching autocomplete data after keyup (default 800)
 ## - mac-autocomplete-clear-on-select: Clear text input on select                             (default false)
+## - mac-autocomplete-placeholder:     Placeholder text of the text input                     (default "")
 ##
 
 angular.module("Mac").directive "macAutocomplete", [
@@ -45,13 +46,15 @@ angular.module("Mac").directive "macAutocomplete", [
       onKeyDown:       "&macAutocompleteOnKeyDown"
 
     compile: (element, attrs) ->
-      valueKey      = attrs.macAutocompleteValue  or "id"
-      labelKey      = attrs.macAutocompleteLabel  or "name"
-      queryKey      = attrs.macAutocompleteQuery  or "q"
-      delay         = +attrs.macAutocompleteDelay or 800
+      valueKey      = attrs.macAutocompleteValue       or "id"
+      labelKey      = attrs.macAutocompleteLabel       or "name"
+      queryKey      = attrs.macAutocompleteQuery       or "q"
+      delay         = +attrs.macAutocompleteDelay      or 800
       clearOnSelect = attrs.macAutocompleteClearOnSelect is "true"
+      placeholder   = attrs.macAutocompletePlaceholder or ""
 
-      textInput = $("input", element)
+      # Set the placeholder
+      element.attr "placeholder", placeholder
 
       ($scope, element, attrs) ->
         if attrs.macAutocompleteOnKeyDown

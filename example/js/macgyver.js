@@ -17446,13 +17446,14 @@ angular.module("Mac").directive("macAutocomplete", [
         onKeyDown: "&macAutocompleteOnKeyDown"
       },
       compile: function(element, attrs) {
-        var clearOnSelect, delay, labelKey, queryKey, textInput, valueKey;
+        var clearOnSelect, delay, labelKey, placeholder, queryKey, valueKey;
         valueKey = attrs.macAutocompleteValue || "id";
         labelKey = attrs.macAutocompleteLabel || "name";
         queryKey = attrs.macAutocompleteQuery || "q";
         delay = +attrs.macAutocompleteDelay || 800;
         clearOnSelect = attrs.macAutocompleteClearOnSelect === "true";
-        textInput = $("input", element);
+        placeholder = attrs.macAutocompletePlaceholder || "";
+        element.attr("placeholder", placeholder);
         return function($scope, element, attrs) {
           if (attrs.macAutocompleteOnKeyDown) {
             element.bind("keydown", function(event) {
@@ -18233,12 +18234,13 @@ angular.module("Mac").directive("macTagAutocomplete", [
       templateUrl: "template/tag_autocomplete.html",
       replace: true,
       compile: function(element, attr) {
-        var delay, getSelected, labelKey, queryKey, selectedExp, tagLabelKey, valueKey;
+        var delay, getSelected, labelKey, placeholder, queryKey, selectedExp, tagLabelKey, valueKey;
         valueKey = attr.macTagAutocompleteValue || "id";
         labelKey = attr.macTagAutocompleteLabel || "name";
         queryKey = attr.macTagAutocompleteQuery || "q";
         delay = +attr.macTagAutocompleteDelay || 800;
         selectedExp = attr.macTagAutocompleteSelected;
+        placeholder = attr.macTagAutocompletePlaceholder || "";
         getSelected = $parse(selectedExp);
         tagLabelKey = labelKey != null ? "." + labelKey : "";
         $(".tag-label", element).text("{{tag" + tagLabelKey + "}}");
@@ -18246,7 +18248,8 @@ angular.module("Mac").directive("macTagAutocomplete", [
           "mac-autocomplete-value": valueKey,
           "mac-autocomplete-label": labelKey,
           "mac-autocomplete-query": queryKey,
-          "mac-autocomplete-delay": delay
+          "mac-autocomplete-delay": delay,
+          "mac-autocomplete-placeholder": placeholder
         });
         return function($scope, element, attrs) {
           Object.defineProperty($scope, "tags", {
