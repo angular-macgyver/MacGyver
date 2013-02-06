@@ -28,8 +28,8 @@ updateBowerPaths = ->
     fs.writeFile "bower-paths.json", JSON.stringify(files), "utf8"
 
 copyImagesDirectory = ->
-  fromDir = path.join examplePath, "css/images"
-  toDir   = path.join finalBuildPath, "images"
+  fromDir = path.join examplePath, "img"
+  toDir   = path.join finalBuildPath, "img"
   wrench.copyDirSyncRecursive fromDir, toDir
 
 task "update:paths", "Update bower paths file", -> updateBowerPaths()
