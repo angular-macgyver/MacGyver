@@ -3,6 +3,7 @@ path          = require "path"
 child_process = require "child_process"
 bower         = require "bower"
 wrench        = require "wrench"
+_             = require "underscore"
 
 testacularPath = "./node_modules/.bin/testacular"
 brunchPath     = "./node_modules/brunch/bin/brunch"
@@ -76,6 +77,8 @@ task "build", "Build the latest MacGyver", ->
     fileList = wrench.readdirSyncRecursive finalBuildPath
     fs.readFile componentFile, "utf8", (err, data) ->
       throw err if err?
+
+      fileList = _(fileList).map (file) -> path.join "lib", file
 
       newArray = JSON.stringify fileList
       data     = data.replace /"main": \[[^\]]+]/, "\"main\": #{newArray}"
