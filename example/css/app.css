@@ -219,13 +219,13 @@
   width: 12px;
   height: 12px;
   font-size: 1px;
-  background: url('images/chosen-sprite.png') -42px 1px no-repeat;
+  background: url('images/chosen-sprite.png') -47px 0px no-repeat;
 }
 .chzn-container-multi .chzn-choices .search-choice .search-choice-close:hover {
-  background-position: -42px -10px;
+  background-position: -47px -11px;
 }
 .chzn-container-multi .chzn-choices .search-choice-focus .search-choice-close {
-  background-position: -42px -10px;
+  background-position: -47px -11px;
 }
 /* @end */
 
