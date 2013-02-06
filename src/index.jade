@@ -71,12 +71,12 @@ html
                 mac-table-columns           = "columnOrder"
                 mac-table-sortable          = "true"
                 mac-table-resizable         = "false"
-                mac-table-lock-first-column = "true"
+                mac-table-lock-first-column = "false"
                 ng-cloak
               )
                 .table-header-template
                 .table-body-template
-                  .cell(column="Name") {{row.name}}
+                  .cell(column="Name", style="width: 80px") {{row.name}}
                   .cell(column="Clicks") {{row.clicks | number: 0}}
                   .cell(column="CPM") {{row.cpm | number: 4}}
                   .cell(column="CPC") {{row.cpc | number: 4}}

@@ -94,6 +94,17 @@ angular.module("Mac").directive "macTable", [
             $scope.displayRows = $scope.data[index..endIndex]
 
         #
+        # @name getTemplateCell
+        # @description
+        # Get the correct template cell transcluded block
+        # @params {String} section Either header, body or footer (default "")
+        # @params {String} column Column needed                  (default "")
+        #
+        getTemplateCell = (section = "", column = "") ->
+          templateSelector = """.table-#{section}-template .cell[column="#{column}"]"""
+          $(templateSelector, transcludedBlock)
+
+        #
         # @name createCellTemplate
         # @description
         # Get the template cell user has defined in template, create empty cell if not found
@@ -102,19 +113,24 @@ angular.module("Mac").directive "macTable", [
         # @params {String} section Either header, body or footer (default "")
         # @params {String} column Column needed                  (default "")
         #
-        createCellTemplate = (section="", column="")->
-          templateSelector = """.table-#{section}-template .cell[column="#{column}"]"""
-          templateCell     = $(templateSelector, transcludedBlock).clone()
-          templateCell     = emptyCell.clone() if templateCell.length is 0
+        createCellTemplate = (section="", column="") ->
+          templateCell = getTemplateCell(section, column).clone()
+          templateCell = emptyCell.clone() if templateCell.length is 0
 
           # Set column property again
           templateCell.prop "column", column
 
-          # Calculate the relative width of each cell
-          calculatedWidth = (opts.width / numColumns) - opts.cellPadding * 2 - opts.borderWidth
+          # Original width of the cell set in the template
+          origWidth = templateCell.width()
 
-          # Use minimum width if the relative width is too small
-          width = Math.max calculatedWidth, opts.columnWidth
+          if origWidth is 0
+            # Calculate the relative width of each cell
+            calculatedWidth = (opts.width / numColumns) - opts.cellPadding * 2 - opts.borderWidth
+
+            # Use minimum width if the relative width is too small
+            width = Math.max calculatedWidth, opts.columnWidth
+          else
+            width = origWidth
 
           templateCell.css
             padding: opts.cellPadding
@@ -133,12 +149,18 @@ angular.module("Mac").directive "macTable", [
         createHeaderCellTemplate = (column = "") ->
           cell        = createCellTemplate "header", column
           contextText = cell.text()
+
+          #Check if body cell has set width
+          bodyCell      = getTemplateCell "body", column
+          bodyCellWidth = bodyCell.width()
+
           cell
             .text(if contextText.length is 0 then column else contextText)
             .attr("for", column)
             .append $("<span>").attr
                                   "ng-show": "predicate == '#{column.toLowerCase()}'"
                                   "class": """caret {{reverse | boolean:"up":"down"}}"""
+          cell.width bodyCellWidth unless bodyCellWidth is 0
 
           return cell
 

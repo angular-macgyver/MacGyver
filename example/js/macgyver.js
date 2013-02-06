@@ -17977,7 +17977,7 @@ angular.module("Mac").directive("macTable", [
           width: opts.width - 2 * opts.borderWidth
         });
         return function($scope, element, attrs) {
-          var addOrderByFunction, createCellTemplate, createHeaderCellTemplate, numColumns, numDisplayRows;
+          var addOrderByFunction, createCellTemplate, createHeaderCellTemplate, getTemplateCell, numColumns, numDisplayRows;
           if ($scope.columns == null) {
             throw "Table view missing columns";
           }
@@ -17992,8 +17992,8 @@ angular.module("Mac").directive("macTable", [
               return $scope.displayRows = $scope.data.slice(index, +endIndex + 1 || 9e9);
             }
           });
-          createCellTemplate = function(section, column) {
-            var calculatedWidth, templateCell, templateSelector, width;
+          getTemplateCell = function(section, column) {
+            var templateSelector;
             if (section == null) {
               section = "";
             }
@@ -18001,13 +18001,28 @@ angular.module("Mac").directive("macTable", [
               column = "";
             }
             templateSelector = ".table-" + section + "-template .cell[column=\"" + column + "\"]";
-            templateCell = $(templateSelector, transcludedBlock).clone();
+            return $(templateSelector, transcludedBlock);
+          };
+          createCellTemplate = function(section, column) {
+            var calculatedWidth, origWidth, templateCell, width;
+            if (section == null) {
+              section = "";
+            }
+            if (column == null) {
+              column = "";
+            }
+            templateCell = getTemplateCell(section, column).clone();
             if (templateCell.length === 0) {
               templateCell = emptyCell.clone();
             }
             templateCell.prop("column", column);
-            calculatedWidth = (opts.width / numColumns) - opts.cellPadding * 2 - opts.borderWidth;
-            width = Math.max(calculatedWidth, opts.columnWidth);
+            origWidth = templateCell.width();
+            if (origWidth === 0) {
+              calculatedWidth = (opts.width / numColumns) - opts.cellPadding * 2 - opts.borderWidth;
+              width = Math.max(calculatedWidth, opts.columnWidth);
+            } else {
+              width = origWidth;
+            }
             templateCell.css({
               padding: opts.cellPadding,
               height: opts.rowHeight,
@@ -18016,16 +18031,21 @@ angular.module("Mac").directive("macTable", [
             return templateCell;
           };
           createHeaderCellTemplate = function(column) {
-            var cell, contextText;
+            var bodyCell, bodyCellWidth, cell, contextText;
             if (column == null) {
               column = "";
             }
             cell = createCellTemplate("header", column);
             contextText = cell.text();
+            bodyCell = getTemplateCell("body", column);
+            bodyCellWidth = bodyCell.width();
             cell.text(contextText.length === 0 ? column : contextText).attr("for", column).append($("<span>").attr({
               "ng-show": "predicate == '" + (column.toLowerCase()) + "'",
               "class": "caret {{reverse | boolean:\"up\":\"down\"}}"
             }));
+            if (bodyCellWidth !== 0) {
+              cell.width(bodyCellWidth);
+            }
             return cell;
           };
           addOrderByFunction = function(column) {
