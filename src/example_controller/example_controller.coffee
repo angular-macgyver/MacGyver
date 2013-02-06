@@ -43,7 +43,7 @@ module.controller "ExampleController", ["$scope", ($scope) ->
   $scope.extraTagInputs  = [{"name": "United States", "id": "123"},{"name": "United Kingdom", "id": "234"},{"name": "United Arab Emirates", "id": "345"}]
 
   # Selected option tags
-  $scope.selected        = []
+  $scope.selected        = [{"name": "United States", "id": "123"}]
 
   # File Uploader handling
   $scope.uploadRoute          = "/test_upload"

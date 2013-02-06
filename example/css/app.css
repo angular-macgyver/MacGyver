@@ -2136,7 +2136,7 @@ i.icon-fb-comment {
 }
 .table-container {
   border: 1px solid #ddd;
-  overflow-x: hidden;
+  overflow: hidden;
   position: relative;
 }
 .table-container .table-row {

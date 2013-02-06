@@ -50,16 +50,33 @@ angular.module("Mac").directive "macTagInput", [
       chosenElement = element.chosen(options)
 
       ($scope, element, attr) ->
+        #
+        # @name updateTagInput
+        # @description
+        # To trigger an update on chosen and redraw the widget
+        #
         updateTagInput = ->
           chosenElement.trigger "liszt:updated"
+
+        #
+        # @name updateSelectedOptions
+        # @description
+        # Add selected property to selected options
+        #
+        updateSelectedOptions = ->
+          selectedValues = _($scope.selected).pluck valueKey
+          $("option", element).each (i, e) ->
+            $(e).prop("selected", "selected") if $(e).val() in selectedValues
 
         $scope.$on "update-tag-input", -> updateTagInput()
 
         $scope.$watch "items", ->
           setTimeout (->
+            updateSelectedOptions()
             updateTagInput()
           ), 0
 
+        # Called when user either add or remove a tag
         chosenElement.change (event, object)->
           $scope.$apply ->
             if object.selected?

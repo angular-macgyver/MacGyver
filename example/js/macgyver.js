@@ -18302,6 +18302,7 @@ angular.module("Mac").directive("macTagAutocomplete", [
     };
   }
 ]);
+var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 angular.module("Mac").directive("macTagInput", [
   "$rootScope", "$parse", function($rootScope, $parse) {
@@ -18330,15 +18331,26 @@ angular.module("Mac").directive("macTagInput", [
         }
         chosenElement = element.chosen(options);
         return function($scope, element, attr) {
-          var updateTagInput;
+          var updateSelectedOptions, updateTagInput;
           updateTagInput = function() {
             return chosenElement.trigger("liszt:updated");
+          };
+          updateSelectedOptions = function() {
+            var selectedValues;
+            selectedValues = _($scope.selected).pluck(valueKey);
+            return $("option", element).each(function(i, e) {
+              var _ref;
+              if (_ref = $(e).val(), __indexOf.call(selectedValues, _ref) >= 0) {
+                return $(e).prop("selected", "selected");
+              }
+            });
           };
           $scope.$on("update-tag-input", function() {
             return updateTagInput();
           });
           $scope.$watch("items", function() {
             return setTimeout((function() {
+              updateSelectedOptions();
               return updateTagInput();
             }), 0);
           });
@@ -18567,7 +18579,12 @@ module.controller("ExampleController", [
         "id": "345"
       }
     ];
-    $scope.selected = [];
+    $scope.selected = [
+      {
+        "name": "United States",
+        "id": "123"
+      }
+    ];
     $scope.uploadRoute = "/test_upload";
     $scope.fileUploaderEndabled = true;
     $scope.fileUploadSubmit = function($event, $response) {
