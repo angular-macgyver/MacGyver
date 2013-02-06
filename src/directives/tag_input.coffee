@@ -55,7 +55,10 @@ angular.module("Mac").directive "macTagInput", [
 
         $scope.$on "update-tag-input", -> updateTagInput()
 
-        $scope.$watch "items", -> updateTagInput()
+        $scope.$watch "items", ->
+          setTimeout (->
+            updateTagInput()
+          ), 0
 
         # Update tag input after adding new option DOM element
         setTimeout (->

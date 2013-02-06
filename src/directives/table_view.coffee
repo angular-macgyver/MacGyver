@@ -227,6 +227,11 @@ angular.module("Mac").directive "macTable", [
                   newOrder.push $(e).prop "column"
                 $scope.$apply -> $scope.columns = newOrder
 
+                setTimeout (->
+                  bodyBlock.scrollLeft headerBlock.scrollLeft()
+                ), 0
+
+
         #
         # @name $scope.drawFooter
         # @description
@@ -337,7 +342,7 @@ angular.module("Mac").directive "macTable", [
           $this      = $(this)
           scrollLeft = $this.scrollLeft()
 
-          headerRow.css "margin-left", $scope.headerLeftMargin - scrollLeft
+          headerBlock.scrollLeft scrollLeft
 
         #
         # @name $scope.reset

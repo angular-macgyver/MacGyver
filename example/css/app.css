@@ -2159,6 +2159,8 @@ i.icon-fb-comment {
   background: #fff -ms-linear-gradient(top, #fff 0%, #e6e6e6 100%);
   background: #fff linear-gradient(top, #fff 0%, #e6e6e6 100%);
   border-bottom: solid 1px #bebebe;
+  overflow-x: hidden;
+  width: 100%;
 }
 .table-container .table-header .table-row:first-child .cell {
   border-top: 0;
