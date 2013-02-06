@@ -14,7 +14,7 @@
 ## - mac-tag-input-placeholder: placeholder text for tag input                    (default "")
 ## - mac-tag-input-no-result:   custom text when there is no search result
 ## - mac-tag-input-value:       the value to be sent back upon selection          (default "id")
-## - mac-tag-input-label:       the label to display to the users
+## - mac-tag-input-label:       the label to display to the users                 (default "name")
 ##
 
 angular.module("Mac").directive "macTagInput", [
@@ -33,7 +33,7 @@ angular.module("Mac").directive "macTagInput", [
       placeholder = attr.macTagInputPlaceholder or ""
       noResult    = attr.macTagInputNoResult
       valueKey    = attr.macTagInputValue       or "id"
-      textKey     = attr.macTagInputLabel
+      textKey     = attr.macTagInputLabel       or "name"
       options     = {}
 
       element.attr "data-placeholder", placeholder
@@ -54,6 +54,8 @@ angular.module("Mac").directive "macTagInput", [
           chosenElement.trigger "liszt:updated"
 
         $scope.$on "update-tag-input", -> updateTagInput()
+
+        $scope.$watch "items", -> updateTagInput()
 
         # Update tag input after adding new option DOM element
         setTimeout (->
