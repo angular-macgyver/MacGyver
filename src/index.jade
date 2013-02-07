@@ -44,6 +44,19 @@ html
                 mac-tag-autocomplete-placeholder = "tagAutocompletePlaceholder"
               )
 
+            h2 Example with autocomplete disabled
+            .docs-example
+              mac-tag-autocomplete(
+                mac-tag-autocomplete-url         = "autocompleteUrl"
+                mac-tag-autocomplete-query       = "q"
+                mac-tag-autocomplete-selected    = "tagAutocompleteDisabledSelected"
+                mac-tag-autocomplete-placeholder = "tagAutocompletePlaceholder"
+                mac-tag-autocomplete-value       = "key"
+                mac-tag-autocomplete-label       = "key"
+                mac-tag-autocomplete-disabled    = "true"
+                mac-tag-autocomplete-on-enter    = "tagAutocompleteOnSelected(item)"
+              )
+
           section
             .page-header: h1 Datepicker
             h2 Example

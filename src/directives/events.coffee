@@ -21,7 +21,7 @@ for event in ["Blur", "Focus", "Keydown", "Keyup", "Mouseenter", "Mouseleave"]
 
 for key in ["Enter", "Escape", "Space", "Left", "Up", "Right", "Down"]
   do (key) ->
-    angular.module("Mac").directive "macKeydown#{key}", ["$parse", "Mac.keys", ($parse, keys) ->
+    angular.module("Mac").directive "macKeydown#{key}", ["$parse", "keys", ($parse, keys) ->
       restrict: "A"
       link: (scope, element, attributes) ->
         expression = $parse attributes["macKeydown#{key}"]

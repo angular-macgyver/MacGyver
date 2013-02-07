@@ -16,6 +16,11 @@
 ## - mac-tag-autocomplete-query:       the query parameter on GET command                      (defualt "q")
 ## - mac-tag-autocomplete-delay:       time delayed on fetching autocomplete data after keyup  (default 800)
 ## - mac-tag-autocomplete-placeholder: Placeholder text of the text input                      (default "")
+## - mac-tag-autocomplete-disabled:    If autocomplete is enabled or disabled                  (default false)
+## - mac-tag-autocomplete-on-enter:    When autocomplete is disabled, this function is called on enter
+##                                     Should return either string, object or boolean. If false, item is not added
+##                                       @params {String} item User input
+##
 ##
 
 angular.module("Mac").directive "macTagAutocomplete", [
@@ -25,27 +30,32 @@ angular.module("Mac").directive "macTagAutocomplete", [
   ($parse, $http, key) ->
     restrict:    "E"
     scope:
-      autocompleteUrl:   "=macTagAutocompleteUrl"
-      autocompleteValue: "=macTagAutocompleteValue"
-      autocompleteLabel: "=macTagAutocompleteLabel"
-      autocompleteQuery: "=macTagAutocompleteQuery"
-      autocompleteDelay: "=macTagAutocompleteDelay"
-      placeholder:       "=macTagAutocompletePlaceholder"
+      autocompleteUrl:      "=macTagAutocompleteUrl"
+      autocompleteValue:    "=macTagAutocompleteValue"
+      autocompleteLabel:    "=macTagAutocompleteLabel"
+      autocompleteQuery:    "=macTagAutocompleteQuery"
+      autocompleteDelay:    "=macTagAutocompleteDelay"
+      placeholder:          "=macTagAutocompletePlaceholder"
+      disabled:             "=macTagAutocompleteDisabled"
+      autocompleteOnEnter:  "&macTagAutocompleteOnEnter"
 
     templateUrl: "template/tag_autocomplete.html"
     replace:     true
 
     compile: (element, attr) ->
-      valueKey    = attr.macTagAutocompleteValue    or "id"
-      labelKey    = attr.macTagAutocompleteLabel    or "name"
+      valueKey    = attr.macTagAutocompleteValue
+      valueKey   ?= "id"
+      labelKey    = attr.macTagAutocompleteLabel
+      labelKey   ?= "name"
       queryKey    = attr.macTagAutocompleteQuery    or "q"
       delay       = +attr.macTagAutocompleteDelay   or 800
       selectedExp = attr.macTagAutocompleteSelected
+      disabled    = attr.macTagAutocompleteDisabled or false
 
       getSelected = $parse selectedExp
 
       # Update template on label variable name
-      tagLabelKey = if labelKey? then ".#{labelKey}" else ""
+      tagLabelKey = if labelKey is "" then labelKey else ".#{labelKey}"
       $(".tag-label", element).text "{{tag#{tagLabelKey}}}"
 
       $(".text-input", element).attr
@@ -56,6 +66,13 @@ angular.module("Mac").directive "macTagAutocomplete", [
         "mac-autocomplete-placeholder": "placeholder"
 
       ($scope, element, attrs) ->
+        if $scope.disabled
+          $(".no-complete", element)
+            .on "keydown", (event) ->
+              $scope.onKeyDown event, $scope.textInput
+            .attr
+              "placeholder": $scope.placeholder
+
         # Getting autocomplete url from parent scope
         Object.defineProperty $scope, "tags",
           get:         -> getSelected $scope.$parent
@@ -79,6 +96,12 @@ angular.module("Mac").directive "macTagAutocomplete", [
             when key.BACKSPACE
               if value.length is 0
                 $scope.$apply -> $scope.tags.pop()
+            when key.ENTER
+              # Used when autocomplete is not needed
+              if value.length > 0 and $scope.disabled
+                $scope.$apply ->
+                  $scope.textInput = ""
+                  $scope.onSelect value
           return true
 
         $scope.onSuccess = (data) ->
@@ -88,5 +111,9 @@ angular.module("Mac").directive "macTagAutocomplete", [
           return _(data.data).reject (item) -> (item[valueKey] or item) in existingValues
 
         $scope.onSelect = (item) ->
-          $scope.tags.push item
+          item = $scope.autocompleteOnEnter {item} if attrs.macTagAutocompleteOnEnter?
+          $scope.tags.push item if item
+
+        $scope.reset = ->
+          $scope.textInput = ""
 ]

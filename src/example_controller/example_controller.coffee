@@ -31,9 +31,13 @@ module.controller "ExampleController", ["$scope", ($scope) ->
   $scope.autocompleteUrl = "data.json"
 
   # Selected tags in tag autocomplete
-  $scope.tagAutocompleteSelected = []
+  $scope.tagAutocompleteSelected         = []
+  $scope.tagAutocompleteDisabledSelected = []
 
   $scope.tagAutocompletePlaceholder = "Hello"
+
+  $scope.tagAutocompleteOnSelected = (item) ->
+    return {key: item}
 
   # Blur section
   # Called with blur directive on blur
