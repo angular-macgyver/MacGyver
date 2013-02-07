@@ -19,6 +19,26 @@ for event in ["Blur", "Focus", "Keydown", "Keyup", "Mouseenter", "Mouseleave"]
           true
     ]
 
+#
+# @type directive
+# @name macParentClick
+# @description
+# macParentClick allows you to specify custom behavior on parent scope
+# when element is clicked
+#
+# @attributes
+# - mac-parent-click: function called on user click
+#                       @params {Object} $event Click event
+#
+angular.module("Mac").directive "macParentClick", ["$parse", ($parse) ->
+  link: ($scope, element, attr) ->
+    fn = $parse attr.macParentClick
+    return unless $scope.$parent?
+    element.bind "click", (event) ->
+      $scope.$apply ->
+        fn $scope.$parent, {$event: event}
+]
+
 for key in ["Enter", "Escape", "Space", "Left", "Up", "Right", "Down"]
   do (key) ->
     angular.module("Mac").directive "macKeydown#{key}", ["$parse", "keys", ($parse, keys) ->
