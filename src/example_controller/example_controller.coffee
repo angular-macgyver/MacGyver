@@ -33,6 +33,8 @@ module.controller "ExampleController", ["$scope", ($scope) ->
   # Selected tags in tag autocomplete
   $scope.tagAutocompleteSelected = []
 
+  $scope.tagAutocompletePlaceholder = "Hello"
+
   # Blur section
   # Called with blur directive on blur
   $scope.onTextBlur = () ->

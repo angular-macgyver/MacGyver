@@ -44,6 +44,7 @@ angular.module("Mac").directive "macAutocomplete", [
       onSuccess:       "&macAutocompleteOnSuccess"
       onError:         "&macAutocompleteOnError"
       onKeyDown:       "&macAutocompleteOnKeyDown"
+      placeholder:     "=macAutocompletePlaceholder"
 
     compile: (element, attrs) ->
       valueKey      = attrs.macAutocompleteValue       or "id"
@@ -51,12 +52,11 @@ angular.module("Mac").directive "macAutocomplete", [
       queryKey      = attrs.macAutocompleteQuery       or "q"
       delay         = +attrs.macAutocompleteDelay      or 800
       clearOnSelect = attrs.macAutocompleteClearOnSelect is "true"
-      placeholder   = attrs.macAutocompletePlaceholder or ""
-
-      # Set the placeholder
-      element.attr "placeholder", placeholder
 
       ($scope, element, attrs) ->
+        # Set the placeholder
+        element.attr "placeholder", $scope.placeholder
+
         if attrs.macAutocompleteOnKeyDown
           element.bind "keydown", (event) ->
             $scope.onKeyDown {event, value: $(this).val()}

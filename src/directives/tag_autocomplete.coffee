@@ -30,17 +30,17 @@ angular.module("Mac").directive "macTagAutocomplete", [
       autocompleteLabel: "=macTagAutocompleteLabel"
       autocompleteQuery: "=macTagAutocompleteQuery"
       autocompleteDelay: "=macTagAutocompleteDelay"
+      placeholder:       "=macTagAutocompletePlaceholder"
 
     templateUrl: "template/tag_autocomplete.html"
     replace:     true
 
     compile: (element, attr) ->
-      valueKey    = attr.macTagAutocompleteValue       or "id"
-      labelKey    = attr.macTagAutocompleteLabel       or "name"
-      queryKey    = attr.macTagAutocompleteQuery       or "q"
-      delay       = +attr.macTagAutocompleteDelay      or 800
+      valueKey    = attr.macTagAutocompleteValue    or "id"
+      labelKey    = attr.macTagAutocompleteLabel    or "name"
+      queryKey    = attr.macTagAutocompleteQuery    or "q"
+      delay       = +attr.macTagAutocompleteDelay   or 800
       selectedExp = attr.macTagAutocompleteSelected
-      placeholder = attr.macTagAutocompletePlaceholder or ""
 
       getSelected = $parse selectedExp
 
@@ -53,7 +53,7 @@ angular.module("Mac").directive "macTagAutocomplete", [
         "mac-autocomplete-label":       labelKey
         "mac-autocomplete-query":       queryKey
         "mac-autocomplete-delay":       delay
-        "mac-autocomplete-placeholder": placeholder
+        "mac-autocomplete-placeholder": "placeholder"
 
       ($scope, element, attrs) ->
         # Getting autocomplete url from parent scope
