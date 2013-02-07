@@ -17626,6 +17626,27 @@ for (_i = 0, _len = _ref.length; _i < _len; _i++) {
   _fn(event);
 }
 
+angular.module("Mac").directive("macParentClick", [
+  "$parse", function($parse) {
+    return {
+      link: function($scope, element, attr) {
+        var fn;
+        fn = $parse(attr.macParentClick);
+        if ($scope.$parent == null) {
+          return;
+        }
+        return element.bind("click", function(event) {
+          return $scope.$apply(function() {
+            return fn($scope.$parent, {
+              $event: event
+            });
+          });
+        });
+      }
+    };
+  }
+]);
+
 _ref1 = ["Enter", "Escape", "Space", "Left", "Up", "Right", "Down"];
 _fn1 = function(key) {
   return angular.module("Mac").directive("macKeydown" + key, [
@@ -17938,6 +17959,7 @@ angular.module("Mac").directive("macTable", [
       restrict: "EA",
       scope: {
         data: "=macTableData",
+        totalData: "=macTableTotalData",
         columns: "=macTableColumns",
         lockTitleColumn: "@macTableLockFirstColumn"
       },
@@ -17945,10 +17967,11 @@ angular.module("Mac").directive("macTable", [
       transclude: true,
       templateUrl: "/template/table_view.html",
       compile: function(element, attrs, transclude) {
-        var bodyBackground, bodyBlock, bodyHeightBlock, bodyWrapperBlock, cellOuterHeight, defaults, emptyCell, firstColumn, footerBlock, headerBlock, headerRow, opts, transcludedBlock;
+        var bodyBackground, bodyBlock, bodyHeightBlock, bodyWrapperBlock, cellOuterHeight, customFooterRow, customRow, defaults, emptyCell, firstColumn, footerBlock, headerBlock, headerRow, opts, totalRow, totalRows, transcludedBlock;
         defaults = {
           hasHeader: true,
-          hasFooter: true,
+          hasTotalFooter: false,
+          hasFooter: false,
           width: 800,
           columnWidth: 140,
           rowHeight: 20,
@@ -17959,7 +17982,8 @@ angular.module("Mac").directive("macTable", [
           resizable: false,
           lockFirstColumn: false,
           allowReorder: true,
-          objectPrefix: ""
+          objectPrefix: "",
+          calculateTotalLocally: false
         };
         transcludedBlock = $(".table-transclude", element);
         headerBlock = $(".table-header", element);
@@ -17969,16 +17993,21 @@ angular.module("Mac").directive("macTable", [
         bodyBlock = $(".table-body", element);
         bodyHeightBlock = $(".table-body-height", element);
         footerBlock = $(".table-footer", element);
+        totalRow = $(".total-footer-row", footerBlock);
+        customRow = $(".custom-footer-row", footerBlock);
+        customFooterRow = $(".custom-footer-row", footerBlock);
         bodyBackground = $(".table-body-background", element);
         emptyCell = $("<div>").addClass("cell");
         opts = util.extendAttributes("macTable", defaults, attrs);
         cellOuterHeight = opts.rowHeight + opts.cellPadding * 2;
+        totalRows = opts.numDisplayRows;
+        totalRows += opts.hasFooter + opts.hasTotalFooter;
         element.css({
-          height: cellOuterHeight * opts.numDisplayRows,
+          height: cellOuterHeight * totalRows,
           width: opts.width - 2 * opts.borderWidth
         });
         return function($scope, element, attrs) {
-          var addOrderByFunction, createCellTemplate, createHeaderCellTemplate, getTemplateCell, numColumns, numDisplayRows;
+          var createCellTemplate, createHeaderCellTemplate, getTemplateCell, numColumns, numDisplayRows;
           if ($scope.columns == null) {
             throw "Table view missing columns";
           }
@@ -17990,7 +18019,17 @@ angular.module("Mac").directive("macTable", [
               scrollTop = bodyWrapperBlock.scrollTop();
               index = Math.floor(scrollTop / cellOuterHeight);
               endIndex = index + numDisplayRows - 1;
-              return $scope.displayRows = $scope.data.slice(index, +endIndex + 1 || 9e9);
+              $scope.displayRows = $scope.data.slice(index, +endIndex + 1 || 9e9);
+              if (opts.calculateTotalLocally) {
+                return $scope.calculateTotal();
+              }
+            }
+          });
+          Object.defineProperty($scope, "total", {
+            get: function() {
+              var totalKey;
+              totalKey = opts.calculateTotalLocally ? "localTotal" : "totalData";
+              return $scope[totalKey];
             }
           });
           getTemplateCell = function(section, column) {
@@ -18005,7 +18044,7 @@ angular.module("Mac").directive("macTable", [
             return $(templateSelector, transcludedBlock);
           };
           createCellTemplate = function(section, column) {
-            var calculatedWidth, origWidth, templateCell, width;
+            var bodyCell, calculatedWidth, setWidth, templateCell, width;
             if (section == null) {
               section = "";
             }
@@ -18017,12 +18056,17 @@ angular.module("Mac").directive("macTable", [
               templateCell = emptyCell.clone();
             }
             templateCell.prop("column", column);
-            origWidth = templateCell.width();
-            if (origWidth === 0) {
+            if (section === "body") {
+              setWidth = templateCell.width();
+            } else {
+              bodyCell = getTemplateCell("body", column);
+              setWidth = bodyCell.width();
+            }
+            if (setWidth === 0) {
               calculatedWidth = (opts.width / numColumns) - opts.cellPadding * 2 - opts.borderWidth;
               width = Math.max(calculatedWidth, opts.columnWidth);
             } else {
-              width = origWidth;
+              width = setWidth;
             }
             templateCell.css({
               padding: opts.cellPadding,
@@ -18032,65 +18076,86 @@ angular.module("Mac").directive("macTable", [
             return templateCell;
           };
           createHeaderCellTemplate = function(column) {
-            var bodyCell, bodyCellWidth, cell, contextText;
+            var cell, cellClass, contextText;
             if (column == null) {
               column = "";
             }
             cell = createCellTemplate("header", column);
             contextText = cell.text();
-            bodyCell = getTemplateCell("body", column);
-            bodyCellWidth = bodyCell.width();
-            cell.text(contextText.length === 0 ? column : contextText).attr("for", column).append($("<span>").attr({
-              "ng-show": "predicate == '" + (column.toLowerCase()) + "'",
-              "class": "caret {{reverse | boolean:\"up\":\"down\"}}"
-            }));
-            if (bodyCellWidth !== 0) {
-              cell.width(bodyCellWidth);
+            cellClass = "caret {{$parent.$parent.reverse | boolean:\"up\":\"down\"}} ";
+            cellClass += "{{$parent.$parent.predicate == column.toLowerCase() | false:'hide'}}";
+            if (contextText.length === 0) {
+              cell.text(column);
             }
+            cell.attr("for", column).append($("<span>").attr("class", cellClass));
             return cell;
           };
-          addOrderByFunction = function(column) {
-            return column.on("click", function(event) {
-              var columnTitle;
-              columnTitle = opts.objectPrefix + $(this).attr("for").toLowerCase();
-              return $scope.$apply(function() {
-                if (columnTitle === $scope.predicate) {
-                  return $scope.reverse = !$scope.reverse;
-                } else {
-                  $scope.predicate = columnTitle;
-                  return $scope.reverse = false;
+          $scope.orderBy = function(column) {
+            var columnTitle;
+            columnTitle = column.toLowerCase();
+            if (opts.objectPrefix) {
+              columnTitle = opts.objectPrefix + "." + columnTitle;
+            }
+            if (columnTitle === $scope.predicate) {
+              return $scope.reverse = !$scope.reverse;
+            } else {
+              $scope.predicate = columnTitle;
+              return $scope.reverse = false;
+            }
+          };
+          $scope.calculateTotal = function() {
+            return $scope.localTotal = _($scope.data).reduce(function(memo, row) {
+              var key, value, _ref;
+              if (opts.objectPrefix) {
+                row = row[opts.objectPrefix];
+              }
+              for (key in row) {
+                value = row[key];
+                if ((_ref = memo[key]) == null) {
+                  memo[key] = 0;
                 }
-              });
-            });
+                memo[key] += isNaN(value) ? 0 : +value;
+              }
+              return memo;
+            }, {});
           };
           $scope.drawHeader = function() {
-            var column, fcTemplateCell, rowWidth, startIndex, templateColumn, _i, _len, _ref;
+            var column, columnName, fcTemplateCell, rowWidth, startIndex, tableCell, templateCell, _i, _len, _ref;
             rowWidth = 0;
             startIndex = opts.lockFirstColumn ? 1 : 0;
+            tableCell = $("<div>").addClass("table-header-cell").attr({
+              "ng-switch": "",
+              "on": "column",
+              "ng-repeat": "column in columns",
+              "data-column": "{{column}}"
+            });
+            if (opts.allowReorder) {
+              tableCell.attr("ng-click", "orderBy(column)");
+            }
+            if (opts.resizable) {
+              tableCell.resizable({
+                containment: "parent",
+                minHeight: opts.rowHeight,
+                maxHeight: opts.rowHeight,
+                handles: "e, w"
+              }).addClass("resizable");
+            }
             _ref = $scope.columns.slice(startIndex);
             for (_i = 0, _len = _ref.length; _i < _len; _i++) {
               column = _ref[_i];
-              templateColumn = createHeaderCellTemplate(column);
-              rowWidth += templateColumn.outerWidth() + opts.borderWidth;
-              if (opts.allowReorder) {
-                addOrderByFunction(templateColumn);
-              }
-              if (opts.resizable) {
-                templateColumn.resizable({
-                  containment: "parent",
-                  minHeight: opts.rowHeight,
-                  maxHeight: opts.rowHeight,
-                  handles: "e, w"
-                }).addClass("resizable");
-              }
-              headerRow.append(templateColumn);
+              templateCell = createHeaderCellTemplate(column);
+              templateCell.attr("ng-switch-when", column);
+              tableCell.append(templateCell);
+              rowWidth += templateCell.outerWidth() + opts.borderWidth;
             }
+            headerRow.append(tableCell).width(rowWidth);
             $compile(headerRow)($scope);
-            headerRow.width(rowWidth);
             if (opts.lockFirstColumn) {
+              columnName = $scope.columns[0];
               fcTemplateCell = createHeaderCellTemplate($scope.columns[0]);
-              fcTemplateCell.addClass("locked-cell");
-              addOrderByFunction(fcTemplateCell);
+              fcTemplateCell.addClass("locked-cell").attr({
+                "ng-click": "orderBy('" + columnName + "')"
+              });
               headerBlock.prepend(fcTemplateCell);
               headerRow.css({
                 "margin-left": fcTemplateCell.outerWidth()
@@ -18099,16 +18164,15 @@ angular.module("Mac").directive("macTable", [
             }
             if (opts.sortable) {
               return headerRow.sortable({
-                items: "> .cell",
+                items: "> .table-header-cell",
                 cursor: "move",
-                containment: "parent",
                 opacity: 0.8,
                 tolerance: "pointer",
                 update: function(event, ui) {
                   var newOrder;
                   newOrder = [];
-                  $(".cell", headerRow).each(function(i, e) {
-                    return newOrder.push($(e).prop("column"));
+                  $(".table-header-cell", headerRow).each(function(i, e) {
+                    return newOrder.push($(e).data("column"));
                   });
                   $scope.$apply(function() {
                     return $scope.columns = newOrder;
@@ -18120,7 +18184,36 @@ angular.module("Mac").directive("macTable", [
               });
             }
           };
-          $scope.drawFooter = function() {};
+          $scope.drawTotalFooter = function() {
+            var column, rowWidth, startIndex, tableCell, templateCell, _i, _len, _ref;
+            rowWidth = 0;
+            startIndex = opts.lockFirstColumn ? 1 : 0;
+            tableCell = $("<div>").addClass("table-total-footer-cell").attr({
+              "ng-switch": "",
+              "on": "column",
+              "ng-repeat": "column in columns",
+              "data-column": "{{column}}"
+            });
+            _ref = $scope.columns.slice(startIndex);
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              column = _ref[_i];
+              templateCell = createCellTemplate("total-footer", column);
+              templateCell.attr("ng-switch-when", column);
+              tableCell.append(templateCell);
+              rowWidth += templateCell.outerWidth() + opts.borderWidth;
+            }
+            totalRow.append(tableCell).width(rowWidth);
+            return $compile(totalRow)($scope);
+          };
+          $scope.drawFooter = function() {
+            var footerTemplate;
+            footerTemplate = $(".table-footer-template", transcludedBlock);
+            customRow.html(footerTemplate.html()).css({
+              "height": opts.rowHeight,
+              "padding": opts.cellPadding
+            });
+            return $compile(customRow)($scope);
+          };
           $scope.calculateBodyDimension = function() {
             var data;
             data = $scope.data || [];
@@ -18195,19 +18288,32 @@ angular.module("Mac").directive("macTable", [
             var $this, scrollLeft;
             $this = $(this);
             scrollLeft = $this.scrollLeft();
-            return headerBlock.scrollLeft(scrollLeft);
+            if (opts.hasHeader) {
+              headerBlock.scrollLeft(scrollLeft);
+            }
+            if (opts.hasFooter) {
+              return footerBlock.scrollLeft(scrollLeft);
+            }
           });
           $scope.reset = function() {
+            var objectPrefix;
             $scope.displayRows = [];
             $scope.index = 0;
             $scope.headerLeftMargin = 0;
-            $scope.predicate = $scope.columns.length > 0 ? "" + opts.objectPrefix + ($scope.columns[0].toLowerCase()) : "";
+            objectPrefix = opts.objectPrefix ? "" + opts.objectPrefix + "." : "";
+            $scope.predicate = $scope.columns.length > 0 ? "" + objectPrefix + ($scope.columns[0].toLowerCase()) : "";
             $scope.reverse = false;
             if (opts.hasHeader) {
               $scope.drawHeader();
             }
             $scope.calculateBodyDimension();
             $scope.drawBody();
+            if (opts.calculateTotalLocally) {
+              $scope.calculateTotal();
+            }
+            if (opts.hasTotalFooter) {
+              $scope.drawTotalFooter();
+            }
             if (opts.hasFooter) {
               return $scope.drawFooter();
             }
@@ -18590,11 +18696,20 @@ module.controller("ExampleController", [
         cpc: Math.random(),
         created: (new Date()).getTime(),
         attributes: {
+          name: "Test " + i,
           abc: Math.random() * 1000
         }
       };
       $scope.data.push(obj);
     }
+    $scope.createCampaign = function(event) {
+      event.stopPropagation();
+      return console.log("Creating Campaign");
+    };
+    $scope.loadMoreCampaigns = function() {
+      event.stopPropagation();
+      return alert("Loading 20 more campaigns");
+    };
     $scope.columnOrder = ["Name", "Clicks", "CPC", "CPM", "Spent", "Created"];
     $scope.onSuccess = function(data) {
       return data.data;

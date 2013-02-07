@@ -16,9 +16,18 @@ module.controller "ExampleController", ["$scope", ($scope) ->
       cpc: Math.random()
       created: (new Date()).getTime()
       attributes:
+        name: "Test " + i
         abc: Math.random() * 1000
 
     $scope.data.push obj
+
+  $scope.createCampaign = (event) ->
+    event.stopPropagation()
+    console.log "Creating Campaign"
+
+  $scope.loadMoreCampaigns = ->
+    event.stopPropagation()
+    alert "Loading 20 more campaigns"
 
   # Columns to display and their order
   $scope.columnOrder = ["Name", "Clicks", "CPC", "CPM", "Spent", "Created"]
@@ -41,7 +50,7 @@ module.controller "ExampleController", ["$scope", ($scope) ->
 
   # Blur section
   # Called with blur directive on blur
-  $scope.onTextBlur = () ->
+  $scope.onTextBlur = ->
     alert "You just blurred out of text input"
 
   # Tag input section

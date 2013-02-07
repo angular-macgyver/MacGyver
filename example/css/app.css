@@ -2150,7 +2150,8 @@ i.icon-fb-comment {
 .table-container .table-row .table-cell .cell:hover {
   background-color: #f5f5f5;
 }
-.table-container .table-header {
+.table-container .table-header,
+.table-container .table-footer {
   float: left;
   background: #fff -webkit-gradient(linear, left top, left bottom, color-stop(0, #fff), color-stop(1, #e6e6e6));
   background: #fff -webkit-linear-gradient(top, #fff 0%, #e6e6e6 100%);
@@ -2162,10 +2163,37 @@ i.icon-fb-comment {
   overflow-x: hidden;
   width: 100%;
 }
-.table-container .table-header .table-row:first-child .cell {
+.table-container .table-header .table-header-cell,
+.table-container .table-footer .table-header-cell {
+  float: left;
+  position: relative;
+}
+.table-container .table-header .table-header-cell .caret,
+.table-container .table-footer .table-header-cell .caret {
+  vertical-align: middle;
+  cursor: pointer;
+  margin-left: 5px;
+}
+.table-container .table-header .table-header-cell .caret.hide,
+.table-container .table-footer .table-header-cell .caret.hide {
+  display: none;
+}
+.table-container .table-header .table-header-cell .caret.up,
+.table-container .table-footer .table-header-cell .caret.up {
+  border-bottom: 4px solid #000;
+  border-top: transparent;
+}
+.table-container .table-header .table-header-cell .caret.down,
+.table-container .table-footer .table-header-cell .caret.down {
+  border-top: 4px solid #000;
+  border-bottom: transparent;
+}
+.table-container .table-header .table-row:first-child .cell,
+.table-container .table-footer .table-row:first-child .cell {
   border-top: 0;
 }
-.table-container .table-header .locked-cell {
+.table-container .table-header .locked-cell,
+.table-container .table-footer .locked-cell {
   position: absolute;
   background: #fff -webkit-gradient(linear, left top, left bottom, color-stop(0, #fff), color-stop(1, #e6e6e6));
   background: #fff -webkit-linear-gradient(top, #fff 0%, #e6e6e6 100%);
@@ -2174,7 +2202,8 @@ i.icon-fb-comment {
   background: #fff -ms-linear-gradient(top, #fff 0%, #e6e6e6 100%);
   background: #fff linear-gradient(top, #fff 0%, #e6e6e6 100%);
 }
-.table-container .table-header .cell {
+.table-container .table-header .cell,
+.table-container .table-footer .cell {
   text-align: left;
   float: left;
   font-size: 12px;
@@ -2182,24 +2211,17 @@ i.icon-fb-comment {
   -o-text-overflow: ellipsis;
   text-overflow: ellipsis;
 }
-.table-container .table-header .cell.ui-sortable-placeholder {
+.table-container .table-header .cell.ui-sortable-placeholder,
+.table-container .table-footer .cell.ui-sortable-placeholder {
   background-color: #f5f5f5;
 }
-.table-container .table-header .cell.resizable {
+.table-container .table-header .cell.resizable,
+.table-container .table-footer .cell.resizable {
   border-right: 1px solid #000;
 }
-.table-container .table-header .cell .caret {
-  vertical-align: middle;
-  cursor: pointer;
-  margin-left: 5px;
-}
-.table-container .table-header .cell .caret.up {
-  border-bottom: 4px solid #000;
-  border-top: transparent;
-}
-.table-container .table-header .cell .caret.down {
-  border-top: 4px solid #000;
-  border-bottom: transparent;
+.table-container .table-header .cell .btn,
+.table-container .table-footer .cell .btn {
+  float: right;
 }
 .table-container .table-body-wrapper {
   overflow-y: auto;

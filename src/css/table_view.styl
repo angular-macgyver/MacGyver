@@ -22,12 +22,31 @@ border-radius    = 4px
         &:hover
           background-color hover-background
 
-  .table-header
+  .table-header, .table-footer
     float         left
     background    #ffffff linear-gradient(top, #ffffff, #e6e6e6)
     border-bottom solid 1px #bebebe
     overflow-x    hidden
     width         100%
+
+    .table-header-cell
+      float    left
+      position relative
+
+      .caret
+        vertical-align middle
+        cursor         pointer
+        margin-left    5px
+
+        &.hide
+          display none
+
+        &.up
+          border-bottom 4px solid #000
+          border-top    transparent
+        &.down
+          border-top    4px solid #000
+          border-bottom transparent
 
     .table-row:first-child
       .cell
@@ -50,17 +69,8 @@ border-radius    = 4px
       &.resizable
         border-right 1px solid #000000
 
-      .caret
-        vertical-align middle
-        cursor         pointer
-        margin-left 5px
-
-        &.up
-          border-bottom 4px solid #000
-          border-top    transparent
-        &.down
-          border-top    4px solid #000
-          border-bottom transparent
+      .btn
+        float right
 
   .table-body-wrapper
     overflow-y auto
