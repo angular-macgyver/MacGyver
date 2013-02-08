@@ -10,10 +10,10 @@ module.controller "ExampleController", ["$scope", ($scope) ->
   for i in [1..10000]
     obj =
       name: "Test " + i
-      clicks: Math.random() * 100000
-      spent: Math.random() * 10000
-      cpm: Math.random()
-      cpc: Math.random()
+      a: Math.random() * 100000
+      b: Math.random() * 10000
+      c: Math.random()
+      d: Math.random()
       created: (new Date()).getTime()
       attributes:
         name: "Test " + i
@@ -21,16 +21,16 @@ module.controller "ExampleController", ["$scope", ($scope) ->
 
     $scope.data.push obj
 
-  $scope.createCampaign = (event) ->
+  $scope.createRow = (event) ->
     event.stopPropagation()
-    console.log "Creating Campaign"
+    console.log "Creating row"
 
-  $scope.loadMoreCampaigns = ->
+  $scope.loadMoreRows = ->
     event.stopPropagation()
-    alert "Loading 20 more campaigns"
+    alert "Loading 20 more rows"
 
   # Columns to display and their order
-  $scope.columnOrder = ["Name", "Clicks", "CPC", "CPM", "Spent", "Created"]
+  $scope.columnOrder = ["Name", "a", "d", "c", "b", "Created"]
 
   # Autocomplete section
   # Used in autocomplete to transform data

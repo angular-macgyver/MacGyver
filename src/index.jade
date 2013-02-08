@@ -95,19 +95,20 @@ html
               )
                 .table-header-template
                   .cell(column="Name") Name
-                    a.btn(mac-parent-click="createCampaign($event)") Create Campaign
+                    a.btn(mac-parent-click="createRow($event)") Create Row
+                  .cell(column="a") Second Column
                 .table-body-template
                   .cell(column="Name", style="width: 200px") {{row.name}}
-                  .cell(column="Clicks") {{row.clicks | number: 0}}
-                  .cell(column="CPM") {{row.cpm | number: 4}}
-                  .cell(column="CPC") {{row.cpc | number: 4}}
-                  .cell(column="Spent", total) {{row.spent | currency}}
+                  .cell(column="a") {{row.a | number: 0}}
+                  .cell(column="d") {{row.d | number: 4}}
+                  .cell(column="c") {{row.c | number: 4}}
+                  .cell(column="b", total) {{row.b | currency}}
                   .cell(column="Created") {{row.created | date: 'mediumDate'}}
                 .table-footer-template
-                  a.btn(mac-parent-click="loadMoreCampaigns()") Load 20 More Campaigns
+                  a.btn(mac-parent-click="loadMoreRows()") Load 20 More Rows
                 .table-total-footer-template
-                  .cell(column="Name") {{ "Campaign" | pluralize: data.length}}
-                  .cell(column="Spent") {{ total.spent | currency}}
+                  .cell(column="Name") {{ "Row" | pluralize: data.length}}
+                  .cell(column="b") {{ total.b | currency}}
 
           section
             .page-header: h1 Tag Input
