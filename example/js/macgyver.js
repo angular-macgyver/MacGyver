@@ -17965,7 +17965,7 @@ angular.module("Mac").directive("macTable", [
       },
       replace: true,
       transclude: true,
-      templateUrl: "/template/table_view.html",
+      templateUrl: "template/table_view.html",
       compile: function(element, attrs, transclude) {
         var bodyBackground, bodyBlock, bodyHeightBlock, bodyWrapperBlock, cellOuterHeight, customFooterRow, customRow, defaults, emptyCell, firstColumn, footerBlock, headerBlock, headerRow, opts, totalRow, totalRows, transcludedBlock;
         defaults = {

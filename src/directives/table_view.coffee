@@ -47,7 +47,7 @@ angular.module("Mac").directive "macTable", [
       lockTitleColumn: "@macTableLockFirstColumn"
     replace:     true
     transclude:  true
-    templateUrl: "/template/table_view.html"
+    templateUrl: "template/table_view.html"
 
     compile: (element, attrs, transclude) ->
       # Default table view attributes
