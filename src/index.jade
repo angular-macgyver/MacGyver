@@ -102,7 +102,8 @@ html
                   .cell(column="a") {{row.a | number: 0}}
                   .cell(column="d") {{row.d | number: 4}}
                   .cell(column="c") {{row.c | number: 4}}
-                  .cell(column="b", total) {{row.b | currency}}
+                  .cell(column="b") {{row.b | currency}}
+                  .cell(column="Abc") {{row.attributes.abc | number:4}}
                   .cell(column="Created") {{row.created | date: 'mediumDate'}}
                 .table-footer-template
                   a.btn(mac-parent-click="loadMoreRows()") Load 20 More Rows

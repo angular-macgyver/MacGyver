@@ -31,6 +31,7 @@ module.controller "ExampleController", ["$scope", ($scope) ->
 
   # Columns to display and their order
   $scope.columnOrder = ["Name", "a", "d", "c", "b", "Created"]
+  #$scope.columnOrder = ["Name", "Abc"] # Used for testing values inside attributes
 
   # Autocomplete section
   # Used in autocomplete to transform data
