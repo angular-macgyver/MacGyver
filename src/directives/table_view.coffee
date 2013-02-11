@@ -189,6 +189,36 @@ angular.module("Mac").directive "macTable", [
           return cell
 
         #
+        # @name createRowTemplate
+        # @description
+        # Create template row with switches to select the correct column template
+        # @params {String} section Table section
+        # @return {Object} template row and the width of the row
+        #
+        createRowTemplate = (section="") ->
+          width      = 0
+          startIndex = if opts.lockFirstColumn then 1 else 0
+
+          # Create template cell with ng-repeat and ng-switch
+          row = $("<div>").addClass("table-#{section}-cell").attr
+                  "ng-switch":   ""
+                  "on":          "column"
+                  "ng-repeat":   "column in columns"
+                  "data-column": "{{column}}"
+
+          for column in $scope.columns[startIndex..]
+            templateCell =  if section is "header"
+                              createHeaderCellTemplate column
+                            else
+                              createCellTemplate section, column
+            templateCell.attr "ng-switch-when", column
+            row.append templateCell
+
+            width += templateCell.outerWidth() + opts.borderWidth
+
+          return {row, width}
+
+        #
         # @name $scope.orderBy
         # @description
         # Function to call when user click on header cell
@@ -228,39 +258,23 @@ angular.module("Mac").directive "macTable", [
         # Enabling order by, resizable columns and drag and drop columns
         #
         $scope.drawHeader = ->
-          rowWidth = 0
-
-          startIndex = if opts.lockFirstColumn then 1 else 0
-
-          # Create template cell with ng-repeat and ng-switch
-          tableCell = $("<div>").addClass("table-header-cell").attr
-                        "ng-switch":   ""
-                        "on":          "column"
-                        "ng-repeat":   "column in columns"
-                        "data-column": "{{column}}"
+          {row, width} = createRowTemplate "header"
 
           # Enable reordering
           if opts.allowReorder
-            tableCell.attr "ng-click", "orderBy(column)"
+            row.attr "ng-click", "orderBy(column)"
 
           # TODO: Enable column resizing
           if opts.resizable
-            tableCell.resizable
+            row.resizable
               containment: "parent"
               minHeight:   opts.rowHeight
               maxHeight:   opts.rowHeight
               handles:     "e, w"
             .addClass "resizable"
 
-          for column in $scope.columns[startIndex..]
-            templateCell = createHeaderCellTemplate column
-            templateCell.attr "ng-switch-when", column
-            tableCell.append templateCell
-
-            rowWidth += templateCell.outerWidth() + opts.borderWidth
-
           # Set the header to be the width of all columns
-          headerRow.append(tableCell).width rowWidth
+          headerRow.append(row).width width
 
           # Compile the column to render carets
           $compile(headerRow) $scope
@@ -303,25 +317,10 @@ angular.module("Mac").directive "macTable", [
         # To create the footer with total value of the table
         #
         $scope.drawTotalFooter = ->
-          rowWidth   = 0
-          startIndex = if opts.lockFirstColumn then 1 else 0
-
-          # Create template cell with ng-repeat and ng-switch
-          tableCell = $("<div>").addClass("table-total-footer-cell").attr
-                        "ng-switch":   ""
-                        "on":          "column"
-                        "ng-repeat":   "column in columns"
-                        "data-column": "{{column}}"
-
-          for column in $scope.columns[startIndex..]
-            templateCell = createCellTemplate "total-footer", column
-            templateCell.attr "ng-switch-when", column
-            tableCell.append templateCell
-
-            rowWidth += templateCell.outerWidth() + opts.borderWidth
+          {row, width} = createRowTemplate "total-footer"
 
           # Set the header to be the width of all columns
-          totalRow.append(tableCell).width rowWidth
+          totalRow.append(row).width width
 
           # Compile the column to render carets
           $compile(totalRow) $scope
@@ -343,8 +342,15 @@ angular.module("Mac").directive "macTable", [
           # Calculate the height to display scrollbar correctly
           bodyHeightBlock.height data.length * cellOuterHeight
 
-          bodyWrapperBlock.css
-            height: numDisplayRows * cellOuterHeight
+          setTimeout ( ->
+            wrapperHeight = numDisplayRows * cellOuterHeight
+
+            # Check if x-axis scrollbar exist
+            wrapperHeight += 15 if bodyBlock[0].scrollWidth > bodyBlock.width()
+
+            bodyWrapperBlock.css
+              height: wrapperHeight
+          ), 0
 
         #
         # @name $scope.drawBody
@@ -362,30 +368,13 @@ angular.module("Mac").directive "macTable", [
           tableRow = $("<div>").addClass "table-row"
           tableRow.attr "ng-repeat", "row in displayRows #{orderBy}"
 
-          # Create template cell with ng-repeat and ng-switch
-          tableCell = $("<div>").addClass "table-cell"
-          tableCell.attr
-            "ng-switch": ""
-            "on":        "column"
-            "ng-repeat": "column in columns"
-
           # Set the first set of rows to show up
           endIndex           = @index + numDisplayRows - 1
           $scope.displayRows = data[@index..endIndex]
 
-          rowWidth   = 0
-          startIndex = if opts.lockFirstColumn then 1 else 0
+          {row, width} = createRowTemplate "body"
 
-          # Get each template cell and append to cell wrapper
-          for column in $scope.columns[startIndex..]
-            templateCell = createCellTemplate("body", column)
-            templateCell.attr "ng-switch-when", column
-            tableCell.append templateCell
-
-            # Calculate the width of each row
-            rowWidth += templateCell.outerWidth() + opts.borderWidth
-
-          tableRow.append(tableCell).width rowWidth
+          tableRow.append(row).width width
           bodyBlock.append tableRow
 
           # Compile the body block to bind all values correctly
@@ -457,7 +446,6 @@ angular.module("Mac").directive "macTable", [
           if opts.hasHeader
             $scope.drawHeader()
 
-          $scope.calculateBodyDimension()
           $scope.drawBody()
 
           # Only calculate total value if footer exist
@@ -469,6 +457,9 @@ angular.module("Mac").directive "macTable", [
 
           if opts.hasFooter
             $scope.drawFooter()
+
+          $scope.calculateBodyDimension()
+
 
         $scope.reset()
 ]
