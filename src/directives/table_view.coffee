@@ -137,8 +137,11 @@ angular.module("Mac").directive "macTable", [
 
             # Distinguish between percentage and pixels
             widthMatch = /(\d+)(px|%)?/.exec setWidth
-            setWidth   = +widthMatch[1]
-            unit       = widthMatch[2]
+            if widthMatch?
+              setWidth = +widthMatch[1]
+              unit     = widthMatch[2]
+            else
+              setWidth = 0
 
             if setWidth is 0
               # Calculate the relative width of each cell

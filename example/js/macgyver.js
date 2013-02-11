@@ -18050,8 +18050,12 @@ angular.module("Mac").directive("macTable", [
               bodyCell = getTemplateCell("body", column);
               setWidth = bodyCell.css("width");
               widthMatch = /(\d+)(px|%)?/.exec(setWidth);
-              setWidth = +widthMatch[1];
-              unit = widthMatch[2];
+              if (widthMatch != null) {
+                setWidth = +widthMatch[1];
+                unit = widthMatch[2];
+              } else {
+                setWidth = 0;
+              }
               if (setWidth === 0) {
                 calculatedWidth = (opts.width / numColumns) - opts.cellPadding * 2 - opts.borderWidth;
                 width = Math.max(calculatedWidth, opts.columnWidth);
