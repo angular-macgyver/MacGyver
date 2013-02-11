@@ -2134,27 +2134,28 @@ i.icon-fb-like {
 i.icon-fb-comment {
   background-position: 0 -64px;
 }
-.table-container {
+.mac-table-container {
   border: 1px solid #ddd;
   position: relative;
+  clear: both;
 }
-.table-container .table-row {
+.mac-table-container .mac-table-row {
   clear: both;
   float: left;
   white-space: nowrap;
 }
-.table-container .table-row .table-cell {
+.mac-table-container .mac-table-row .mac-table-cell {
   text-align: left;
   float: left;
 }
-.table-container .table-row .table-cell .cell {
+.mac-table-container .mac-table-row .mac-table-cell .mac-cell {
   width: 100%;
 }
-.table-container .table-row .table-cell .cell:hover {
+.mac-table-container .mac-table-row .mac-table-cell .mac-cell:hover {
   background-color: #f5f5f5;
 }
-.table-container .table-header,
-.table-container .table-footer {
+.mac-table-container .mac-table-header,
+.mac-table-container .mac-table-footer {
   float: left;
   background: #fff -webkit-gradient(linear, left top, left bottom, color-stop(0, #fff), color-stop(1, #e6e6e6));
   background: #fff -webkit-linear-gradient(top, #fff 0%, #e6e6e6 100%);
@@ -2166,37 +2167,37 @@ i.icon-fb-comment {
   overflow-x: hidden;
   width: 100%;
 }
-.table-container .table-header .table-header-cell,
-.table-container .table-footer .table-header-cell {
+.mac-table-container .mac-table-header .mac-table-header-cell,
+.mac-table-container .mac-table-footer .mac-table-header-cell {
   float: left;
   position: relative;
 }
-.table-container .table-header .table-header-cell .caret,
-.table-container .table-footer .table-header-cell .caret {
+.mac-table-container .mac-table-header .mac-table-header-cell .mac-table-caret,
+.mac-table-container .mac-table-footer .mac-table-header-cell .mac-table-caret {
   vertical-align: middle;
   cursor: pointer;
   margin-left: 5px;
 }
-.table-container .table-header .table-header-cell .caret.hide,
-.table-container .table-footer .table-header-cell .caret.hide {
+.mac-table-container .mac-table-header .mac-table-header-cell .mac-table-caret.hide,
+.mac-table-container .mac-table-footer .mac-table-header-cell .mac-table-caret.hide {
   display: none;
 }
-.table-container .table-header .table-header-cell .caret.up,
-.table-container .table-footer .table-header-cell .caret.up {
+.mac-table-container .mac-table-header .mac-table-header-cell .mac-table-caret.up,
+.mac-table-container .mac-table-footer .mac-table-header-cell .mac-table-caret.up {
   border-bottom: 4px solid #000;
   border-top: transparent;
 }
-.table-container .table-header .table-header-cell .caret.down,
-.table-container .table-footer .table-header-cell .caret.down {
+.mac-table-container .mac-table-header .mac-table-header-cell .mac-table-caret.down,
+.mac-table-container .mac-table-footer .mac-table-header-cell .mac-table-caret.down {
   border-top: 4px solid #000;
   border-bottom: transparent;
 }
-.table-container .table-header .table-row:first-child .cell,
-.table-container .table-footer .table-row:first-child .cell {
+.mac-table-container .mac-table-header .mac-table-row:first-child .mac-cell,
+.mac-table-container .mac-table-footer .mac-table-row:first-child .mac-cell {
   border-top: 0;
 }
-.table-container .table-header .locked-cell,
-.table-container .table-footer .locked-cell {
+.mac-table-container .mac-table-header .mac-table-locked-cell,
+.mac-table-container .mac-table-footer .mac-table-locked-cell {
   position: absolute;
   background: #fff -webkit-gradient(linear, left top, left bottom, color-stop(0, #fff), color-stop(1, #e6e6e6));
   background: #fff -webkit-linear-gradient(top, #fff 0%, #e6e6e6 100%);
@@ -2205,8 +2206,8 @@ i.icon-fb-comment {
   background: #fff -ms-linear-gradient(top, #fff 0%, #e6e6e6 100%);
   background: #fff linear-gradient(top, #fff 0%, #e6e6e6 100%);
 }
-.table-container .table-header .cell,
-.table-container .table-footer .cell {
+.mac-table-container .mac-table-header .mac-cell,
+.mac-table-container .mac-table-footer .mac-cell {
   text-align: left;
   float: left;
   font-size: 12px;
@@ -2215,67 +2216,63 @@ i.icon-fb-comment {
   text-overflow: ellipsis;
   width: 100%;
 }
-.table-container .table-header .cell.ui-sortable-placeholder,
-.table-container .table-footer .cell.ui-sortable-placeholder {
+.mac-table-container .mac-table-header .mac-cell.ui-sortable-placeholder,
+.mac-table-container .mac-table-footer .mac-cell.ui-sortable-placeholder {
   background-color: #f5f5f5;
 }
-.table-container .table-header .cell.resizable,
-.table-container .table-footer .cell.resizable {
+.mac-table-container .mac-table-header .mac-cell.resizable,
+.mac-table-container .mac-table-footer .mac-cell.resizable {
   border-right: 1px solid #000;
 }
-.table-container .table-header .cell .btn,
-.table-container .table-footer .cell .btn {
-  float: right;
-}
-.table-container .table-body-wrapper {
+.mac-table-container .mac-table-body-wrapper {
   overflow-y: auto;
   overflow-x: hidden;
   position: relative;
   width: 100%;
 }
-.table-container .table-body-wrapper .table-body,
-.table-container .table-body-wrapper .title-column {
+.mac-table-container .mac-table-body-wrapper .mac-table-body,
+.mac-table-container .mac-table-body-wrapper .mac-title-column {
   position: absolute;
 }
-.table-container .table-body-wrapper .table-body {
+.mac-table-container .mac-table-body-wrapper .mac-table-body {
   width: 100%;
   overflow-x: auto;
 }
-.table-container .table-body-wrapper .table-body-height {
+.mac-table-container .mac-table-body-wrapper .mac-table-body-height {
   position: absolute;
   top: 0px;
   width: 50px;
 }
-.table-container .table-body-background {
+.mac-table-container .mac-table-body-background {
   position: absolute;
   top: 0px;
   left: 0px;
   width: 100%;
   pointer-events: none;
 }
-.table-container .table-body-background .table-row {
+.mac-table-container .mac-table-body-background .mac-table-row {
   width: 100%;
 }
-.table-container .table-body-background .table-row:nth-child(even) {
+.mac-table-container .mac-table-body-background .mac-table-row:nth-child(even) {
   background-color: #f0f5ff;
 }
-.table-container .table-header:first-child .table-row:first-child .cell:first-child {
+.mac-table-container .mac-table-header:first-child .mac-table-row:first-child .mac-cell:first-child {
   border-top-left-radius: 4px;
 }
-.table-container .table-header:first-child .table-row:first-child .cell:last-child {
+.mac-table-container .mac-table-header:first-child .mac-table-row:first-child .mac-cell:last-child {
   border-top-right-radius: 4px;
 }
-.table-container .table-header:last-child .table-row:last-child .cell:first-child,
-.table-container .table-body:last-child .table-row:last-child .cell:first-child,
-.table-container .table-footer:last-child .table-row:last-child .cell:first-child {
+.mac-table-container .mac-table-header:last-child .mac-table-row:last-child .mac-cell:first-child,
+.mac-table-container .mac-table-body:last-child .mac-table-row:last-child .mac-cell:first-child,
+.mac-table-container .mac-table-footer:last-child .mac-table-row:last-child .mac-cell:first-child {
   border-bottom-left-radius: 4px;
 }
-.table-container .table-header:last-child .table-row:last-child .cell:last-child,
-.table-container .table-body:last-child .table-row:last-child .cell:last-child,
-.table-container .table-footer:last-child .table-row:last-child .cell:last-child {
+.mac-table-container .mac-table-header:last-child .mac-table-row:last-child .mac-cell:last-child,
+.mac-table-container .mac-table-body:last-child .mac-table-row:last-child .mac-cell:last-child,
+.mac-table-container .mac-table-footer:last-child .mac-table-row:last-child .mac-cell:last-child {
   border-bottom-right-radius: 4px;
 }
-.table-container .table-transclude {
+.mac-table-container .mac-table-transclude {
   display: none;
 }
 .mac-tag-autocomplete {
