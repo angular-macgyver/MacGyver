@@ -10,14 +10,17 @@ border-radius    = 4px
   position relative
 
   .table-row
-    clear both
-    float left
+    clear       both
+    float       left
+    white-space nowrap
 
-    .table-body-cell
+    .table-cell
       text-align  left
       float       left
 
       .cell
+        width 100%
+
         &:hover
           background-color hover-background
 
@@ -61,6 +64,7 @@ border-radius    = 4px
       font-size     12px
       font-weight   bold
       text-overflow ellipsis
+      width         100%
 
       &.ui-sortable-placeholder
         background-color hover-background
@@ -81,6 +85,7 @@ border-radius    = 4px
       position absolute
 
     .table-body
+      width      100%
       overflow-x auto
 
     .table-body-height

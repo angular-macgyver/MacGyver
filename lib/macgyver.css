@@ -2136,16 +2136,19 @@ i.icon-fb-comment {
 }
 .table-container {
   border: 1px solid #ddd;
-  overflow: hidden;
   position: relative;
 }
 .table-container .table-row {
   clear: both;
   float: left;
+  white-space: nowrap;
 }
 .table-container .table-row .table-cell {
   text-align: left;
   float: left;
+}
+.table-container .table-row .table-cell .cell {
+  width: 100%;
 }
 .table-container .table-row .table-cell .cell:hover {
   background-color: #f5f5f5;
@@ -2210,6 +2213,7 @@ i.icon-fb-comment {
   font-weight: bold;
   -o-text-overflow: ellipsis;
   text-overflow: ellipsis;
+  width: 100%;
 }
 .table-container .table-header .cell.ui-sortable-placeholder,
 .table-container .table-footer .cell.ui-sortable-placeholder {
@@ -2225,6 +2229,7 @@ i.icon-fb-comment {
 }
 .table-container .table-body-wrapper {
   overflow-y: auto;
+  overflow-x: hidden;
   position: relative;
   width: 100%;
 }
@@ -2233,6 +2238,7 @@ i.icon-fb-comment {
   position: absolute;
 }
 .table-container .table-body-wrapper .table-body {
+  width: 100%;
   overflow-x: auto;
 }
 .table-container .table-body-wrapper .table-body-height {
