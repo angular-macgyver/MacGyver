@@ -5,37 +5,38 @@ hover-background = #f5f5f5
 even-background  = #f0f5ff
 border-radius    = 4px
 
-.table-container
+.mac-table-container
   border   1px solid border-color
   position relative
+  clear    both
 
-  .table-row
+  .mac-table-row
     clear       both
     float       left
     white-space nowrap
 
-    .table-cell
+    .mac-table-cell
       text-align  left
       float       left
 
-      .cell
+      .mac-cell
         width 100%
 
         &:hover
           background-color hover-background
 
-  .table-header, .table-footer
+  .mac-table-header, .mac-table-footer
     float         left
     background    #ffffff linear-gradient(top, #ffffff, #e6e6e6)
     border-bottom solid 1px #bebebe
     overflow-x    hidden
     width         100%
 
-    .table-header-cell
+    .mac-table-header-cell
       float    left
       position relative
 
-      .caret
+      .mac-table-caret
         vertical-align middle
         cursor         pointer
         margin-left    5px
@@ -50,15 +51,15 @@ border-radius    = 4px
           border-top    4px solid #000
           border-bottom transparent
 
-    .table-row:first-child
-      .cell
+    .mac-table-row:first-child
+      .mac-cell
         border-top 0
 
-    .locked-cell
+    .mac-table-locked-cell
       position   absolute
       background #ffffff linear-gradient(top, #ffffff, #e6e6e6)
 
-    .cell
+    .mac-cell
       text-align    left
       float         left
       font-size     12px
@@ -72,59 +73,56 @@ border-radius    = 4px
       &.resizable
         border-right 1px solid #000000
 
-      .btn
-        float right
-
-  .table-body-wrapper
+  .mac-table-body-wrapper
     overflow-y auto
     overflow-x hidden
     position   relative
     width      100%
 
-    .table-body, .title-column
+    .mac-table-body, .mac-title-column
       position absolute
 
-    .table-body
+    .mac-table-body
       width      100%
       overflow-x auto
 
-    .table-body-height
+    .mac-table-body-height
       position absolute
       top      0px
       width    50px
 
-  .table-body-background
+  .mac-table-body-background
     position       absolute
     top            0px
     left           0px
     width          100%
     pointer-events none
 
-    .table-row
+    .mac-table-row
       width  100%
 
       &:nth-child(even)
         background-color even-background
 
-  .table-header:first-child
-    .table-row:first-child
-      .cell:first-child
+  .mac-table-header:first-child
+    .mac-table-row:first-child
+      .mac-cell:first-child
         border-top-left-radius border-radius
 
-      .cell:last-child
+      .mac-cell:last-child
         border-top-right-radius border-radius
 
-  .table-header:last-child,
-  .table-body:last-child,
-  .table-footer:last-child
-    .table-row:last-child
-      .cell:first-child
+  .mac-table-header:last-child,
+  .mac-table-body:last-child,
+  .mac-table-footer:last-child
+    .mac-table-row:last-child
+      .mac-cell:first-child
         border-bottom-left-radius border-radius
 
-      .cell:last-child
+      .mac-cell:last-child
         border-bottom-right-radius border-radius
 
-  .table-transclude
+  .mac-table-transclude
     display none
 
 

@@ -70,19 +70,18 @@ angular.module("Mac").directive "macTable", [
         calculateTotalLocally: false
         fluidWidth:            false
 
-      transcludedBlock = $(".table-transclude", element)
-      headerBlock      = $(".table-header", element)
-      headerRow        = $(".table-row", headerBlock)
-      bodyWrapperBlock = $(".table-body-wrapper", element)
-      firstColumn      = $(".title-column", bodyWrapperBlock)
-      bodyBlock        = $(".table-body", element)
-      bodyHeightBlock  = $(".table-body-height", element)
-      footerBlock      = $(".table-footer", element)
+      transcludedBlock = $(".mac-table-transclude", element)
+      headerBlock      = $(".mac-table-header", element)
+      headerRow        = $(".mac-table-row", headerBlock)
+      bodyWrapperBlock = $(".mac-table-body-wrapper", element)
+      firstColumn      = $(".mac-title-column", bodyWrapperBlock)
+      bodyBlock        = $(".mac-table-body", element)
+      bodyHeightBlock  = $(".mac-table-body-height", element)
+      footerBlock      = $(".mac-table-footer", element)
       totalRow         = $(".total-footer-row", footerBlock)
-      customRow        = $(".custom-footer-row", footerBlock)
       customFooterRow  = $(".custom-footer-row", footerBlock)
-      bodyBackground   = $(".table-body-background", element)
-      emptyCell        = $("<div>").addClass "cell"
+      bodyBackground   = $(".mac-table-body-background", element)
+      emptyCell        = $("<div>").addClass "mac-cell"
 
       # Calculate all the options based on defaults
       opts = util.extendAttributes "macTable", defaults, attrs
@@ -136,12 +135,11 @@ angular.module("Mac").directive "macTable", [
             setWidth = bodyCell.css "width"
 
             # Distinguish between percentage and pixels
-            widthMatch = /(\d+)(px|%)?/.exec setWidth
-            if widthMatch?
+
+            if (widthMatch = /(\d+)(px|%)?/.exec setWidth)?
               setWidth = +widthMatch[1]
               unit     = widthMatch[2]
-            else
-              setWidth = 0
+            setWidth ?= 0
 
             if setWidth is 0
               # Calculate the relative width of each cell
@@ -203,7 +201,7 @@ angular.module("Mac").directive "macTable", [
           {cell, width} = createCellTemplate "header", column
           contextText   = cell.text()
 
-          cellClass  = """caret {{$parent.$parent.reverse | boolean:"up":"down"}} """
+          cellClass  = """mac-table-caret {{$parent.$parent.reverse | boolean:"up":"down"}} """
           cellClass += """{{$parent.$parent.predicate == column.toLowerCase() | false:'hide'}}"""
 
           cell.text column if contextText.length is 0
@@ -225,8 +223,8 @@ angular.module("Mac").directive "macTable", [
           startIndex = if opts.lockFirstColumn then 1 else 0
 
           # Create template cell with ng-repeat and ng-switch
-          cssClass  = "table-#{section}-cell"
-          cssClass += " table-cell" unless section is "header"
+          cssClass  = "mac-table-#{section}-cell"
+          cssClass += " mac-table-cell" unless section is "header"
           row       = $("<div>").addClass(cssClass).attr
                         "ng-switch":   ""
                         "on":          "column"
@@ -320,7 +318,7 @@ angular.module("Mac").directive "macTable", [
           if opts.lockFirstColumn
             columnName    = $scope.columns[0]
             {cell, width} = createHeaderCellTemplate $scope.columns[0]
-            cell.addClass("locked-cell").attr
+            cell.addClass("mac-table-locked-cell").attr
               "ng-click": "orderBy('#{columnName}')"
               "ng-style": "getColumnCss('#{columnName}')"
 
@@ -334,13 +332,13 @@ angular.module("Mac").directive "macTable", [
           # Enable drag and drop on header cell
           if opts.sortable
             headerRow.sortable
-              items:       "> .table-header-cell"
+              items:       "> .mac-table-header-cell"
               cursor:      "move"
               opacity:     0.8
               tolerance:   "pointer"
               update:      (event, ui) ->
                 newOrder = []
-                $(".table-header-cell", headerRow).each (i, e) ->
+                $(".mac-table-header-cell", headerRow).each (i, e) ->
                   newOrder.push $(e).data "column"
                 $scope.$apply -> $scope.columns = newOrder
 
@@ -369,10 +367,10 @@ angular.module("Mac").directive "macTable", [
 
         $scope.drawFooter = ->
           footerTemplate = $(".table-footer-template", transcludedBlock)
-          customRow.html(footerTemplate.html()).css
+          customFooterRow.html(footerTemplate.html()).css
             "height":  opts.rowHeight
             "padding": opts.cellPadding
-          $compile(customRow) $scope
+          $compile(customFooterRow) $scope
 
         #
         # @name $scope.calculateBodyDimension
@@ -408,7 +406,7 @@ angular.module("Mac").directive "macTable", [
           orderBy = if opts.allowReorder then "| orderBy:predicate:reverse" else ""
 
           # Create template row with ng-repeat
-          tableRow = $("<div>").addClass "table-row"
+          tableRow = $("<div>").addClass "mac-table-row"
           tableRow.attr
             "ng-repeat": "row in displayRows #{orderBy}"
             "ng-cloak":  "ng-cloak"
@@ -428,7 +426,7 @@ angular.module("Mac").directive "macTable", [
           # if the first column is locked, create a separate column with
           # fixed position
           if opts.lockFirstColumn
-            fcTableRow    = $(".table-row", firstColumn)
+            fcTableRow    = $(".mac-table-row", firstColumn)
             columnName    = $scope.columns[0]
             {cell, width} = createCellTemplate "body", columnName
             cell.attr
@@ -447,7 +445,7 @@ angular.module("Mac").directive "macTable", [
               "width":       element.width() - width
 
           # Generate empty rows to fill up table background
-          emptyTemplateRow = $("<div>").addClass "table-row"
+          emptyTemplateRow = $("<div>").addClass "mac-table-row"
           emptyTemplateRow.height cellOuterHeight
           bodyBackground.append(emptyTemplateRow.clone()) for i in [0..numDisplayRows]
 

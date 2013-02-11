@@ -27,7 +27,7 @@ attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow |
 var buf = [];
 with (locals || {}) {
 var interp;
-buf.push('<div class="table-container"><div class="table-header"><div class="table-row"></div></div><div class="table-body-background"></div><div class="table-body-wrapper"><div ng-show="lockTitleColumn" class="title-column"><div class="table-row"></div></div><div class="table-body"></div><div class="table-body-height"></div></div><div class="table-footer"><div class="table-row custom-footer-row"></div><div class="table-row total-footer-row"></div></div><div ng-transclude="ng-transclude" ng-cloak="ng-cloak" class="table-transclude"></div></div>');
+buf.push('<div class="mac-table-container"><div class="mac-table-header"><div class="mac-table-row"></div></div><div class="mac-table-body-background"></div><div class="mac-table-body-wrapper"><div ng-show="lockTitleColumn" class="mac-title-column"><div class="mac-table-row"></div></div><div class="mac-table-body"></div><div class="mac-table-body-height"></div></div><div class="mac-table-footer"><div class="mac-table-row custom-footer-row"></div><div class="mac-table-row total-footer-row"></div></div><div ng-transclude="ng-transclude" ng-cloak="ng-cloak" class="mac-table-transclude"></div></div>');
 }
 return buf.join("");
 };module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
