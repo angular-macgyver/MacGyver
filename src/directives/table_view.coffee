@@ -21,6 +21,7 @@
 ## - mac-table-has-total-footer:  Boolean determining if footer with total should be shown         (default false)
 ## - mac-table-has-footer:        A boolean value to determine if footer should be shown           (default false)
 ## - mac-table-width:             The width of the whole table                                     (default 800)
+## - mac-table-fluid-width:
 ## - mac-table-column-width:      The minimum width of a column                                    (default 140)
 ## - mac-table-row-height:        The height of each row in the table                              (default 20)
 ## - mac-table-num-display-rows:  The total number of rows to display                              (default 10)
@@ -67,6 +68,7 @@ angular.module("Mac").directive "macTable", [
         allowReorder:          true
         objectPrefix:          ""
         calculateTotalLocally: false
+        fluidWidth:            false
 
 
       transcludedBlock = $(".table-transclude", element)
@@ -90,10 +92,13 @@ angular.module("Mac").directive "macTable", [
       totalRows       = opts.numDisplayRows
       totalRows      += opts.hasFooter + opts.hasTotalFooter
 
-      # Update the width and height of the whole table
-      element.css
-        height: cellOuterHeight * totalRows
-        width:  opts.width - 2 * opts.borderWidth
+      (->
+        # Update the width and height of the whole table
+        width = if false then "100%" else (opts.width - 2 * opts.borderWidth)
+        element.css
+          height: cellOuterHeight * totalRows
+          width:  width
+      )()
 
       ($scope, element, attrs) ->
         # Make sure columns are defined
