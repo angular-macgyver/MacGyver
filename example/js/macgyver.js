@@ -18289,7 +18289,7 @@ angular.module("Mac").directive("macTable", [
             }), 0);
           };
           $scope.drawBody = function() {
-            var cell, columnName, data, emptyTemplateRow, endIndex, fcTableRow, i, orderBy, row, tableRow, width, _i, _ref, _ref1, _ref2;
+            var cell, columnName, data, emptyTemplateRow, endIndex, fcTableRow, i, orderBy, row, rowClass, tableRow, width, _i, _ref, _ref1, _ref2;
             data = $scope.data || [];
             orderBy = opts.allowReorder ? "| orderBy:predicate:reverse" : "";
             tableRow = $("<div>").addClass("mac-table-row");
@@ -18321,10 +18321,10 @@ angular.module("Mac").directive("macTable", [
                 "width": element.width() - width
               });
             }
-            emptyTemplateRow = $("<div>").addClass("mac-table-row");
-            emptyTemplateRow.height(cellOuterHeight);
+            emptyTemplateRow = $("<div>").addClass("mac-table-row").height(cellOuterHeight);
             for (i = _i = 0, _ref2 = numDisplayRows - opts.hasHeader; 0 <= _ref2 ? _i <= _ref2 : _i >= _ref2; i = 0 <= _ref2 ? ++_i : --_i) {
-              bodyBackground.append(emptyTemplateRow.clone());
+              rowClass = i % 2 ? "odd" : "even";
+              bodyBackground.append((emptyTemplateRow.clone()).addClass(rowClass));
             }
             if (opts.hasHeader) {
               return bodyBackground.css("top", opts.headerHeight + 2 * opts.cellPadding + opts.borderWidth);
