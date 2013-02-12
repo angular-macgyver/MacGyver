@@ -210,12 +210,14 @@ angular.module("Mac").directive "macTable", [
         # Caret is added to the cell before returning
         # @params {String} column Column needed (default "")
         #
-        createHeaderCellTemplate = (column = "") ->
+        createHeaderCellTemplate = (column = "", firstColumn = false) ->
           {cell, width} = createCellTemplate "header", column
           contextText   = cell.text()
 
-          cellClass  = """mac-table-caret {{$parent.$parent.reverse | boolean:"up":"down"}} """
-          cellClass += """{{$parent.$parent.predicate == column.toLowerCase() | false:'hide'}}"""
+          parentScope  = if firstColumn then "" else "$parent.$parent."
+
+          cellClass  = """mac-table-caret {{#{parentScope}reverse | boolean:"up":"down"}} """
+          cellClass += """{{#{parentScope}predicate == "#{column.toLowerCase()}" | false:'hide'}}"""
 
           cell.text column if contextText.length is 0
           cell
@@ -247,9 +249,9 @@ angular.module("Mac").directive "macTable", [
 
           for column in $scope.columns[startIndex..]
             {cell, width} = if section is "header"
-                                      createHeaderCellTemplate column
-                                    else
-                                      createCellTemplate section, column
+                              createHeaderCellTemplate column
+                            else
+                              createCellTemplate section, column
             cell.attr "ng-switch-when", column
             row.append cell
 
@@ -334,8 +336,8 @@ angular.module("Mac").directive "macTable", [
           # Create a separate cell if the first cell is locked
           if opts.lockFirstColumn
             columnName    = $scope.columns[0]
-            {cell, width} = createHeaderCellTemplate $scope.columns[0]
-            cell.addClass("mac-table-locked-cell").attr
+            {cell, width} = createHeaderCellTemplate columnName, true
+            cell.addClass("mac-table-locked-cell mac-table-header-cell").attr
               "ng-click": "orderBy('#{columnName}')"
               "ng-style": "getColumnCss('#{columnName}', 'header')"
 

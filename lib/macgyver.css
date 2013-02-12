@@ -2169,9 +2169,13 @@ i.icon-fb-comment {
 }
 .mac-table-container .mac-table-header .mac-table-header-cell .mac-table-caret,
 .mac-table-container .mac-table-footer .mac-table-header-cell .mac-table-caret {
-  vertical-align: middle;
   cursor: pointer;
   margin-left: 5px;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  position: absolute;
+  top: 50%;
+  margin-top: -4px;
 }
 .mac-table-container .mac-table-header .mac-table-header-cell .mac-table-caret.hide,
 .mac-table-container .mac-table-footer .mac-table-header-cell .mac-table-caret.hide {
@@ -2180,12 +2184,10 @@ i.icon-fb-comment {
 .mac-table-container .mac-table-header .mac-table-header-cell .mac-table-caret.up,
 .mac-table-container .mac-table-footer .mac-table-header-cell .mac-table-caret.up {
   border-bottom: 4px solid #000;
-  border-top: transparent;
 }
 .mac-table-container .mac-table-header .mac-table-header-cell .mac-table-caret.down,
 .mac-table-container .mac-table-footer .mac-table-header-cell .mac-table-caret.down {
   border-top: 4px solid #000;
-  border-bottom: transparent;
 }
 .mac-table-container .mac-table-header .mac-table-row:first-child .mac-cell,
 .mac-table-container .mac-table-footer .mac-table-row:first-child .mac-cell {

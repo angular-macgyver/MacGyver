@@ -35,19 +35,21 @@ border-radius    = 4px
       position relative
 
       .mac-table-caret
-        vertical-align middle
         cursor         pointer
         margin-left    5px
+        border-left    4px solid transparent
+        border-right   4px solid transparent
+        position       absolute
+        top            50%
+        margin-top     -4px
 
         &.hide
           display none
 
         &.up
           border-bottom 4px solid #000
-          border-top    transparent
         &.down
           border-top    4px solid #000
-          border-bottom transparent
 
     .mac-table-row:first-child
       .mac-cell
