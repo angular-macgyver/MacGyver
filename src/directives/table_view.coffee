@@ -114,6 +114,15 @@ angular.module("Mac").directive "macTable", [
 
             $scope.calculateTotal() if opts.calculateTotalLocally
 
+            # Recalculate all the column css with latest data
+            calculateColumnCss() if $scope.columns?
+
+            # Recalculate body block width after cells are populated
+            if opts.lockFirstColumn and $scope.columns?
+              firstColumn = $scope.columns[0]
+              width       = $scope.columnsCss[firstColumn]?.width or 0
+              bodyBlock.width element.width() - width
+
         $scope.$watch "columns", ->
           calculateColumnCss() if $scope.columns?
 

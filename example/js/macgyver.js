@@ -18018,14 +18018,22 @@ angular.module("Mac").directive("macTable", [
           numColumns = $scope.columns.length;
           numDisplayRows = opts.numDisplayRows - opts.hasHeader;
           $scope.$watch("data", function() {
-            var endIndex, index, scrollTop;
+            var endIndex, index, scrollTop, width, _ref;
             if ($scope.data != null) {
               scrollTop = bodyWrapperBlock.scrollTop();
               index = Math.floor(scrollTop / cellOuterHeight);
               endIndex = index + numDisplayRows - 1;
               $scope.displayRows = $scope.data.slice(index, +endIndex + 1 || 9e9);
               if (opts.calculateTotalLocally) {
-                return $scope.calculateTotal();
+                $scope.calculateTotal();
+              }
+              if ($scope.columns != null) {
+                calculateColumnCss();
+              }
+              if (opts.lockFirstColumn && ($scope.columns != null)) {
+                firstColumn = $scope.columns[0];
+                width = ((_ref = $scope.columnsCss[firstColumn]) != null ? _ref.width : void 0) || 0;
+                return bodyBlock.width(element.width() - width);
               }
             }
           });
