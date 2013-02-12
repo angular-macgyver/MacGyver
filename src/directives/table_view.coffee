@@ -23,6 +23,7 @@
 ## - mac-table-width:             The width of the whole table                                     (default 800)
 ## - mac-table-fluid-width:       When true, width of the table is 100% of the parent container    (default false)
 ## - mac-table-column-width:      The minimum width of a column                                    (default 140)
+## - mac-table-header-height:     The height of the header row                                     (default mac-table-row-height)
 ## - mac-table-row-height:        The height of each row in the table                              (default 20)
 ## - mac-table-num-display-rows:  The total number of rows to display                              (default 10)
 ## - mac-table-cell-padding:      Should match the css padding value on each cell                  (default 8)
@@ -58,6 +59,7 @@ angular.module("Mac").directive "macTable", [
         hasFooter:             false
         width:                 800
         columnWidth:           140
+        headerHeight:          20
         rowHeight:             20
         numDisplayRows:        10
         cellPadding:           8
@@ -85,6 +87,9 @@ angular.module("Mac").directive "macTable", [
 
       # Calculate all the options based on defaults
       opts = util.extendAttributes "macTable", defaults, attrs
+
+      # Default header height to row height if header height is not defined
+      opts.headerHeight = opts.rowHeight unless attrs.macTableHeaderHeight?
 
       cellOuterHeight = opts.rowHeight + opts.cellPadding * 2
       totalRows       = opts.numDisplayRows
@@ -238,7 +243,7 @@ angular.module("Mac").directive "macTable", [
                         "on":          "column"
                         "ng-repeat":   "column in columns.slice(#{startIndex})"
                         "data-column": "{{column}}"
-                        "ng-style":    "getColumnCss(column)"
+                        "ng-style":    "getColumnCss(column, '#{section}')"
 
           for column in $scope.columns[startIndex..]
             {cell, width} = if section is "header"
@@ -257,9 +262,13 @@ angular.module("Mac").directive "macTable", [
         # @description
         # A get function for getting CSS object
         # @params {String} column Column name
+        # @params {String} section Section for the css
         # @result {Object} Object with CSS attributes
         #
-        $scope.getColumnCss = (column) -> $scope.columnsCss[column]
+        $scope.getColumnCss = (column, section) ->
+          css        = angular.copy $scope.columnsCss[column]
+          css.height = opts.headerHeight if section is "header"
+          return css
 
         #
         # @name $scope.orderBy
@@ -328,7 +337,7 @@ angular.module("Mac").directive "macTable", [
             {cell, width} = createHeaderCellTemplate $scope.columns[0]
             cell.addClass("mac-table-locked-cell").attr
               "ng-click": "orderBy('#{columnName}')"
-              "ng-style": "getColumnCss('#{columnName}')"
+              "ng-style": "getColumnCss('#{columnName}', 'header')"
 
             headerBlock.append cell
 
@@ -391,12 +400,13 @@ angular.module("Mac").directive "macTable", [
           bodyHeightBlock.height data.length * cellOuterHeight
 
           setTimeout ( ->
-            wrapperHeight = numDisplayRows * cellOuterHeight
+            wrapperHeight  = (numDisplayRows - opts.hasHeader) * cellOuterHeight
+            wrapperHeight += opts.headerHeight * opts.hasHeader
 
             # Check if x-axis scrollbar exist
             if bodyBlock[0].scrollWidth > bodyBlock.width()
               wrapperHeight += 15
-              element.height element.height() + 15
+              element.height element.height() + 15 + opts.hasHeader * (opts.headerHeight - opts.rowHeight) / 2
 
             bodyWrapperBlock.height wrapperHeight
           ), 0
@@ -438,7 +448,7 @@ angular.module("Mac").directive "macTable", [
             columnName    = $scope.columns[0]
             {cell, width} = createCellTemplate "body", columnName
             cell.attr
-              "ng-style": "getColumnCss('#{columnName}')"
+              "ng-style": "getColumnCss('#{columnName}', 'body')"
             fcTableRow.attr
                         "ng-repeat": "row in displayRows #{orderBy}"
                         "ng-cloak":  "ng-cloak"
@@ -455,7 +465,10 @@ angular.module("Mac").directive "macTable", [
           # Generate empty rows to fill up table background
           emptyTemplateRow = $("<div>").addClass "mac-table-row"
           emptyTemplateRow.height cellOuterHeight
-          bodyBackground.append(emptyTemplateRow.clone()) for i in [0..numDisplayRows]
+          bodyBackground.append(emptyTemplateRow.clone()) for i in [0..numDisplayRows-opts.hasHeader]
+
+          if opts.hasHeader
+            bodyBackground.css "top", opts.headerHeight + 2 * opts.cellPadding + opts.borderWidth
 
         # Up and down scrolling
         bodyWrapperBlock.scroll ->
@@ -514,6 +527,14 @@ angular.module("Mac").directive "macTable", [
 
           $scope.tableInitialized = true
 
+          # Update body width if the table is fluid
+          if opts.fluidWidth
+            clearTimeout $scope.bodyBlockTimeout if $scope.bodyBlockTimeout?
+            $scope.bodyBlockTimeout = setInterval (->
+                leftMargin = bodyBlock.css "margin-left"
+                bodyBlock.width element.width() - parseInt(leftMargin)
+              ), 500
+
           return true
 
         #
@@ -526,6 +547,7 @@ angular.module("Mac").directive "macTable", [
           $scope.index            = 0
           $scope.headerLeftMargin = 0
           $scope.columnsCss       = {}
+          $scope.bodyBlockTimeout = null
 
           # Use to determine if table has been initialized
           $scope.tableInitialized = false
