@@ -2227,7 +2227,9 @@ i.icon-fb-comment {
 }
 .mac-table-container .mac-table-body-wrapper .mac-table-body {
   width: 100%;
+  overflow: hidden;
   overflow-x: auto;
+  height: 100%;
 }
 .mac-table-container .mac-table-body-wrapper .mac-table-body-height {
   position: absolute;
