@@ -465,9 +465,10 @@ angular.module("Mac").directive "macTable", [
               "width":       element.width() - width
 
           # Generate empty rows to fill up table background
-          emptyTemplateRow = $("<div>").addClass "mac-table-row"
-          emptyTemplateRow.height cellOuterHeight
-          bodyBackground.append(emptyTemplateRow.clone()) for i in [0..numDisplayRows-opts.hasHeader]
+          emptyTemplateRow = $("<div>").addClass("mac-table-row").height cellOuterHeight
+          for i in [0..numDisplayRows-opts.hasHeader]
+            rowClass = if i%2 then "odd" else "even"
+            bodyBackground.append (emptyTemplateRow.clone()).addClass rowClass
 
           if opts.hasHeader
             bodyBackground.css "top", opts.headerHeight + 2 * opts.cellPadding + opts.borderWidth

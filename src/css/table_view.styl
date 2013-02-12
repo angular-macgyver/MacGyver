@@ -60,7 +60,6 @@ border-radius    = 4px
       background #ffffff linear-gradient(top, #ffffff, #e6e6e6)
 
     .mac-cell
-      float         left
       font-size     12px
       font-weight   bold
 
@@ -105,26 +104,8 @@ border-radius    = 4px
     .mac-table-row
       width  100%
 
-      &:nth-child(even)
+      &.even
         background-color even-background
-
-  .mac-table-header:first-child
-    .mac-table-row:first-child
-      .mac-cell:first-child
-        border-top-left-radius border-radius
-
-      .mac-cell:last-child
-        border-top-right-radius border-radius
-
-  .mac-table-header:last-child,
-  .mac-table-body:last-child,
-  .mac-table-footer:last-child
-    .mac-table-row:last-child
-      .mac-cell:first-child
-        border-bottom-left-radius border-radius
-
-      .mac-cell:last-child
-        border-bottom-right-radius border-radius
 
   .mac-table-transclude
     display none
