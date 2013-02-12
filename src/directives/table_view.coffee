@@ -487,6 +487,11 @@ angular.module("Mac").directive "macTable", [
         # @return {Boolean} true
         #
         $scope.renderTable = ->
+          $scope.predicate =  if $scope.columns?.length > 0
+                                "#{objectPrefix}#{$scope.columns[0].toLowerCase()}"
+                              else
+                                ""
+
           calculateColumnCss()
 
           if opts.hasHeader
@@ -525,10 +530,7 @@ angular.module("Mac").directive "macTable", [
           $scope.tableInitialized = false
 
           objectPrefix     = if opts.objectPrefix then "#{opts.objectPrefix}." else ""
-          $scope.predicate = if $scope.columns.length > 0
-                               "#{objectPrefix}#{$scope.columns[0].toLowerCase()}"
-                             else
-                               ""
+          $scope.predicate = ""
           $scope.reverse = false
 
         $scope.reset()
