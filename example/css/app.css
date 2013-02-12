@@ -2048,17 +2048,15 @@ div.wijmo-wijmenu .wijmo-wijmenu-child .wijmo-wijmenu-text
   background: #ffe2e2;
   border: solid 1px #dea9a9;
 }
-.docs-example {
-  min-height: 25px;
-}
-.example-hit-area .example-upload-button {
+.mac-upload {
   position: relative;
   height: 21px;
+  line-height: 21px;
   width: 65px;
   overflow: hidden;
   font-weight: bold;
 }
-.example-hit-area input {
+.mac-upload input {
   position: absolute;
   top: 0;
   left: 0;

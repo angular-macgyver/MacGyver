@@ -9,7 +9,8 @@ html
       style(type='text/css')
         body {padding: 40px 0px 100px 0px;}
         section {padding-top: 30px;}
-        .btn {line-height: 12px; float: right;}
+        .mac-table .btn {line-height: 11px; float: right;}
+        .docs-example {min-height: 25px;}
   body(ng-app='Mac')
     .container
       .row
@@ -141,7 +142,7 @@ html
             h2 Example
             .docs-example.example-hit-area
               form(action="...", method="post", enctype="multipart/form-data", name="upload-example")
-                span.example-upload-button.btn.fileinput-button
+                span.mac-upload.btn.fileinput-button
                   span Upload
                   input(
                     type                 = "file"
