@@ -2065,7 +2065,7 @@ div.wijmo-wijmenu .wijmo-wijmenu-child .wijmo-wijmenu-text
   padding: 0px 0px 100px 200px;
 }
 i {
-  background: url("../img/sprite-icons.png") no-repeat;
+  background: url("../img/mac-sprite-icons.png") no-repeat;
   text-indent: -9999px;
 /*
   &.icon-calendar
@@ -2205,7 +2205,6 @@ i.icon-fb-comment {
 }
 .mac-table-container .mac-table-header .mac-cell,
 .mac-table-container .mac-table-footer .mac-cell {
-  float: left;
   font-size: 12px;
   font-weight: bold;
 }
@@ -2256,24 +2255,8 @@ i.icon-fb-comment {
 .mac-table-container .mac-table-body-background .mac-table-row {
   width: 100%;
 }
-.mac-table-container .mac-table-body-background .mac-table-row:nth-child(even) {
+.mac-table-container .mac-table-body-background .mac-table-row.even {
   background-color: #f0f5ff;
-}
-.mac-table-container .mac-table-header:first-child .mac-table-row:first-child .mac-cell:first-child {
-  border-top-left-radius: 4px;
-}
-.mac-table-container .mac-table-header:first-child .mac-table-row:first-child .mac-cell:last-child {
-  border-top-right-radius: 4px;
-}
-.mac-table-container .mac-table-header:last-child .mac-table-row:last-child .mac-cell:first-child,
-.mac-table-container .mac-table-body:last-child .mac-table-row:last-child .mac-cell:first-child,
-.mac-table-container .mac-table-footer:last-child .mac-table-row:last-child .mac-cell:first-child {
-  border-bottom-left-radius: 4px;
-}
-.mac-table-container .mac-table-header:last-child .mac-table-row:last-child .mac-cell:last-child,
-.mac-table-container .mac-table-body:last-child .mac-table-row:last-child .mac-cell:last-child,
-.mac-table-container .mac-table-footer:last-child .mac-table-row:last-child .mac-cell:last-child {
-  border-bottom-right-radius: 4px;
 }
 .mac-table-container .mac-table-transclude {
   display: none;
