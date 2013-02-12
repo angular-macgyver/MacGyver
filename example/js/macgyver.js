@@ -18011,8 +18011,7 @@ angular.module("Mac").directive("macTable", [
           });
         })();
         return function($scope, element, attrs) {
-          var calculateColumnCss, createCellTemplate, createHeaderCellTemplate, createRowTemplate, getTemplateCell, numColumns, numDisplayRows;
-          numColumns = $scope.columns.length;
+          var calculateColumnCss, createCellTemplate, createHeaderCellTemplate, createRowTemplate, getTemplateCell, numDisplayRows;
           numDisplayRows = opts.numDisplayRows - opts.hasHeader;
           $scope.$watch("data", function() {
             var endIndex, firstColumnName, index, scrollTop, width, _ref;
@@ -18050,7 +18049,7 @@ angular.module("Mac").directive("macTable", [
             }
           });
           calculateColumnCss = function() {
-            var bodyCell, calculatedWidth, column, setWidth, unit, width, widthMatch, _i, _len, _ref;
+            var bodyCell, calculatedWidth, column, numColumns, setWidth, unit, width, widthMatch, _i, _len, _ref;
             _ref = $scope.columns;
             for (_i = 0, _len = _ref.length; _i < _len; _i++) {
               column = _ref[_i];
@@ -18064,6 +18063,7 @@ angular.module("Mac").directive("macTable", [
                 setWidth = 0;
               }
               if (setWidth === 0) {
+                numColumns = $scope.columns.length;
                 calculatedWidth = (opts.width / numColumns) - opts.cellPadding * 2 - opts.borderWidth;
                 width = Math.max(calculatedWidth, opts.columnWidth);
               } else {

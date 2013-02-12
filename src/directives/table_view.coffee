@@ -99,7 +99,6 @@ angular.module("Mac").directive "macTable", [
       )()
 
       ($scope, element, attrs) ->
-        numColumns     = $scope.columns.length
         numDisplayRows = opts.numDisplayRows - opts.hasHeader
 
         $scope.$watch "data", ->
@@ -151,6 +150,7 @@ angular.module("Mac").directive "macTable", [
 
             if setWidth is 0
               # Calculate the relative width of each cell
+              numColumns      = $scope.columns.length
               calculatedWidth = (opts.width / numColumns) - opts.cellPadding * 2 - opts.borderWidth
 
               # Use minimum width if the relative width is too small
