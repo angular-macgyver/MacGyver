@@ -20,8 +20,6 @@ border-radius    = 4px
       float       left
 
       .mac-cell
-        width 100%
-
         &:hover
           background-color hover-background
 
@@ -60,12 +58,9 @@ border-radius    = 4px
       background #ffffff linear-gradient(top, #ffffff, #e6e6e6)
 
     .mac-cell
-      text-align    left
       float         left
       font-size     12px
       font-weight   bold
-      text-overflow ellipsis
-      width         100%
 
       &.ui-sortable-placeholder
         background-color hover-background
@@ -90,6 +85,11 @@ border-radius    = 4px
       position absolute
       top      0px
       width    50px
+
+  .mac-cell
+    overflow   ellipsis
+    width      100%
+    text-align left
 
   .mac-table-body-background
     position       absolute

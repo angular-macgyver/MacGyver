@@ -184,7 +184,7 @@ angular.module("Mac").directive "macTable", [
           cell = emptyCell.clone() if cell.length is 0
 
           # Set column property again
-          cell.prop "column", column
+          cell.prop("column", column).addClass "mac-cell"
 
           width = $scope.columnsCss[column].width + 2 * opts.cellPadding + opts.borderWidth
 
