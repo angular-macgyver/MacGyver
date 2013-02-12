@@ -487,6 +487,7 @@ angular.module("Mac").directive "macTable", [
         # @return {Boolean} true
         #
         $scope.renderTable = ->
+          objectPrefix     = if opts.objectPrefix then "#{opts.objectPrefix}." else ""
           $scope.predicate =  if $scope.columns?.length > 0
                                 "#{objectPrefix}#{$scope.columns[0].toLowerCase()}"
                               else
@@ -529,7 +530,6 @@ angular.module("Mac").directive "macTable", [
           # Use to determine if table has been initialized
           $scope.tableInitialized = false
 
-          objectPrefix     = if opts.objectPrefix then "#{opts.objectPrefix}." else ""
           $scope.predicate = ""
           $scope.reverse = false
 
