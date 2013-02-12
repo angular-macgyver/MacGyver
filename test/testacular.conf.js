@@ -10,17 +10,16 @@ files = [
   JASMINE_ADAPTER,
 
   // Application Code //
-  'components/angular/angular.js',
-  'app/*.coffee',
+  'example/js/vendor.js',
+  'src/*.coffee',
 
   // Javascript //
- 
-  'test/vendor/angular/angular-mocks.js',
+  //'test/vendor/angular/angular-mocks.js',
 
   // Specs //
 
   // CoffeeScript //
-  'test/unit/**/*.spec.coffee'
+  'test/unit/*.spec.coffee'
 
   // Javascript //
   // 'test/unit/**/*.spec.js'
