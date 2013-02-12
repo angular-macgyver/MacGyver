@@ -99,9 +99,6 @@ angular.module("Mac").directive "macTable", [
       )()
 
       ($scope, element, attrs) ->
-        # Make sure columns are defined
-        throw "Table view missing columns" unless $scope.columns?
-
         numColumns     = $scope.columns.length
         numDisplayRows = opts.numDisplayRows - opts.hasHeader
 
@@ -119,12 +116,14 @@ angular.module("Mac").directive "macTable", [
 
             # Recalculate body block width after cells are populated
             if opts.lockFirstColumn and $scope.columns?
-              firstColumn = $scope.columns[0]
-              width       = $scope.columnsCss[firstColumn]?.width or 0
+              firstColumnName = $scope.columns[0]
+              width           = $scope.columnsCss[firstColumnName]?.width or 0
               bodyBlock.width element.width() - width
 
         $scope.$watch "columns", ->
-          calculateColumnCss() if $scope.columns?
+          if $scope.columns?
+            $scope.renderTable() unless $scope.tableInitialized
+            calculateColumnCss()
 
         Object.defineProperty $scope, "total",
           get: ->
@@ -482,24 +481,13 @@ angular.module("Mac").directive "macTable", [
           footerBlock.scrollLeft scrollLeft if opts.hasFooter
 
         #
-        # @name $scope.reset
+        # @name $scope.renderTable
         # @description
-        # Reset table view scope
+        # Function tto draw all components of the table
+        # @return {Boolean} true
         #
-        $scope.reset = ->
-          $scope.displayRows      = []
-          $scope.index            = 0
-          $scope.headerLeftMargin = 0
-          $scope.columnsCss       = {}
-
+        $scope.renderTable = ->
           calculateColumnCss()
-
-          objectPrefix     = if opts.objectPrefix then "#{opts.objectPrefix}." else ""
-          $scope.predicate = if $scope.columns.length > 0
-                               "#{objectPrefix}#{$scope.columns[0].toLowerCase()}"
-                             else
-                               ""
-          $scope.reverse = false
 
           if opts.hasHeader
             $scope.drawHeader()
@@ -517,6 +505,31 @@ angular.module("Mac").directive "macTable", [
             $scope.drawFooter()
 
           $scope.calculateBodyDimension()
+
+          $scope.tableInitialized = true
+
+          return true
+
+        #
+        # @name $scope.reset
+        # @description
+        # Reset table view scope
+        #
+        $scope.reset = ->
+          $scope.displayRows      = []
+          $scope.index            = 0
+          $scope.headerLeftMargin = 0
+          $scope.columnsCss       = {}
+
+          # Use to determine if table has been initialized
+          $scope.tableInitialized = false
+
+          objectPrefix     = if opts.objectPrefix then "#{opts.objectPrefix}." else ""
+          $scope.predicate = if $scope.columns.length > 0
+                               "#{objectPrefix}#{$scope.columns[0].toLowerCase()}"
+                             else
+                               ""
+          $scope.reverse = false
 
         $scope.reset()
 ]
