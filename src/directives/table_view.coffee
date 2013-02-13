@@ -106,7 +106,7 @@ angular.module("Mac").directive "macTable", [
       ($scope, element, attrs) ->
         numDisplayRows = opts.numDisplayRows - opts.hasHeader
 
-        $scope.$watch "data", ->
+        render = ->
           if $scope.data?
             scrollTop          = bodyWrapperBlock.scrollTop()
             index              = Math.floor scrollTop / cellOuterHeight
@@ -123,6 +123,9 @@ angular.module("Mac").directive "macTable", [
               firstColumnName = $scope.columns[0]
               width           = $scope.columnsCss[firstColumnName]?.width or 0
               bodyBlock.width element.width() - width
+
+        $scope.$watch "data",        render
+        $scope.$watch "data.length", render
 
         $scope.$watch "columns", ->
           if $scope.columns?
