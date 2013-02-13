@@ -2240,6 +2240,7 @@ i.icon-fb-comment {
   position: absolute;
   top: 0px;
   width: 50px;
+  pointer-events: none;
 }
 .mac-table-container .mac-cell {
   white-space: nowrap;

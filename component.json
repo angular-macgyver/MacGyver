@@ -1,7 +1,7 @@
 {
   "name": "MacGyver",
   "version": "0.0.1",
-  "main": ["lib/macgyver.js","lib/macgyver.css","lib/img","lib/img/ui-bg_inset-soft_95_fef1ec_1x100.png","lib/img/ui-bg_highlight-soft_75_cccccc_1x100.png","lib/img/ui-bg_glass_75_ffffff_1x400.png","lib/img/ui-bg_glass_75_dadada_1x400.png","lib/img/ui-bg_glass_55_fbf9ee_1x400.png","lib/img/ui-icons_222222_256x240.png","lib/img/ui-bg_flat_75_ffffff_40x100.png","lib/img/ui-icons_454545_256x240.png","lib/img/ui-bg_glass_75_e6e6e6_1x400.png","lib/img/ui-icons_2e83ff_256x240.png","lib/img/ui-icons_f6cf3b_256x240.png","lib/img/mac-sprite-icons.png","lib/img/ui-icons_cd0a0a_256x240.png","lib/img/ui-bg_flat_0_aaaaaa_40x100.png","lib/img/ui-bg_glass_65_ffffff_1x400.png","lib/img/chosen-sprite.png","lib/img/ui-bg_glass_95_fef1ec_1x400.png","lib/img/ui-icons_888888_256x240.png"],
+  "main": ["lib/img","lib/macgyver.css","lib/macgyver.js","lib/img/chosen-sprite.png","lib/img/mac-sprite-icons.png","lib/img/ui-bg_flat_0_aaaaaa_40x100.png","lib/img/ui-bg_flat_75_ffffff_40x100.png","lib/img/ui-bg_glass_55_fbf9ee_1x400.png","lib/img/ui-bg_glass_65_ffffff_1x400.png","lib/img/ui-bg_glass_75_dadada_1x400.png","lib/img/ui-bg_glass_75_e6e6e6_1x400.png","lib/img/ui-bg_glass_75_ffffff_1x400.png","lib/img/ui-bg_glass_95_fef1ec_1x400.png","lib/img/ui-bg_highlight-soft_75_cccccc_1x100.png","lib/img/ui-bg_inset-soft_95_fef1ec_1x100.png","lib/img/ui-icons_222222_256x240.png","lib/img/ui-icons_2e83ff_256x240.png","lib/img/ui-icons_454545_256x240.png","lib/img/ui-icons_888888_256x240.png","lib/img/ui-icons_cd0a0a_256x240.png","lib/img/ui-icons_f6cf3b_256x240.png"],
   "dependencies": {
     "angular": "*"
   }

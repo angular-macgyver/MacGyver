@@ -23,6 +23,12 @@ html
         #example.span10(ng-controller='ExampleController')
 
           section
+            .page-header: h1 Buttons!
+            h2 Example
+            .docs-example
+              .btn(mac-click="what()") Button
+
+          section
             .page-header: h1 Autocomplete
             h2 Example
             .docs-example
@@ -101,7 +107,8 @@ html
                     a.btn(mac-parent-click="createRow($event)") Create Row
                   .cell(column="a") Second Column
                 .table-body-template
-                  .cell(column="Name", style="width: 200px") {{row.name}}
+                  .cell(column="Name", style="width: 200px")
+                    a(mac-click="loadMoreRows()") {{row.name}}
                   .cell(column="a") {{row.a | number: 0}}
                   .cell(column="d") {{row.d | number: 4}}
                   .cell(column="c") {{row.c | number: 4}}

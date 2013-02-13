@@ -17626,6 +17626,38 @@ for (_i = 0, _len = _ref.length; _i < _len; _i++) {
   _fn(event);
 }
 
+angular.module("Mac").directive("macClick", [
+  "$parse", function($parse) {
+    return {
+      link: function($scope, element, attr) {
+        var clickAction, depth, fn;
+        fn = $parse(attr.macClick);
+        depth = +(attr.macClickDepth || 2);
+        clickAction = function(scope, depth) {
+          var parent, ret;
+          if (depth === 0) {
+            return false;
+          }
+          ret = fn(scope, {
+            $event: event
+          });
+          parent = scope.$parent;
+          if (!ret && (parent != null)) {
+            return clickAction(parent, depth - 1);
+          } else {
+            return true;
+          }
+        };
+        return element.bind("click", function(event) {
+          return $scope.$apply(function() {
+            return clickAction($scope, depth);
+          });
+        });
+      }
+    };
+  }
+]);
+
 angular.module("Mac").directive("macParentClick", [
   "$parse", function($parse) {
     return {
