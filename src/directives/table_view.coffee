@@ -381,8 +381,10 @@ angular.module("Mac").directive "macTable", [
 
           if opts.lockFirstColumn
             columnName  = $scope.columns[0]
-            paddingLeft = $scope.columnsCss[columnName].width + 2 * opts.cellPadding + opts.borderWidth
-            totalRow.css "padding-left", paddingLeft
+            {cell, width} = createCellTemplate "total-footer", columnName
+            cell.addClass("mac-table-locked-cell").attr
+              "ng-style": "getColumnCss('#{columnName}', 'total-footer')"
+            totalRow.prepend(cell).css "padding-left", width
 
           # Compile the column to render carets
           $compile(totalRow) $scope

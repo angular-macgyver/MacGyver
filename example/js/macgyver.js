@@ -18256,13 +18256,16 @@ angular.module("Mac").directive("macTable", [
             }
           };
           $scope.drawTotalFooter = function() {
-            var columnName, paddingLeft, row, width, _ref;
+            var cell, columnName, row, width, _ref, _ref1;
             _ref = createRowTemplate("total-footer"), row = _ref.row, width = _ref.width;
             totalRow.append(row).width(width);
             if (opts.lockFirstColumn) {
               columnName = $scope.columns[0];
-              paddingLeft = $scope.columnsCss[columnName].width + 2 * opts.cellPadding + opts.borderWidth;
-              totalRow.css("padding-left", paddingLeft);
+              _ref1 = createCellTemplate("total-footer", columnName), cell = _ref1.cell, width = _ref1.width;
+              cell.addClass("mac-table-locked-cell").attr({
+                "ng-style": "getColumnCss('" + columnName + "', 'total-footer')"
+              });
+              totalRow.prepend(cell).css("padding-left", width);
             }
             return $compile(totalRow)($scope);
           };

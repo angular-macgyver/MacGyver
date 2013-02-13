@@ -2167,6 +2167,15 @@ i.icon-fb-comment {
   float: left;
   position: relative;
 }
+.mac-table-container .mac-table-header .mac-table-header-cell.mac-table-locked-cell,
+.mac-table-container .mac-table-footer .mac-table-header-cell.mac-table-locked-cell {
+  background: #fff -webkit-gradient(linear, left top, left bottom, color-stop(0, #fff), color-stop(1, #e6e6e6));
+  background: #fff -webkit-linear-gradient(top, #fff 0%, #e6e6e6 100%);
+  background: #fff -moz-linear-gradient(top, #fff 0%, #e6e6e6 100%);
+  background: #fff -o-linear-gradient(top, #fff 0%, #e6e6e6 100%);
+  background: #fff -ms-linear-gradient(top, #fff 0%, #e6e6e6 100%);
+  background: #fff linear-gradient(top, #fff 0%, #e6e6e6 100%);
+}
 .mac-table-container .mac-table-header .mac-table-header-cell .mac-table-caret,
 .mac-table-container .mac-table-footer .mac-table-header-cell .mac-table-caret {
   cursor: pointer;
@@ -2193,20 +2202,15 @@ i.icon-fb-comment {
 .mac-table-container .mac-table-footer .mac-table-row:first-child .mac-cell {
   border-top: 0;
 }
-.mac-table-container .mac-table-header .mac-table-locked-cell,
-.mac-table-container .mac-table-footer .mac-table-locked-cell {
-  position: absolute;
-  background: #fff -webkit-gradient(linear, left top, left bottom, color-stop(0, #fff), color-stop(1, #e6e6e6));
-  background: #fff -webkit-linear-gradient(top, #fff 0%, #e6e6e6 100%);
-  background: #fff -moz-linear-gradient(top, #fff 0%, #e6e6e6 100%);
-  background: #fff -o-linear-gradient(top, #fff 0%, #e6e6e6 100%);
-  background: #fff -ms-linear-gradient(top, #fff 0%, #e6e6e6 100%);
-  background: #fff linear-gradient(top, #fff 0%, #e6e6e6 100%);
-}
 .mac-table-container .mac-table-header .mac-cell,
 .mac-table-container .mac-table-footer .mac-cell {
   font-size: 12px;
   font-weight: bold;
+}
+.mac-table-container .mac-table-header .mac-cell.mac-table-locked-cell,
+.mac-table-container .mac-table-footer .mac-cell.mac-table-locked-cell {
+  position: absolute;
+  left: 0px;
 }
 .mac-table-container .mac-table-header .mac-cell.ui-sortable-placeholder,
 .mac-table-container .mac-table-footer .mac-cell.ui-sortable-placeholder {

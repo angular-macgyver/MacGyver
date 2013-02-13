@@ -34,6 +34,9 @@ border-radius    = 4px
       float    left
       position relative
 
+      &.mac-table-locked-cell
+        background #ffffff linear-gradient(top, #ffffff, #e6e6e6)
+
       .mac-table-caret
         cursor         pointer
         margin-left    5px
@@ -55,13 +58,13 @@ border-radius    = 4px
       .mac-cell
         border-top 0
 
-    .mac-table-locked-cell
-      position   absolute
-      background #ffffff linear-gradient(top, #ffffff, #e6e6e6)
-
     .mac-cell
       font-size     12px
       font-weight   bold
+
+      &.mac-table-locked-cell
+        position   absolute
+        left       0px
 
       &.ui-sortable-placeholder
         background-color hover-background
