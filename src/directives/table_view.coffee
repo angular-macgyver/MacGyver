@@ -106,6 +106,10 @@ angular.module("Mac").directive "macTable", [
       ($scope, element, attrs) ->
         numDisplayRows = opts.numDisplayRows - opts.hasHeader
 
+        # Get all the columns defined in the body template
+        bodyColumns = $(".table-body-template .cell", transcludedBlock).map (i, item) ->
+          return $(item).attr "column"
+
         render = ->
           if $scope.data?
             scrollTop          = bodyWrapperBlock.scrollTop()
@@ -113,10 +117,8 @@ angular.module("Mac").directive "macTable", [
             endIndex           = index + numDisplayRows - 1
             $scope.displayRows = $scope.data[index..endIndex]
 
+            # Recalculate total if data have changed
             $scope.calculateTotal() if opts.calculateTotalLocally
-
-            # Recalculate all the column css with latest data
-            calculateColumnCss() if $scope.columns?
 
             # Recalculate body block width after cells are populated
             if opts.lockFirstColumn and $scope.columns?
@@ -127,10 +129,12 @@ angular.module("Mac").directive "macTable", [
         $scope.$watch "data",        render
         $scope.$watch "data.length", render
 
-        $scope.$watch "columns", ->
+        $scope.$watch "columns.length", ->
           if $scope.columns?
-            $scope.renderTable() unless $scope.tableInitialized
-            calculateColumnCss()
+            unless $scope.tableInitialized
+              $scope.renderTable()
+              calculateColumnCss()
+            calculateRowCss()
 
         Object.defineProperty $scope, "total",
           get: ->
@@ -144,7 +148,7 @@ angular.module("Mac").directive "macTable", [
         # @return {Boolean} true
         #
         calculateColumnCss = ->
-          for column in $scope.columns
+          for column in bodyColumns
             #Check if body cell has set width
             bodyCell = getTemplateCell "body", column
             setWidth = bodyCell.css "width"
@@ -172,6 +176,21 @@ angular.module("Mac").directive "macTable", [
               width:   width
               padding: opts.cellPadding
               height:  opts.rowHeight
+
+          return true
+
+        #
+        # @name calculateRowCss
+        # @description
+        # Calculate the row width based on user defined columns
+        # @return {Boolean} true
+        #
+        calculateRowCss = ->
+          calculateRowWidth = 0
+          startIndex = if opts.lockFirstColumn then 1 else 0
+          for column in $scope.columns[startIndex..]
+            calculateRowWidth += $scope.columnsCss[column].width + opts.cellPadding * 2 + opts.borderWidth
+          $scope.rowCss = {width: calculateRowWidth}
 
           return true
 
@@ -250,7 +269,7 @@ angular.module("Mac").directive "macTable", [
                         "data-column": "{{column}}"
                         "ng-style":    "getColumnCss(column, '#{section}')"
 
-          for column in $scope.columns[startIndex..]
+          for column in bodyColumns
             {cell, width} = if section is "header"
                               createHeaderCellTemplate column
                             else
@@ -331,7 +350,8 @@ angular.module("Mac").directive "macTable", [
             .addClass "resizable"
 
           # Set the header to be the width of all columns
-          headerRow.append(row).width width
+          headerRow.append(row).attr
+            "ng-style": "rowCss"
 
           # Compile the column to render carets
           $compile(headerRow) $scope
@@ -377,7 +397,8 @@ angular.module("Mac").directive "macTable", [
           {row, width} = createRowTemplate "total-footer"
 
           # Set the header to be the width of all columns
-          totalRow.append(row).width width
+          totalRow.append(row).attr
+            "ng-style": "rowCss"
 
           if opts.lockFirstColumn
             columnName  = $scope.columns[0]
@@ -442,7 +463,8 @@ angular.module("Mac").directive "macTable", [
 
           {row, width} = createRowTemplate "body"
 
-          tableRow.append(row).width width
+          tableRow.append(row).attr
+            "ng-style": "rowCss"
           bodyBlock.append tableRow
 
           # Compile the body block to bind all values correctly
@@ -556,6 +578,8 @@ angular.module("Mac").directive "macTable", [
           $scope.headerLeftMargin = 0
           $scope.columnsCss       = {}
           $scope.bodyBlockTimeout = null
+
+          $scope.rowCss = {}
 
           # Use to determine if table has been initialized
           $scope.tableInitialized = false
