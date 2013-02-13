@@ -259,15 +259,24 @@ angular.module("Mac").directive "macTable", [
           rowWidth   = 0
           startIndex = if opts.lockFirstColumn then 1 else 0
 
+          rowTemplates = $(".table-#{section}-template .mac-table-row", transcludedBlock)
+
           # Create template cell with ng-repeat and ng-switch
           cssClass  = "mac-table-#{section}-cell"
           cssClass += " mac-table-cell" unless section is "header"
-          row       = $("<div>").addClass(cssClass).attr
+          row       = $("<div>").attr
                         "ng-switch":   ""
                         "on":          "column"
                         "ng-repeat":   "column in columns.slice(#{startIndex})"
                         "data-column": "{{column}}"
                         "ng-style":    "getColumnCss(column, '#{section}')"
+
+          # Check if row template exist
+          if rowTemplates.length > 0
+            rowTemplate = $(rowTemplates[0]).removeClass "mac-table-row"
+            row.attr "class", rowTemplate.attr("class")
+
+          row.addClass cssClass
 
           for column in bodyColumns
             {cell, width} = if section is "header"

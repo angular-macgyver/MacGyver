@@ -18185,23 +18185,29 @@ angular.module("Mac").directive("macTable", [
             };
           };
           createRowTemplate = function(section) {
-            var cell, column, cssClass, row, rowWidth, startIndex, width, _i, _len, _ref;
+            var cell, column, cssClass, row, rowTemplate, rowTemplates, rowWidth, startIndex, width, _i, _len, _ref;
             if (section == null) {
               section = "";
             }
             rowWidth = 0;
             startIndex = opts.lockFirstColumn ? 1 : 0;
+            rowTemplates = $(".table-" + section + "-template .mac-table-row", transcludedBlock);
             cssClass = "mac-table-" + section + "-cell";
             if (section !== "header") {
               cssClass += " mac-table-cell";
             }
-            row = $("<div>").addClass(cssClass).attr({
+            row = $("<div>").attr({
               "ng-switch": "",
               "on": "column",
               "ng-repeat": "column in columns.slice(" + startIndex + ")",
               "data-column": "{{column}}",
               "ng-style": "getColumnCss(column, '" + section + "')"
             });
+            if (rowTemplates.length > 0) {
+              rowTemplate = $(rowTemplates[0]).removeClass("mac-table-row");
+              row.attr("class", rowTemplate.attr("class"));
+            }
+            row.addClass(cssClass);
             for (_i = 0, _len = bodyColumns.length; _i < _len; _i++) {
               column = bodyColumns[_i];
               _ref = section === "header" ? createHeaderCellTemplate(column) : createCellTemplate(section, column), cell = _ref.cell, width = _ref.width;
