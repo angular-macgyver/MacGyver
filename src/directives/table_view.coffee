@@ -94,18 +94,19 @@ angular.module("Mac").directive "macTable", [
       cellOuterHeight = opts.rowHeight + opts.cellPadding * 2
       totalRows       = opts.numDisplayRows
       totalRows      += opts.hasFooter + opts.hasTotalFooter
+      elementHeight   = cellOuterHeight * totalRows
+      elementHeight  += opts.hasHeader * (opts.headerHeight + 2 * opts.cellPadding + opts.borderWidth)
+      elementHeight  += 2 * opts.borderWidth
 
       (->
         # Update the width and height of the whole table
         width = if opts.fluidWidth then "100%" else (opts.width - 2 * opts.borderWidth)
         element.css
-          height: cellOuterHeight * totalRows
+          height: elementHeight
           width:  width
       )()
 
       ($scope, element, attrs) ->
-        numDisplayRows = opts.numDisplayRows - opts.hasHeader
-
         # Get all the columns defined in the body template
         bodyColumns = $(".table-body-template .cell", transcludedBlock).map (i, item) ->
           return $(item).attr "column"
@@ -114,7 +115,7 @@ angular.module("Mac").directive "macTable", [
           if $scope.data?
             scrollTop          = bodyWrapperBlock.scrollTop()
             index              = Math.floor scrollTop / cellOuterHeight
-            endIndex           = index + numDisplayRows - 1
+            endIndex           = index + opts.numDisplayRows - 1
             $scope.displayRows = $scope.data[index..endIndex]
 
             # Recalculate total if data have changed
@@ -173,9 +174,10 @@ angular.module("Mac").directive "macTable", [
               width    = setWidth
 
             $scope.columnsCss[column] =
-              width:   width
-              padding: opts.cellPadding
-              height:  opts.rowHeight
+              "width":       width
+              "padding":     opts.cellPadding
+              "height":      opts.rowHeight
+              "line-height": "#{opts.rowHeight}px"
 
           return true
 
@@ -406,8 +408,7 @@ angular.module("Mac").directive "macTable", [
           {row, width} = createRowTemplate "total-footer"
 
           # Set the header to be the width of all columns
-          totalRow.append(row).attr
-            "ng-style": "rowCss"
+          totalRow.append(row).attr "ng-style", "rowCss"
 
           if opts.lockFirstColumn
             columnName  = $scope.columns[0]
@@ -437,13 +438,12 @@ angular.module("Mac").directive "macTable", [
           bodyHeightBlock.height data.length * cellOuterHeight
 
           setTimeout ( ->
-            wrapperHeight  = (numDisplayRows - opts.hasHeader) * cellOuterHeight
-            wrapperHeight += opts.headerHeight * opts.hasHeader
+            wrapperHeight = opts.numDisplayRows * cellOuterHeight
 
             # Check if x-axis scrollbar exist
             if bodyBlock[0].scrollWidth > bodyBlock.width()
-              wrapperHeight += 15
-              element.height element.height() + 15 + opts.hasHeader * (opts.headerHeight - opts.rowHeight) / 2
+              wrapperHeight += 10
+              element.height element.height() + 10 - 2 * opts.borderWidth
 
             bodyWrapperBlock.height wrapperHeight
           ), 0
@@ -467,8 +467,8 @@ angular.module("Mac").directive "macTable", [
             "ng-cloak":  "ng-cloak"
 
           # Set the first set of rows to show up
-          endIndex           = @index + numDisplayRows - 1
-          $scope.displayRows = data[@index..endIndex]
+          endIndex           = opts.numDisplayRows - 1
+          $scope.displayRows = data[..endIndex]
 
           {row, width} = createRowTemplate "body"
 
@@ -502,7 +502,7 @@ angular.module("Mac").directive "macTable", [
 
           # Generate empty rows to fill up table background
           emptyTemplateRow = $("<div>").addClass("mac-table-row").height cellOuterHeight
-          for i in [0..numDisplayRows-opts.hasHeader]
+          for i in [0..opts.numDisplayRows-1]
             rowClass = if i%2 then "odd" else "even"
             bodyBackground.append (emptyTemplateRow.clone()).addClass rowClass
 
@@ -521,7 +521,7 @@ angular.module("Mac").directive "macTable", [
           $scope.$apply ->
             data               = $scope.data or []
             index              = Math.floor scrollTop / cellOuterHeight
-            endIndex           = index + numDisplayRows - 1
+            endIndex           = index + opts.numDisplayRows - 1
             $scope.displayRows = data[index..endIndex]
 
         # Left and right scrolling
