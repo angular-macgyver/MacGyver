@@ -34,17 +34,17 @@ angular.module("Mac").directive "macClick", ["$parse", ($parse) ->
     fn    = $parse attr.macClick
     depth = +(attr.macClickDepth or 2)
 
-    clickAction = (scope, depth) ->
+    clickAction = (scope, depth, $event) ->
       return false if depth is 0
-      ret    = fn scope, {$event: event}
+      ret    = fn scope, {$event, $scope}
       parent = scope.$parent
       if not ret and parent?
-        return clickAction(parent, depth - 1)
+        return clickAction parent, depth - 1, $event
       else
         return true
 
     element.bind "click", (event) ->
-      $scope.$apply -> clickAction $scope, depth
+      $scope.$apply -> clickAction $scope, depth, event
 ]
 
 #

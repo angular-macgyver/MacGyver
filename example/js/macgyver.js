@@ -17633,24 +17633,25 @@ angular.module("Mac").directive("macClick", [
         var clickAction, depth, fn;
         fn = $parse(attr.macClick);
         depth = +(attr.macClickDepth || 2);
-        clickAction = function(scope, depth) {
+        clickAction = function(scope, depth, $event) {
           var parent, ret;
           if (depth === 0) {
             return false;
           }
           ret = fn(scope, {
-            $event: event
+            $event: $event,
+            $scope: $scope
           });
           parent = scope.$parent;
           if (!ret && (parent != null)) {
-            return clickAction(parent, depth - 1);
+            return clickAction(parent, depth - 1, $event);
           } else {
             return true;
           }
         };
         return element.bind("click", function(event) {
           return $scope.$apply(function() {
-            return clickAction($scope, depth);
+            return clickAction($scope, depth, event);
           });
         });
       }
