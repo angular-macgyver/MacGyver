@@ -18166,6 +18166,9 @@ angular.module("Mac").directive("macTable", [
               cell = emptyCell.clone();
             }
             cell.prop("column", column).addClass("mac-cell");
+            if ($scope.columnsCss[column] == null) {
+              throw "Missing body template for cell " + column;
+            }
             width = $scope.columnsCss[column].width + 2 * opts.cellPadding + opts.borderWidth;
             return {
               cell: cell,
@@ -18232,6 +18235,9 @@ angular.module("Mac").directive("macTable", [
           };
           $scope.getColumnCss = function(column, section) {
             var css;
+            if ($scope.columnsCss[column] == null) {
+              throw "Missing body template for cell " + column;
+            }
             css = angular.copy($scope.columnsCss[column]);
             if (section === "header") {
               css.height = opts.headerHeight;

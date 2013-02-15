@@ -228,6 +228,7 @@ angular.module("Mac").directive "macTable", [
           # Set column property again
           cell.prop("column", column).addClass "mac-cell"
 
+          throw "Missing body template for cell #{column}" unless $scope.columnsCss[column]?
           width = $scope.columnsCss[column].width + 2 * opts.cellPadding + opts.borderWidth
 
           return {cell, width}
@@ -306,6 +307,8 @@ angular.module("Mac").directive "macTable", [
         # @result {Object} Object with CSS attributes
         #
         $scope.getColumnCss = (column, section) ->
+          throw "Missing body template for cell #{column}" unless $scope.columnsCss[column]?
+
           css        = angular.copy $scope.columnsCss[column]
           css.height = opts.headerHeight if section is "header"
           return css
