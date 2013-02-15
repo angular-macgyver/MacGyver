@@ -17537,6 +17537,40 @@ angular.module("Mac").directive("macAutocomplete", [
   }
 ]);
 
+angular.module("Mac").directive("macBind", [
+  "$parse", function($parse) {
+    return {
+      link: function($scope, element, attr) {
+        var checkScope, depth, fn;
+        element.addClass('mac-binding').data('$binding', attr.ngBind);
+        fn = $parse(attr.macBind);
+        depth = +(attr.macBindDepth || 2);
+        checkScope = function(scope, depth, $event) {
+          var parent, ret;
+          if (depth === 0) {
+            return false;
+          }
+          ret = fn(scope, {
+            $scope: $scope
+          });
+          parent = scope.$parent;
+          if (!ret && (parent != null)) {
+            return checkScope(parent, depth - 1, $event);
+          } else {
+            if (ret) {
+              scope.$watch(attr.macBind, function(value) {
+                return element.text(value || "");
+              });
+            }
+            return true;
+          }
+        };
+        return checkScope($scope, depth);
+      }
+    };
+  }
+]);
+
 angular.module("Mac").directive("macDatepicker", [
   "util", function(util) {
     return {
