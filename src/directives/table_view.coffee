@@ -124,6 +124,10 @@ angular.module("Mac").directive "macTable", [
             # Recalculate body block width after cells are populated
             if opts.lockFirstColumn and $scope.columns?
               firstColumnName = $scope.columns[0]
+
+              unless $scope.columnsCss[firstColumnName]?
+                throw "Missing body template for cell #{firstColumnName}"
+
               width           = $scope.columnsCss[firstColumnName]?.width or 0
               bodyBlock.width element.width() - width
 
@@ -191,6 +195,7 @@ angular.module("Mac").directive "macTable", [
           calculateRowWidth = 0
           startIndex = if opts.lockFirstColumn then 1 else 0
           for column in $scope.columns[startIndex..]
+            throw "Missing body template for cell #{column}" unless $scope.columnsCss[column]?
             calculateRowWidth += $scope.columnsCss[column].width + opts.cellPadding * 2 + opts.borderWidth
           $scope.rowCss = {width: calculateRowWidth}
 
