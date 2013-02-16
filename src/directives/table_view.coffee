@@ -121,6 +121,8 @@ angular.module("Mac").directive "macTable", [
             # Recalculate total if data have changed
             $scope.calculateTotal() if opts.calculateTotalLocally
 
+            $scope.calculateBodyDimension()
+
             # Recalculate body block width after cells are populated
             if opts.lockFirstColumn and $scope.columns?
               firstColumnName = $scope.columns[0]
