@@ -111,8 +111,9 @@ angular.module("Mac").directive "macTable", [
         bodyColumns = $(".table-body-template .cell", transcludedBlock).map (i, item) ->
           return $(item).attr "column"
 
+        # Function called when data has been updated and require rendering
         render = ->
-          if $scope.data?
+          if $scope.data? and $scope.tableInitialized
             scrollTop          = bodyWrapperBlock.scrollTop()
             index              = Math.floor scrollTop / cellOuterHeight
             endIndex           = index + opts.numDisplayRows - 1

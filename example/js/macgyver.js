@@ -18091,7 +18091,7 @@ angular.module("Mac").directive("macTable", [
           });
           render = function() {
             var endIndex, firstColumnName, index, scrollTop, width, _ref;
-            if ($scope.data != null) {
+            if (($scope.data != null) && $scope.tableInitialized) {
               scrollTop = bodyWrapperBlock.scrollTop();
               index = Math.floor(scrollTop / cellOuterHeight);
               endIndex = index + opts.numDisplayRows - 1;
