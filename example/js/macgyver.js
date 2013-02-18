@@ -17537,6 +17537,40 @@ angular.module("Mac").directive("macAutocomplete", [
   }
 ]);
 
+angular.module("Mac").directive("macBind", [
+  "$parse", function($parse) {
+    return {
+      link: function($scope, element, attr) {
+        var checkScope, depth, fn;
+        element.addClass('mac-binding').data('$binding', attr.ngBind);
+        fn = $parse(attr.macBind);
+        depth = +(attr.macBindDepth || 2);
+        checkScope = function(scope, depth, $event) {
+          var parent, ret;
+          if (depth === 0) {
+            return false;
+          }
+          ret = fn(scope, {
+            $scope: $scope
+          });
+          parent = scope.$parent;
+          if (!ret && (parent != null)) {
+            return checkScope(parent, depth - 1, $event);
+          } else {
+            if (ret) {
+              scope.$watch(attr.macBind, function(value) {
+                return element.text(value || "");
+              });
+            }
+            return true;
+          }
+        };
+        return checkScope($scope, depth);
+      }
+    };
+  }
+]);
+
 angular.module("Mac").directive("macDatepicker", [
   "util", function(util) {
     return {
@@ -18057,7 +18091,7 @@ angular.module("Mac").directive("macTable", [
           });
           render = function() {
             var endIndex, firstColumnName, index, scrollTop, width, _ref;
-            if ($scope.data != null) {
+            if (($scope.data != null) && $scope.tableInitialized) {
               scrollTop = bodyWrapperBlock.scrollTop();
               index = Math.floor(scrollTop / cellOuterHeight);
               endIndex = index + opts.numDisplayRows - 1;
@@ -18065,8 +18099,12 @@ angular.module("Mac").directive("macTable", [
               if (opts.calculateTotalLocally) {
                 $scope.calculateTotal();
               }
+              $scope.calculateBodyDimension();
               if (opts.lockFirstColumn && ($scope.columns != null)) {
                 firstColumnName = $scope.columns[0];
+                if ($scope.columnsCss[firstColumnName] == null) {
+                  throw "Missing body template for cell " + firstColumnName;
+                }
                 width = ((_ref = $scope.columnsCss[firstColumnName]) != null ? _ref.width : void 0) || 0;
                 return bodyBlock.width(element.width() - width);
               }
@@ -18129,6 +18167,9 @@ angular.module("Mac").directive("macTable", [
             _ref = $scope.columns.slice(startIndex);
             for (_i = 0, _len = _ref.length; _i < _len; _i++) {
               column = _ref[_i];
+              if ($scope.columnsCss[column] == null) {
+                throw "Missing body template for cell " + column;
+              }
               calculateRowWidth += $scope.columnsCss[column].width + opts.cellPadding * 2 + opts.borderWidth;
             }
             $scope.rowCss = {
@@ -18160,6 +18201,9 @@ angular.module("Mac").directive("macTable", [
               cell = emptyCell.clone();
             }
             cell.prop("column", column).addClass("mac-cell");
+            if ($scope.columnsCss[column] == null) {
+              throw "Missing body template for cell " + column;
+            }
             width = $scope.columnsCss[column].width + 2 * opts.cellPadding + opts.borderWidth;
             return {
               cell: cell,
@@ -18226,6 +18270,9 @@ angular.module("Mac").directive("macTable", [
           };
           $scope.getColumnCss = function(column, section) {
             var css;
+            if ($scope.columnsCss[column] == null) {
+              throw "Missing body template for cell " + column;
+            }
             css = angular.copy($scope.columnsCss[column]);
             if (section === "header") {
               css.height = opts.headerHeight;
