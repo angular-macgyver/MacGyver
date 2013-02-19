@@ -18070,6 +18070,9 @@ angular.module("Mac").directive("macTable", [
         if (attrs.macTableHeaderHeight == null) {
           opts.headerHeight = opts.rowHeight;
         }
+        if (opts.calculateTotalLocally) {
+          opts.hasTotalFooter = opts.calculateTotalLocally;
+        }
         cellOuterHeight = opts.rowHeight + opts.cellPadding * 2;
         totalRows = opts.numDisplayRows;
         totalRows += opts.hasFooter + opts.hasTotalFooter;

@@ -97,7 +97,10 @@ angular.module("Mac").directive "macTable", [
       opts = util.extendAttributes "macTable", defaults, attrs
 
       # Default header height to row height if header height is not defined
-      opts.headerHeight = opts.rowHeight unless attrs.macTableHeaderHeight?
+      opts.headerHeight   = opts.rowHeight unless attrs.macTableHeaderHeight?
+
+      # Total header should show if total is calculated locally
+      opts.hasTotalFooter = opts.calculateTotalLocally if opts.calculateTotalLocally
 
       cellOuterHeight = opts.rowHeight + opts.cellPadding * 2
       totalRows       = opts.numDisplayRows
