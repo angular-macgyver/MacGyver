@@ -2207,6 +2207,10 @@ i.icon-fb-comment {
   font-size: 12px;
   font-weight: bold;
 }
+.mac-table-container .mac-table-header .mac-cell.reorderable,
+.mac-table-container .mac-table-footer .mac-cell.reorderable {
+  cursor: pointer;
+}
 .mac-table-container .mac-table-header .mac-cell.mac-table-locked-cell,
 .mac-table-container .mac-table-footer .mac-cell.mac-table-locked-cell {
   position: absolute;

@@ -18211,7 +18211,7 @@ angular.module("Mac").directive("macTable", [
             };
           };
           createHeaderCellTemplate = function(column, firstColumn) {
-            var cell, cellClass, contextText, parentScope, width, _ref;
+            var cell, cellClass, contextText, parentScope, sortBy, width, _ref;
             if (column == null) {
               column = "";
             }
@@ -18221,10 +18221,18 @@ angular.module("Mac").directive("macTable", [
             _ref = createCellTemplate("header", column), cell = _ref.cell, width = _ref.width;
             contextText = cell.text();
             parentScope = firstColumn ? "" : "$parent.$parent.";
+            sortBy = cell.attr("sort-by");
+            if (sortBy == null) {
+              sortBy = column.toLowerCase();
+            }
             cellClass = "mac-table-caret {{" + parentScope + "reverse | boolean:\"up\":\"down\"}} ";
-            cellClass += "{{" + parentScope + "predicate == \"" + (column.toLowerCase()) + "\" | false:'hide'}}";
+            cellClass += "{{" + parentScope + "predicate == \"" + sortBy + "\" | false:'hide'}}";
             if (contextText.length === 0) {
               cell.text(column);
+            }
+            if (opts.allowReorder) {
+              cell.attr("ng-click", "orderBy('" + sortBy + "')");
+              cell.addClass("reorderable");
             }
             cell.attr("for", column).append($("<span>").attr("class", cellClass));
             return {
@@ -18311,9 +18319,6 @@ angular.module("Mac").directive("macTable", [
           $scope.drawHeader = function() {
             var cell, columnName, row, width, _ref, _ref1;
             _ref = createRowTemplate("header"), row = _ref.row, width = _ref.width;
-            if (opts.allowReorder) {
-              row.attr("ng-click", "orderBy(column)");
-            }
             if (opts.resizable) {
               row.resizable({
                 containment: "parent",
@@ -18330,7 +18335,6 @@ angular.module("Mac").directive("macTable", [
               columnName = $scope.columns[0];
               _ref1 = createHeaderCellTemplate(columnName, true), cell = _ref1.cell, width = _ref1.width;
               cell.addClass("mac-table-locked-cell mac-table-header-cell").attr({
-                "ng-click": "orderBy('" + columnName + "')",
                 "ng-style": "getColumnCss('" + columnName + "', 'header')"
               });
               headerBlock.append(cell);
@@ -18902,7 +18906,7 @@ module.controller("ExampleController", [
       event.stopPropagation();
       return alert("Loading 20 more rows");
     };
-    $scope.columnOrder = ["Name", "a", "d", "c", "b", "Created"];
+    $scope.columnOrder = ["Name", "anotherName", "d", "c", "b", "Created"];
     $scope.onSuccess = function(data) {
       return data.data;
     };
