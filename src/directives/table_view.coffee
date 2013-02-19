@@ -35,6 +35,14 @@
 ## - mac-table-object-prefix:     Useful when using backbone object where data is in attributes    (default "")
 ## - mac-table-calculate-total-locally: A boolean value to determine if total should be calculated (default false)
 ##
+## @attributes (cell)
+## - column:  Column name
+## - style:   CSS style for the cell
+## - class:   Class to use for the cell
+##
+## @attributes (header cell)
+## - sort-by: The key to use for sorting for the column
+##
 
 angular.module("Mac").directive "macTable", [
   "$rootScope"
@@ -249,10 +257,20 @@ angular.module("Mac").directive "macTable", [
 
           parentScope  = if firstColumn then "" else "$parent.$parent."
 
+          # Check for user defined sort-by attribute
+          sortBy  = cell.attr "sort-by"
+          sortBy ?= column.toLowerCase()
+
           cellClass  = """mac-table-caret {{#{parentScope}reverse | boolean:"up":"down"}} """
-          cellClass += """{{#{parentScope}predicate == "#{column.toLowerCase()}" | false:'hide'}}"""
+          cellClass += """{{#{parentScope}predicate == "#{sortBy}" | false:'hide'}}"""
 
           cell.text column if contextText.length is 0
+
+          # Enable reordering
+          if opts.allowReorder
+            cell.attr "ng-click", "orderBy('#{sortBy}')"
+            cell.addClass "reorderable"
+
           cell
             .attr("for", column)
             .append $("<span>").attr "class", cellClass
@@ -358,10 +376,6 @@ angular.module("Mac").directive "macTable", [
         $scope.drawHeader = ->
           {row, width} = createRowTemplate "header"
 
-          # Enable reordering
-          if opts.allowReorder
-            row.attr "ng-click", "orderBy(column)"
-
           # TODO: Enable column resizing
           if opts.resizable
             row.resizable
@@ -383,7 +397,6 @@ angular.module("Mac").directive "macTable", [
             columnName    = $scope.columns[0]
             {cell, width} = createHeaderCellTemplate columnName, true
             cell.addClass("mac-table-locked-cell mac-table-header-cell").attr
-              "ng-click": "orderBy('#{columnName}')"
               "ng-style": "getColumnCss('#{columnName}', 'header')"
 
             headerBlock.append cell

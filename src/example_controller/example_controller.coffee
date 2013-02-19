@@ -30,7 +30,7 @@ module.controller "ExampleController", ["$scope", ($scope) ->
     alert "Loading 20 more rows"
 
   # Columns to display and their order
-  $scope.columnOrder = ["Name", "a", "d", "c", "b", "Created"]
+  $scope.columnOrder = ["Name", "anotherName", "d", "c", "b", "Created"]
   #$scope.columnOrder = ["Name", "Abc"] # Used for testing values inside attributes
 
   # Autocomplete section

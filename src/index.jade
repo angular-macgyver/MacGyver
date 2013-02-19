@@ -105,12 +105,12 @@ html
                 .table-header-template
                   .cell(column="Name") Name
                     a.btn(mac-parent-click="createRow($event)") Create Row
-                  .cell(column="a") Second Column
+                  .cell(column="anotherName", sort-by="a") Second Column
                 .table-body-template
                   .mac-table-row(class="{{'what'}}")
                     .cell(column="Name", style="width: 200px")
                       a(mac-click="loadMoreRows()") {{row.name}}
-                    .cell(column="a") {{row.a | number: 0}}
+                    .cell(column="anotherName") {{row.a | number: 0}}
                     .cell(column="d") {{row.d | number: 4}}
                     .cell(column="c") {{row.c | number: 4}}
                     .cell(column="b") {{row.b | currency}}
