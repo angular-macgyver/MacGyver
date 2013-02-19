@@ -2067,70 +2067,12 @@ div.wijmo-wijmenu .wijmo-wijmenu-child .wijmo-wijmenu-text
 i {
   background: url("../img/mac-sprite-icons.png") no-repeat;
   text-indent: -9999px;
-/*
-  &.icon-calendar
-    background-position -64px -96px
-  &.icon-time
-    background-position -96px -96px
-  */
 }
-i.icon-male {
-  background-position: 0 0;
+i.mac-icon-calendar {
+  background-position: -64px -96px;
 }
-i.icon-female {
-  background-position: -32px 0;
-}
-i.icon-both {
-  background-position: -64px 0;
-}
-i.icon-settings {
-  background-position: -96px 0;
-  opacity: 0.6;
-}
-i.icon-settings:hover {
-  opacity: 1;
-}
-i.icon-clone {
-  background-position: 0 -32px;
-  opacity: 0.6;
-}
-i.icon-clone:hover {
-  opacity: 1;
-}
-i.icon-detail {
-  background-position: -32px -32px;
-  opacity: 0.5;
-}
-i.icon-detail:hover {
-  opacity: 1;
-}
-i.icon-search {
-  background-position: -32px -32px;
-  opacity: 0.5;
-}
-i.icon-e {
-  background-position: 0 -128px;
-}
-i.icon-w {
-  background-position: -32px -128px;
-}
-i.icon-fb-update {
-  background-position: -64px -32px;
-}
-i.icon-fb-add {
-  background-position: -96px -32px;
-}
-i.fb-nub {
-  background-position: -32px -64px;
-}
-i.icon-fb-play {
-  background-position: -64px -64px;
-}
-i.icon-fb-like {
-  background-position: -96px -64px;
-}
-i.icon-fb-comment {
-  background-position: 0 -64px;
+i.mac-icon-time {
+  background-position: -96px -96px;
 }
 .mac-table-container {
   border: 1px solid #ddd;
