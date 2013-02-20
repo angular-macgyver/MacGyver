@@ -23,6 +23,16 @@ html
         #example.span10(ng-controller='ExampleController')
 
           section
+            .page-header: h1 Editable
+            h2 Example
+            .docs-example
+              a(
+                mac-editable
+                mac-editable-type  = "text"
+                mac-editable-model = "editableTest"
+              ) {{editableTest}}
+
+          section
             .page-header: h1 Buttons!
             h2 Example
             .docs-example

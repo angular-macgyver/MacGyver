@@ -33,6 +33,12 @@ module.controller "ExampleController", ["$scope", ($scope) ->
   $scope.columnOrder = ["Name", "anotherName", "d", "c", "b", "Created"]
   #$scope.columnOrder = ["Name", "Abc"] # Used for testing values inside attributes
 
+  # Editable
+  $scope.editableTest = "Hello"
+
+  $scope.getDisplayText = ->
+    $scope.editableTest
+
   # Autocomplete section
   # Used in autocomplete to transform data
   $scope.onSuccess = (data) -> data.data
