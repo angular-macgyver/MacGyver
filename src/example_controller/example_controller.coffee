@@ -1,7 +1,7 @@
 module = angular.module("Mac")
 
 module.controller "ExampleController", ["$scope", ($scope) ->
-
+  window.s = $scope
   # Table view section
   # Data for table view
   # Current generating 10000 rows of entries to make sure table view can handle large
@@ -38,6 +38,16 @@ module.controller "ExampleController", ["$scope", ($scope) ->
 
   $scope.getDisplayText = ->
     $scope.editableTest
+
+  $scope.selectOptions = [
+    {value: 1, text: "text1"}
+    {value: 2, text: "text2"}
+    {value: 3, text: "text3"}
+  ]
+  $scope.selectedOptionValue = "1"
+  $scope.convertToText = ->
+    for option in $scope.selectOptions when option.value is +$scope.selectedOptionValue
+      return option.text
 
   # Autocomplete section
   # Used in autocomplete to transform data

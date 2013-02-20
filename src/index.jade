@@ -26,11 +26,19 @@ html
             .page-header: h1 Editable
             h2 Example
             .docs-example
-              a(
-                mac-editable
+              mac-editable(
                 mac-editable-type  = "text"
                 mac-editable-model = "editableTest"
-              ) {{editableTest}}
+                mac-editable-display = "'' || editableTest"
+              )
+
+              mac-editable(
+                mac-editable-type    = "select"
+                mac-editable-model   = "selectedOptionValue"
+                mac-editable-display = "convertToText()"
+                mac-editable-source  = "selectOptions"
+                mac-editable-title   = "Select a test"
+              )
 
           section
             .page-header: h1 Buttons!

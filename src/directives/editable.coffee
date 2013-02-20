@@ -13,30 +13,41 @@
 ## http://vitalets.github.com/x-editable/docs.html#editable
 ##
 ## @attributes
-## - mac-editable-anim
-## - mac-editable-autotext
+## - mac-editable-on-hidden  Callback on hidden
+## - mac-editable-on-init    Callback on init
+## - mac-editable-on-save    Callback on save
+## - mac-editable-on-shown   Callback on shown
+## - mac-editable-success    Callback on ajax succes
+## - mac-editable-validate   Input validation
+## - mac-editable-model      Angular model to store to
+## - mac-editable-display    Display text
+## - mac-editable-source     Used by select type on filling all the options
+##
 
 angular.module("Mac").directive "macEditable", [
   "$rootScope"
   "util"
   ($rootScope, util) ->
-    restrict: "A"
+    restrict: "E"
     scope:    {
-      onHidden:    "&macEditableOnHidden"
-      onInit:      "&macEditableOnInit"
-      onSave:      "&macEditableOnSave"
-      onShown:     "&macEditableOnShown"
-      success:     "&macEditableSuccess"
-      validate:    "&macEditableValidate"
-      model:       "=macEditableModel"
-      displayText: "=macEditableDisplayText"
+      onHidden: "&macEditableOnHidden"
+      onInit:   "&macEditableOnInit"
+      onSave:   "&macEditableOnSave"
+      onShown:  "&macEditableOnShown"
+      success:  "&macEditableSuccess"
+      validate: "&macEditableValidate"
+      model:    "=macEditableModel"
+      display:  "=macEditableDisplay"
+      source:   "=macEditableSource"
     }
-    link: ($scope, element, attrs) ->
+    replace:  true
+    template: "<a></a>"
+    link:     ($scope, element, attrs) ->
+      # default values and whitelisting
       defaults =
         anim:         "fast"
         autotext:     "auto"
         disabled:     "false"
-        display:      false
         emptyclass:   "editable-empty"
         emptytext:    "Empty"
         mode:         "popup"
@@ -44,7 +55,6 @@ angular.module("Mac").directive "macEditable", [
         onblur:       "cancel"
         params:       null
         placement:    "top"
-        placeholder:  ""
         saveonchange: false
         selector:     null
         send:         "never"
@@ -55,6 +65,35 @@ angular.module("Mac").directive "macEditable", [
         url:          null
         title:        ""
 
+      componentsDefaults =
+        text:
+          tpl:         "<input type='text'>"
+          placeholder: null
+          clear:       true
+          inputclass:  "input-medium"
+
+        textarea:
+          tp:          "<textarea></textarea>"
+          inputclass:  "input-large"
+          placeholder: null
+          rows:        7
+
+        select:
+          tpl:         "<select></select>"
+          prepend:     false
+          sourceError: "Error when loading list"
+          sourceCache: true
+          inputclass:  "input-medium"
+
+      attrs.macEditableType = attrs.macEditableType or "text"
+
+      extraDefaults = switch attrs.macEditableType
+                        when "textarea", "select"
+                          componentsDefaults[attrs.macEditableType]
+                        else
+                          componentsDefaults["text"]
+      angular.extend defaults, extraDefaults
+
       opts          = util.extendAttributes "macEditable", defaults, attrs
       opts.validate = (value) ->
         if attrs.macEditableValidate?
@@ -63,21 +102,20 @@ angular.module("Mac").directive "macEditable", [
         if attrs.macEditableSuccess?
           $scope.success {response, newValue}
 
-      ###
-      opts.display = (value, sourceData, response) ->
-        console.log value, sourceData, response
-      ###
+      if attrs.macEditableType is "select"
+        opts.source = -> $scope.source
 
       $scope.$watch "model", (value) ->
         if value?
-          setTimeout (->
-            element.editable "destroy"
-            $scope.initialize()
-          ), 0
+          element.editable "destroy"
+          $scope.initialize()
+
+      $scope.$watch "display", (value) ->
+        element.text value or $scope.model
 
       $scope.initialize = ->
-        opts.value = $scope.model
-        console.log opts
+        opts.value   = $scope.model
+        opts.display = false
 
         element.editable(opts)
         .on "hidden", (event, reason) ->
