@@ -103,11 +103,6 @@ angular.module("Mac").directive "macEditable", [
       if attrs.macEditableType is "select"
         opts.source = -> $scope.source
 
-      $scope.$watch "model", (value) ->
-        if value?
-          element.editable "destroy"
-          $scope.initialize()
-
       $scope.$watch "display", (value) ->
         element.text value or $scope.model
 
@@ -132,4 +127,6 @@ angular.module("Mac").directive "macEditable", [
         .on "shown", (event) ->
           if attrs.macEditableOnShown?
             $scope.onShown {event}
+
+      $scope.initialize()
 ]
