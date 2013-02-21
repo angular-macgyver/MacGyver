@@ -45,6 +45,7 @@ angular.module("Mac").directive "macEditable", [
       defaults =
         anim:         "fast"
         autotext:     "auto"
+        container:    "body"
         disabled:     "false"
         emptyclass:   "editable-empty"
         emptytext:    "Empty"

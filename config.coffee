@@ -23,7 +23,8 @@ vendorPath = (filename) ->
 cssIgnoreModules = []
 
 beforePaths = _(bowerPaths).union([
-    'src/main.coffee'
+    "src/main.coffee"
+    "vendor/js/jquery-ui.js"
   ])
 
 exports.config =
