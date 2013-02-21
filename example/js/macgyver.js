@@ -1,5 +1,6 @@
 
 angular.module("Mac", ["Mac.Util"]);
+
 /*! X-editable - v1.4.1
 * In-place editing with Twitter Bootstrap, jQuery UI or pure jQuery
 * http://github.com/vitalets/x-editable
@@ -5484,7 +5485,6 @@ $(function(){
     $.fn.editabletypes.typeahead = Constructor;
 
 }(window.jQuery));
-;
 
 // Chosen, a Select Box Enhancer for jQuery and Protoype
 // by Patrick Filler for Harvest, http://getharvest.com
@@ -6575,7 +6575,6 @@ Copyright (c) 2011 by Harvest
   root.get_side_border_padding = get_side_border_padding;
 
 }).call(this);
-;
 
 /*! jQuery UI - v1.10.0 - 2013-01-17
 * http://jqueryui.com
@@ -21427,7 +21426,6 @@ $.widget( "ui.tooltip", {
 });
 
 }( jQuery ) );
-;
 
 /*
  * jQuery File Upload Plugin 5.21
@@ -22593,7 +22591,6 @@ $.widget( "ui.tooltip", {
     });
 
 }));
-;
 
 //fgnass.github.com/spin.js#v1.2.8
 !function(window, document, undefined) {
@@ -22915,7 +22912,6 @@ $.widget( "ui.tooltip", {
     window.Spinner = Spinner
 
 }(window, document);
-;
 
 
 angular.module("Mac").directive("macAutocomplete", [
@@ -23023,6 +23019,7 @@ angular.module("Mac").directive("macAutocomplete", [
   }
 ]);
 
+
 angular.module("Mac").directive("macBind", [
   "$parse", function($parse) {
     return {
@@ -23056,6 +23053,7 @@ angular.module("Mac").directive("macBind", [
     };
   }
 ]);
+
 
 angular.module("Mac").directive("macDatepicker", [
   "util", function(util) {
@@ -23117,6 +23115,7 @@ angular.module("Mac").directive("macDatepicker", [
     };
   }
 ]);
+
 
 angular.module("Mac").directive("macEditable", [
   "$rootScope", "util", function($rootScope, util) {
@@ -23261,6 +23260,7 @@ angular.module("Mac").directive("macEditable", [
     };
   }
 ]);
+
 var event, key, _fn, _fn1, _i, _j, _len, _len1, _ref, _ref1;
 
 _ref = ["Blur", "Focus", "Keydown", "Keyup", "Mouseenter", "Mouseleave"];
@@ -23412,6 +23412,7 @@ angular.module("Mac").directive("macPauseTyping", [
   }
 ]);
 
+
 angular.module("Mac").directive("macUpload", [
   function() {
     return {
@@ -23501,6 +23502,7 @@ angular.module("Mac").directive("macUpload", [
     };
   }
 ]);
+
 
 angular.module("Mac").factory("keys", function() {
   return {
@@ -23621,6 +23623,7 @@ angular.module("Mac").factory("keys", function() {
     META: 224
   };
 });
+
 var __hasProp = {}.hasOwnProperty;
 
 angular.module("Mac").directive("macSpinner", function() {
@@ -23649,6 +23652,7 @@ angular.module("Mac").directive("macSpinner", function() {
     }
   };
 });
+
 
 angular.module("Mac").directive("macTable", [
   "$rootScope", "$compile", "util", function($rootScope, $compile, util) {
@@ -24153,6 +24157,7 @@ angular.module("Mac").directive("macTable", [
     };
   }
 ]);
+
 var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 angular.module("Mac").directive("macTagAutocomplete", [
@@ -24274,6 +24279,7 @@ angular.module("Mac").directive("macTagAutocomplete", [
     };
   }
 ]);
+
 var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 angular.module("Mac").directive("macTagInput", [
@@ -24344,6 +24350,7 @@ angular.module("Mac").directive("macTagInput", [
     };
   }
 ]);
+
 
 angular.module("Mac").directive("macTime", [
   "util", "keys", "$filter", function(util, keys, $filter) {
@@ -24508,6 +24515,7 @@ angular.module("Mac").directive("macTime", [
     };
   }
 ]);
+
 var module;
 
 module = angular.module("Mac");
@@ -24611,6 +24619,7 @@ module.controller("ExampleController", [
     };
   }
 ]);
+
 var module;
 
 module = angular.module("Mac");
@@ -24657,6 +24666,7 @@ module.filter("false", function() {
   };
 });
 
+
 angular.module("Mac").filter("pluralize", [
   "util", function(util) {
     return function(string, count, includeCount) {
@@ -24667,6 +24677,7 @@ angular.module("Mac").filter("pluralize", [
     };
   }
 ]);
+
 
 angular.module("Mac").filter("timestamp", [
   "util", function(util) {
@@ -24714,6 +24725,7 @@ angular.module("Mac").filter("timestamp", [
     };
   }
 ]);
+
 var util,
   __hasProp = {}.hasOwnProperty;
 

@@ -16,31 +16,26 @@
     "test": "brunch test"
   },
   "dependencies": {
-    "brunch":               "1.4.x",
-    "javascript-brunch":    ">= 1.0 < 1.5",
-    "coffee-script-brunch": ">= 1.0 < 1.5",
-
-    "css-brunch":           ">= 1.0 < 1.5",
-    "stylus-brunch":        ">= 1.0 < 1.5",
-
-    "handlebars-brunch":    ">= 1.0 < 1.5",
-
-    "jade-brunch":          ">= 1.4.1 < 1.5",
-    "static-jade-brunch":   ">= 1.4.0 <= 1.4.5 || >= 1.4.8 < 1.5",
-
-    "uglify-js-brunch":     ">= 1.0 < 1.5",
-    "clean-css-brunch":     ">= 1.0 < 1.5",
-    "testacular":           ">=0.4.0",
-
-    "bower":                "0.6.6",
-    "underscore":           ">= 1.4.0 < 1.5",
-    "wrench":               "1.4.4"
+    "testacular": ">=0.4.0",
+    "bower":      "0.6.6",
+    "underscore": ">= 1.4.0 < 1.5",
+    "wrench":     "1.4.4"
   },
   "devDependencies": {
-    "chai": "1.2.0",
-    "sinon": "1.4.2",
-    "sinon-chai": "2.1.2",
-    "express": "~3.0.3",
-    "http-proxy": "~0.8.5"
+    "chai":                 "1.2.0",
+    "sinon":                "1.4.2",
+    "sinon-chai":           "2.1.2",
+    "express":              "~3.0.3",
+    "http-proxy":           "~0.8.5",
+    "grunt":                "~0.4.0",
+    "grunt-contrib-watch":  "~0.2.0",
+    "grunt-contrib-concat": "~0.1.2",
+    "grunt-contrib-coffee": "~0.4.0",
+    "grunt-contrib-stylus": "~0.4.0",
+    "grunt-contrib-jade":   "~0.4.0",
+    "grunt-contrib-copy":   "~0.4.0",
+    "grunt-contrib-clean":  "~0.4.0",
+    "nib":                  "~0.9.1",
+    "stylus":               "~0.32.0"
   }
 }
