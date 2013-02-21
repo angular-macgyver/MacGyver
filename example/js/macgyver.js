@@ -23121,7 +23121,7 @@ angular.module("Mac").directive("macDatepicker", [
 angular.module("Mac").directive("macEditable", [
   "$rootScope", "util", function($rootScope, util) {
     return {
-      restrict: "E",
+      restrict: "A",
       scope: {
         onHidden: "&macEditableOnHidden",
         onInit: "&macEditableOnInit",
@@ -23133,8 +23133,6 @@ angular.module("Mac").directive("macEditable", [
         display: "=macEditableDisplay",
         source: "=macEditableSource"
       },
-      replace: true,
-      template: "<a></a>",
       link: function($scope, element, attrs) {
         var componentsDefaults, defaults, extraDefaults, opts;
         defaults = {

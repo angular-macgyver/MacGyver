@@ -26,13 +26,15 @@ html
             .page-header: h1 Editable
             h2 Example
             .docs-example
-              mac-editable(
-                mac-editable-type  = "text"
-                mac-editable-model = "editableTest"
+              a(
+                mac-editable
+                mac-editable-type    = "text"
+                mac-editable-model   = "editableTest"
                 mac-editable-display = "'' || editableTest"
               )
 
-              mac-editable(
+              a(
+                mac-editable
                 mac-editable-type    = "select"
                 mac-editable-model   = "selectedOptionValue"
                 mac-editable-display = "convertToText()"
