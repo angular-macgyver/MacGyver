@@ -2525,14 +2525,14 @@ div.wijmo-wijmenu .wijmo-wijmenu-child .wijmo-wijmenu-text
   cursor: pointer;
   padding: 0px 0px 100px 200px;
 }
-i {
+i.mac-icons {
   background: url("../img/mac-sprite-icons.png") no-repeat;
   text-indent: -9999px;
 }
-i.mac-icon-calendar {
+i.mac-icons.mac-icon-calendar {
   background-position: 0px 0px;
 }
-i.mac-icon-time {
+i.mac-icons.mac-icon-time {
   background-position: -32px 0px;
 }
 .mac-table-container {

@@ -19,7 +19,7 @@ attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow |
 var buf = [];
 with (locals || {}) {
 var interp;
-buf.push('<div class="date-time"><i class="mac-icon-calendar"></i><input type="text"/></div>');
+buf.push('<div class="date-time"><i class="mac-icons mac-icon-calendar"></i><input type="text"/></div>');
 }
 return buf.join("");
 };module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
@@ -51,7 +51,7 @@ attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow |
 var buf = [];
 with (locals || {}) {
 var interp;
-buf.push('<div class="date-time"><i class="mac-icon-time"></i><input type="text" placeholder="--:--" maxlength="8"/></div>');
+buf.push('<div class="date-time"><i class="mac-icons mac-icon-time"></i><input type="text" placeholder="--:--" maxlength="8"/></div>');
 }
 return buf.join("");
 };
