@@ -342,7 +342,8 @@ angular.module("Mac").directive "macTable", [
           return {} unless column and column?
 
           unless $scope.columnsCss[column]?
-            throw "Missing body template for cell '#{column}'"
+            # TODO: Better error message
+            #throw "Missing body template for cell '#{column}'"
             return {}
 
           css        = angular.copy $scope.columnsCss[column]

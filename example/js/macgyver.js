@@ -18413,7 +18413,6 @@ angular.module("Mac").directive("macTable", [
               return {};
             }
             if ($scope.columnsCss[column] == null) {
-              throw "Missing body template for cell '" + column + "'";
               return {};
             }
             css = angular.copy($scope.columnsCss[column]);
