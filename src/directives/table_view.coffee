@@ -622,6 +622,8 @@ angular.module("Mac").directive "macTable", [
                 bodyBlock.width element.width() - parseInt(leftMargin)
               ), 500
 
+          updateDisplayRows()
+
           return true
 
         #
