@@ -165,18 +165,20 @@ angular.module("Mac").directive "macTable", [
             $scope[totalKey]
 
         reOrderingRows = ->
+          data               = $scope.data or []
           $scope.orderedRows =
             if opts.allowReorder
-               $filter("orderBy") $scope.data, $scope.predicate, $scope.reverse
+               $filter("orderBy") data, $scope.predicate, $scope.reverse
             else
-              $scope.data
+              data
           updateDisplayRows()
 
         updateDisplayRows = ->
+          data               = $scope.orderedRows or []
           scrollTop          = bodyWrapperBlock.scrollTop()
           index              = Math.floor scrollTop / cellOuterHeight
           endIndex           = index + opts.numDisplayRows - 1
-          $scope.displayRows = $scope.orderedRows[index..endIndex]
+          $scope.displayRows = data[index..endIndex]
 
         #
         # @name calculateColumnCss

@@ -18261,15 +18261,18 @@ angular.module("Mac").directive("macTable", [
             }
           });
           reOrderingRows = function() {
-            $scope.orderedRows = opts.allowReorder ? $filter("orderBy")($scope.data, $scope.predicate, $scope.reverse) : $scope.data;
+            var data;
+            data = $scope.data || [];
+            $scope.orderedRows = opts.allowReorder ? $filter("orderBy")(data, $scope.predicate, $scope.reverse) : data;
             return updateDisplayRows();
           };
           updateDisplayRows = function() {
-            var endIndex, index, scrollTop;
+            var data, endIndex, index, scrollTop;
+            data = $scope.orderedRows || [];
             scrollTop = bodyWrapperBlock.scrollTop();
             index = Math.floor(scrollTop / cellOuterHeight);
             endIndex = index + opts.numDisplayRows - 1;
-            return $scope.displayRows = $scope.orderedRows.slice(index, +endIndex + 1 || 9e9);
+            return $scope.displayRows = data.slice(index, +endIndex + 1 || 9e9);
           };
           calculateColumnCss = function() {
             var bodyCell, calculatedWidth, column, numColumns, setWidth, unit, width, widthMatch, _i, _len;
