@@ -42,6 +42,9 @@ angular.module("Mac").directive "macTime", [
           minutes: -> inputDOM.setSelectionRange 3, 5
           markers: -> inputDOM.setSelectionRange 6, 8
 
+        $scope.$watch "model", (value) ->
+          element.val value if value?
+
         $scope.reset = ->
           $scope.time = new Date()
           # Set datetime to midnight

@@ -17605,6 +17605,11 @@ angular.module("Mac").directive("macDatepicker", [
         opts = util.extendAttributes("macDatepicker", defaults, attrs);
         inputElement = $("input", element).attr("id", opts.id);
         return function($scope, element, attrs) {
+          $scope.$watch("model", function(value) {
+            if (value != null) {
+              return inputElement.datepicker("setDate", value);
+            }
+          });
           opts.onSelect = function(date, instance) {
             return $scope.$apply(function() {
               if (attrs.macDatepickerOnBeforeSelect != null) {
@@ -18882,6 +18887,11 @@ angular.module("Mac").directive("macTime", [
               return inputDOM.setSelectionRange(6, 8);
             }
           };
+          $scope.$watch("model", function(value) {
+            if (value != null) {
+              return element.val(value);
+            }
+          });
           $scope.reset = function() {
             $scope.time = new Date();
             return $scope.time.setHours(0, 0, 0, 0);
@@ -19107,9 +19117,11 @@ module.controller("ExampleController", [
     $scope.fileUploadSubmit = function($event, $response) {
       return console.log("submitted");
     };
-    return $scope.fileUploadSuccess = function($data, $status) {
+    $scope.fileUploadSuccess = function($data, $status) {
       return console.log("success");
     };
+    $scope.startDate = "01/01/2013";
+    return $scope.startTime = "11:59 AM";
   }
 ]);
 var module;

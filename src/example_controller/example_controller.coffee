@@ -87,4 +87,7 @@ module.controller "ExampleController", ["$scope", ($scope) ->
   $scope.fileUploadSuccess = ($data, $status) ->
     console.log "success"
 
+  $scope.startDate = "01/01/2013"
+  $scope.startTime = "11:59 AM"
+
 ]

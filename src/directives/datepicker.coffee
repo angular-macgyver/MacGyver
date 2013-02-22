@@ -71,6 +71,9 @@ angular.module("Mac").directive "macDatepicker", [
 
       ($scope, element, attrs) ->
 
+        $scope.$watch "model", (value) ->
+          inputElement.datepicker "setDate", value if value?
+
         opts.onSelect = (date, instance) ->
           $scope.$apply ->
             date         = $scope.onBeforeSelect {data} if attrs.macDatepickerOnBeforeSelect?
