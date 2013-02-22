@@ -32,6 +32,7 @@
 ## - mac-datepicker-number-of-months:     The number of months to show at once
 ## - mac-datepicker-show-on:              When the datepicker should appear
 ## - mac-datepicker-year-range:           The range of years displayed in the year drop-down
+## - mac-datepicker-disabled:             Enable or disable datepicker
 
 angular.module("Mac").directive "macDatepicker", [
   "util"
@@ -39,6 +40,7 @@ angular.module("Mac").directive "macDatepicker", [
     restrict: "E"
     scope:
       model:          "=macDatepickerModel"
+      disabled:       "=macDatepickerDisabled"
       onBeforeSelect: "&macDatepickerOnBeforeSelect"
       onBeforeClose:  "&macDatepickerOnBeforeClose"
 
@@ -67,10 +69,11 @@ angular.module("Mac").directive "macDatepicker", [
 
       opts = util.extendAttributes "macDatepicker", defaults, attrs
 
-      inputElement = $("input", element).attr "id", opts.id
+      inputElement = $("input", element).attr
+        "id":          opts.id
+        "ng-disabled": "disabled"
 
       ($scope, element, attrs) ->
-
         $scope.$watch "model", (value) ->
           inputElement.datepicker "setDate", value if value?
 

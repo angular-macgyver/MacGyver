@@ -17577,6 +17577,7 @@ angular.module("Mac").directive("macDatepicker", [
       restrict: "E",
       scope: {
         model: "=macDatepickerModel",
+        disabled: "=macDatepickerDisabled",
         onBeforeSelect: "&macDatepickerOnBeforeSelect",
         onBeforeClose: "&macDatepickerOnBeforeClose"
       },
@@ -17603,7 +17604,10 @@ angular.module("Mac").directive("macDatepicker", [
           yearRange: "c-10:c+10"
         };
         opts = util.extendAttributes("macDatepicker", defaults, attrs);
-        inputElement = $("input", element).attr("id", opts.id);
+        inputElement = $("input", element).attr({
+          "id": opts.id,
+          "ng-disabled": "disabled"
+        });
         return function($scope, element, attrs) {
           $scope.$watch("model", function(value) {
             if (value != null) {
@@ -18862,7 +18866,8 @@ angular.module("Mac").directive("macTime", [
     return {
       restrict: "E",
       scope: {
-        model: "=macTimeModel"
+        model: "=macTimeModel",
+        disabled: "=macTimeDisabled"
       },
       replace: true,
       templateUrl: "template/time.html",
@@ -18876,7 +18881,8 @@ angular.module("Mac").directive("macTime", [
         inputElement = $("input", element);
         inputElement.attr({
           "placeholder": opts.placeholder,
-          "ng-model": "model"
+          "ng-model": "model",
+          "ng-disabled": "disabled"
         });
         return function($scope, element, attrs) {
           var highlighActions, inputDOM, inputSelectAction, timeRegex, updateInput, updateScopeTime;

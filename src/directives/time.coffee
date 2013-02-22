@@ -9,6 +9,7 @@
 ## - mac-time-id:          ID of the text input field         (default: time-input)
 ## - mac-time-model:       Model to bind input to
 ## - mac-time-placeholder: Placeholder text of the text input (default --:--)
+## - mac-time-disabled:    Enable or disable time input
 ##
 angular.module("Mac").directive "macTime", [
   "util"
@@ -17,7 +18,8 @@ angular.module("Mac").directive "macTime", [
   (util, keys, $filter) ->
     restrict: "E"
     scope:
-      model:  "=macTimeModel"
+      model:    "=macTimeModel"
+      disabled: "=macTimeDisabled"
     replace:     true
     templateUrl: "template/time.html"
 
@@ -33,6 +35,7 @@ angular.module("Mac").directive "macTime", [
       inputElement.attr
         "placeholder": opts.placeholder
         "ng-model":    "model"
+        "ng-disabled": "disabled"
 
       ($scope, element, attrs) ->
         inputDOM        = inputElement[0]
