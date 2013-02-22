@@ -264,7 +264,7 @@ angular.module("Mac").directive "macTable", [
         #
         createHeaderCellTemplate = (column = "", firstColumn = false) ->
           {cell, width} = createCellTemplate "header", column
-          contextText   = cell.text()
+          contextText   = cell.html()
 
           parentScope  = if firstColumn then "" else "$parent.$parent."
 
