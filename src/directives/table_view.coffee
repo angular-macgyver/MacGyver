@@ -150,6 +150,7 @@ angular.module("Mac").directive "macTable", [
 
         $scope.$watch "columns.length", ->
           if $scope.columns?
+            return unless _($scope.columns).every()
             unless $scope.tableInitialized
               $scope.renderTable()
               calculateColumnCss()
@@ -225,7 +226,11 @@ angular.module("Mac").directive "macTable", [
         #
         getTemplateCell = (section = "", column = "") ->
           templateSelector = """.table-#{section}-template .cell[column="#{column}"]"""
-          $(templateSelector, transcludedBlock)
+          selected = $(templateSelector, transcludedBlock)
+          if selected.length > 1
+            throw "More than 1 definition of '#{column}' in '#{section}' section"
+            selected = selected.first()
+          return selected
 
         #
         # @name createCellTemplate
@@ -337,7 +342,7 @@ angular.module("Mac").directive "macTable", [
           return {} unless column
 
           unless $scope.columnsCss[column]?
-            throw "Missing body template for cell #{column}"
+            throw "Missing body template for cell '#{column}'"
             return {}
 
           css        = angular.copy $scope.columnsCss[column]

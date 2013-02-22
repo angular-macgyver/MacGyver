@@ -1,3 +1,4 @@
+## Disabled until refactored
 ##
 ## @name
 ## x-editable
@@ -23,7 +24,7 @@
 ## - mac-editable-display    Display text
 ## - mac-editable-source     Used by select type on filling all the options
 ##
-
+###
 angular.module("Mac").directive "macEditable", [
   "$rootScope"
   "util"
@@ -131,3 +132,4 @@ angular.module("Mac").directive "macEditable", [
 
       $scope.initialize()
 ]
+###
