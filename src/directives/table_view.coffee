@@ -140,7 +140,7 @@ angular.module("Mac").directive "macTable", [
               firstColumnName = $scope.columns[0]
 
               unless $scope.columnsCss[firstColumnName]?
-                throw "Missing body template for cell #{firstColumnName}"
+                throw "Missing body template for first column cell '#{firstColumnName}'"
 
               width           = $scope.columnsCss[firstColumnName]?.width or 0
               bodyBlock.width element.width() - width
@@ -209,7 +209,8 @@ angular.module("Mac").directive "macTable", [
           calculateRowWidth = 0
           startIndex = if opts.lockFirstColumn then 1 else 0
           for column in $scope.columns[startIndex..]
-            throw "Missing body template for cell #{column}" unless $scope.columnsCss[column]?
+            continue unless column
+            throw "Missing body template for cell '#{column}'" unless $scope.columnsCss[column]?
             calculateRowWidth += $scope.columnsCss[column].width + opts.cellPadding * 2 + opts.borderWidth
           $scope.rowCss = {width: calculateRowWidth}
 
@@ -236,13 +237,15 @@ angular.module("Mac").directive "macTable", [
         # @params {String} column Column needed                  (default "")
         #
         createCellTemplate = (section="", column="") ->
+          return {cell: $("<div>"), width: 0} unless column
           cell = getTemplateCell(section, column).clone()
           cell = emptyCell.clone() if cell.length is 0
 
           # Set column property again
           cell.prop("column", column).addClass "mac-cell"
 
-          throw "Missing body template for cell #{column}" unless $scope.columnsCss[column]?
+          unless $scope.columnsCss[column]? and cell?
+            throw "Missing body template for cell '#{column}'"
           width = $scope.columnsCss[column].width + 2 * opts.cellPadding + opts.borderWidth
 
           return {cell, width}
@@ -331,7 +334,11 @@ angular.module("Mac").directive "macTable", [
         # @result {Object} Object with CSS attributes
         #
         $scope.getColumnCss = (column, section) ->
-          throw "Missing body template for cell #{column}" unless $scope.columnsCss[column]?
+          return {} unless column
+
+          unless $scope.columnsCss[column]?
+            throw "Missing body template for cell #{column}"
+            return {}
 
           css        = angular.copy $scope.columnsCss[column]
           css.height = opts.headerHeight if section is "header"
