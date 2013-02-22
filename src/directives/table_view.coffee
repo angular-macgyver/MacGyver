@@ -125,6 +125,7 @@ angular.module("Mac").directive "macTable", [
         # Function called when data has been updated and require rendering
         render = ->
           if $scope.data? and $scope.tableInitialized
+            reOrderingRows()
             updateDisplayRows()
 
             # Recalculate total if data have changed
@@ -612,8 +613,6 @@ angular.module("Mac").directive "macTable", [
 
           $scope.calculateBodyDimension()
 
-          $scope.tableInitialized = true
-
           # Update body width if the table is fluid
           if opts.fluidWidth
             clearTimeout $scope.bodyBlockTimeout if $scope.bodyBlockTimeout?
@@ -623,6 +622,8 @@ angular.module("Mac").directive "macTable", [
               ), 500
 
           updateDisplayRows()
+
+          $scope.tableInitialized = true
 
           return true
 

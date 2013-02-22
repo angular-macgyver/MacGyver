@@ -8,19 +8,23 @@ module.controller "ExampleController", ["$scope", ($scope) ->
   # amount of data
   $scope.data = []
   #for i in [1..10000]
-  for i in [1..5000]
-    obj =
-      name: "Test " + i
-      a: Math.random() * 100000
-      b: Math.random() * 10000
-      c: Math.random()
-      d: Math.random()
-      created: (new Date()).getTime()
-      attributes:
+  # Added setTimeout to mimic ajax delay
+  setTimeout (->
+    for i in [1..5000]
+      obj =
         name: "Test " + i
-        abc: Math.random() * 1000
+        a: Math.random() * 100000
+        b: Math.random() * 10000
+        c: Math.random()
+        d: Math.random()
+        created: (new Date()).getTime()
+        attributes:
+          name: "Test " + i
+          abc: Math.random() * 1000
 
-    $scope.data.push obj
+      $scope.data.push obj
+    $scope.$digest()
+  ), 5000
 
   $scope.createRow = (event) ->
     event.stopPropagation()
