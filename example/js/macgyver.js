@@ -18409,7 +18409,7 @@ angular.module("Mac").directive("macTable", [
           };
           $scope.getColumnCss = function(column, section) {
             var css;
-            if (!column) {
+            if (!(column && (column != null))) {
               return {};
             }
             if ($scope.columnsCss[column] == null) {
