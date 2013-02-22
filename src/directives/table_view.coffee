@@ -47,8 +47,9 @@
 angular.module("Mac").directive "macTable", [
   "$rootScope"
   "$compile"
+  "$filter"
   "util"
-  ($rootScope, $compile, util) ->
+  ($rootScope, $compile, $filter, util) ->
     restrict: "EA"
     scope:
       data:            "=macTableData"
@@ -90,7 +91,6 @@ angular.module("Mac").directive "macTable", [
       footerBlock      = $(".mac-table-footer", element)
       totalRow         = $(".total-footer-row", footerBlock)
       customFooterRow  = $(".custom-footer-row", footerBlock)
-      bodyBackground   = $(".mac-table-body-background", element)
       emptyCell        = $("<div>").addClass "mac-cell"
 
       # Calculate all the options based on defaults
@@ -125,10 +125,7 @@ angular.module("Mac").directive "macTable", [
         # Function called when data has been updated and require rendering
         render = ->
           if $scope.data? and $scope.tableInitialized
-            scrollTop          = bodyWrapperBlock.scrollTop()
-            index              = Math.floor scrollTop / cellOuterHeight
-            endIndex           = index + opts.numDisplayRows - 1
-            $scope.displayRows = $scope.data[index..endIndex]
+            updateDisplayRows()
 
             # Recalculate total if data have changed
             $scope.calculateTotal() if opts.calculateTotalLocally
@@ -156,10 +153,30 @@ angular.module("Mac").directive "macTable", [
               calculateColumnCss()
             calculateRowCss()
 
+        $scope.$watch "predicate", (value) ->
+          reOrderingRows() if value?
+
+        $scope.$watch "reverse", (value) ->
+          reOrderingRows() if value?
+
         Object.defineProperty $scope, "total",
           get: ->
             totalKey = if opts.calculateTotalLocally then "localTotal" else "totalData"
             $scope[totalKey]
+
+        reOrderingRows = ->
+          $scope.orderedRows =
+            if opts.allowReorder
+               $filter("orderBy") $scope.data, $scope.predicate, $scope.reverse
+            else
+              $scope.data
+          updateDisplayRows()
+
+        updateDisplayRows = ->
+          scrollTop          = bodyWrapperBlock.scrollTop()
+          index              = Math.floor scrollTop / cellOuterHeight
+          endIndex           = index + opts.numDisplayRows - 1
+          $scope.displayRows = $scope.orderedRows[index..endIndex]
 
         #
         # @name calculateColumnCss
@@ -497,13 +514,12 @@ angular.module("Mac").directive "macTable", [
         # Create a separate column if first column is locked with a ng-repeat
         #
         $scope.drawBody = ->
-          data    = $scope.data or []
-          orderBy = if opts.allowReorder then "| orderBy:predicate:reverse" else ""
+          data = $scope.orderedRows or []
 
           # Create template row with ng-repeat
-          tableRow = $("<div>").addClass "mac-table-row"
+          tableRow = $("<div>").addClass "mac-table-row {{$index % 2 | boolean:'odd':'even'}}"
           tableRow.attr
-            "ng-repeat": "row in displayRows #{orderBy}"
+            "ng-repeat": "row in displayRows"
             "ng-cloak":  "ng-cloak"
 
           # Set the first set of rows to show up
@@ -528,8 +544,9 @@ angular.module("Mac").directive "macTable", [
             cell.attr
               "ng-style": "getColumnCss('#{columnName}', 'body')"
             fcTableRow.attr
-                        "ng-repeat": "row in displayRows #{orderBy}"
+                        "ng-repeat": "row in displayRows"
                         "ng-cloak":  "ng-cloak"
+                      .addClass("{{$index % 2 | boolean:'odd':'even'}}")
                       .append cell
             # Compile the column to render ng-repeat
             $compile(firstColumn) $scope
@@ -540,15 +557,6 @@ angular.module("Mac").directive "macTable", [
               "margin-left": $scope.headerLeftMargin
               "width":       element.width() - width
 
-          # Generate empty rows to fill up table background
-          emptyTemplateRow = $("<div>").addClass("mac-table-row").height cellOuterHeight
-          for i in [0..opts.numDisplayRows-1]
-            rowClass = if i%2 then "odd" else "even"
-            bodyBackground.append (emptyTemplateRow.clone()).addClass rowClass
-
-          if opts.hasHeader
-            bodyBackground.css "top", opts.headerHeight + 2 * opts.cellPadding + opts.borderWidth
-
         # Up and down scrolling
         bodyWrapperBlock.scroll ->
           $this     = $(this)
@@ -558,11 +566,7 @@ angular.module("Mac").directive "macTable", [
           bodyBlock.css "top", scrollTop
           firstColumn.css "top", scrollTop if opts.lockFirstColumn
 
-          $scope.$apply ->
-            data               = $scope.data or []
-            index              = Math.floor scrollTop / cellOuterHeight
-            endIndex           = index + opts.numDisplayRows - 1
-            $scope.displayRows = data[index..endIndex]
+          $scope.$apply -> updateDisplayRows()
 
         # Left and right scrolling
         bodyBlock.scroll ->
@@ -584,6 +588,8 @@ angular.module("Mac").directive "macTable", [
                                 "#{objectPrefix}#{$scope.columns[0].toLowerCase()}"
                               else
                                 ""
+
+          $scope.orderedRows = $scope.data
 
           calculateColumnCss()
 
@@ -622,6 +628,7 @@ angular.module("Mac").directive "macTable", [
         # Reset table view scope
         #
         $scope.reset = ->
+          $scope.orderedRows      = []
           $scope.displayRows      = []
           $scope.index            = 0
           $scope.headerLeftMargin = 0

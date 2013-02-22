@@ -2545,6 +2545,9 @@ i.mac-icons.mac-icon-time {
   float: left;
   white-space: nowrap;
 }
+.mac-table-container .mac-table-row.even {
+  background-color: #f0f5ff;
+}
 .mac-table-container .mac-table-row .mac-table-cell {
   text-align: left;
   float: left;

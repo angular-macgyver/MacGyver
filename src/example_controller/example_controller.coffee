@@ -7,7 +7,8 @@ module.controller "ExampleController", ["$scope", ($scope) ->
   # Current generating 10000 rows of entries to make sure table view can handle large
   # amount of data
   $scope.data = []
-  for i in [1..10000]
+  #for i in [1..10000]
+  for i in [1..5000]
     obj =
       name: "Test " + i
       a: Math.random() * 100000
