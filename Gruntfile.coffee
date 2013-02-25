@@ -56,13 +56,14 @@ module.exports = (grunt) ->
       vendorJs:
         dest: "example/js/vendor.js"
         src: [
-          "vendor/bower/**/*.js"
+          "vendor/bower/angular/angular.js"
         ]
 
       appJs:
         dest: "example/js/<%= pkg.name %>.js"
         src: [
           "tmp/app/main.js"
+          "vendor/js/jquery-ui.js"
           "vendor/js/*.js"
           "tmp/app/**/*.js"
         ]
@@ -94,7 +95,7 @@ module.exports = (grunt) ->
           use: [require "nib"]
         files:
           "tmp/app.css":    ["src/css/*.styl"]
-          "tmp/vendor.css": "vendor/bower/vendor.styl"
+          "tmp/vendor.css": "vendor/vendor.styl"
 
     #
     # Jade section
