@@ -32,13 +32,20 @@ Angular helpers for all your friends!
 ## Get Started ##
 MacGyver requires a few node modules for developer environment.
 
+### Install all through npm ###
+
+  `npm install -d`
+
+### Install manually ###
+Install each package one by one
+
 #### Install Coffeescript ####
 
   `sudo npm -g install coffee-script`
 
-#### Install Brunch ####
+#### Install Grunt CLI ####
 
-  `sudo npm -g install brunch`
+  `sudo npm -g install grunt-cli`
 
 #### Install testacular ####
 
@@ -54,14 +61,24 @@ MacGyver requires a few node modules for developer environment.
            [express](https://npmjs.org/package/express),
            [http-proxy](https://npmjs.org/package/http-proxy)
 
-  `npm install`
+  `npm install -d`
 
-## Cake commands ##
+## Grunt tasks ##
 
 ```
-cake update:paths         # Update bower paths file
-cake test                 # Run tests with testacular
-cake watch                # Proxy brunch watch
-cake build:images         # Copy images to build directory
-cake build                # Build the latest MacGyver
+           coffee  Compile CoffeeScript files into JavaScript *
+           concat  Concatenate files. *
+           stylus  Compile Stylus files into CSS *
+             jade  Compile Jade templates into HTML. *
+             copy  Copy files. *
+            clean  Clean files and folders. *
+            watch  Run predefined tasks whenever watched files change.
+           uglify  Minify files with UglifyJS. *
+       embed:html  Replace templateUrl with actual html
+ update:component  Update component.json for bower
+           deploy  Build and copy to lib/
+          compile  Compile files
+             test  Run testacular for unit tests
+              run  Watch src and run test server
+           server  Run test server
 ```
