@@ -1,5 +1,6147 @@
 
 angular.module("Mac", ["Mac.Util"]);
+<<<<<<< HEAD
+/*! jQuery UI - v1.10.0 - 2013-01-17
+* http://jqueryui.com
+* Includes: jquery.ui.core.js, jquery.ui.widget.js, jquery.ui.mouse.js, jquery.ui.position.js, jquery.ui.accordion.js, jquery.ui.autocomplete.js, jquery.ui.button.js, jquery.ui.datepicker.js, jquery.ui.dialog.js, jquery.ui.draggable.js, jquery.ui.droppable.js, jquery.ui.effect.js, jquery.ui.effect-blind.js, jquery.ui.effect-bounce.js, jquery.ui.effect-clip.js, jquery.ui.effect-drop.js, jquery.ui.effect-explode.js, jquery.ui.effect-fade.js, jquery.ui.effect-fold.js, jquery.ui.effect-highlight.js, jquery.ui.effect-pulsate.js, jquery.ui.effect-scale.js, jquery.ui.effect-shake.js, jquery.ui.effect-slide.js, jquery.ui.effect-transfer.js, jquery.ui.menu.js, jquery.ui.progressbar.js, jquery.ui.resizable.js, jquery.ui.selectable.js, jquery.ui.slider.js, jquery.ui.sortable.js, jquery.ui.spinner.js, jquery.ui.tabs.js, jquery.ui.tooltip.js
+* Copyright (c) 2013 jQuery Foundation and other contributors Licensed MIT */
+=======
+
+/*! X-editable - v1.4.1
+* In-place editing with Twitter Bootstrap, jQuery UI or pure jQuery
+* http://github.com/vitalets/x-editable
+* Copyright (c) 2013 Vitaliy Potapov; Licensed MIT */
+
+/**
+Form with single input element, two buttons and two states: normal/loading.
+Applied as jQuery method to DIV tag (not to form tag!). This is because form can be in loading state when spinner shown.
+Editableform is linked with one of input types, e.g. 'text', 'select' etc.
+
+@class editableform
+@uses text
+@uses textarea
+**/
+(function ($) {
+
+    var EditableForm = function (div, options) {
+        this.options = $.extend({}, $.fn.editableform.defaults, options);
+        this.$div = $(div); //div, containing form. Not form tag. Not editable-element.
+        if(!this.options.scope) {
+            this.options.scope = this;
+        }
+        //nothing shown after init
+    };
+>>>>>>> feature/grunt
+
+(function( $, undefined ) {
+
+var uuid = 0,
+	runiqueId = /^ui-id-\d+$/;
+
+// prevent duplicate loading
+// this is only a problem because we proxy existing functions
+// and we don't want to double proxy them
+$.ui = $.ui || {};
+if ( $.ui.version ) {
+	return;
+}
+
+$.extend( $.ui, {
+	version: "1.10.0",
+
+	keyCode: {
+		BACKSPACE: 8,
+		COMMA: 188,
+		DELETE: 46,
+		DOWN: 40,
+		END: 35,
+		ENTER: 13,
+		ESCAPE: 27,
+		HOME: 36,
+		LEFT: 37,
+		NUMPAD_ADD: 107,
+		NUMPAD_DECIMAL: 110,
+		NUMPAD_DIVIDE: 111,
+		NUMPAD_ENTER: 108,
+		NUMPAD_MULTIPLY: 106,
+		NUMPAD_SUBTRACT: 109,
+		PAGE_DOWN: 34,
+		PAGE_UP: 33,
+		PERIOD: 190,
+		RIGHT: 39,
+		SPACE: 32,
+		TAB: 9,
+		UP: 38
+	}
+});
+
+// plugins
+$.fn.extend({
+	_focus: $.fn.focus,
+	focus: function( delay, fn ) {
+		return typeof delay === "number" ?
+			this.each(function() {
+				var elem = this;
+				setTimeout(function() {
+					$( elem ).focus();
+					if ( fn ) {
+						fn.call( elem );
+					}
+				}, delay );
+			}) :
+			this._focus.apply( this, arguments );
+	},
+
+	scrollParent: function() {
+		var scrollParent;
+		if (($.ui.ie && (/(static|relative)/).test(this.css("position"))) || (/absolute/).test(this.css("position"))) {
+			scrollParent = this.parents().filter(function() {
+				return (/(relative|absolute|fixed)/).test($.css(this,"position")) && (/(auto|scroll)/).test($.css(this,"overflow")+$.css(this,"overflow-y")+$.css(this,"overflow-x"));
+			}).eq(0);
+		} else {
+			scrollParent = this.parents().filter(function() {
+				return (/(auto|scroll)/).test($.css(this,"overflow")+$.css(this,"overflow-y")+$.css(this,"overflow-x"));
+			}).eq(0);
+		}
+
+		return (/fixed/).test(this.css("position")) || !scrollParent.length ? $(document) : scrollParent;
+	},
+
+	zIndex: function( zIndex ) {
+		if ( zIndex !== undefined ) {
+			return this.css( "zIndex", zIndex );
+		}
+
+		if ( this.length ) {
+			var elem = $( this[ 0 ] ), position, value;
+			while ( elem.length && elem[ 0 ] !== document ) {
+				// Ignore z-index if position is set to a value where z-index is ignored by the browser
+				// This makes behavior of this function consistent across browsers
+				// WebKit always returns auto if the element is positioned
+				position = elem.css( "position" );
+				if ( position === "absolute" || position === "relative" || position === "fixed" ) {
+					// IE returns 0 when zIndex is not specified
+					// other browsers return a string
+					// we ignore the case of nested elements with an explicit value of 0
+					// <div style="z-index: -10;"><div style="z-index: 0;"></div></div>
+					value = parseInt( elem.css( "zIndex" ), 10 );
+					if ( !isNaN( value ) && value !== 0 ) {
+						return value;
+					}
+				}
+				elem = elem.parent();
+			}
+		}
+
+		return 0;
+	},
+
+	uniqueId: function() {
+		return this.each(function() {
+			if ( !this.id ) {
+				this.id = "ui-id-" + (++uuid);
+			}
+		});
+	},
+
+	removeUniqueId: function() {
+		return this.each(function() {
+			if ( runiqueId.test( this.id ) ) {
+				$( this ).removeAttr( "id" );
+			}
+		});
+	}
+});
+
+// selectors
+function focusable( element, isTabIndexNotNaN ) {
+	var map, mapName, img,
+		nodeName = element.nodeName.toLowerCase();
+	if ( "area" === nodeName ) {
+		map = element.parentNode;
+		mapName = map.name;
+		if ( !element.href || !mapName || map.nodeName.toLowerCase() !== "map" ) {
+			return false;
+		}
+		img = $( "img[usemap=#" + mapName + "]" )[0];
+		return !!img && visible( img );
+	}
+	return ( /input|select|textarea|button|object/.test( nodeName ) ?
+		!element.disabled :
+		"a" === nodeName ?
+			element.href || isTabIndexNotNaN :
+			isTabIndexNotNaN) &&
+		// the element and all of its ancestors must be visible
+		visible( element );
+}
+
+function visible( element ) {
+	return $.expr.filters.visible( element ) &&
+		!$( element ).parents().addBack().filter(function() {
+			return $.css( this, "visibility" ) === "hidden";
+		}).length;
+}
+
+$.extend( $.expr[ ":" ], {
+	data: $.expr.createPseudo ?
+		$.expr.createPseudo(function( dataName ) {
+			return function( elem ) {
+				return !!$.data( elem, dataName );
+			};
+		}) :
+		// support: jQuery <1.8
+		function( elem, i, match ) {
+			return !!$.data( elem, match[ 3 ] );
+		},
+
+	focusable: function( element ) {
+		return focusable( element, !isNaN( $.attr( element, "tabindex" ) ) );
+	},
+
+	tabbable: function( element ) {
+		var tabIndex = $.attr( element, "tabindex" ),
+			isTabIndexNaN = isNaN( tabIndex );
+		return ( isTabIndexNaN || tabIndex >= 0 ) && focusable( element, !isTabIndexNaN );
+	}
+});
+
+// support: jQuery <1.8
+if ( !$( "<a>" ).outerWidth( 1 ).jquery ) {
+	$.each( [ "Width", "Height" ], function( i, name ) {
+		var side = name === "Width" ? [ "Left", "Right" ] : [ "Top", "Bottom" ],
+			type = name.toLowerCase(),
+			orig = {
+				innerWidth: $.fn.innerWidth,
+				innerHeight: $.fn.innerHeight,
+				outerWidth: $.fn.outerWidth,
+				outerHeight: $.fn.outerHeight
+			};
+
+		function reduce( elem, size, border, margin ) {
+			$.each( side, function() {
+				size -= parseFloat( $.css( elem, "padding" + this ) ) || 0;
+				if ( border ) {
+					size -= parseFloat( $.css( elem, "border" + this + "Width" ) ) || 0;
+				}
+				if ( margin ) {
+					size -= parseFloat( $.css( elem, "margin" + this ) ) || 0;
+				}
+			});
+			return size;
+		}
+
+		$.fn[ "inner" + name ] = function( size ) {
+			if ( size === undefined ) {
+				return orig[ "inner" + name ].call( this );
+			}
+
+			return this.each(function() {
+				$( this ).css( type, reduce( this, size ) + "px" );
+			});
+		};
+
+		$.fn[ "outer" + name] = function( size, margin ) {
+			if ( typeof size !== "number" ) {
+				return orig[ "outer" + name ].call( this, size );
+			}
+
+			return this.each(function() {
+				$( this).css( type, reduce( this, size, true, margin ) + "px" );
+			});
+		};
+	});
+}
+
+// support: jQuery <1.8
+if ( !$.fn.addBack ) {
+	$.fn.addBack = function( selector ) {
+		return this.add( selector == null ?
+			this.prevObject : this.prevObject.filter( selector )
+		);
+	};
+}
+
+// support: jQuery 1.6.1, 1.6.2 (http://bugs.jquery.com/ticket/9413)
+if ( $( "<a>" ).data( "a-b", "a" ).removeData( "a-b" ).data( "a-b" ) ) {
+	$.fn.removeData = (function( removeData ) {
+		return function( key ) {
+			if ( arguments.length ) {
+				return removeData.call( this, $.camelCase( key ) );
+			} else {
+				return removeData.call( this );
+			}
+		};
+	})( $.fn.removeData );
+}
+
+
+
+
+
+// deprecated
+$.ui.ie = !!/msie [\w.]+/.exec( navigator.userAgent.toLowerCase() );
+
+$.support.selectstart = "onselectstart" in document.createElement( "div" );
+$.fn.extend({
+	disableSelection: function() {
+		return this.bind( ( $.support.selectstart ? "selectstart" : "mousedown" ) +
+			".ui-disableSelection", function( event ) {
+				event.preventDefault();
+			});
+	},
+
+	enableSelection: function() {
+		return this.unbind( ".ui-disableSelection" );
+	}
+});
+
+$.extend( $.ui, {
+	// $.ui.plugin is deprecated.  Use the proxy pattern instead.
+	plugin: {
+		add: function( module, option, set ) {
+			var i,
+				proto = $.ui[ module ].prototype;
+			for ( i in set ) {
+				proto.plugins[ i ] = proto.plugins[ i ] || [];
+				proto.plugins[ i ].push( [ option, set[ i ] ] );
+			}
+		},
+		call: function( instance, name, args ) {
+			var i,
+				set = instance.plugins[ name ];
+			if ( !set || !instance.element[ 0 ].parentNode || instance.element[ 0 ].parentNode.nodeType === 11 ) {
+				return;
+			}
+
+			for ( i = 0; i < set.length; i++ ) {
+				if ( instance.options[ set[ i ][ 0 ] ] ) {
+					set[ i ][ 1 ].apply( instance.element, args );
+				}
+			}
+		}
+	},
+
+	// only used by resizable
+	hasScroll: function( el, a ) {
+
+		//If overflow is hidden, the element might have extra content, but the user wants to hide it
+		if ( $( el ).css( "overflow" ) === "hidden") {
+			return false;
+		}
+
+		var scroll = ( a && a === "left" ) ? "scrollLeft" : "scrollTop",
+			has = false;
+
+		if ( el[ scroll ] > 0 ) {
+			return true;
+		}
+
+		// TODO: determine which cases actually cause this to happen
+		// if the element doesn't have the scroll set, see if it's possible to
+		// set the scroll
+		el[ scroll ] = 1;
+		has = ( el[ scroll ] > 0 );
+		el[ scroll ] = 0;
+		return has;
+	}
+});
+
+})( jQuery );
+(function( $, undefined ) {
+
+var uuid = 0,
+	slice = Array.prototype.slice,
+	_cleanData = $.cleanData;
+$.cleanData = function( elems ) {
+	for ( var i = 0, elem; (elem = elems[i]) != null; i++ ) {
+		try {
+			$( elem ).triggerHandler( "remove" );
+		// http://bugs.jquery.com/ticket/8235
+		} catch( e ) {}
+	}
+	_cleanData( elems );
+};
+
+$.widget = function( name, base, prototype ) {
+	var fullName, existingConstructor, constructor, basePrototype,
+		// proxiedPrototype allows the provided prototype to remain unmodified
+		// so that it can be used as a mixin for multiple widgets (#8876)
+		proxiedPrototype = {},
+		namespace = name.split( "." )[ 0 ];
+
+	name = name.split( "." )[ 1 ];
+	fullName = namespace + "-" + name;
+
+	if ( !prototype ) {
+		prototype = base;
+		base = $.Widget;
+	}
+
+	// create selector for plugin
+	$.expr[ ":" ][ fullName.toLowerCase() ] = function( elem ) {
+		return !!$.data( elem, fullName );
+	};
+
+	$[ namespace ] = $[ namespace ] || {};
+	existingConstructor = $[ namespace ][ name ];
+	constructor = $[ namespace ][ name ] = function( options, element ) {
+		// allow instantiation without "new" keyword
+		if ( !this._createWidget ) {
+			return new constructor( options, element );
+		}
+
+		// allow instantiation without initializing for simple inheritance
+		// must use "new" keyword (the code above always passes args)
+		if ( arguments.length ) {
+			this._createWidget( options, element );
+		}
+	};
+	// extend with the existing constructor to carry over any static properties
+	$.extend( constructor, existingConstructor, {
+		version: prototype.version,
+		// copy the object used to create the prototype in case we need to
+		// redefine the widget later
+		_proto: $.extend( {}, prototype ),
+		// track widgets that inherit from this widget in case this widget is
+		// redefined after a widget inherits from it
+		_childConstructors: []
+	});
+
+	basePrototype = new base();
+	// we need to make the options hash a property directly on the new instance
+	// otherwise we'll modify the options hash on the prototype that we're
+	// inheriting from
+	basePrototype.options = $.widget.extend( {}, basePrototype.options );
+	$.each( prototype, function( prop, value ) {
+		if ( !$.isFunction( value ) ) {
+			proxiedPrototype[ prop ] = value;
+			return;
+		}
+		proxiedPrototype[ prop ] = (function() {
+			var _super = function() {
+					return base.prototype[ prop ].apply( this, arguments );
+				},
+				_superApply = function( args ) {
+					return base.prototype[ prop ].apply( this, args );
+				};
+			return function() {
+				var __super = this._super,
+					__superApply = this._superApply,
+					returnValue;
+
+				this._super = _super;
+				this._superApply = _superApply;
+
+				returnValue = value.apply( this, arguments );
+
+				this._super = __super;
+				this._superApply = __superApply;
+
+				return returnValue;
+			};
+		})();
+	});
+	constructor.prototype = $.widget.extend( basePrototype, {
+		// TODO: remove support for widgetEventPrefix
+		// always use the name + a colon as the prefix, e.g., draggable:start
+		// don't prefix for widgets that aren't DOM-based
+		widgetEventPrefix: existingConstructor ? basePrototype.widgetEventPrefix : name
+	}, proxiedPrototype, {
+		constructor: constructor,
+		namespace: namespace,
+		widgetName: name,
+		widgetFullName: fullName
+	});
+
+	// If this widget is being redefined then we need to find all widgets that
+	// are inheriting from it and redefine all of them so that they inherit from
+	// the new version of this widget. We're essentially trying to replace one
+	// level in the prototype chain.
+	if ( existingConstructor ) {
+		$.each( existingConstructor._childConstructors, function( i, child ) {
+			var childPrototype = child.prototype;
+
+			// redefine the child widget using the same prototype that was
+			// originally used, but inherit from the new version of the base
+			$.widget( childPrototype.namespace + "." + childPrototype.widgetName, constructor, child._proto );
+		});
+		// remove the list of existing child constructors from the old constructor
+		// so the old child constructors can be garbage collected
+		delete existingConstructor._childConstructors;
+	} else {
+		base._childConstructors.push( constructor );
+	}
+
+	$.widget.bridge( name, constructor );
+};
+
+$.widget.extend = function( target ) {
+	var input = slice.call( arguments, 1 ),
+		inputIndex = 0,
+		inputLength = input.length,
+		key,
+		value;
+	for ( ; inputIndex < inputLength; inputIndex++ ) {
+		for ( key in input[ inputIndex ] ) {
+			value = input[ inputIndex ][ key ];
+			if ( input[ inputIndex ].hasOwnProperty( key ) && value !== undefined ) {
+				// Clone objects
+				if ( $.isPlainObject( value ) ) {
+					target[ key ] = $.isPlainObject( target[ key ] ) ?
+						$.widget.extend( {}, target[ key ], value ) :
+						// Don't extend strings, arrays, etc. with objects
+						$.widget.extend( {}, value );
+				// Copy everything else by reference
+				} else {
+					target[ key ] = value;
+				}
+			}
+		}
+	}
+	return target;
+};
+
+$.widget.bridge = function( name, object ) {
+	var fullName = object.prototype.widgetFullName || name;
+	$.fn[ name ] = function( options ) {
+		var isMethodCall = typeof options === "string",
+			args = slice.call( arguments, 1 ),
+			returnValue = this;
+
+		// allow multiple hashes to be passed on init
+		options = !isMethodCall && args.length ?
+			$.widget.extend.apply( null, [ options ].concat(args) ) :
+			options;
+
+		if ( isMethodCall ) {
+			this.each(function() {
+				var methodValue,
+					instance = $.data( this, fullName );
+				if ( !instance ) {
+					return $.error( "cannot call methods on " + name + " prior to initialization; " +
+						"attempted to call method '" + options + "'" );
+				}
+				if ( !$.isFunction( instance[options] ) || options.charAt( 0 ) === "_" ) {
+					return $.error( "no such method '" + options + "' for " + name + " widget instance" );
+				}
+				methodValue = instance[ options ].apply( instance, args );
+				if ( methodValue !== instance && methodValue !== undefined ) {
+					returnValue = methodValue && methodValue.jquery ?
+						returnValue.pushStack( methodValue.get() ) :
+						methodValue;
+					return false;
+				}
+			});
+		} else {
+			this.each(function() {
+				var instance = $.data( this, fullName );
+				if ( instance ) {
+					instance.option( options || {} )._init();
+				} else {
+					$.data( this, fullName, new object( options, this ) );
+				}
+			});
+		}
+
+		return returnValue;
+	};
+};
+
+$.Widget = function( /* options, element */ ) {};
+$.Widget._childConstructors = [];
+
+$.Widget.prototype = {
+	widgetName: "widget",
+	widgetEventPrefix: "",
+	defaultElement: "<div>",
+	options: {
+		disabled: false,
+
+		// callbacks
+		create: null
+	},
+	_createWidget: function( options, element ) {
+		element = $( element || this.defaultElement || this )[ 0 ];
+		this.element = $( element );
+		this.uuid = uuid++;
+		this.eventNamespace = "." + this.widgetName + this.uuid;
+		this.options = $.widget.extend( {},
+			this.options,
+			this._getCreateOptions(),
+			options );
+
+		this.bindings = $();
+		this.hoverable = $();
+		this.focusable = $();
+
+		if ( element !== this ) {
+			$.data( element, this.widgetFullName, this );
+			this._on( true, this.element, {
+				remove: function( event ) {
+					if ( event.target === element ) {
+						this.destroy();
+					}
+				}
+			});
+			this.document = $( element.style ?
+				// element within the document
+				element.ownerDocument :
+				// element is window or document
+				element.document || element );
+			this.window = $( this.document[0].defaultView || this.document[0].parentWindow );
+		}
+
+		this._create();
+		this._trigger( "create", null, this._getCreateEventData() );
+		this._init();
+	},
+	_getCreateOptions: $.noop,
+	_getCreateEventData: $.noop,
+	_create: $.noop,
+	_init: $.noop,
+
+	destroy: function() {
+		this._destroy();
+		// we can probably remove the unbind calls in 2.0
+		// all event bindings should go through this._on()
+		this.element
+			.unbind( this.eventNamespace )
+			// 1.9 BC for #7810
+			// TODO remove dual storage
+			.removeData( this.widgetName )
+			.removeData( this.widgetFullName )
+			// support: jquery <1.6.3
+			// http://bugs.jquery.com/ticket/9413
+			.removeData( $.camelCase( this.widgetFullName ) );
+		this.widget()
+			.unbind( this.eventNamespace )
+			.removeAttr( "aria-disabled" )
+			.removeClass(
+				this.widgetFullName + "-disabled " +
+				"ui-state-disabled" );
+
+		// clean up events and states
+		this.bindings.unbind( this.eventNamespace );
+		this.hoverable.removeClass( "ui-state-hover" );
+		this.focusable.removeClass( "ui-state-focus" );
+	},
+	_destroy: $.noop,
+
+	widget: function() {
+		return this.element;
+	},
+
+	option: function( key, value ) {
+		var options = key,
+			parts,
+			curOption,
+			i;
+
+		if ( arguments.length === 0 ) {
+			// don't return a reference to the internal hash
+			return $.widget.extend( {}, this.options );
+		}
+
+		if ( typeof key === "string" ) {
+			// handle nested keys, e.g., "foo.bar" => { foo: { bar: ___ } }
+			options = {};
+			parts = key.split( "." );
+			key = parts.shift();
+			if ( parts.length ) {
+				curOption = options[ key ] = $.widget.extend( {}, this.options[ key ] );
+				for ( i = 0; i < parts.length - 1; i++ ) {
+					curOption[ parts[ i ] ] = curOption[ parts[ i ] ] || {};
+					curOption = curOption[ parts[ i ] ];
+				}
+				key = parts.pop();
+				if ( value === undefined ) {
+					return curOption[ key ] === undefined ? null : curOption[ key ];
+				}
+				curOption[ key ] = value;
+			} else {
+				if ( value === undefined ) {
+					return this.options[ key ] === undefined ? null : this.options[ key ];
+				}
+				options[ key ] = value;
+			}
+		}
+
+		this._setOptions( options );
+
+		return this;
+	},
+	_setOptions: function( options ) {
+		var key;
+
+		for ( key in options ) {
+			this._setOption( key, options[ key ] );
+		}
+
+		return this;
+	},
+	_setOption: function( key, value ) {
+		this.options[ key ] = value;
+
+		if ( key === "disabled" ) {
+			this.widget()
+				.toggleClass( this.widgetFullName + "-disabled ui-state-disabled", !!value )
+				.attr( "aria-disabled", value );
+			this.hoverable.removeClass( "ui-state-hover" );
+			this.focusable.removeClass( "ui-state-focus" );
+		}
+
+		return this;
+	},
+
+	enable: function() {
+		return this._setOption( "disabled", false );
+	},
+	disable: function() {
+		return this._setOption( "disabled", true );
+	},
+
+	_on: function( suppressDisabledCheck, element, handlers ) {
+		var delegateElement,
+			instance = this;
+
+		// no suppressDisabledCheck flag, shuffle arguments
+		if ( typeof suppressDisabledCheck !== "boolean" ) {
+			handlers = element;
+			element = suppressDisabledCheck;
+			suppressDisabledCheck = false;
+		}
+
+		// no element argument, shuffle and use this.element
+		if ( !handlers ) {
+			handlers = element;
+			element = this.element;
+			delegateElement = this.widget();
+		} else {
+			// accept selectors, DOM elements
+			element = delegateElement = $( element );
+			this.bindings = this.bindings.add( element );
+		}
+
+		$.each( handlers, function( event, handler ) {
+			function handlerProxy() {
+				// allow widgets to customize the disabled handling
+				// - disabled as an array instead of boolean
+				// - disabled class as method for disabling individual parts
+				if ( !suppressDisabledCheck &&
+						( instance.options.disabled === true ||
+							$( this ).hasClass( "ui-state-disabled" ) ) ) {
+					return;
+				}
+				return ( typeof handler === "string" ? instance[ handler ] : handler )
+					.apply( instance, arguments );
+			}
+
+			// copy the guid so direct unbinding works
+			if ( typeof handler !== "string" ) {
+				handlerProxy.guid = handler.guid =
+					handler.guid || handlerProxy.guid || $.guid++;
+			}
+
+			var match = event.match( /^(\w+)\s*(.*)$/ ),
+				eventName = match[1] + instance.eventNamespace,
+				selector = match[2];
+			if ( selector ) {
+				delegateElement.delegate( selector, eventName, handlerProxy );
+			} else {
+				element.bind( eventName, handlerProxy );
+			}
+		});
+	},
+
+	_off: function( element, eventName ) {
+		eventName = (eventName || "").split( " " ).join( this.eventNamespace + " " ) + this.eventNamespace;
+		element.unbind( eventName ).undelegate( eventName );
+	},
+
+	_delay: function( handler, delay ) {
+		function handlerProxy() {
+			return ( typeof handler === "string" ? instance[ handler ] : handler )
+				.apply( instance, arguments );
+		}
+		var instance = this;
+		return setTimeout( handlerProxy, delay || 0 );
+	},
+
+	_hoverable: function( element ) {
+		this.hoverable = this.hoverable.add( element );
+		this._on( element, {
+			mouseenter: function( event ) {
+				$( event.currentTarget ).addClass( "ui-state-hover" );
+			},
+			mouseleave: function( event ) {
+				$( event.currentTarget ).removeClass( "ui-state-hover" );
+			}
+		});
+	},
+
+	_focusable: function( element ) {
+		this.focusable = this.focusable.add( element );
+		this._on( element, {
+			focusin: function( event ) {
+				$( event.currentTarget ).addClass( "ui-state-focus" );
+			},
+			focusout: function( event ) {
+				$( event.currentTarget ).removeClass( "ui-state-focus" );
+			}
+		});
+	},
+
+	_trigger: function( type, event, data ) {
+		var prop, orig,
+			callback = this.options[ type ];
+
+		data = data || {};
+		event = $.Event( event );
+		event.type = ( type === this.widgetEventPrefix ?
+			type :
+			this.widgetEventPrefix + type ).toLowerCase();
+		// the original event may come from any element
+		// so we need to reset the target on the new event
+		event.target = this.element[ 0 ];
+
+		// copy original event properties over to the new event
+		orig = event.originalEvent;
+		if ( orig ) {
+			for ( prop in orig ) {
+				if ( !( prop in event ) ) {
+					event[ prop ] = orig[ prop ];
+				}
+			}
+		}
+
+		this.element.trigger( event, data );
+		return !( $.isFunction( callback ) &&
+			callback.apply( this.element[0], [ event ].concat( data ) ) === false ||
+			event.isDefaultPrevented() );
+	}
+};
+
+$.each( { show: "fadeIn", hide: "fadeOut" }, function( method, defaultEffect ) {
+	$.Widget.prototype[ "_" + method ] = function( element, options, callback ) {
+		if ( typeof options === "string" ) {
+			options = { effect: options };
+		}
+		var hasOptions,
+			effectName = !options ?
+				method :
+				options === true || typeof options === "number" ?
+					defaultEffect :
+					options.effect || defaultEffect;
+		options = options || {};
+		if ( typeof options === "number" ) {
+			options = { duration: options };
+		}
+		hasOptions = !$.isEmptyObject( options );
+		options.complete = callback;
+		if ( options.delay ) {
+			element.delay( options.delay );
+		}
+		if ( hasOptions && $.effects && $.effects.effect[ effectName ] ) {
+			element[ method ]( options );
+		} else if ( effectName !== method && element[ effectName ] ) {
+			element[ effectName ]( options.duration, options.easing, callback );
+		} else {
+			element.queue(function( next ) {
+				$( this )[ method ]();
+				if ( callback ) {
+					callback.call( element[ 0 ] );
+				}
+				next();
+			});
+		}
+	};
+});
+
+})( jQuery );
+(function( $, undefined ) {
+
+var mouseHandled = false;
+$( document ).mouseup( function() {
+	mouseHandled = false;
+});
+
+$.widget("ui.mouse", {
+	version: "1.10.0",
+	options: {
+		cancel: "input,textarea,button,select,option",
+		distance: 1,
+		delay: 0
+	},
+	_mouseInit: function() {
+		var that = this;
+
+		this.element
+			.bind("mousedown."+this.widgetName, function(event) {
+				return that._mouseDown(event);
+			})
+			.bind("click."+this.widgetName, function(event) {
+				if (true === $.data(event.target, that.widgetName + ".preventClickEvent")) {
+					$.removeData(event.target, that.widgetName + ".preventClickEvent");
+					event.stopImmediatePropagation();
+					return false;
+				}
+			});
+
+		this.started = false;
+	},
+
+	// TODO: make sure destroying one instance of mouse doesn't mess with
+	// other instances of mouse
+	_mouseDestroy: function() {
+		this.element.unbind("."+this.widgetName);
+		if ( this._mouseMoveDelegate ) {
+			$(document)
+				.unbind("mousemove."+this.widgetName, this._mouseMoveDelegate)
+				.unbind("mouseup."+this.widgetName, this._mouseUpDelegate);
+		}
+	},
+
+	_mouseDown: function(event) {
+		// don't let more than one widget handle mouseStart
+		if( mouseHandled ) { return; }
+
+		// we may have missed mouseup (out of window)
+		(this._mouseStarted && this._mouseUp(event));
+
+		this._mouseDownEvent = event;
+
+		var that = this,
+			btnIsLeft = (event.which === 1),
+			// event.target.nodeName works around a bug in IE 8 with
+			// disabled inputs (#7620)
+			elIsCancel = (typeof this.options.cancel === "string" && event.target.nodeName ? $(event.target).closest(this.options.cancel).length : false);
+		if (!btnIsLeft || elIsCancel || !this._mouseCapture(event)) {
+			return true;
+		}
+
+		this.mouseDelayMet = !this.options.delay;
+		if (!this.mouseDelayMet) {
+			this._mouseDelayTimer = setTimeout(function() {
+				that.mouseDelayMet = true;
+			}, this.options.delay);
+		}
+
+		if (this._mouseDistanceMet(event) && this._mouseDelayMet(event)) {
+			this._mouseStarted = (this._mouseStart(event) !== false);
+			if (!this._mouseStarted) {
+				event.preventDefault();
+				return true;
+			}
+		}
+
+		// Click event may never have fired (Gecko & Opera)
+		if (true === $.data(event.target, this.widgetName + ".preventClickEvent")) {
+			$.removeData(event.target, this.widgetName + ".preventClickEvent");
+		}
+
+		// these delegates are required to keep context
+		this._mouseMoveDelegate = function(event) {
+			return that._mouseMove(event);
+		};
+		this._mouseUpDelegate = function(event) {
+			return that._mouseUp(event);
+		};
+		$(document)
+			.bind("mousemove."+this.widgetName, this._mouseMoveDelegate)
+			.bind("mouseup."+this.widgetName, this._mouseUpDelegate);
+
+		event.preventDefault();
+
+		mouseHandled = true;
+		return true;
+	},
+
+	_mouseMove: function(event) {
+		// IE mouseup check - mouseup happened when mouse was out of window
+		if ($.ui.ie && ( !document.documentMode || document.documentMode < 9 ) && !event.button) {
+			return this._mouseUp(event);
+		}
+
+		if (this._mouseStarted) {
+			this._mouseDrag(event);
+			return event.preventDefault();
+		}
+
+		if (this._mouseDistanceMet(event) && this._mouseDelayMet(event)) {
+			this._mouseStarted =
+				(this._mouseStart(this._mouseDownEvent, event) !== false);
+			(this._mouseStarted ? this._mouseDrag(event) : this._mouseUp(event));
+		}
+
+		return !this._mouseStarted;
+	},
+
+	_mouseUp: function(event) {
+		$(document)
+			.unbind("mousemove."+this.widgetName, this._mouseMoveDelegate)
+			.unbind("mouseup."+this.widgetName, this._mouseUpDelegate);
+
+		if (this._mouseStarted) {
+			this._mouseStarted = false;
+
+			if (event.target === this._mouseDownEvent.target) {
+				$.data(event.target, this.widgetName + ".preventClickEvent", true);
+			}
+
+			this._mouseStop(event);
+		}
+
+		return false;
+	},
+
+	_mouseDistanceMet: function(event) {
+		return (Math.max(
+				Math.abs(this._mouseDownEvent.pageX - event.pageX),
+				Math.abs(this._mouseDownEvent.pageY - event.pageY)
+			) >= this.options.distance
+		);
+	},
+
+	_mouseDelayMet: function(/* event */) {
+		return this.mouseDelayMet;
+	},
+
+	// These are placeholder methods, to be overriden by extending plugin
+	_mouseStart: function(/* event */) {},
+	_mouseDrag: function(/* event */) {},
+	_mouseStop: function(/* event */) {},
+	_mouseCapture: function(/* event */) { return true; }
+});
+
+})(jQuery);
+(function( $, undefined ) {
+
+$.ui = $.ui || {};
+
+var cachedScrollbarWidth,
+	max = Math.max,
+	abs = Math.abs,
+	round = Math.round,
+	rhorizontal = /left|center|right/,
+	rvertical = /top|center|bottom/,
+	roffset = /[\+\-]\d+%?/,
+	rposition = /^\w+/,
+	rpercent = /%$/,
+	_position = $.fn.position;
+
+function getOffsets( offsets, width, height ) {
+	return [
+		parseInt( offsets[ 0 ], 10 ) * ( rpercent.test( offsets[ 0 ] ) ? width / 100 : 1 ),
+		parseInt( offsets[ 1 ], 10 ) * ( rpercent.test( offsets[ 1 ] ) ? height / 100 : 1 )
+	];
+}
+
+function parseCss( element, property ) {
+	return parseInt( $.css( element, property ), 10 ) || 0;
+}
+
+function getDimensions( elem ) {
+	var raw = elem[0];
+	if ( raw.nodeType === 9 ) {
+		return {
+			width: elem.width(),
+			height: elem.height(),
+			offset: { top: 0, left: 0 }
+		};
+	}
+	if ( $.isWindow( raw ) ) {
+		return {
+			width: elem.width(),
+			height: elem.height(),
+			offset: { top: elem.scrollTop(), left: elem.scrollLeft() }
+		};
+	}
+	if ( raw.preventDefault ) {
+		return {
+			width: 0,
+			height: 0,
+			offset: { top: raw.pageY, left: raw.pageX }
+		};
+	}
+	return {
+		width: elem.outerWidth(),
+		height: elem.outerHeight(),
+		offset: elem.offset()
+	};
+}
+
+$.position = {
+	scrollbarWidth: function() {
+		if ( cachedScrollbarWidth !== undefined ) {
+			return cachedScrollbarWidth;
+		}
+		var w1, w2,
+			div = $( "<div style='display:block;width:50px;height:50px;overflow:hidden;'><div style='height:100px;width:auto;'></div></div>" ),
+			innerDiv = div.children()[0];
+
+		$( "body" ).append( div );
+		w1 = innerDiv.offsetWidth;
+		div.css( "overflow", "scroll" );
+
+		w2 = innerDiv.offsetWidth;
+
+		if ( w1 === w2 ) {
+			w2 = div[0].clientWidth;
+		}
+
+		div.remove();
+
+		return (cachedScrollbarWidth = w1 - w2);
+	},
+	getScrollInfo: function( within ) {
+		var overflowX = within.isWindow ? "" : within.element.css( "overflow-x" ),
+			overflowY = within.isWindow ? "" : within.element.css( "overflow-y" ),
+			hasOverflowX = overflowX === "scroll" ||
+				( overflowX === "auto" && within.width < within.element[0].scrollWidth ),
+			hasOverflowY = overflowY === "scroll" ||
+				( overflowY === "auto" && within.height < within.element[0].scrollHeight );
+		return {
+			width: hasOverflowX ? $.position.scrollbarWidth() : 0,
+			height: hasOverflowY ? $.position.scrollbarWidth() : 0
+		};
+	},
+	getWithinInfo: function( element ) {
+		var withinElement = $( element || window ),
+			isWindow = $.isWindow( withinElement[0] );
+		return {
+			element: withinElement,
+			isWindow: isWindow,
+			offset: withinElement.offset() || { left: 0, top: 0 },
+			scrollLeft: withinElement.scrollLeft(),
+			scrollTop: withinElement.scrollTop(),
+			width: isWindow ? withinElement.width() : withinElement.outerWidth(),
+			height: isWindow ? withinElement.height() : withinElement.outerHeight()
+		};
+	}
+};
+
+$.fn.position = function( options ) {
+	if ( !options || !options.of ) {
+		return _position.apply( this, arguments );
+	}
+
+	// make a copy, we don't want to modify arguments
+	options = $.extend( {}, options );
+
+	var atOffset, targetWidth, targetHeight, targetOffset, basePosition, dimensions,
+		target = $( options.of ),
+		within = $.position.getWithinInfo( options.within ),
+		scrollInfo = $.position.getScrollInfo( within ),
+		collision = ( options.collision || "flip" ).split( " " ),
+		offsets = {};
+
+	dimensions = getDimensions( target );
+	if ( target[0].preventDefault ) {
+		// force left top to allow flipping
+		options.at = "left top";
+	}
+	targetWidth = dimensions.width;
+	targetHeight = dimensions.height;
+	targetOffset = dimensions.offset;
+	// clone to reuse original targetOffset later
+	basePosition = $.extend( {}, targetOffset );
+
+	// force my and at to have valid horizontal and vertical positions
+	// if a value is missing or invalid, it will be converted to center
+	$.each( [ "my", "at" ], function() {
+		var pos = ( options[ this ] || "" ).split( " " ),
+			horizontalOffset,
+			verticalOffset;
+
+		if ( pos.length === 1) {
+			pos = rhorizontal.test( pos[ 0 ] ) ?
+				pos.concat( [ "center" ] ) :
+				rvertical.test( pos[ 0 ] ) ?
+					[ "center" ].concat( pos ) :
+					[ "center", "center" ];
+		}
+		pos[ 0 ] = rhorizontal.test( pos[ 0 ] ) ? pos[ 0 ] : "center";
+		pos[ 1 ] = rvertical.test( pos[ 1 ] ) ? pos[ 1 ] : "center";
+
+		// calculate offsets
+		horizontalOffset = roffset.exec( pos[ 0 ] );
+		verticalOffset = roffset.exec( pos[ 1 ] );
+		offsets[ this ] = [
+			horizontalOffset ? horizontalOffset[ 0 ] : 0,
+			verticalOffset ? verticalOffset[ 0 ] : 0
+		];
+
+		// reduce to just the positions without the offsets
+		options[ this ] = [
+			rposition.exec( pos[ 0 ] )[ 0 ],
+			rposition.exec( pos[ 1 ] )[ 0 ]
+		];
+	});
+
+	// normalize collision option
+	if ( collision.length === 1 ) {
+		collision[ 1 ] = collision[ 0 ];
+	}
+
+	if ( options.at[ 0 ] === "right" ) {
+		basePosition.left += targetWidth;
+	} else if ( options.at[ 0 ] === "center" ) {
+		basePosition.left += targetWidth / 2;
+	}
+
+	if ( options.at[ 1 ] === "bottom" ) {
+		basePosition.top += targetHeight;
+	} else if ( options.at[ 1 ] === "center" ) {
+		basePosition.top += targetHeight / 2;
+	}
+
+	atOffset = getOffsets( offsets.at, targetWidth, targetHeight );
+	basePosition.left += atOffset[ 0 ];
+	basePosition.top += atOffset[ 1 ];
+
+	return this.each(function() {
+		var collisionPosition, using,
+			elem = $( this ),
+			elemWidth = elem.outerWidth(),
+			elemHeight = elem.outerHeight(),
+			marginLeft = parseCss( this, "marginLeft" ),
+			marginTop = parseCss( this, "marginTop" ),
+			collisionWidth = elemWidth + marginLeft + parseCss( this, "marginRight" ) + scrollInfo.width,
+			collisionHeight = elemHeight + marginTop + parseCss( this, "marginBottom" ) + scrollInfo.height,
+			position = $.extend( {}, basePosition ),
+			myOffset = getOffsets( offsets.my, elem.outerWidth(), elem.outerHeight() );
+
+		if ( options.my[ 0 ] === "right" ) {
+			position.left -= elemWidth;
+		} else if ( options.my[ 0 ] === "center" ) {
+			position.left -= elemWidth / 2;
+		}
+
+<<<<<<< HEAD
+=======
+        validate: function () {
+            if (typeof this.options.validate === 'function') {
+                return this.options.validate.call(this, this.value);
+            }
+        },
+
+        /**
+        Sets new value of editable
+        @method setValue(value, convertStr)
+        @param {mixed} value new value
+        @param {boolean} convertStr whether to convert value from string to internal format
+        **/
+        setValue: function(value, convertStr, response) {
+            if(convertStr) {
+                this.value = this.input.str2value(value);
+            } else {
+                this.value = value;
+            }
+            if(this.container) {
+                this.container.option('value', this.value);
+            }
+            $.when(this.render(response))
+            .then($.proxy(function() {
+                this.handleEmpty();
+            }, this));
+        },
+
+        /**
+        Activates input of visible container (e.g. set focus)
+        @method activate()
+        **/
+        activate: function() {
+            if(this.container) {
+               this.container.activate();
+            }
+        },
+
+        /**
+        Removes editable feature from element
+        @method destroy()
+        **/
+        destroy: function() {
+            if(this.container) {
+               this.container.destroy();
+            }
+
+            if(this.options.toggle !== 'manual') {
+                this.$element.removeClass('editable-click');
+                this.$element.off(this.options.toggle + '.editable');
+            }
+
+            this.$element.off("save.internal");
+
+            this.$element.removeClass('editable');
+            this.$element.removeClass('editable-open');
+            this.$element.removeData('editable');
+        }
+    };
+
+    /* EDITABLE PLUGIN DEFINITION
+    * ======================= */
+
+    /**
+    jQuery method to initialize editable element.
+
+    @method $().editable(options)
+    @params {Object} options
+    @example
+    $('#username').editable({
+        type: 'text',
+        url: '/post',
+        pk: 1
+    });
+    **/
+    $.fn.editable = function (option) {
+        //special API methods returning non-jquery object
+        var result = {}, args = arguments, datakey = 'editable';
+        switch (option) {
+            /**
+            Runs client-side validation for all matched editables
+
+            @method validate()
+            @returns {Object} validation errors map
+            @example
+            $('#username, #fullname').editable('validate');
+            // possible result:
+            {
+              username: "username is required",
+              fullname: "fullname should be minimum 3 letters length"
+            }
+            **/
+            case 'validate':
+                this.each(function () {
+                    var $this = $(this), data = $this.data(datakey), error;
+                    if (data && (error = data.validate())) {
+                        result[data.options.name] = error;
+                    }
+                });
+            return result;
+
+            /**
+            Returns current values of editable elements. If value is <code>null</code> or <code>undefined</code> it will not be returned
+            @method getValue()
+            @returns {Object} object of element names and values
+            @example
+            $('#username, #fullname').editable('validate');
+            // possible result:
+            {
+            username: "superuser",
+            fullname: "John"
+            }
+            **/
+            case 'getValue':
+                this.each(function () {
+                    var $this = $(this), data = $this.data(datakey);
+                    if (data && data.value !== undefined && data.value !== null) {
+                        result[data.options.name] = data.input.value2submit(data.value);
+                    }
+                });
+            return result;
+
+            /**
+            This method collects values from several editable elements and submit them all to server.
+            Internally it runs client-side validation for all fields and submits only in case of success.
+            See <a href="#newrecord">creating new records</a> for details.
+
+            @method submit(options)
+            @param {object} options
+            @param {object} options.url url to submit data
+            @param {object} options.data additional data to submit
+            @param {object} options.ajaxOptions additional ajax options
+            @param {function} options.error(obj) error handler
+            @param {function} options.success(obj,config) success handler
+            @returns {Object} jQuery object
+            **/
+            case 'submit':  //collects value, validate and submit to server for creating new record
+                var config = arguments[1] || {},
+                $elems = this,
+                errors = this.editable('validate'),
+                values;
+
+                if($.isEmptyObject(errors)) {
+                    values = this.editable('getValue');
+                    if(config.data) {
+                        $.extend(values, config.data);
+                    }
+
+                    $.ajax($.extend({
+                        url: config.url,
+                        data: values,
+                        type: 'POST'
+                    }, config.ajaxOptions))
+                    .success(function(response) {
+                        //successful response 200 OK
+                        if(typeof config.success === 'function') {
+                            config.success.call($elems, response, config);
+                        }
+                    })
+                    .error(function(){  //ajax error
+                        if(typeof config.error === 'function') {
+                            config.error.apply($elems, arguments);
+                        }
+                    });
+                } else { //client-side validation error
+                    if(typeof config.error === 'function') {
+                        config.error.call($elems, errors);
+                    }
+                }
+            return this;
+        }
+
+        //return jquery object
+        return this.each(function () {
+            var $this = $(this),
+                data = $this.data(datakey),
+                options = typeof option === 'object' && option;
+
+            if (!data) {
+                $this.data(datakey, (data = new Editable(this, options)));
+            }
+
+            if (typeof option === 'string') { //call method
+                data[option].apply(data, Array.prototype.slice.call(args, 1));
+            }
+        });
+    };
+
+
+    $.fn.editable.defaults = {
+        /**
+        Type of input. Can be <code>text|textarea|select|date|checklist</code> and more
+
+        @property type
+        @type string
+        @default 'text'
+        **/
+        type: 'text',
+        /**
+        Sets disabled state of editable
+
+        @property disabled
+        @type boolean
+        @default false
+        **/
+        disabled: false,
+        /**
+        How to toggle editable. Can be <code>click|dblclick|mouseenter|manual</code>.
+        When set to <code>manual</code> you should manually call <code>show/hide</code> methods of editable.
+        **Note**: if you call <code>show</code> or <code>toggle</code> inside **click** handler of some DOM element,
+        you need to apply <code>e.stopPropagation()</code> because containers are being closed on any click on document.
+
+        @example
+        $('#edit-button').click(function(e) {
+            e.stopPropagation();
+            $('#username').editable('toggle');
+        });
+
+        @property toggle
+        @type string
+        @default 'click'
+        **/
+        toggle: 'click',
+        /**
+        Text shown when element is empty.
+
+        @property emptytext
+        @type string
+        @default 'Empty'
+        **/
+        emptytext: 'Empty',
+        /**
+        Allows to automatically set element's text based on it's value. Can be <code>auto|always|never</code>. Useful for select and date.
+        For example, if dropdown list is <code>{1: 'a', 2: 'b'}</code> and element's value set to <code>1</code>, it's html will be automatically set to <code>'a'</code>.
+        <code>auto</code> - text will be automatically set only if element is empty.
+        <code>always|never</code> - always(never) try to set element's text.
+
+        @property autotext
+        @type string
+        @default 'auto'
+        **/
+        autotext: 'auto',
+        /**
+        Initial value of input. If not set, taken from element's text.
+
+        @property value
+        @type mixed
+        @default element's text
+        **/
+        value: null,
+        /**
+        Callback to perform custom displaying of value in element's text.
+        If `null`, default input's display used.
+        If `false`, no displaying methods will be called, element's text will never change.
+        Runs under element's scope.
+        _Parameters:_
+
+        * `value` current value to be displayed
+        * `response` server response (if display called after ajax submit), since 1.4.0
+
+        For **inputs with source** (select, checklist) parameters are different:
+
+        * `value` current value to be displayed
+        * `sourceData` array of items for current input (e.g. dropdown items)
+        * `response` server response (if display called after ajax submit), since 1.4.0
+
+        To get currently selected items use `$.fn.editableutils.itemsByValue(value, sourceData)`.
+
+        @property display
+        @type function|boolean
+        @default null
+        @since 1.2.0
+        @example
+        display: function(value, sourceData) {
+           //display checklist as comma-separated values
+           var html = [],
+               checked = $.fn.editableutils.itemsByValue(value, sourceData);
+
+           if(checked.length) {
+               $.each(checked, function(i, v) { html.push($.fn.editableutils.escape(v.text)); });
+               $(this).html(html.join(', '));
+           } else {
+               $(this).empty();
+           }
+        }
+        **/
+        display: null,
+        /**
+        Css class applied when editable text is empty.
+
+        @property emptyclass
+        @type string
+        @since 1.4.1
+        @default editable-empty
+        **/
+        emptyclass: 'editable-empty',
+        /**
+        Css class applied when value was stored but not sent to server (`pk` is empty or `send = 'never'`).
+        You may set it to `null` if you work with editables locally and submit them together.
+
+        @property unsavedclass
+        @type string
+        @since 1.4.1
+        @default editable-unsaved
+        **/
+        unsavedclass: 'editable-unsaved',
+        /**
+        If a css selector is provided, editable will be delegated to the specified targets.
+        Usefull for dynamically generated DOM elements.
+        **Please note**, that delegated targets can't use `emptytext` and `autotext` options,
+        as they are initialized after first click.
+
+        @property selector
+        @type string
+        @since 1.4.1
+        @default null
+        @example
+        <div id="user">
+          <a href="#" data-name="username" data-type="text" title="Username">awesome</a>
+          <a href="#" data-name="group" data-type="select" data-source="/groups" data-value="1" title="Group">Operator</a>
+        </div>
+
+        <script>
+        $('#user').editable({
+            selector: 'a',
+            url: '/post',
+            pk: 1
+        });
+        </script>
+        **/
+        selector: null
+    };
+
+}(window.jQuery));
+
+/**
+AbstractInput - base class for all editable inputs.
+It defines interface to be implemented by any input type.
+To create your own input you can inherit from this class.
+
+@class abstractinput
+**/
+(function ($) {
+
+    //types
+    $.fn.editabletypes = {};
+
+    var AbstractInput = function () { };
+
+    AbstractInput.prototype = {
+       /**
+        Initializes input
+
+        @method init()
+        **/
+       init: function(type, options, defaults) {
+           this.type = type;
+           this.options = $.extend({}, defaults, options);
+       },
+
+       /*
+       this method called before render to init $tpl that is inserted in DOM
+       */
+       prerender: function() {
+           this.$tpl = $(this.options.tpl); //whole tpl as jquery object
+           this.$input = this.$tpl;         //control itself, can be changed in render method
+           this.$clear = null;              //clear button
+           this.error = null;               //error message, if input cannot be rendered
+       },
+
+       /**
+        Renders input from tpl. Can return jQuery deferred object.
+        Can be overwritten in child objects
+
+        @method render()
+       **/
+       render: function() {
+
+       },
+
+       /**
+        Sets element's html by value.
+
+        @method value2html(value, element)
+        @param {mixed} value
+        @param {DOMElement} element
+       **/
+       value2html: function(value, element) {
+           $(element).text(value);
+       },
+
+       /**
+        Converts element's html to value
+
+        @method html2value(html)
+        @param {string} html
+        @returns {mixed}
+       **/
+       html2value: function(html) {
+           return $('<div>').html(html).text();
+       },
+
+       /**
+        Converts value to string (for internal compare). For submitting to server used value2submit().
+
+        @method value2str(value)
+        @param {mixed} value
+        @returns {string}
+       **/
+       value2str: function(value) {
+           return value;
+       },
+
+       /**
+        Converts string received from server into value. Usually from `data-value` attribute.
+
+        @method str2value(str)
+        @param {string} str
+        @returns {mixed}
+       **/
+       str2value: function(str) {
+           return str;
+       },
+
+       /**
+        Converts value for submitting to server. Result can be string or object.
+
+        @method value2submit(value)
+        @param {mixed} value
+        @returns {mixed}
+       **/
+       value2submit: function(value) {
+           return value;
+       },
+
+       /**
+        Sets value of input.
+
+        @method value2input(value)
+        @param {mixed} value
+       **/
+       value2input: function(value) {
+           this.$input.val(value);
+       },
+
+       /**
+        Returns value of input. Value can be object (e.g. datepicker)
+
+        @method input2value()
+       **/
+       input2value: function() {
+           return this.$input.val();
+       },
+
+       /**
+        Activates input. For text it sets focus.
+
+        @method activate()
+       **/
+       activate: function() {
+           if(this.$input.is(':visible')) {
+               this.$input.focus();
+           }
+       },
+
+       /**
+        Creates input.
+
+        @method clear()
+       **/
+       clear: function() {
+           this.$input.val(null);
+       },
+
+       /**
+        method to escape html.
+       **/
+       escape: function(str) {
+           return $('<div>').text(str).html();
+       },
+
+       /**
+        attach handler to automatically submit form when value changed (useful when buttons not shown)
+       **/
+       autosubmit: function() {
+
+       },
+
+       // -------- helper functions --------
+       setClass: function() {
+           if(this.options.inputclass) {
+               this.$input.addClass(this.options.inputclass);
+           }
+       },
+
+       setAttr: function(attr) {
+           if (this.options[attr]) {
+               this.$input.attr(attr, this.options[attr]);
+           }
+       },
+
+       option: function(key, value) {
+            this.options[key] = value;
+       }
+
+    };
+
+    AbstractInput.defaults = {
+        /**
+        HTML template of input. Normally you should not change it.
+
+        @property tpl
+        @type string
+        @default ''
+        **/
+        tpl: '',
+        /**
+        CSS class automatically applied to input
+
+        @property inputclass
+        @type string
+        @default input-medium
+        **/
+        inputclass: 'input-medium'
+    };
+
+    $.extend($.fn.editabletypes, {abstractinput: AbstractInput});
+
+}(window.jQuery));
+
+/**
+List - abstract class for inputs that have source option loaded from js array or via ajax
+
+@class list
+@extends abstractinput
+**/
+(function ($) {
+
+    var List = function (options) {
+
+    };
+
+    $.fn.editableutils.inherit(List, $.fn.editabletypes.abstractinput);
+
+    $.extend(List.prototype, {
+        render: function () {
+            var deferred = $.Deferred();
+
+            this.error = null;
+            this.onSourceReady(function () {
+                this.renderList();
+                deferred.resolve();
+            }, function () {
+                this.error = this.options.sourceError;
+                deferred.resolve();
+            });
+
+            return deferred.promise();
+        },
+
+        html2value: function (html) {
+            return null; //can't set value by text
+        },
+
+        value2html: function (value, element, display, response) {
+            var deferred = $.Deferred(),
+                success = function () {
+                    if(typeof display === 'function') {
+                        //custom display method
+                        display.call(element, value, this.sourceData, response);
+                    } else {
+                        this.value2htmlFinal(value, element);
+                    }
+                    deferred.resolve();
+               };
+
+            //for null value just call success without loading source
+            if(value === null) {
+               success.call(this);
+            } else {
+               this.onSourceReady(success, function () { deferred.resolve(); });
+            }
+
+            return deferred.promise();
+        },
+
+        // ------------- additional functions ------------
+
+        onSourceReady: function (success, error) {
+            //if allready loaded just call success
+            if($.isArray(this.sourceData)) {
+                success.call(this);
+                return;
+            }
+
+            // try parse json in single quotes (for double quotes jquery does automatically)
+            try {
+                this.options.source = $.fn.editableutils.tryParseJson(this.options.source, false);
+            } catch (e) {
+                error.call(this);
+                return;
+            }
+
+            //loading from url
+            if (typeof this.options.source === 'string') {
+                //try to get from cache
+                if(this.options.sourceCache) {
+                    var cacheID = this.options.source,
+                    cache;
+
+                    if (!$(document).data(cacheID)) {
+                        $(document).data(cacheID, {});
+                    }
+                    cache = $(document).data(cacheID);
+
+                    //check for cached data
+                    if (cache.loading === false && cache.sourceData) { //take source from cache
+                        this.sourceData = cache.sourceData;
+                        this.doPrepend();
+                        success.call(this);
+                        return;
+                    } else if (cache.loading === true) { //cache is loading, put callback in stack to be called later
+                        cache.callbacks.push($.proxy(function () {
+                            this.sourceData = cache.sourceData;
+                            this.doPrepend();
+                            success.call(this);
+                        }, this));
+
+                        //also collecting error callbacks
+                        cache.err_callbacks.push($.proxy(error, this));
+                        return;
+                    } else { //no cache yet, activate it
+                        cache.loading = true;
+                        cache.callbacks = [];
+                        cache.err_callbacks = [];
+                    }
+                }
+
+                //loading sourceData from server
+                $.ajax({
+                    url: this.options.source,
+                    type: 'get',
+                    cache: false,
+                    dataType: 'json',
+                    success: $.proxy(function (data) {
+                        if(cache) {
+                            cache.loading = false;
+                        }
+                        this.sourceData = this.makeArray(data);
+                        if($.isArray(this.sourceData)) {
+                            if(cache) {
+                                //store result in cache
+                                cache.sourceData = this.sourceData;
+                                //run success callbacks for other fields waiting for this source
+                                $.each(cache.callbacks, function () { this.call(); });
+                            }
+                            this.doPrepend();
+                            success.call(this);
+                        } else {
+                            error.call(this);
+                            if(cache) {
+                                //run error callbacks for other fields waiting for this source
+                                $.each(cache.err_callbacks, function () { this.call(); });
+                            }
+                        }
+                    }, this),
+                    error: $.proxy(function () {
+                        error.call(this);
+                        if(cache) {
+                             cache.loading = false;
+                             //run error callbacks for other fields
+                             $.each(cache.err_callbacks, function () { this.call(); });
+                        }
+                    }, this)
+                });
+            } else { //options as json/array/function
+                if ($.isFunction(this.options.source)) {
+                   this.sourceData = this.makeArray(this.options.source());
+                } else {
+                   this.sourceData = this.makeArray(this.options.source);
+                }
+
+                if($.isArray(this.sourceData)) {
+                    this.doPrepend();
+                    success.call(this);
+                } else {
+                    error.call(this);
+                }
+            }
+        },
+
+        doPrepend: function () {
+            if(this.options.prepend === null || this.options.prepend === undefined) {
+                return;
+            }
+
+            if(!$.isArray(this.prependData)) {
+                //try parse json in single quotes
+                this.options.prepend = $.fn.editableutils.tryParseJson(this.options.prepend, true);
+                if (typeof this.options.prepend === 'string') {
+                    this.options.prepend = {'': this.options.prepend};
+                }
+                if (typeof this.options.prepend === 'function') {
+                    this.prependData = this.makeArray(this.options.prepend());
+                } else {
+                    this.prependData = this.makeArray(this.options.prepend);
+                }
+            }
+
+            if($.isArray(this.prependData) && $.isArray(this.sourceData)) {
+                this.sourceData = this.prependData.concat(this.sourceData);
+            }
+        },
+
+        /*
+         renders input list
+        */
+        renderList: function() {
+            // this method should be overwritten in child class
+        },
+
+         /*
+         set element's html by value
+        */
+        value2htmlFinal: function(value, element) {
+            // this method should be overwritten in child class
+        },
+
+        /**
+        * convert data to array suitable for sourceData, e.g. [{value: 1, text: 'abc'}, {...}]
+        */
+        makeArray: function(data) {
+            var count, obj, result = [], item, iterateItem;
+            if(!data || typeof data === 'string') {
+                return null;
+            }
+
+            if($.isArray(data)) { //array
+                /*
+                   function to iterate inside item of array if item is object.
+                   Caclulates count of keys in item and store in obj.
+                */
+                iterateItem = function (k, v) {
+                    obj = {value: k, text: v};
+                    if(count++ >= 2) {
+                        return false;// exit from `each` if item has more than one key.
+                    }
+                };
+
+                for(var i = 0; i < data.length; i++) {
+                    item = data[i];
+                    if(typeof item === 'object') {
+                        count = 0; //count of keys inside item
+                        $.each(item, iterateItem);
+                        //case: [{val1: 'text1'}, {val2: 'text2} ...]
+                        if(count === 1) {
+                            result.push(obj);
+                            //case: [{value: 1, text: 'text1'}, {value: 2, text: 'text2'}, ...]
+                        } else if(count > 1) {
+                            //removed check of existance: item.hasOwnProperty('value') && item.hasOwnProperty('text')
+                            if(item.children) {
+                                item.children = this.makeArray(item.children);
+                            }
+                            result.push(item);
+                        }
+                    } else {
+                        //case: ['text1', 'text2' ...]
+                        result.push({value: item, text: item});
+                    }
+                }
+            } else {  //case: {val1: 'text1', val2: 'text2, ...}
+                $.each(data, function (k, v) {
+                    result.push({value: k, text: v});
+                });
+            }
+            return result;
+        },
+
+        option: function(key, value) {
+            this.options[key] = value;
+            if(key === 'source') {
+                this.sourceData = null;
+            }
+            if(key === 'prepend') {
+                this.prependData = null;
+            }
+        }
+
+    });
+
+    List.defaults = $.extend({}, $.fn.editabletypes.abstractinput.defaults, {
+        /**
+        Source data for list.
+        If **array** - it should be in format: `[{value: 1, text: "text1"}, {value: 2, text: "text2"}, ...]`
+        For compability, object format is also supported: `{"1": "text1", "2": "text2" ...}` but it does not guarantee elements order.
+
+        If **string** - considered ajax url to load items. In that case results will be cached for fields with the same source and name. See also `sourceCache` option.
+
+        If **function**, it should return data in format above (since 1.4.0).
+
+        Since 1.4.1 key `children` supported to render OPTGROUP (for **select** input only).
+        `[{text: "group1", children: [{value: 1, text: "text1"}, {value: 2, text: "text2"}]}, ...]`
+
+
+        @property source
+        @type string | array | object | function
+        @default null
+        **/
+        source: null,
+        /**
+        Data automatically prepended to the beginning of dropdown list.
+
+        @property prepend
+        @type string | array | object | function
+        @default false
+        **/
+        prepend: false,
+        /**
+        Error message when list cannot be loaded (e.g. ajax error)
+
+        @property sourceError
+        @type string
+        @default Error when loading list
+        **/
+        sourceError: 'Error when loading list',
+        /**
+        if <code>true</code> and source is **string url** - results will be cached for fields with the same source.
+        Usefull for editable column in grid to prevent extra requests.
+
+        @property sourceCache
+        @type boolean
+        @default true
+        @since 1.2.0
+        **/
+        sourceCache: true
+    });
+
+    $.fn.editabletypes.list = List;
+
+}(window.jQuery));
+
+/**
+Text input
+
+@class text
+@extends abstractinput
+@final
+@example
+<a href="#" id="username" data-type="text" data-pk="1">awesome</a>
+<script>
+$(function(){
+    $('#username').editable({
+        url: '/post',
+        title: 'Enter username'
+    });
+});
+</script>
+**/
+(function ($) {
+    var Text = function (options) {
+        this.init('text', options, Text.defaults);
+    };
+
+    $.fn.editableutils.inherit(Text, $.fn.editabletypes.abstractinput);
+
+    $.extend(Text.prototype, {
+        render: function() {
+           this.renderClear();
+           this.setClass();
+           this.setAttr('placeholder');
+        },
+
+        activate: function() {
+            if(this.$input.is(':visible')) {
+                this.$input.focus();
+                $.fn.editableutils.setCursorPosition(this.$input.get(0), this.$input.val().length);
+                if(this.toggleClear) {
+                    this.toggleClear();
+                }
+            }
+        },
+
+        //render clear button
+        renderClear:  function() {
+           if (this.options.clear) {
+               this.$clear = $('<span class="editable-clear-x"></span>');
+               this.$input.after(this.$clear)
+                          .css('padding-right', 20)
+                          .keyup($.proxy(this.toggleClear, this))
+                          .parent().css('position', 'relative');
+
+               this.$clear.click($.proxy(this.clear, this));
+           }
+        },
+
+        postrender: function() {
+            if(this.$clear) {
+                //can position clear button only here, when form is shown and height can be calculated
+                var h = this.$input.outerHeight() || 20,
+                    delta = (h - this.$clear.height()) / 2;
+
+                //workaround for plain-popup
+                if(delta < 3) {
+                   delta = 3;
+                }
+
+                this.$clear.css({top: delta, right: delta});
+            }
+        },
+
+        //show / hide clear button
+        toggleClear: function() {
+            if(!this.$clear) {
+                return;
+            }
+
+            if(this.$input.val().length) {
+                this.$clear.show();
+            } else {
+                this.$clear.hide();
+            }
+        },
+
+        clear: function() {
+           this.$clear.hide();
+           this.$input.val('').focus();
+        }
+    });
+
+    Text.defaults = $.extend({}, $.fn.editabletypes.abstractinput.defaults, {
+        /**
+        @property tpl
+        @default <input type="text">
+        **/
+        tpl: '<input type="text">',
+        /**
+        Placeholder attribute of input. Shown when input is empty.
+
+        @property placeholder
+        @type string
+        @default null
+        **/
+        placeholder: null,
+
+        /**
+        Whether to show `clear` button
+
+        @property clear
+        @type boolean
+        @default true
+        **/
+        clear: true
+    });
+
+    $.fn.editabletypes.text = Text;
+
+}(window.jQuery));
+
+/**
+Textarea input
+
+@class textarea
+@extends abstractinput
+@final
+@example
+<a href="#" id="comments" data-type="textarea" data-pk="1">awesome comment!</a>
+<script>
+$(function(){
+    $('#comments').editable({
+        url: '/post',
+        title: 'Enter comments',
+        rows: 10
+    });
+});
+</script>
+**/
+(function ($) {
+
+    var Textarea = function (options) {
+        this.init('textarea', options, Textarea.defaults);
+    };
+
+    $.fn.editableutils.inherit(Textarea, $.fn.editabletypes.abstractinput);
+
+    $.extend(Textarea.prototype, {
+        render: function () {
+            this.setClass();
+            this.setAttr('placeholder');
+            this.setAttr('rows');
+
+            //ctrl + enter
+            this.$input.keydown(function (e) {
+                if (e.ctrlKey && e.which === 13) {
+                    $(this).closest('form').submit();
+                }
+            });
+        },
+
+        value2html: function(value, element) {
+            var html = '', lines;
+            if(value) {
+                lines = value.split("\n");
+                for (var i = 0; i < lines.length; i++) {
+                    lines[i] = $('<div>').text(lines[i]).html();
+                }
+                html = lines.join('<br>');
+            }
+            $(element).html(html);
+        },
+
+        html2value: function(html) {
+            if(!html) {
+                return '';
+            }
+
+            var regex = new RegExp(String.fromCharCode(10), 'g');
+            var lines = html.split(/<br\s*\/?>/i);
+            for (var i = 0; i < lines.length; i++) {
+                var text = $('<div>').html(lines[i]).text();
+
+                // Remove newline characters (\n) to avoid them being converted by value2html() method
+                // thus adding extra <br> tags
+                text = text.replace(regex, '');
+
+                lines[i] = text;
+            }
+            return lines.join("\n");
+        },
+
+        activate: function() {
+            $.fn.editabletypes.text.prototype.activate.call(this);
+        }
+    });
+
+    Textarea.defaults = $.extend({}, $.fn.editabletypes.abstractinput.defaults, {
+        /**
+        @property tpl
+        @default <textarea></textarea>
+        **/
+        tpl:'<textarea></textarea>',
+        /**
+        @property inputclass
+        @default input-large
+        **/
+        inputclass: 'input-large',
+        /**
+        Placeholder attribute of input. Shown when input is empty.
+
+        @property placeholder
+        @type string
+        @default null
+        **/
+        placeholder: null,
+        /**
+        Number of rows in textarea
+
+        @property rows
+        @type integer
+        @default 7
+        **/
+        rows: 7
+    });
+
+    $.fn.editabletypes.textarea = Textarea;
+
+}(window.jQuery));
+
+/**
+Select (dropdown)
+
+@class select
+@extends list
+@final
+@example
+<a href="#" id="status" data-type="select" data-pk="1" data-url="/post" data-original-title="Select status"></a>
+<script>
+$(function(){
+    $('#status').editable({
+        value: 2,
+        source: [
+              {value: 1, text: 'Active'},
+              {value: 2, text: 'Blocked'},
+              {value: 3, text: 'Deleted'}
+           ]
+        }
+    });
+});
+</script>
+**/
+(function ($) {
+
+    var Select = function (options) {
+        this.init('select', options, Select.defaults);
+    };
+
+    $.fn.editableutils.inherit(Select, $.fn.editabletypes.list);
+
+    $.extend(Select.prototype, {
+        renderList: function() {
+            this.$input.empty();
+
+            var fillItems = function($el, data) {
+                if($.isArray(data)) {
+                    for(var i=0; i<data.length; i++) {
+                        if(data[i].children) {
+                           $el.append(fillItems($('<optgroup>', {label: data[i].text}), data[i].children));
+                        } else {
+                           $el.append($('<option>', {value: data[i].value}).text(data[i].text));
+                        }
+                    }
+                }
+                return $el;
+            };
+
+            fillItems(this.$input, this.sourceData);
+
+            this.setClass();
+
+            //enter submit
+            this.$input.on('keydown.editable', function (e) {
+                if (e.which === 13) {
+                    $(this).closest('form').submit();
+                }
+            });
+        },
+
+        value2htmlFinal: function(value, element) {
+            var text = '',
+                items = $.fn.editableutils.itemsByValue(value, this.sourceData);
+
+            if(items.length) {
+                text = items[0].text;
+            }
+
+            $(element).text(text);
+        },
+
+        autosubmit: function() {
+            this.$input.off('keydown.editable').on('change.editable', function(){
+                $(this).closest('form').submit();
+            });
+        }
+    });
+
+    Select.defaults = $.extend({}, $.fn.editabletypes.list.defaults, {
+        /**
+        @property tpl
+        @default <select></select>
+        **/
+        tpl:'<select></select>'
+    });
+
+    $.fn.editabletypes.select = Select;
+
+}(window.jQuery));
+/**
+List of checkboxes.
+Internally value stored as javascript array of values.
+
+@class checklist
+@extends list
+@final
+@example
+<a href="#" id="options" data-type="checklist" data-pk="1" data-url="/post" data-original-title="Select options"></a>
+<script>
+$(function(){
+    $('#options').editable({
+        value: [2, 3],
+        source: [
+              {value: 1, text: 'option1'},
+              {value: 2, text: 'option2'},
+              {value: 3, text: 'option3'}
+           ]
+        }
+    });
+});
+</script>
+**/
+(function ($) {
+
+    var Checklist = function (options) {
+        this.init('checklist', options, Checklist.defaults);
+    };
+
+    $.fn.editableutils.inherit(Checklist, $.fn.editabletypes.list);
+
+    $.extend(Checklist.prototype, {
+        renderList: function() {
+            var $label, $div;
+
+            this.$tpl.empty();
+
+            if(!$.isArray(this.sourceData)) {
+                return;
+            }
+
+            for(var i=0; i<this.sourceData.length; i++) {
+                $label = $('<label>').append($('<input>', {
+                                           type: 'checkbox',
+                                           value: this.sourceData[i].value
+                                     }))
+                                     .append($('<span>').text(' '+this.sourceData[i].text));
+
+                $('<div>').append($label).appendTo(this.$tpl);
+            }
+
+            this.$input = this.$tpl.find('input[type="checkbox"]');
+            this.setClass();
+        },
+
+       value2str: function(value) {
+           return $.isArray(value) ? value.sort().join($.trim(this.options.separator)) : '';
+       },
+
+       //parse separated string
+        str2value: function(str) {
+           var reg, value = null;
+           if(typeof str === 'string' && str.length) {
+               reg = new RegExp('\\s*'+$.trim(this.options.separator)+'\\s*');
+               value = str.split(reg);
+           } else if($.isArray(str)) {
+               value = str;
+           }
+           return value;
+        },
+
+       //set checked on required checkboxes
+       value2input: function(value) {
+            this.$input.prop('checked', false);
+            if($.isArray(value) && value.length) {
+               this.$input.each(function(i, el) {
+                   var $el = $(el);
+                   // cannot use $.inArray as it performs strict comparison
+                   $.each(value, function(j, val){
+                       /*jslint eqeq: true*/
+                       if($el.val() == val) {
+                       /*jslint eqeq: false*/
+                           $el.prop('checked', true);
+                       }
+                   });
+               });
+            }
+        },
+
+       input2value: function() {
+           var checked = [];
+           this.$input.filter(':checked').each(function(i, el) {
+               checked.push($(el).val());
+           });
+           return checked;
+       },
+
+       //collect text of checked boxes
+        value2htmlFinal: function(value, element) {
+           var html = [],
+               checked = $.fn.editableutils.itemsByValue(value, this.sourceData);
+
+           if(checked.length) {
+               $.each(checked, function(i, v) { html.push($.fn.editableutils.escape(v.text)); });
+               $(element).html(html.join('<br>'));
+           } else {
+               $(element).empty();
+           }
+        },
+
+       activate: function() {
+           this.$input.first().focus();
+       },
+
+       autosubmit: function() {
+           this.$input.on('keydown', function(e){
+               if (e.which === 13) {
+                   $(this).closest('form').submit();
+               }
+           });
+       }
+    });
+
+    Checklist.defaults = $.extend({}, $.fn.editabletypes.list.defaults, {
+        /**
+        @property tpl
+        @default <div></div>
+        **/
+        tpl:'<div class="editable-checklist"></div>',
+
+        /**
+        @property inputclass
+        @type string
+        @default null
+        **/
+        inputclass: null,
+
+        /**
+        Separator of values when reading from `data-value` attribute
+
+        @property separator
+        @type string
+        @default ','
+        **/
+        separator: ','
+    });
+
+    $.fn.editabletypes.checklist = Checklist;
+
+}(window.jQuery));
+
+/**
+HTML5 input types.
+Following types are supported:
+
+* password
+* email
+* url
+* tel
+* number
+* range
+
+Learn more about html5 inputs:
+http://www.w3.org/wiki/HTML5_form_additions
+To check browser compatibility please see:
+https://developer.mozilla.org/en-US/docs/HTML/Element/Input
+
+@class html5types
+@extends text
+@final
+@since 1.3.0
+@example
+<a href="#" id="email" data-type="email" data-pk="1">admin@example.com</a>
+<script>
+$(function(){
+    $('#email').editable({
+        url: '/post',
+        title: 'Enter email'
+    });
+});
+</script>
+**/
+
+/**
+@property tpl
+@default depends on type
+**/
+
+/*
+Password
+*/
+(function ($) {
+    var Password = function (options) {
+        this.init('password', options, Password.defaults);
+    };
+    $.fn.editableutils.inherit(Password, $.fn.editabletypes.text);
+    $.extend(Password.prototype, {
+       //do not display password, show '[hidden]' instead
+       value2html: function(value, element) {
+           if(value) {
+               $(element).text('[hidden]');
+           } else {
+               $(element).empty();
+           }
+       },
+       //as password not displayed, should not set value by html
+       html2value: function(html) {
+           return null;
+       }
+    });
+    Password.defaults = $.extend({}, $.fn.editabletypes.text.defaults, {
+        tpl: '<input type="password">'
+    });
+    $.fn.editabletypes.password = Password;
+}(window.jQuery));
+
+
+/*
+Email
+*/
+(function ($) {
+    var Email = function (options) {
+        this.init('email', options, Email.defaults);
+    };
+    $.fn.editableutils.inherit(Email, $.fn.editabletypes.text);
+    Email.defaults = $.extend({}, $.fn.editabletypes.text.defaults, {
+        tpl: '<input type="email">'
+    });
+    $.fn.editabletypes.email = Email;
+}(window.jQuery));
+
+
+/*
+Url
+*/
+(function ($) {
+    var Url = function (options) {
+        this.init('url', options, Url.defaults);
+    };
+    $.fn.editableutils.inherit(Url, $.fn.editabletypes.text);
+    Url.defaults = $.extend({}, $.fn.editabletypes.text.defaults, {
+        tpl: '<input type="url">'
+    });
+    $.fn.editabletypes.url = Url;
+}(window.jQuery));
+
+
+/*
+Tel
+*/
+(function ($) {
+    var Tel = function (options) {
+        this.init('tel', options, Tel.defaults);
+    };
+    $.fn.editableutils.inherit(Tel, $.fn.editabletypes.text);
+    Tel.defaults = $.extend({}, $.fn.editabletypes.text.defaults, {
+        tpl: '<input type="tel">'
+    });
+    $.fn.editabletypes.tel = Tel;
+}(window.jQuery));
+
+
+/*
+Number
+*/
+(function ($) {
+    var NumberInput = function (options) {
+        this.init('number', options, NumberInput.defaults);
+    };
+    $.fn.editableutils.inherit(NumberInput, $.fn.editabletypes.text);
+    $.extend(NumberInput.prototype, {
+         render: function () {
+            NumberInput.superclass.render.call(this);
+            this.setAttr('min');
+            this.setAttr('max');
+            this.setAttr('step');
+        }
+    });
+    NumberInput.defaults = $.extend({}, $.fn.editabletypes.text.defaults, {
+        tpl: '<input type="number">',
+        inputclass: 'input-mini',
+        min: null,
+        max: null,
+        step: null
+    });
+    $.fn.editabletypes.number = NumberInput;
+}(window.jQuery));
+
+
+/*
+Range (inherit from number)
+*/
+(function ($) {
+    var Range = function (options) {
+        this.init('range', options, Range.defaults);
+    };
+    $.fn.editableutils.inherit(Range, $.fn.editabletypes.number);
+    $.extend(Range.prototype, {
+        render: function () {
+            this.$input = this.$tpl.filter('input');
+
+            this.setClass();
+            this.setAttr('min');
+            this.setAttr('max');
+            this.setAttr('step');
+
+            this.$input.on('input', function(){
+                $(this).siblings('output').text($(this).val());
+            });
+        },
+        activate: function() {
+            this.$input.focus();
+        }
+    });
+    Range.defaults = $.extend({}, $.fn.editabletypes.number.defaults, {
+        tpl: '<input type="range"><output style="width: 30px; display: inline-block"></output>',
+        inputclass: 'input-medium'
+    });
+    $.fn.editabletypes.range = Range;
+}(window.jQuery));
+/**
+Select2 input. Based on amazing work of Igor Vaynberg https://github.com/ivaynberg/select2.
+Please see [original docs](http://ivaynberg.github.com/select2) for detailed description and options.
+You should manually include select2 distributive:
+
+    <link href="select2/select2.css" rel="stylesheet" type="text/css"></link>
+    <script src="select2/select2.js"></script>
+
+@class select2
+@extends abstractinput
+@since 1.4.1
+@final
+@example
+<a href="#" id="country" data-type="select2" data-pk="1" data-value="ru" data-url="/post" data-original-title="Select country"></a>
+<script>
+$(function(){
+    $('#country').editable({
+        source: [
+              {id: 'gb', text: 'Great Britain'},
+              {id: 'us', text: 'United States'},
+              {id: 'ru', text: 'Russia'}
+           ],
+        select2: {
+           multiple: true
+        }
+    });
+});
+</script>
+**/
+(function ($) {
+
+    var Constructor = function (options) {
+        this.init('select2', options, Constructor.defaults);
+
+        options.select2 = options.select2 || {};
+
+        var that = this,
+            mixin = {
+               placeholder:  options.placeholder
+            };
+
+       //detect whether it is multi-valued
+       this.isMultiple = options.select2.tags || options.select2.multiple;
+
+       //if not `tags` mode, we need define init set data from source
+       if(!options.select2.tags) {
+            if(options.source) {
+                mixin.data = options.source;
+            }
+
+            //this function can be defaulted in seletc2. See https://github.com/ivaynberg/select2/issues/710
+            mixin.initSelection = function (element, callback) {
+                var val = that.str2value(element.val()),
+                    data = $.fn.editableutils.itemsByValue(val, mixin.data, 'id');
+
+                //for single-valued mode should not use array. Take first element instead.
+                if($.isArray(data) && data.length && !that.isMultiple) {
+                   data = data[0];
+                }
+
+                callback(data);
+            };
+        }
+
+        //overriding objects in config (as by default jQuery extend() is not recursive)
+        this.options.select2 = $.extend({}, Constructor.defaults.select2, mixin, options.select2);
+    };
+
+    $.fn.editableutils.inherit(Constructor, $.fn.editabletypes.abstractinput);
+
+    $.extend(Constructor.prototype, {
+        render: function() {
+            this.setClass();
+            //apply select2
+            this.$input.select2(this.options.select2);
+
+            //trigger resize of editableform to re-position container in multi-valued mode
+            if(this.isMultiple) {
+               this.$input.on('change', function() {
+                   $(this).closest('form').parent().triggerHandler('resize');
+               });
+            }
+
+        },
+
+       value2html: function(value, element) {
+           var text = '', data;
+           if(this.$input) { //when submitting form
+               data = this.$input.select2('data');
+           } else { //on init (autotext)
+               //here select2 instance not created yet and data may be even not loaded.
+               //we can check data/tags property of select config and if exist lookup text
+               if(this.options.select2.tags) {
+                   data = value;
+               } else if(this.options.select2.data) {
+                   data = $.fn.editableutils.itemsByValue(value, this.options.select2.data, 'id');
+               }
+           }
+
+           if($.isArray(data)) {
+               //collect selected data and show with separator
+               text = [];
+               $.each(data, function(k, v){
+                   text.push(v && typeof v === 'object' ? v.text : v);
+               });
+           } else if(data) {
+               text = data.text;
+           }
+
+           text = $.isArray(text) ? text.join(this.options.viewseparator) : text;
+
+           $(element).text(text);
+       },
+
+       html2value: function(html) {
+           return this.options.select2.tags ? this.str2value(html, this.options.viewseparator) : null;
+       },
+
+       value2input: function(value) {
+           this.$input.val(value).trigger('change');
+       },
+
+       input2value: function() {
+           return this.$input.select2('val');
+       },
+
+       str2value: function(str, separator) {
+            if(typeof str !== 'string' || !this.isMultiple) {
+                return str;
+            }
+
+            separator = separator || this.options.select2.separator || $.fn.select2.defaults.separator;
+
+            var val, i, l;
+
+            if (str === null || str.length < 1) {
+                return null;
+            }
+            val = str.split(separator);
+            for (i = 0, l = val.length; i < l; i = i + 1) {
+                val[i] = $.trim(val[i]);
+            }
+
+            return val;
+       }
+
+    });
+
+    Constructor.defaults = $.extend({}, $.fn.editabletypes.abstractinput.defaults, {
+        /**
+        @property tpl
+        @default <input type="hidden">
+        **/
+        tpl:'<input type="hidden">',
+        /**
+        Configuration of select2. [Full list of options](http://ivaynberg.github.com/select2).
+
+        @property select2
+        @type object
+        @default null
+        **/
+        select2: null,
+        /**
+        Placeholder attribute of select
+
+        @property placeholder
+        @type string
+        @default null
+        **/
+        placeholder: null,
+        /**
+        Source data for select. It will be assigned to select2 `data` property and kept here just for convenience.
+        Please note, that format is different from simple `select` input: use 'id' instead of 'value'.
+        E.g. `[{id: 1, text: "text1"}, {id: 2, text: "text2"}, ...]`.
+
+        @property source
+        @type array
+        @default null
+        **/
+        source: null,
+        /**
+        Separator used to display tags.
+
+        @property viewseparator
+        @type string
+        @default ', '
+        **/
+        viewseparator: ', '
+    });
+
+    $.fn.editabletypes.select2 = Constructor;
+
+}(window.jQuery));
+/**
+* Combodate - 1.0.1
+* Dropdown date and time picker.
+* Converts text input into dropdowns to pick day, month, year, hour, minute and second.
+* Uses momentjs as datetime library http://momentjs.com.
+* For i18n include corresponding file from https://github.com/timrwood/moment/tree/master/lang
+*
+* Author: Vitaliy Potapov
+* Project page: http://github.com/vitalets/combodate
+* Copyright (c) 2012 Vitaliy Potapov. Released under MIT License.
+**/
+(function ($) {
+
+    var Combodate = function (element, options) {
+        this.$element = $(element);
+        if(!this.$element.is('input')) {
+            $.error('Combodate should be applied to INPUT element');
+            return;
+        }
+        this.options = $.extend({}, $.fn.combodate.defaults, options, this.$element.data());
+        this.init();
+     };
+
+    Combodate.prototype = {
+        constructor: Combodate,
+        init: function () {
+            this.map = {
+                //key   regexp    moment.method
+                day:    ['D',    'date'],
+                month:  ['M',    'month'],
+                year:   ['Y',    'year'],
+                hour:   ['[Hh]', 'hours'],
+                minute: ['m',    'minutes'],
+                second: ['s',    'seconds'],
+                ampm:   ['[Aa]', '']
+            };
+
+            this.$widget = $('<span class="combodate"></span>').html(this.getTemplate());
+
+            this.initCombos();
+
+            //update original input on change
+            this.$widget.on('change', 'select', $.proxy(function(){
+                this.$element.val(this.getValue());
+            }, this));
+
+            this.$widget.find('select').css('width', 'auto');
+
+            //hide original input and insert widget
+            this.$element.hide().after(this.$widget);
+
+            //set initial value
+            this.setValue(this.$element.val() || this.options.value);
+        },
+
+        /*
+         Replace tokens in template with <select> elements
+        */
+        getTemplate: function() {
+            var tpl = this.options.template;
+
+            //first pass
+            $.each(this.map, function(k, v) {
+                v = v[0];
+                var r = new RegExp(v+'+'),
+                    token = v.length > 1 ? v.substring(1, 2) : v;
+
+                tpl = tpl.replace(r, '{'+token+'}');
+            });
+
+            //replace spaces with &nbsp;
+            tpl = tpl.replace(/ /g, '&nbsp;');
+
+            //second pass
+            $.each(this.map, function(k, v) {
+                v = v[0];
+                var token = v.length > 1 ? v.substring(1, 2) : v;
+
+                tpl = tpl.replace('{'+token+'}', '<select class="'+k+'"></select>');
+            });
+
+            return tpl;
+        },
+
+        /*
+         Initialize combos that presents in template
+        */
+        initCombos: function() {
+            var that = this;
+            $.each(this.map, function(k, v) {
+               var $c = that.$widget.find('.'+k), f, items;
+               if($c.length) {
+                   that['$'+k] = $c; //set properties like this.$day, this.$month etc.
+                   f = 'fill' + k.charAt(0).toUpperCase() + k.slice(1); //define method name to fill items, e.g `fillDays`
+                   items = that[f]();
+                   that['$'+k].html(that.renderItems(items));
+               }
+            });
+        },
+
+        /*
+         Initialize items of combos. Handles `firstItem` option
+        */
+        initItems: function(key) {
+            var values = [];
+            if(this.options.firstItem === 'name') {
+                var header = typeof moment.relativeTime[key] === 'function' ? moment.relativeTime[key](1, true, key, false) : moment.relativeTime[key];
+                //take last entry (see momentjs lang files structure)
+                header = header.split(' ').reverse()[0];
+                values.push(['', header]);
+            } else if(this.options.firstItem === 'empty') {
+                values.push(['', '']);
+            }
+            return values;
+        },
+
+        /*
+        render items to string of <option> tags
+        */
+        renderItems: function(items) {
+            var str = [];
+            for(var i=0; i<items.length; i++) {
+                str.push('<option value="'+items[i][0]+'">'+items[i][1]+'</option>');
+            }
+            return str.join("\n");
+        },
+
+        /*
+        fill day
+        */
+        fillDay: function() {
+            var items = this.initItems('d'), name, i,
+                twoDigit = this.options.template.indexOf('DD') !== -1;
+
+            for(i=1; i<=31; i++) {
+                name = twoDigit ? this.leadZero(i) : i;
+                items.push([i, name]);
+            }
+            return items;
+        },
+
+        /*
+        fill month
+        */
+        fillMonth: function() {
+            var items = this.initItems('M'), name, i,
+                longNames = this.options.template.indexOf('MMMM') !== -1,
+                shortNames = this.options.template.indexOf('MMM') !== -1,
+                twoDigit = this.options.template.indexOf('MM') !== -1;
+
+            for(i=0; i<=11; i++) {
+                if(longNames) {
+                    name = moment.months[i];
+                } else if(shortNames) {
+                    name = moment.monthsShort[i];
+                } else if(twoDigit) {
+                    name = this.leadZero(i+1);
+                } else {
+                    name = i+1;
+                }
+                items.push([i, name]);
+            }
+            return items;
+        },
+
+        /*
+        fill year
+        */
+        fillYear: function() {
+            var items = this.initItems('y'), name, i,
+                longNames = this.options.template.indexOf('YYYY') !== -1;
+
+            for(i=this.options.maxYear; i>=this.options.minYear; i--) {
+                name = longNames ? i : (i+'').substring(2);
+                items.push([i, name]);
+            }
+            return items;
+        },
+
+        /*
+        fill hour
+        */
+        fillHour: function() {
+            var items = this.initItems('h'), name, i,
+                h12 = this.options.template.indexOf('h') !== -1,
+                h24 = this.options.template.indexOf('H') !== -1,
+                twoDigit = this.options.template.toLowerCase().indexOf('hh') !== -1,
+                max = h12 ? 12 : 23;
+
+            for(i=0; i<=max; i++) {
+                name = twoDigit ? this.leadZero(i) : i;
+                items.push([i, name]);
+            }
+            return items;
+        },
+
+        /*
+        fill minute
+        */
+        fillMinute: function() {
+            var items = this.initItems('m'), name, i,
+                twoDigit = this.options.template.indexOf('mm') !== -1;
+
+            for(i=0; i<=59; i+= this.options.minuteStep) {
+                name = twoDigit ? this.leadZero(i) : i;
+                items.push([i, name]);
+            }
+            return items;
+        },
+
+        /*
+        fill second
+        */
+        fillSecond: function() {
+            var items = this.initItems('s'), name, i,
+                twoDigit = this.options.template.indexOf('ss') !== -1;
+
+            for(i=0; i<=59; i+= this.options.secondStep) {
+                name = twoDigit ? this.leadZero(i) : i;
+                items.push([i, name]);
+            }
+            return items;
+        },
+
+        /*
+        fill ampm
+        */
+        fillAmpm: function() {
+            var ampmL = this.options.template.indexOf('a') !== -1,
+                ampmU = this.options.template.indexOf('A') !== -1,
+                items = [
+                    ['am', ampmL ? 'am' : 'AM'],
+                    ['pm', ampmL ? 'pm' : 'PM']
+                ];
+            return items;
+        },
+
+        /*
+         Returns current date value.
+         If format not specified - `options.format` used.
+         If format = `null` - Moment object returned.
+        */
+        getValue: function(format) {
+            var dt, values = {},
+                that = this,
+                notSelected = false;
+
+            //getting selected values
+            $.each(this.map, function(k, v) {
+                if(k === 'ampm') {
+                    return;
+                }
+                var def = k === 'day' ? 1 : 0;
+
+                values[k] = that['$'+k] ? parseInt(that['$'+k].val(), 10) : def;
+
+                if(isNaN(values[k])) {
+                   notSelected = true;
+                   return false;
+                }
+            });
+
+            //if at least one visible combo not selected - return empty string
+            if(notSelected) {
+               return '';
+            }
+
+            //convert hours if 12h format
+            if(this.$ampm) {
+               values.hour = this.$ampm.val() === 'am' ? values.hour : values.hour+12;
+               if(values.hour === 24) {
+                   values.hour = 0;
+               }
+            }
+
+            dt = moment([values.year, values.month, values.day, values.hour, values.minute, values.second]);
+
+            //highlight invalid date
+            this.highlight(dt);
+
+            format = format === undefined ? this.options.format : format;
+            if(format === null) {
+               return dt.isValid() ? dt : null;
+            } else {
+               return dt.isValid() ? dt.format(format) : '';
+            }
+        },
+
+        setValue: function(value) {
+            if(!value) {
+                return;
+            }
+
+            var dt = typeof value === 'string' ? moment(value, this.options.format) : moment(value),
+                that = this,
+                values = {};
+
+            if(dt.isValid()) {
+                 //read values from date object
+                 $.each(this.map, function(k, v) {
+                     if(k === 'ampm') {
+                         return;
+                     }
+                     values[k] = dt[v[1]]();
+                 });
+
+               if(this.$ampm) {
+                   if(values.hour > 12) {
+                       values.hour -= 12;
+                       values.ampm = 'pm';
+                   } else {
+                       values.ampm = 'am';
+                   }
+               }
+
+               $.each(values, function(k, v) {
+                   if(that['$'+k]) {
+                       that['$'+k].val(v);
+                   }
+               });
+
+               this.$element.val(dt.format(this.options.format));
+            }
+        },
+
+        /*
+         highlight combos if date is invalid
+        */
+        highlight: function(dt) {
+            if(!dt.isValid()) {
+                if(this.options.errorClass) {
+                    this.$widget.addClass(this.options.errorClass);
+                } else {
+                    //store original border color
+                    if(!this.borderColor) {
+                        this.borderColor = this.$widget.find('select').css('border-color');
+                    }
+                    this.$widget.find('select').css('border-color', 'red');
+                }
+            } else {
+                if(this.options.errorClass) {
+                    this.$widget.removeClass(this.options.errorClass);
+                } else {
+                    this.$widget.find('select').css('border-color', this.borderColor);
+                }
+            }
+        },
+
+        leadZero: function(v) {
+            return v <= 9 ? '0' + v : v;
+        },
+
+        destroy: function() {
+            this.$widget.remove();
+            this.$element.removeData('combodate').show();
+        }
+
+        //todo: clear method
+    };
+
+    $.fn.combodate = function ( option ) {
+        var d, args = Array.apply(null, arguments);
+        args.shift();
+
+        //getValue returns date as string / object (not jQuery object)
+        if(option === 'getValue' && this.length && (d = this.eq(0).data('combodate'))) {
+          return d.getValue.apply(d, args);
+        }
+
+        return this.each(function () {
+            var $this = $(this),
+            data = $this.data('combodate'),
+            options = typeof option == 'object' && option;
+            if (!data) {
+                $this.data('combodate', (data = new Combodate(this, options)));
+            }
+            if (typeof option == 'string' && typeof data[option] == 'function') {
+                data[option].apply(data, args);
+            }
+        });
+    };
+
+    $.fn.combodate.defaults = {
+         //in this format value stored in original input
+        format: 'DD-MM-YYYY HH:mm',
+        //in this format items in dropdowns are displayed
+        template: 'D / MMM / YYYY   H : mm',
+        //initial value, can be `new Date()`
+        value: null,
+        minYear: 1970,
+        maxYear: 2015,
+        minuteStep: 5,
+        secondStep: 1,
+        firstItem: 'empty', //'name', 'empty', 'none'
+        errorClass: null
+    };
+
+}(window.jQuery));
+/**
+Combodate input - dropdown date and time picker.
+Based on [combodate](http://vitalets.github.com/combodate) plugin. To use it you should manually include [momentjs](http://momentjs.com).
+
+    <script src="js/moment.min.js"></script>
+
+Allows to input:
+
+* only date
+* only time
+* both date and time
+
+Please note, that format is taken from momentjs and **not compatible** with bootstrap-datepicker / jquery UI datepicker.
+Internally value stored as `momentjs` object.
+
+@class combodate
+@extends abstractinput
+@final
+@since 1.4.0
+@example
+<a href="#" id="dob" data-type="combodate" data-pk="1" data-url="/post" data-value="1984-05-15" data-original-title="Select date"></a>
+<script>
+$(function(){
+    $('#dob').editable({
+        format: 'YYYY-MM-DD',
+        viewformat: 'DD.MM.YYYY',
+        template: 'D / MMMM / YYYY',
+        combodate: {
+                minYear: 2000,
+                maxYear: 2015,
+                minuteStep: 1
+           }
+        }
+    });
+});
+</script>
+**/
+
+/*global moment*/
+
+(function ($) {
+
+    var Constructor = function (options) {
+        this.init('combodate', options, Constructor.defaults);
+
+        //by default viewformat equals to format
+        if(!this.options.viewformat) {
+            this.options.viewformat = this.options.format;
+        }
+
+        //overriding combodate config (as by default jQuery extend() is not recursive)
+        this.options.combodate = $.extend({}, Constructor.defaults.combodate, options.combodate, {
+            format: this.options.format,
+            template: this.options.template
+        });
+    };
+
+    $.fn.editableutils.inherit(Constructor, $.fn.editabletypes.abstractinput);
+
+    $.extend(Constructor.prototype, {
+        render: function () {
+            this.$input.combodate(this.options.combodate);
+
+            //"clear" link
+            /*
+            if(this.options.clear) {
+                this.$clear = $('<a href="#"></a>').html(this.options.clear).click($.proxy(function(e){
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.clear();
+                }, this));
+
+                this.$tpl.parent().append($('<div class="editable-clear">').append(this.$clear));
+            }
+            */
+        },
+
+        value2html: function(value, element) {
+            var text = value ? value.format(this.options.viewformat) : '';
+            $(element).text(text);
+        },
+
+        html2value: function(html) {
+            return html ? moment(html, this.options.viewformat) : null;
+        },
+
+        value2str: function(value) {
+            return value ? value.format(this.options.format) : '';
+       },
+
+       str2value: function(str) {
+           return str ? moment(str, this.options.format) : null;
+       },
+
+       value2submit: function(value) {
+           return this.value2str(value);
+       },
+
+       value2input: function(value) {
+           this.$input.combodate('setValue', value);
+       },
+
+       input2value: function() {
+           return this.$input.combodate('getValue', null);
+       },
+
+       activate: function() {
+           this.$input.siblings('.combodate').find('select').eq(0).focus();
+       },
+
+       /*
+       clear:  function() {
+          this.$input.data('datepicker').date = null;
+          this.$input.find('.active').removeClass('active');
+       },
+       */
+
+       autosubmit: function() {
+
+       }
+
+    });
+
+    Constructor.defaults = $.extend({}, $.fn.editabletypes.abstractinput.defaults, {
+        /**
+        @property tpl
+        @default <input type="text">
+        **/
+        tpl:'<input type="text">',
+        /**
+        @property inputclass
+        @default null
+        **/
+        inputclass: null,
+        /**
+        Format used for sending value to server. Also applied when converting date from <code>data-value</code> attribute.<br>
+        See list of tokens in [momentjs docs](http://momentjs.com/docs/#/parsing/string-format)
+
+        @property format
+        @type string
+        @default YYYY-MM-DD
+        **/
+        format:'YYYY-MM-DD',
+        /**
+        Format used for displaying date. Also applied when converting date from element's text on init.
+        If not specified equals to `format`.
+
+        @property viewformat
+        @type string
+        @default null
+        **/
+        viewformat: null,
+        /**
+        Template used for displaying dropdowns.
+
+        @property template
+        @type string
+        @default D / MMM / YYYY
+        **/
+        template: 'D / MMM / YYYY',
+        /**
+        Configuration of combodate.
+        Full list of options: http://vitalets.github.com/combodate/#docs
+
+        @property combodate
+        @type object
+        @default null
+        **/
+        combodate: null
+
+        /*
+        (not implemented yet)
+        Text shown as clear date button.
+        If <code>false</code> clear button will not be rendered.
+
+        @property clear
+        @type boolean|string
+        @default 'x clear'
+        */
+        //clear: '&times; clear'
+    });
+
+    $.fn.editabletypes.combodate = Constructor;
+
+}(window.jQuery));
+
+/*
+Editableform based on Twitter Bootstrap
+*/
+(function ($) {
+
+      $.extend($.fn.editableform.Constructor.prototype, {
+         initTemplate: function() {
+            this.$form = $($.fn.editableform.template);
+            this.$form.find('.editable-error-block').addClass('help-block');
+         }
+    });
+
+    //buttons
+    $.fn.editableform.buttons = '<button type="submit" class="btn btn-primary editable-submit"><i class="icon-ok icon-white"></i></button>'+
+                                '<button type="button" class="btn editable-cancel"><i class="icon-remove"></i></button>';
+
+    //error classes
+    $.fn.editableform.errorGroupClass = 'error';
+    $.fn.editableform.errorBlockClass = null;
+
+}(window.jQuery));
+/**
+* Editable Popover
+* ---------------------
+* requires bootstrap-popover.js
+*/
+(function ($) {
+
+    //extend methods
+    $.extend($.fn.editableContainer.Popup.prototype, {
+        containerName: 'popover',
+        //for compatibility with bootstrap <= 2.2.1 (content inserted into <p> instead of directly .popover-content)
+        innerCss: $($.fn.popover.defaults.template).find('p').length ? '.popover-content p' : '.popover-content',
+
+        initContainer: function(){
+            $.extend(this.containerOptions, {
+                trigger: 'manual',
+                selector: false,
+                content: ' ',
+                template: $.fn.popover.defaults.template
+            });
+
+            //as template property is used in inputs, hide it from popover
+            var t;
+            if(this.$element.data('template')) {
+               t = this.$element.data('template');
+               this.$element.removeData('template');
+            }
+
+            this.call(this.containerOptions);
+
+            if(t) {
+               //restore data('template')
+               this.$element.data('template', t);
+            }
+        },
+
+        /* show */
+        innerShow: function () {
+            this.call('show');
+        },
+
+        /* hide */
+        innerHide: function () {
+            this.call('hide');
+        },
+
+        /* destroy */
+        innerDestroy: function() {
+            this.call('destroy');
+        },
+
+        setContainerOption: function(key, value) {
+            this.container().options[key] = value;
+        },
+
+        /**
+        * move popover to new position. This function mainly copied from bootstrap-popover.
+        */
+        /*jshint laxcomma: true*/
+        setPosition: function () {
+
+            (function() {
+                var $tip = this.tip()
+                , inside
+                , pos
+                , actualWidth
+                , actualHeight
+                , placement
+                , tp;
+
+                placement = typeof this.options.placement === 'function' ?
+                this.options.placement.call(this, $tip[0], this.$element[0]) :
+                this.options.placement;
+
+                inside = /in/.test(placement);
+
+                $tip
+              //  .detach()
+              //vitalets: remove any placement class because otherwise they dont influence on re-positioning of visible popover
+                .removeClass('top right bottom left')
+                .css({ top: 0, left: 0, display: 'block' });
+              //  .insertAfter(this.$element);
+
+                pos = this.getPosition(inside);
+
+                actualWidth = $tip[0].offsetWidth;
+                actualHeight = $tip[0].offsetHeight;
+
+                switch (inside ? placement.split(' ')[1] : placement) {
+                    case 'bottom':
+                        tp = {top: pos.top + pos.height, left: pos.left + pos.width / 2 - actualWidth / 2};
+                        break;
+                    case 'top':
+                        tp = {top: pos.top - actualHeight, left: pos.left + pos.width / 2 - actualWidth / 2};
+                        break;
+                    case 'left':
+                        tp = {top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left - actualWidth};
+                        break;
+                    case 'right':
+                        tp = {top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left + pos.width};
+                        break;
+                }
+
+                $tip
+                .offset(tp)
+                .addClass(placement)
+                .addClass('in');
+
+            }).call(this.container());
+          /*jshint laxcomma: false*/
+        }
+    });
+
+}(window.jQuery));
+/**
+Bootstrap-datepicker.
+Description and examples: https://github.com/eternicode/bootstrap-datepicker.
+For **i18n** you should include js file from here: https://github.com/eternicode/bootstrap-datepicker/tree/master/js/locales
+and set `language` option.
+Since 1.4.0 date has different appearance in **popup** and **inline** modes.
+
+@class date
+@extends abstractinput
+@final
+@example
+<a href="#" id="dob" data-type="date" data-pk="1" data-url="/post" data-original-title="Select date">15/05/1984</a>
+<script>
+$(function(){
+    $('#dob').editable({
+        format: 'yyyy-mm-dd',
+        viewformat: 'dd/mm/yyyy',
+        datepicker: {
+                weekStart: 1
+           }
+        }
+    });
+});
+</script>
+**/
+(function ($) {
+
+    var Date = function (options) {
+        this.init('date', options, Date.defaults);
+        this.initPicker(options, Date.defaults);
+    };
+
+    $.fn.editableutils.inherit(Date, $.fn.editabletypes.abstractinput);
+
+    $.extend(Date.prototype, {
+        initPicker: function(options, defaults) {
+            //'format' is set directly from settings or data-* attributes
+
+            //by default viewformat equals to format
+            if(!this.options.viewformat) {
+                this.options.viewformat = this.options.format;
+            }
+
+            //overriding datepicker config (as by default jQuery extend() is not recursive)
+            //since 1.4 datepicker internally uses viewformat instead of format. Format is for submit only
+            this.options.datepicker = $.extend({}, defaults.datepicker, options.datepicker, {
+                format: this.options.viewformat
+            });
+
+            //language
+            this.options.datepicker.language = this.options.datepicker.language || 'en';
+
+            //store DPglobal
+            this.dpg = $.fn.datepicker.DPGlobal;
+
+            //store parsed formats
+            this.parsedFormat = this.dpg.parseFormat(this.options.format);
+            this.parsedViewFormat = this.dpg.parseFormat(this.options.viewformat);
+        },
+
+        render: function () {
+            this.$input.datepicker(this.options.datepicker);
+
+            //"clear" link
+            if(this.options.clear) {
+                this.$clear = $('<a href="#"></a>').html(this.options.clear).click($.proxy(function(e){
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.clear();
+                }, this));
+
+                this.$tpl.parent().append($('<div class="editable-clear">').append(this.$clear));
+            }
+        },
+
+        value2html: function(value, element) {
+            var text = value ? this.dpg.formatDate(value, this.parsedViewFormat, this.options.datepicker.language) : '';
+            Date.superclass.value2html(text, element);
+        },
+
+        html2value: function(html) {
+            return html ? this.dpg.parseDate(html, this.parsedViewFormat, this.options.datepicker.language) : null;
+        },
+
+        value2str: function(value) {
+            return value ? this.dpg.formatDate(value, this.parsedFormat, this.options.datepicker.language) : '';
+       },
+
+       str2value: function(str) {
+           return str ? this.dpg.parseDate(str, this.parsedFormat, this.options.datepicker.language) : null;
+       },
+
+       value2submit: function(value) {
+           return this.value2str(value);
+       },
+
+       value2input: function(value) {
+           this.$input.datepicker('update', value);
+       },
+
+       input2value: function() {
+           return this.$input.data('datepicker').date;
+       },
+
+       activate: function() {
+       },
+
+       clear:  function() {
+          this.$input.data('datepicker').date = null;
+          this.$input.find('.active').removeClass('active');
+       },
+
+       autosubmit: function() {
+           this.$input.on('changeDate', function(e){
+               var $form = $(this).closest('form');
+               setTimeout(function() {
+                   $form.submit();
+               }, 200);
+           });
+       }
+
+    });
+
+    Date.defaults = $.extend({}, $.fn.editabletypes.abstractinput.defaults, {
+        /**
+        @property tpl
+        @default <div></div>
+        **/
+        tpl:'<div class="editable-date well"></div>',
+        /**
+        @property inputclass
+        @default null
+        **/
+        inputclass: null,
+        /**
+        Format used for sending value to server. Also applied when converting date from <code>data-value</code> attribute.<br>
+        Possible tokens are: <code>d, dd, m, mm, yy, yyyy</code>
+
+        @property format
+        @type string
+        @default yyyy-mm-dd
+        **/
+        format:'yyyy-mm-dd',
+        /**
+        Format used for displaying date. Also applied when converting date from element's text on init.
+        If not specified equals to <code>format</code>
+
+        @property viewformat
+        @type string
+        @default null
+        **/
+        viewformat: null,
+        /**
+        Configuration of datepicker.
+        Full list of options: http://vitalets.github.com/bootstrap-datepicker
+
+        @property datepicker
+        @type object
+        @default {
+            weekStart: 0,
+            startView: 0,
+            autoclose: false
+        }
+        **/
+        datepicker:{
+            weekStart: 0,
+            startView: 0,
+            autoclose: false
+        },
+        /**
+        Text shown as clear date button.
+        If <code>false</code> clear button will not be rendered.
+
+        @property clear
+        @type boolean|string
+        @default 'x clear'
+        **/
+        clear: '&times; clear'
+    });
+
+    $.fn.editabletypes.date = Date;
+
+}(window.jQuery));
+
+/**
+Bootstrap datefield input - modification for inline mode.
+Shows normal <input type="text"> and binds popup datepicker.
+Automatically shown in inline mode.
+
+@class datefield
+@extends date
+
+@since 1.4.0
+**/
+(function ($) {
+
+    var DateField = function (options) {
+        this.init('datefield', options, DateField.defaults);
+        this.initPicker(options, DateField.defaults);
+    };
+
+    $.fn.editableutils.inherit(DateField, $.fn.editabletypes.date);
+
+    $.extend(DateField.prototype, {
+        render: function () {
+            this.$input = this.$tpl.find('input');
+            this.setClass();
+            this.setAttr('placeholder');
+
+            this.$tpl.datepicker(this.options.datepicker);
+
+            //need to disable original event handlers
+            this.$input.off('focus keydown');
+
+            //update value of datepicker
+            this.$input.keyup($.proxy(function(){
+               this.$tpl.removeData('date');
+               this.$tpl.datepicker('update');
+            }, this));
+
+        },
+
+       value2input: function(value) {
+           this.$input.val(value ? this.dpg.formatDate(value, this.parsedViewFormat, this.options.datepicker.language) : '');
+           this.$tpl.datepicker('update');
+       },
+
+       input2value: function() {
+           return this.html2value(this.$input.val());
+       },
+
+       activate: function() {
+           $.fn.editabletypes.text.prototype.activate.call(this);
+       },
+
+       autosubmit: function() {
+         //reset autosubmit to empty
+       }
+    });
+
+    DateField.defaults = $.extend({}, $.fn.editabletypes.date.defaults, {
+        /**
+        @property tpl
+        **/
+        tpl:'<div class="input-append date"><input type="text"/><span class="add-on"><i class="icon-th"></i></span></div>',
+        /**
+        @property inputclass
+        @default 'input-small'
+        **/
+        inputclass: 'input-small',
+
+        /* datepicker config */
+        datepicker: {
+            weekStart: 0,
+            startView: 0,
+            autoclose: true
+        }
+    });
+
+    $.fn.editabletypes.datefield = DateField;
+
+}(window.jQuery));
+/* =========================================================
+ * bootstrap-datepicker.js
+ * http://www.eyecon.ro/bootstrap-datepicker
+ * =========================================================
+ * Copyright 2012 Stefan Petre
+ * Improvements by Andrew Rowls
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ========================================================= */
+
+!function( $ ) {
+
+	function UTCDate(){
+		return new Date(Date.UTC.apply(Date, arguments));
+	}
+	function UTCToday(){
+		var today = new Date();
+		return UTCDate(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
+	}
+
+	// Picker object
+
+	var Datepicker = function(element, options) {
+		var that = this;
+
+		this.element = $(element);
+		this.language = options.language||this.element.data('date-language')||"en";
+		this.language = this.language in dates ? this.language : "en";
+		this.isRTL = dates[this.language].rtl||false;
+		this.format = DPGlobal.parseFormat(options.format||this.element.data('date-format')||'mm/dd/yyyy');
+		this.isInline = false;
+		this.isInput = this.element.is('input');
+		this.component = this.element.is('.date') ? this.element.find('.add-on') : false;
+		this.hasInput = this.component && this.element.find('input').length;
+		if(this.component && this.component.length === 0)
+			this.component = false;
+
+		this._attachEvents();
+
+		this.forceParse = true;
+		if ('forceParse' in options) {
+			this.forceParse = options.forceParse;
+		} else if ('dateForceParse' in this.element.data()) {
+			this.forceParse = this.element.data('date-force-parse');
+		}
+
+
+		this.picker = $(DPGlobal.template)
+							.appendTo(this.isInline ? this.element : 'body')
+							.on({
+								click: $.proxy(this.click, this),
+								mousedown: $.proxy(this.mousedown, this)
+							});
+
+		if(this.isInline) {
+			this.picker.addClass('datepicker-inline');
+		} else {
+			this.picker.addClass('datepicker-dropdown dropdown-menu');
+		}
+		if (this.isRTL){
+			this.picker.addClass('datepicker-rtl');
+			this.picker.find('.prev i, .next i')
+						.toggleClass('icon-arrow-left icon-arrow-right');
+		}
+		$(document).on('mousedown', function (e) {
+			// Clicked outside the datepicker, hide it
+			if ($(e.target).closest('.datepicker').length === 0) {
+				that.hide();
+			}
+		});
+
+		this.autoclose = false;
+		if ('autoclose' in options) {
+			this.autoclose = options.autoclose;
+		} else if ('dateAutoclose' in this.element.data()) {
+			this.autoclose = this.element.data('date-autoclose');
+		}
+
+		this.keyboardNavigation = true;
+		if ('keyboardNavigation' in options) {
+			this.keyboardNavigation = options.keyboardNavigation;
+		} else if ('dateKeyboardNavigation' in this.element.data()) {
+			this.keyboardNavigation = this.element.data('date-keyboard-navigation');
+		}
+
+		this.viewMode = this.startViewMode = 0;
+		switch(options.startView || this.element.data('date-start-view')){
+			case 2:
+			case 'decade':
+				this.viewMode = this.startViewMode = 2;
+				break;
+			case 1:
+			case 'year':
+				this.viewMode = this.startViewMode = 1;
+				break;
+		}
+
+		this.todayBtn = (options.todayBtn||this.element.data('date-today-btn')||false);
+		this.todayHighlight = (options.todayHighlight||this.element.data('date-today-highlight')||false);
+
+		this.weekStart = ((options.weekStart||this.element.data('date-weekstart')||dates[this.language].weekStart||0) % 7);
+		this.weekEnd = ((this.weekStart + 6) % 7);
+		this.startDate = -Infinity;
+		this.endDate = Infinity;
+		this.daysOfWeekDisabled = [];
+		this.setStartDate(options.startDate||this.element.data('date-startdate'));
+		this.setEndDate(options.endDate||this.element.data('date-enddate'));
+		this.setDaysOfWeekDisabled(options.daysOfWeekDisabled||this.element.data('date-days-of-week-disabled'));
+		this.fillDow();
+		this.fillMonths();
+		this.update();
+		this.showMode();
+
+		if(this.isInline) {
+			this.show();
+		}
+	};
+
+	Datepicker.prototype = {
+		constructor: Datepicker,
+
+		_events: [],
+		_attachEvents: function(){
+			this._detachEvents();
+			if (this.isInput) { // single input
+				this._events = [
+					[this.element, {
+						focus: $.proxy(this.show, this),
+						keyup: $.proxy(this.update, this),
+						keydown: $.proxy(this.keydown, this)
+					}]
+				];
+			}
+			else if (this.component && this.hasInput){ // component: input + button
+				this._events = [
+					// For components that are not readonly, allow keyboard nav
+					[this.element.find('input'), {
+						focus: $.proxy(this.show, this),
+						keyup: $.proxy(this.update, this),
+						keydown: $.proxy(this.keydown, this)
+					}],
+					[this.component, {
+						click: $.proxy(this.show, this)
+					}]
+				];
+			}
+						else if (this.element.is('div')) {  // inline datepicker
+							this.isInline = true;
+						}
+			else {
+				this._events = [
+					[this.element, {
+						click: $.proxy(this.show, this)
+					}]
+				];
+			}
+			for (var i=0, el, ev; i<this._events.length; i++){
+				el = this._events[i][0];
+				ev = this._events[i][1];
+				el.on(ev);
+			}
+		},
+		_detachEvents: function(){
+			for (var i=0, el, ev; i<this._events.length; i++){
+				el = this._events[i][0];
+				ev = this._events[i][1];
+				el.off(ev);
+			}
+			this._events = [];
+		},
+
+		show: function(e) {
+			this.picker.show();
+			this.height = this.component ? this.component.outerHeight() : this.element.outerHeight();
+			this.update();
+			this.place();
+			$(window).on('resize', $.proxy(this.place, this));
+			if (e ) {
+				e.stopPropagation();
+				e.preventDefault();
+			}
+			this.element.trigger({
+				type: 'show',
+				date: this.date
+			});
+		},
+
+		hide: function(e){
+			if(this.isInline) return;
+			this.picker.hide();
+			$(window).off('resize', this.place);
+			this.viewMode = this.startViewMode;
+			this.showMode();
+			if (!this.isInput) {
+				$(document).off('mousedown', this.hide);
+			}
+
+			if (
+				this.forceParse &&
+				(
+					this.isInput && this.element.val() ||
+					this.hasInput && this.element.find('input').val()
+				)
+			)
+				this.setValue();
+			this.element.trigger({
+				type: 'hide',
+				date: this.date
+			});
+		},
+
+		remove: function() {
+			this._detachEvents();
+			this.picker.remove();
+			delete this.element.data().datepicker;
+		},
+
+		getDate: function() {
+			var d = this.getUTCDate();
+			return new Date(d.getTime() + (d.getTimezoneOffset()*60000));
+		},
+
+		getUTCDate: function() {
+			return this.date;
+		},
+
+		setDate: function(d) {
+			this.setUTCDate(new Date(d.getTime() - (d.getTimezoneOffset()*60000)));
+		},
+
+		setUTCDate: function(d) {
+			this.date = d;
+			this.setValue();
+		},
+
+		setValue: function() {
+			var formatted = this.getFormattedDate();
+			if (!this.isInput) {
+				if (this.component){
+					this.element.find('input').val(formatted);
+				}
+				this.element.data('date', formatted);
+			} else {
+				this.element.val(formatted);
+			}
+		},
+
+		getFormattedDate: function(format) {
+			if (format === undefined)
+				format = this.format;
+			return DPGlobal.formatDate(this.date, format, this.language);
+		},
+
+		setStartDate: function(startDate){
+			this.startDate = startDate||-Infinity;
+			if (this.startDate !== -Infinity) {
+				this.startDate = DPGlobal.parseDate(this.startDate, this.format, this.language);
+			}
+			this.update();
+			this.updateNavArrows();
+		},
+
+		setEndDate: function(endDate){
+			this.endDate = endDate||Infinity;
+			if (this.endDate !== Infinity) {
+				this.endDate = DPGlobal.parseDate(this.endDate, this.format, this.language);
+			}
+			this.update();
+			this.updateNavArrows();
+		},
+
+		setDaysOfWeekDisabled: function(daysOfWeekDisabled){
+			this.daysOfWeekDisabled = daysOfWeekDisabled||[];
+			if (!$.isArray(this.daysOfWeekDisabled)) {
+				this.daysOfWeekDisabled = this.daysOfWeekDisabled.split(/,\s*/);
+			}
+			this.daysOfWeekDisabled = $.map(this.daysOfWeekDisabled, function (d) {
+				return parseInt(d, 10);
+			});
+			this.update();
+			this.updateNavArrows();
+		},
+
+		place: function(){
+						if(this.isInline) return;
+			var zIndex = parseInt(this.element.parents().filter(function() {
+							return $(this).css('z-index') != 'auto';
+						}).first().css('z-index'))+10;
+			var offset = this.component ? this.component.offset() : this.element.offset();
+			var height = this.component ? this.component.outerHeight(true) : this.element.outerHeight(true);
+			this.picker.css({
+				top: offset.top + height,
+				left: offset.left,
+				zIndex: zIndex
+			});
+		},
+
+		update: function(){
+			var date, fromArgs = false;
+			if(arguments && arguments.length && (typeof arguments[0] === 'string' || arguments[0] instanceof Date)) {
+				date = arguments[0];
+				fromArgs = true;
+			} else {
+				date = this.isInput ? this.element.val() : this.element.data('date') || this.element.find('input').val();
+			}
+
+			this.date = DPGlobal.parseDate(date, this.format, this.language);
+
+			if(fromArgs) this.setValue();
+
+			var oldViewDate = this.viewDate;
+			if (this.date < this.startDate) {
+				this.viewDate = new Date(this.startDate);
+			} else if (this.date > this.endDate) {
+				this.viewDate = new Date(this.endDate);
+			} else {
+				this.viewDate = new Date(this.date);
+			}
+
+			if (oldViewDate && oldViewDate.getTime() != this.viewDate.getTime()){
+				this.element.trigger({
+					type: 'changeDate',
+					date: this.viewDate
+				});
+			}
+			this.fill();
+		},
+
+		fillDow: function(){
+			var dowCnt = this.weekStart,
+			html = '<tr>';
+			while (dowCnt < this.weekStart + 7) {
+				html += '<th class="dow">'+dates[this.language].daysMin[(dowCnt++)%7]+'</th>';
+			}
+			html += '</tr>';
+			this.picker.find('.datepicker-days thead').append(html);
+		},
+
+		fillMonths: function(){
+			var html = '',
+			i = 0;
+			while (i < 12) {
+				html += '<span class="month">'+dates[this.language].monthsShort[i++]+'</span>';
+			}
+			this.picker.find('.datepicker-months td').html(html);
+		},
+
+		fill: function() {
+			var d = new Date(this.viewDate),
+				year = d.getUTCFullYear(),
+				month = d.getUTCMonth(),
+				startYear = this.startDate !== -Infinity ? this.startDate.getUTCFullYear() : -Infinity,
+				startMonth = this.startDate !== -Infinity ? this.startDate.getUTCMonth() : -Infinity,
+				endYear = this.endDate !== Infinity ? this.endDate.getUTCFullYear() : Infinity,
+				endMonth = this.endDate !== Infinity ? this.endDate.getUTCMonth() : Infinity,
+				currentDate = this.date && this.date.valueOf(),
+				today = new Date();
+			this.picker.find('.datepicker-days thead th:eq(1)')
+						.text(dates[this.language].months[month]+' '+year);
+			this.picker.find('tfoot th.today')
+						.text(dates[this.language].today)
+						.toggle(this.todayBtn !== false);
+			this.updateNavArrows();
+			this.fillMonths();
+			var prevMonth = UTCDate(year, month-1, 28,0,0,0,0),
+				day = DPGlobal.getDaysInMonth(prevMonth.getUTCFullYear(), prevMonth.getUTCMonth());
+			prevMonth.setUTCDate(day);
+			prevMonth.setUTCDate(day - (prevMonth.getUTCDay() - this.weekStart + 7)%7);
+			var nextMonth = new Date(prevMonth);
+			nextMonth.setUTCDate(nextMonth.getUTCDate() + 42);
+			nextMonth = nextMonth.valueOf();
+			var html = [];
+			var clsName;
+			while(prevMonth.valueOf() < nextMonth) {
+				if (prevMonth.getUTCDay() == this.weekStart) {
+					html.push('<tr>');
+				}
+				clsName = '';
+				if (prevMonth.getUTCFullYear() < year || (prevMonth.getUTCFullYear() == year && prevMonth.getUTCMonth() < month)) {
+					clsName += ' old';
+				} else if (prevMonth.getUTCFullYear() > year || (prevMonth.getUTCFullYear() == year && prevMonth.getUTCMonth() > month)) {
+					clsName += ' new';
+				}
+				// Compare internal UTC date with local today, not UTC today
+				if (this.todayHighlight &&
+					prevMonth.getUTCFullYear() == today.getFullYear() &&
+					prevMonth.getUTCMonth() == today.getMonth() &&
+					prevMonth.getUTCDate() == today.getDate()) {
+					clsName += ' today';
+				}
+				if (currentDate && prevMonth.valueOf() == currentDate) {
+					clsName += ' active';
+				}
+				if (prevMonth.valueOf() < this.startDate || prevMonth.valueOf() > this.endDate ||
+					$.inArray(prevMonth.getUTCDay(), this.daysOfWeekDisabled) !== -1) {
+					clsName += ' disabled';
+				}
+				html.push('<td class="day'+clsName+'">'+prevMonth.getUTCDate() + '</td>');
+				if (prevMonth.getUTCDay() == this.weekEnd) {
+					html.push('</tr>');
+				}
+				prevMonth.setUTCDate(prevMonth.getUTCDate()+1);
+			}
+			this.picker.find('.datepicker-days tbody').empty().append(html.join(''));
+			var currentYear = this.date && this.date.getUTCFullYear();
+
+			var months = this.picker.find('.datepicker-months')
+						.find('th:eq(1)')
+							.text(year)
+							.end()
+						.find('span').removeClass('active');
+			if (currentYear && currentYear == year) {
+				months.eq(this.date.getUTCMonth()).addClass('active');
+			}
+			if (year < startYear || year > endYear) {
+				months.addClass('disabled');
+			}
+			if (year == startYear) {
+				months.slice(0, startMonth).addClass('disabled');
+			}
+			if (year == endYear) {
+				months.slice(endMonth+1).addClass('disabled');
+			}
+
+			html = '';
+			year = parseInt(year/10, 10) * 10;
+			var yearCont = this.picker.find('.datepicker-years')
+								.find('th:eq(1)')
+									.text(year + '-' + (year + 9))
+									.end()
+								.find('td');
+			year -= 1;
+			for (var i = -1; i < 11; i++) {
+				html += '<span class="year'+(i == -1 || i == 10 ? ' old' : '')+(currentYear == year ? ' active' : '')+(year < startYear || year > endYear ? ' disabled' : '')+'">'+year+'</span>';
+				year += 1;
+			}
+			yearCont.html(html);
+		},
+
+		updateNavArrows: function() {
+			var d = new Date(this.viewDate),
+				year = d.getUTCFullYear(),
+				month = d.getUTCMonth();
+			switch (this.viewMode) {
+				case 0:
+					if (this.startDate !== -Infinity && year <= this.startDate.getUTCFullYear() && month <= this.startDate.getUTCMonth()) {
+						this.picker.find('.prev').css({visibility: 'hidden'});
+					} else {
+						this.picker.find('.prev').css({visibility: 'visible'});
+					}
+					if (this.endDate !== Infinity && year >= this.endDate.getUTCFullYear() && month >= this.endDate.getUTCMonth()) {
+						this.picker.find('.next').css({visibility: 'hidden'});
+					} else {
+						this.picker.find('.next').css({visibility: 'visible'});
+					}
+					break;
+				case 1:
+				case 2:
+					if (this.startDate !== -Infinity && year <= this.startDate.getUTCFullYear()) {
+						this.picker.find('.prev').css({visibility: 'hidden'});
+					} else {
+						this.picker.find('.prev').css({visibility: 'visible'});
+					}
+					if (this.endDate !== Infinity && year >= this.endDate.getUTCFullYear()) {
+						this.picker.find('.next').css({visibility: 'hidden'});
+					} else {
+						this.picker.find('.next').css({visibility: 'visible'});
+					}
+					break;
+			}
+		},
+
+		click: function(e) {
+			e.stopPropagation();
+			e.preventDefault();
+			var target = $(e.target).closest('span, td, th');
+			if (target.length == 1) {
+				switch(target[0].nodeName.toLowerCase()) {
+					case 'th':
+						switch(target[0].className) {
+							case 'switch':
+								this.showMode(1);
+								break;
+							case 'prev':
+							case 'next':
+								var dir = DPGlobal.modes[this.viewMode].navStep * (target[0].className == 'prev' ? -1 : 1);
+								switch(this.viewMode){
+									case 0:
+										this.viewDate = this.moveMonth(this.viewDate, dir);
+										break;
+									case 1:
+									case 2:
+										this.viewDate = this.moveYear(this.viewDate, dir);
+										break;
+								}
+								this.fill();
+								break;
+							case 'today':
+								var date = new Date();
+								date = UTCDate(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0);
+
+								this.showMode(-2);
+								var which = this.todayBtn == 'linked' ? null : 'view';
+								this._setDate(date, which);
+								break;
+						}
+						break;
+					case 'span':
+						if (!target.is('.disabled')) {
+							this.viewDate.setUTCDate(1);
+							if (target.is('.month')) {
+								var month = target.parent().find('span').index(target);
+								this.viewDate.setUTCMonth(month);
+								this.element.trigger({
+									type: 'changeMonth',
+									date: this.viewDate
+								});
+							} else {
+								var year = parseInt(target.text(), 10)||0;
+								this.viewDate.setUTCFullYear(year);
+								this.element.trigger({
+									type: 'changeYear',
+									date: this.viewDate
+								});
+							}
+							this.showMode(-1);
+							this.fill();
+						}
+						break;
+					case 'td':
+						if (target.is('.day') && !target.is('.disabled')){
+							var day = parseInt(target.text(), 10)||1;
+							var year = this.viewDate.getUTCFullYear(),
+								month = this.viewDate.getUTCMonth();
+							if (target.is('.old')) {
+								if (month === 0) {
+									month = 11;
+									year -= 1;
+								} else {
+									month -= 1;
+								}
+							} else if (target.is('.new')) {
+								if (month == 11) {
+									month = 0;
+									year += 1;
+								} else {
+									month += 1;
+								}
+							}
+							this._setDate(UTCDate(year, month, day,0,0,0,0));
+						}
+						break;
+				}
+			}
+		},
+
+		_setDate: function(date, which){
+			if (!which || which == 'date')
+				this.date = date;
+			if (!which || which  == 'view')
+				this.viewDate = date;
+			this.fill();
+			this.setValue();
+			this.element.trigger({
+				type: 'changeDate',
+				date: this.date
+			});
+			var element;
+			if (this.isInput) {
+				element = this.element;
+			} else if (this.component){
+				element = this.element.find('input');
+			}
+			if (element) {
+				element.change();
+				if (this.autoclose && (!which || which == 'date')) {
+					this.hide();
+				}
+			}
+		},
+
+		moveMonth: function(date, dir){
+			if (!dir) return date;
+			var new_date = new Date(date.valueOf()),
+				day = new_date.getUTCDate(),
+				month = new_date.getUTCMonth(),
+				mag = Math.abs(dir),
+				new_month, test;
+			dir = dir > 0 ? 1 : -1;
+			if (mag == 1){
+				test = dir == -1
+					// If going back one month, make sure month is not current month
+					// (eg, Mar 31 -> Feb 31 == Feb 28, not Mar 02)
+					? function(){ return new_date.getUTCMonth() == month; }
+					// If going forward one month, make sure month is as expected
+					// (eg, Jan 31 -> Feb 31 == Feb 28, not Mar 02)
+					: function(){ return new_date.getUTCMonth() != new_month; };
+				new_month = month + dir;
+				new_date.setUTCMonth(new_month);
+				// Dec -> Jan (12) or Jan -> Dec (-1) -- limit expected date to 0-11
+				if (new_month < 0 || new_month > 11)
+					new_month = (new_month + 12) % 12;
+			} else {
+				// For magnitudes >1, move one month at a time...
+				for (var i=0; i<mag; i++)
+					// ...which might decrease the day (eg, Jan 31 to Feb 28, etc)...
+					new_date = this.moveMonth(new_date, dir);
+				// ...then reset the day, keeping it in the new month
+				new_month = new_date.getUTCMonth();
+				new_date.setUTCDate(day);
+				test = function(){ return new_month != new_date.getUTCMonth(); };
+			}
+			// Common date-resetting loop -- if date is beyond end of month, make it
+			// end of month
+			while (test()){
+				new_date.setUTCDate(--day);
+				new_date.setUTCMonth(new_month);
+			}
+			return new_date;
+		},
+
+		moveYear: function(date, dir){
+			return this.moveMonth(date, dir*12);
+		},
+
+		dateWithinRange: function(date){
+			return date >= this.startDate && date <= this.endDate;
+		},
+
+		keydown: function(e){
+			if (this.picker.is(':not(:visible)')){
+				if (e.keyCode == 27) // allow escape to hide and re-show picker
+					this.show();
+				return;
+			}
+			var dateChanged = false,
+				dir, day, month,
+				newDate, newViewDate;
+			switch(e.keyCode){
+				case 27: // escape
+					this.hide();
+					e.preventDefault();
+					break;
+				case 37: // left
+				case 39: // right
+					if (!this.keyboardNavigation) break;
+					dir = e.keyCode == 37 ? -1 : 1;
+					if (e.ctrlKey){
+						newDate = this.moveYear(this.date, dir);
+						newViewDate = this.moveYear(this.viewDate, dir);
+					} else if (e.shiftKey){
+						newDate = this.moveMonth(this.date, dir);
+						newViewDate = this.moveMonth(this.viewDate, dir);
+					} else {
+						newDate = new Date(this.date);
+						newDate.setUTCDate(this.date.getUTCDate() + dir);
+						newViewDate = new Date(this.viewDate);
+						newViewDate.setUTCDate(this.viewDate.getUTCDate() + dir);
+					}
+					if (this.dateWithinRange(newDate)){
+						this.date = newDate;
+						this.viewDate = newViewDate;
+						this.setValue();
+						this.update();
+						e.preventDefault();
+						dateChanged = true;
+					}
+					break;
+				case 38: // up
+				case 40: // down
+					if (!this.keyboardNavigation) break;
+					dir = e.keyCode == 38 ? -1 : 1;
+					if (e.ctrlKey){
+						newDate = this.moveYear(this.date, dir);
+						newViewDate = this.moveYear(this.viewDate, dir);
+					} else if (e.shiftKey){
+						newDate = this.moveMonth(this.date, dir);
+						newViewDate = this.moveMonth(this.viewDate, dir);
+					} else {
+						newDate = new Date(this.date);
+						newDate.setUTCDate(this.date.getUTCDate() + dir * 7);
+						newViewDate = new Date(this.viewDate);
+						newViewDate.setUTCDate(this.viewDate.getUTCDate() + dir * 7);
+					}
+					if (this.dateWithinRange(newDate)){
+						this.date = newDate;
+						this.viewDate = newViewDate;
+						this.setValue();
+						this.update();
+						e.preventDefault();
+						dateChanged = true;
+					}
+					break;
+				case 13: // enter
+					this.hide();
+					e.preventDefault();
+					break;
+				case 9: // tab
+					this.hide();
+					break;
+			}
+			if (dateChanged){
+				this.element.trigger({
+					type: 'changeDate',
+					date: this.date
+				});
+				var element;
+				if (this.isInput) {
+					element = this.element;
+				} else if (this.component){
+					element = this.element.find('input');
+				}
+				if (element) {
+					element.change();
+				}
+			}
+		},
+
+		showMode: function(dir) {
+			if (dir) {
+				this.viewMode = Math.max(0, Math.min(2, this.viewMode + dir));
+			}
+			/*
+				vitalets: fixing bug of very special conditions:
+				jquery 1.7.1 + webkit + show inline datepicker in bootstrap popover.
+				Method show() does not set display css correctly and datepicker is not shown.
+				Changed to .css('display', 'block') solve the problem.
+				See https://github.com/vitalets/x-editable/issues/37
+
+				In jquery 1.7.2+ everything works fine.
+			*/
+			//this.picker.find('>div').hide().filter('.datepicker-'+DPGlobal.modes[this.viewMode].clsName).show();
+			this.picker.find('>div').hide().filter('.datepicker-'+DPGlobal.modes[this.viewMode].clsName).css('display', 'block');
+			this.updateNavArrows();
+		}
+	};
+
+	$.fn.datepicker = function ( option ) {
+		var args = Array.apply(null, arguments);
+		args.shift();
+		return this.each(function () {
+			var $this = $(this),
+				data = $this.data('datepicker'),
+				options = typeof option == 'object' && option;
+			if (!data) {
+				$this.data('datepicker', (data = new Datepicker(this, $.extend({}, $.fn.datepicker.defaults,options))));
+			}
+			if (typeof option == 'string' && typeof data[option] == 'function') {
+				data[option].apply(data, args);
+			}
+		});
+	};
+
+	$.fn.datepicker.defaults = {
+	};
+	$.fn.datepicker.Constructor = Datepicker;
+	var dates = $.fn.datepicker.dates = {
+		en: {
+			days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+			daysShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+			daysMin: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
+			months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+			monthsShort: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+			today: "Today"
+		}
+	};
+
+	var DPGlobal = {
+		modes: [
+			{
+				clsName: 'days',
+				navFnc: 'Month',
+				navStep: 1
+			},
+			{
+				clsName: 'months',
+				navFnc: 'FullYear',
+				navStep: 1
+			},
+			{
+				clsName: 'years',
+				navFnc: 'FullYear',
+				navStep: 10
+		}],
+		isLeapYear: function (year) {
+			return (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0));
+		},
+		getDaysInMonth: function (year, month) {
+			return [31, (DPGlobal.isLeapYear(year) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month];
+		},
+		validParts: /dd?|DD?|mm?|MM?|yy(?:yy)?/g,
+		nonpunctuation: /[^ -\/:-@\[\u3400-\u9fff-`{-~\t\n\r]+/g,
+		parseFormat: function(format){
+			// IE treats \0 as a string end in inputs (truncating the value),
+			// so it's a bad format delimiter, anyway
+			var separators = format.replace(this.validParts, '\0').split('\0'),
+				parts = format.match(this.validParts);
+			if (!separators || !separators.length || !parts || parts.length === 0){
+				throw new Error("Invalid date format.");
+			}
+			return {separators: separators, parts: parts};
+		},
+		parseDate: function(date, format, language) {
+			if (date instanceof Date) return date;
+			if (/^[\-+]\d+[dmwy]([\s,]+[\-+]\d+[dmwy])*$/.test(date)) {
+				var part_re = /([\-+]\d+)([dmwy])/,
+					parts = date.match(/([\-+]\d+)([dmwy])/g),
+					part, dir;
+				date = new Date();
+				for (var i=0; i<parts.length; i++) {
+					part = part_re.exec(parts[i]);
+					dir = parseInt(part[1]);
+					switch(part[2]){
+						case 'd':
+							date.setUTCDate(date.getUTCDate() + dir);
+							break;
+						case 'm':
+							date = Datepicker.prototype.moveMonth.call(Datepicker.prototype, date, dir);
+							break;
+						case 'w':
+							date.setUTCDate(date.getUTCDate() + dir * 7);
+							break;
+						case 'y':
+							date = Datepicker.prototype.moveYear.call(Datepicker.prototype, date, dir);
+							break;
+					}
+				}
+				return UTCDate(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), 0, 0, 0);
+			}
+			var parts = date && date.match(this.nonpunctuation) || [],
+				date = new Date(),
+				parsed = {},
+				setters_order = ['yyyy', 'yy', 'M', 'MM', 'm', 'mm', 'd', 'dd'],
+				setters_map = {
+					yyyy: function(d,v){ return d.setUTCFullYear(v); },
+					yy: function(d,v){ return d.setUTCFullYear(2000+v); },
+					m: function(d,v){
+						v -= 1;
+						while (v<0) v += 12;
+						v %= 12;
+						d.setUTCMonth(v);
+						while (d.getUTCMonth() != v)
+							d.setUTCDate(d.getUTCDate()-1);
+						return d;
+					},
+					d: function(d,v){ return d.setUTCDate(v); }
+				},
+				val, filtered, part;
+			setters_map['M'] = setters_map['MM'] = setters_map['mm'] = setters_map['m'];
+			setters_map['dd'] = setters_map['d'];
+			date = UTCDate(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0);
+			var fparts = format.parts.slice();
+			// Remove noop parts
+			if (parts.length != fparts.length) {
+				fparts = $(fparts).filter(function(i,p){
+					return $.inArray(p, setters_order) !== -1;
+				}).toArray();
+			}
+			// Process remainder
+			if (parts.length == fparts.length) {
+				for (var i=0, cnt = fparts.length; i < cnt; i++) {
+					val = parseInt(parts[i], 10);
+					part = fparts[i];
+					if (isNaN(val)) {
+						switch(part) {
+							case 'MM':
+								filtered = $(dates[language].months).filter(function(){
+									var m = this.slice(0, parts[i].length),
+										p = parts[i].slice(0, m.length);
+									return m == p;
+								});
+								val = $.inArray(filtered[0], dates[language].months) + 1;
+								break;
+							case 'M':
+								filtered = $(dates[language].monthsShort).filter(function(){
+									var m = this.slice(0, parts[i].length),
+										p = parts[i].slice(0, m.length);
+									return m == p;
+								});
+								val = $.inArray(filtered[0], dates[language].monthsShort) + 1;
+								break;
+						}
+					}
+					parsed[part] = val;
+				}
+				for (var i=0, s; i<setters_order.length; i++){
+					s = setters_order[i];
+					if (s in parsed && !isNaN(parsed[s]))
+						setters_map[s](date, parsed[s]);
+				}
+			}
+			return date;
+		},
+		formatDate: function(date, format, language){
+			var val = {
+				d: date.getUTCDate(),
+				D: dates[language].daysShort[date.getUTCDay()],
+				DD: dates[language].days[date.getUTCDay()],
+				m: date.getUTCMonth() + 1,
+				M: dates[language].monthsShort[date.getUTCMonth()],
+				MM: dates[language].months[date.getUTCMonth()],
+				yy: date.getUTCFullYear().toString().substring(2),
+				yyyy: date.getUTCFullYear()
+			};
+			val.dd = (val.d < 10 ? '0' : '') + val.d;
+			val.mm = (val.m < 10 ? '0' : '') + val.m;
+			var date = [],
+				seps = $.extend([], format.separators);
+			for (var i=0, cnt = format.parts.length; i < cnt; i++) {
+				if (seps.length)
+					date.push(seps.shift());
+				date.push(val[format.parts[i]]);
+			}
+			return date.join('');
+		},
+		headTemplate: '<thead>'+
+							'<tr>'+
+								'<th class="prev"><i class="icon-arrow-left"/></th>'+
+								'<th colspan="5" class="switch"></th>'+
+								'<th class="next"><i class="icon-arrow-right"/></th>'+
+							'</tr>'+
+						'</thead>',
+		contTemplate: '<tbody><tr><td colspan="7"></td></tr></tbody>',
+		footTemplate: '<tfoot><tr><th colspan="7" class="today"></th></tr></tfoot>'
+	};
+	DPGlobal.template = '<div class="datepicker">'+
+							'<div class="datepicker-days">'+
+								'<table class=" table-condensed">'+
+									DPGlobal.headTemplate+
+									'<tbody></tbody>'+
+									DPGlobal.footTemplate+
+								'</table>'+
+							'</div>'+
+							'<div class="datepicker-months">'+
+								'<table class="table-condensed">'+
+									DPGlobal.headTemplate+
+									DPGlobal.contTemplate+
+									DPGlobal.footTemplate+
+								'</table>'+
+							'</div>'+
+							'<div class="datepicker-years">'+
+								'<table class="table-condensed">'+
+									DPGlobal.headTemplate+
+									DPGlobal.contTemplate+
+									DPGlobal.footTemplate+
+								'</table>'+
+							'</div>'+
+						'</div>';
+
+	$.fn.datepicker.DPGlobal = DPGlobal;
+
+}( window.jQuery );
+
+/**
+Typeahead input (bootstrap only). Based on Twitter Bootstrap [typeahead](http://twitter.github.com/bootstrap/javascript.html#typeahead).
+Depending on `source` format typeahead operates in two modes:
+
+* **strings**:
+  When `source` defined as array of strings, e.g. `['text1', 'text2', 'text3' ...]`.
+  User can submit one of these strings or any text entered in input (even if it is not matching source).
+
+* **objects**:
+  When `source` defined as array of objects, e.g. `[{value: 1, text: "text1"}, {value: 2, text: "text2"}, ...]`.
+  User can submit only values that are in source (otherwise `null` is submitted). This is more like *dropdown* behavior.
+
+@class typeahead
+@extends list
+@since 1.4.1
+@final
+@example
+<a href="#" id="country" data-type="typeahead" data-pk="1" data-url="/post" data-original-title="Input country"></a>
+<script>
+$(function(){
+    $('#country').editable({
+        value: 'ru',
+        source: [
+              {value: 'gb', text: 'Great Britain'},
+              {value: 'us', text: 'United States'},
+              {value: 'ru', text: 'Russia'}
+           ]
+        }
+    });
+});
+</script>
+**/
+(function ($) {
+
+    var Constructor = function (options) {
+        this.init('typeahead', options, Constructor.defaults);
+
+        //overriding objects in config (as by default jQuery extend() is not recursive)
+        this.options.typeahead = $.extend({}, Constructor.defaults.typeahead, {
+            //set default methods for typeahead to work with objects
+            matcher: this.matcher,
+            sorter: this.sorter,
+            highlighter: this.highlighter,
+            updater: this.updater
+        }, options.typeahead);
+    };
+
+    $.fn.editableutils.inherit(Constructor, $.fn.editabletypes.list);
+
+    $.extend(Constructor.prototype, {
+        renderList: function() {
+            this.$input = this.$tpl.is('input') ? this.$tpl : this.$tpl.find('input[type="text"]');
+
+            //set source of typeahead
+            this.options.typeahead.source = this.sourceData;
+
+            //apply typeahead
+            this.$input.typeahead(this.options.typeahead);
+
+            //attach own render method
+            this.$input.data('typeahead').render = $.proxy(this.typeaheadRender, this.$input.data('typeahead'));
+
+            this.renderClear();
+            this.setClass();
+            this.setAttr('placeholder');
+        },
+
+        value2htmlFinal: function(value, element) {
+            if(this.getIsObjects()) {
+                var items = $.fn.editableutils.itemsByValue(value, this.sourceData);
+                $(element).text(items.length ? items[0].text : '');
+            } else {
+                $(element).text(value);
+            }
+        },
+
+        html2value: function (html) {
+            return html ? html : null;
+        },
+
+        value2input: function(value) {
+            if(this.getIsObjects()) {
+                var items = $.fn.editableutils.itemsByValue(value, this.sourceData);
+                this.$input.data('value', value).val(items.length ? items[0].text : '');
+            } else {
+                this.$input.val(value);
+            }
+        },
+
+        input2value: function() {
+            if(this.getIsObjects()) {
+                var value = this.$input.data('value'),
+                    items = $.fn.editableutils.itemsByValue(value, this.sourceData);
+
+                if(items.length && items[0].text.toLowerCase() === this.$input.val().toLowerCase()) {
+                   return value;
+                } else {
+                   return null; //entered string not found in source
+                }
+            } else {
+                return this.$input.val();
+            }
+        },
+
+        /*
+         if in sourceData values <> texts, typeahead in "objects" mode:
+         user must pick some value from list, otherwise `null` returned.
+         if all values == texts put typeahead in "strings" mode:
+         anything what entered is submited.
+        */
+        getIsObjects: function() {
+            if(this.isObjects === undefined) {
+                this.isObjects = false;
+                for(var i=0; i<this.sourceData.length; i++) {
+                    if(this.sourceData[i].value !== this.sourceData[i].text) {
+                        this.isObjects = true;
+                        break;
+                    }
+                }
+            }
+            return this.isObjects;
+        },
+
+        /*
+          Methods borrowed from text input
+        */
+        activate: $.fn.editabletypes.text.prototype.activate,
+        renderClear: $.fn.editabletypes.text.prototype.renderClear,
+        postrender: $.fn.editabletypes.text.prototype.postrender,
+        toggleClear: $.fn.editabletypes.text.prototype.toggleClear,
+        clear: function() {
+            $.fn.editabletypes.text.prototype.clear.call(this);
+            this.$input.data('value', '');
+        },
+
+
+        /*
+          Typeahead option methods used as defaults
+        */
+        /*jshint eqeqeq:false, curly: false, laxcomma: true*/
+        matcher: function (item) {
+            return $.fn.typeahead.Constructor.prototype.matcher.call(this, item.text);
+        },
+        sorter: function (items) {
+            var beginswith = []
+            , caseSensitive = []
+            , caseInsensitive = []
+            , item
+            , text;
+
+            while (item = items.shift()) {
+                text = item.text;
+                if (!text.toLowerCase().indexOf(this.query.toLowerCase())) beginswith.push(item);
+                else if (~text.indexOf(this.query)) caseSensitive.push(item);
+                else caseInsensitive.push(item);
+            }
+
+            return beginswith.concat(caseSensitive, caseInsensitive);
+        },
+        highlighter: function (item) {
+            return $.fn.typeahead.Constructor.prototype.highlighter.call(this, item.text);
+        },
+        updater: function (item) {
+            item = this.$menu.find('.active').data('item');
+            this.$element.data('value', item.value);
+            return item.text;
+        },
+
+
+        /*
+          Overwrite typeahead's render method to store objects.
+          There are a lot of disscussion in bootstrap repo on this point and still no result.
+          See https://github.com/twitter/bootstrap/issues/5967
+
+          This function just store item in via jQuery data() method instead of attr('data-value')
+        */
+        typeaheadRender: function (items) {
+            var that = this;
+
+            items = $(items).map(function (i, item) {
+//                i = $(that.options.item).attr('data-value', item)
+                i = $(that.options.item).data('item', item);
+                i.find('a').html(that.highlighter(item));
+                return i[0];
+            });
+
+            items.first().addClass('active');
+            this.$menu.html(items);
+            return this;
+        }
+        /*jshint eqeqeq: true, curly: true, laxcomma: false*/
+
+    });
+
+    Constructor.defaults = $.extend({}, $.fn.editabletypes.list.defaults, {
+        /**
+        @property tpl
+        @default <input type="text">
+        **/
+        tpl:'<input type="text">',
+        /**
+        Configuration of typeahead. [Full list of options](http://twitter.github.com/bootstrap/javascript.html#typeahead).
+
+        @property typeahead
+        @type object
+        @default null
+        **/
+        typeahead: null,
+        /**
+        Whether to show `clear` button
+
+        @property clear
+        @type boolean
+        @default true
+        **/
+        clear: true
+    });
+
+    $.fn.editabletypes.typeahead = Constructor;
+
+}(window.jQuery));
+
+// Chosen, a Select Box Enhancer for jQuery and Protoype
+// by Patrick Filler for Harvest, http://getharvest.com
+//
+// Version 0.9.11
+// Full source at https://github.com/harvesthq/chosen
+// Copyright (c) 2011 Harvest http://getharvest.com
+
+// MIT License, https://github.com/harvesthq/chosen/blob/master/LICENSE.md
+// This file is generated by `cake build`, do not edit it by hand.
+(function() {
+  var SelectParser;
+
+  SelectParser = (function() {
+
+    function SelectParser() {
+      this.options_index = 0;
+      this.parsed = [];
+    }
+
+    SelectParser.prototype.add_node = function(child) {
+      if (child.nodeName.toUpperCase() === "OPTGROUP") {
+        return this.add_group(child);
+      } else {
+        return this.add_option(child);
+      }
+    };
+
+    SelectParser.prototype.add_group = function(group) {
+      var group_position, option, _i, _len, _ref, _results;
+      group_position = this.parsed.length;
+      this.parsed.push({
+        array_index: group_position,
+        group: true,
+        label: group.label,
+        children: 0,
+        disabled: group.disabled
+      });
+      _ref = group.childNodes;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        option = _ref[_i];
+        _results.push(this.add_option(option, group_position, group.disabled));
+      }
+      return _results;
+    };
+
+    SelectParser.prototype.add_option = function(option, group_position, group_disabled) {
+      if (option.nodeName.toUpperCase() === "OPTION") {
+        if (option.text !== "") {
+          if (group_position != null) {
+            this.parsed[group_position].children += 1;
+          }
+          this.parsed.push({
+            array_index: this.parsed.length,
+            options_index: this.options_index,
+            value: option.value,
+            text: option.text,
+            html: option.innerHTML,
+            selected: option.selected,
+            disabled: group_disabled === true ? group_disabled : option.disabled,
+            group_array_index: group_position,
+            classes: option.className,
+            style: option.style.cssText
+          });
+        } else {
+          this.parsed.push({
+            array_index: this.parsed.length,
+            options_index: this.options_index,
+            empty: true
+          });
+        }
+        return this.options_index += 1;
+      }
+    };
+
+    return SelectParser;
+
+  })();
+
+  SelectParser.select_to_array = function(select) {
+    var child, parser, _i, _len, _ref;
+    parser = new SelectParser();
+    _ref = select.childNodes;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      child = _ref[_i];
+      parser.add_node(child);
+    }
+    return parser.parsed;
+  };
+
+  this.SelectParser = SelectParser;
+
+}).call(this);
+
+/*
+Chosen source: generate output using 'cake build'
+Copyright (c) 2011 by Harvest
+*/
+
+
+(function() {
+  var AbstractChosen, root;
+
+  root = this;
+
+  AbstractChosen = (function() {
+
+    function AbstractChosen(form_field, options) {
+      this.form_field = form_field;
+      this.options = options != null ? options : {};
+      this.is_multiple = this.form_field.multiple;
+      this.set_default_text();
+      this.set_default_values();
+      this.setup();
+      this.set_up_html();
+      this.register_observers();
+      this.finish_setup();
+    }
+
+    AbstractChosen.prototype.set_default_values = function() {
+      var _this = this;
+      this.click_test_action = function(evt) {
+        return _this.test_active_click(evt);
+      };
+      this.activate_action = function(evt) {
+        return _this.activate_field(evt);
+      };
+      this.active_field = false;
+      this.mouse_on_container = false;
+      this.results_showing = false;
+      this.result_highlighted = null;
+      this.result_single_selected = null;
+      this.allow_single_deselect = (this.options.allow_single_deselect != null) && (this.form_field.options[0] != null) && this.form_field.options[0].text === "" ? this.options.allow_single_deselect : false;
+      this.disable_search_threshold = this.options.disable_search_threshold || 0;
+      this.disable_search = this.options.disable_search || false;
+      this.enable_split_word_search = this.options.enable_split_word_search != null ? this.options.enable_split_word_search : true;
+      this.search_contains = this.options.search_contains || false;
+      this.choices = 0;
+      this.single_backstroke_delete = this.options.single_backstroke_delete || false;
+      this.max_selected_options = this.options.max_selected_options || Infinity;
+      return this.inherit_select_classes = this.options.inherit_select_classes || false;
+    };
+
+    AbstractChosen.prototype.set_default_text = function() {
+      if (this.form_field.getAttribute("data-placeholder")) {
+        this.default_text = this.form_field.getAttribute("data-placeholder");
+      } else if (this.is_multiple) {
+        this.default_text = this.options.placeholder_text_multiple || this.options.placeholder_text || "Select Some Options";
+      } else {
+        this.default_text = this.options.placeholder_text_single || this.options.placeholder_text || "Select an Option";
+      }
+      return this.results_none_found = this.form_field.getAttribute("data-no_results_text") || this.options.no_results_text || "No results match";
+    };
+
+    AbstractChosen.prototype.mouse_enter = function() {
+      return this.mouse_on_container = true;
+    };
+
+    AbstractChosen.prototype.mouse_leave = function() {
+      return this.mouse_on_container = false;
+    };
+
+    AbstractChosen.prototype.input_focus = function(evt) {
+      var _this = this;
+      if (this.is_multiple) {
+        if (!this.active_field) {
+          return setTimeout((function() {
+            return _this.container_mousedown();
+          }), 50);
+        }
+      } else {
+        if (!this.active_field) {
+          return this.activate_field();
+        }
+      }
+    };
+
+    AbstractChosen.prototype.input_blur = function(evt) {
+      var _this = this;
+      if (!this.mouse_on_container) {
+        this.active_field = false;
+        return setTimeout((function() {
+          return _this.blur_test();
+        }), 100);
+      }
+    };
+
+    AbstractChosen.prototype.result_add_option = function(option) {
+      var classes, style;
+      if (!option.disabled) {
+        option.dom_id = this.container_id + "_o_" + option.array_index;
+        classes = option.selected && this.is_multiple ? [] : ["active-result"];
+        if (option.selected) {
+          classes.push("result-selected");
+        }
+        if (option.group_array_index != null) {
+          classes.push("group-option");
+        }
+        if (option.classes !== "") {
+          classes.push(option.classes);
+        }
+        style = option.style.cssText !== "" ? " style=\"" + option.style + "\"" : "";
+        return '<li id="' + option.dom_id + '" class="' + classes.join(' ') + '"' + style + '>' + option.html + '</li>';
+      } else {
+        return "";
+      }
+    };
+
+    AbstractChosen.prototype.results_update_field = function() {
+      if (!this.is_multiple) {
+        this.results_reset_cleanup();
+      }
+      this.result_clear_highlight();
+      this.result_single_selected = null;
+      return this.results_build();
+    };
+
+    AbstractChosen.prototype.results_toggle = function() {
+      if (this.results_showing) {
+        return this.results_hide();
+      } else {
+        return this.results_show();
+      }
+    };
+
+    AbstractChosen.prototype.results_search = function(evt) {
+      if (this.results_showing) {
+        return this.winnow_results();
+      } else {
+        return this.results_show();
+      }
+    };
+
+    AbstractChosen.prototype.keyup_checker = function(evt) {
+      var stroke, _ref;
+      stroke = (_ref = evt.which) != null ? _ref : evt.keyCode;
+      this.search_field_scale();
+      switch (stroke) {
+        case 8:
+          if (this.is_multiple && this.backstroke_length < 1 && this.choices > 0) {
+            return this.keydown_backstroke();
+          } else if (!this.pending_backstroke) {
+            this.result_clear_highlight();
+            return this.results_search();
+          }
+          break;
+        case 13:
+          evt.preventDefault();
+          if (this.results_showing) {
+            return this.result_select(evt);
+          }
+          break;
+        case 27:
+          if (this.results_showing) {
+            this.results_hide();
+          }
+          return true;
+        case 9:
+        case 38:
+        case 40:
+        case 16:
+        case 91:
+        case 17:
+          break;
+        default:
+          return this.results_search();
+      }
+    };
+
+    AbstractChosen.prototype.generate_field_id = function() {
+      var new_id;
+      new_id = this.generate_random_id();
+      this.form_field.id = new_id;
+      return new_id;
+    };
+
+    AbstractChosen.prototype.generate_random_char = function() {
+      var chars, newchar, rand;
+      chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      rand = Math.floor(Math.random() * chars.length);
+      return newchar = chars.substring(rand, rand + 1);
+    };
+
+    return AbstractChosen;
+
+  })();
+
+  root.AbstractChosen = AbstractChosen;
+
+}).call(this);
+
+/*
+Chosen source: generate output using 'cake build'
+Copyright (c) 2011 by Harvest
+*/
+
+
+(function() {
+  var $, Chosen, get_side_border_padding, root,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  root = this;
+
+  $ = jQuery;
+
+  $.fn.extend({
+    chosen: function(options) {
+      var browser, match, ua;
+      ua = navigator.userAgent.toLowerCase();
+      match = /(msie) ([\w.]+)/.exec(ua) || [];
+      browser = {
+        name: match[1] || "",
+        version: match[2] || "0"
+      };
+      if (browser.name === "msie" && (browser.version === "6.0" || (browser.version === "7.0" && document.documentMode === 7))) {
+        return this;
+      }
+      return this.each(function(input_field) {
+        var $this;
+        $this = $(this);
+        if (!$this.hasClass("chzn-done")) {
+          return $this.data('chosen', new Chosen(this, options));
+        }
+      });
+    }
+  });
+
+  Chosen = (function(_super) {
+
+    __extends(Chosen, _super);
+
+    function Chosen() {
+      return Chosen.__super__.constructor.apply(this, arguments);
+    }
+
+    Chosen.prototype.setup = function() {
+      this.form_field_jq = $(this.form_field);
+      this.current_value = this.form_field_jq.val();
+      return this.is_rtl = this.form_field_jq.hasClass("chzn-rtl");
+    };
+
+    Chosen.prototype.finish_setup = function() {
+      return this.form_field_jq.addClass("chzn-done");
+    };
+
+    Chosen.prototype.set_up_html = function() {
+      var container_classes, container_div, container_props, dd_top, dd_width, sf_width;
+      this.container_id = this.form_field.id.length ? this.form_field.id.replace(/[^\w]/g, '_') : this.generate_field_id();
+      this.container_id += "_chzn";
+      container_classes = ["chzn-container"];
+      container_classes.push("chzn-container-" + (this.is_multiple ? "multi" : "single"));
+      if (this.inherit_select_classes && this.form_field.className) {
+        container_classes.push(this.form_field.className);
+      }
+      if (this.is_rtl) {
+        container_classes.push("chzn-rtl");
+      }
+      this.f_width = this.form_field_jq.outerWidth();
+      container_props = {
+        id: this.container_id,
+        "class": container_classes.join(' '),
+        style: 'width: ' + this.f_width + 'px;',
+        title: this.form_field.title
+      };
+      container_div = $("<div />", container_props);
+      if (this.is_multiple) {
+        container_div.html('<ul class="chzn-choices"><li class="search-field"><input type="text" value="' + this.default_text + '" class="default" autocomplete="off" style="width:25px;" /></li></ul><div class="chzn-drop" style="left:-9000px;"><ul class="chzn-results"></ul></div>');
+      } else {
+        container_div.html('<a href="javascript:void(0)" class="chzn-single chzn-default" tabindex="-1"><span>' + this.default_text + '</span><div><b></b></div></a><div class="chzn-drop" style="left:-9000px;"><div class="chzn-search"><input type="text" autocomplete="off" /></div><ul class="chzn-results"></ul></div>');
+      }
+      this.form_field_jq.hide().after(container_div);
+      this.container = $('#' + this.container_id);
+      this.dropdown = this.container.find('div.chzn-drop').first();
+      dd_top = this.container.height();
+      dd_width = this.f_width - get_side_border_padding(this.dropdown);
+      this.dropdown.css({
+        "width": dd_width + "px",
+        "top": dd_top + "px"
+      });
+      this.search_field = this.container.find('input').first();
+      this.search_results = this.container.find('ul.chzn-results').first();
+      this.search_field_scale();
+      this.search_no_results = this.container.find('li.no-results').first();
+      if (this.is_multiple) {
+        this.search_choices = this.container.find('ul.chzn-choices').first();
+        this.search_container = this.container.find('li.search-field').first();
+      } else {
+        this.search_container = this.container.find('div.chzn-search').first();
+        this.selected_item = this.container.find('.chzn-single').first();
+        sf_width = dd_width - get_side_border_padding(this.search_container) - get_side_border_padding(this.search_field);
+        this.search_field.css({
+          "width": sf_width + "px"
+        });
+      }
+      this.results_build();
+      this.set_tab_index();
+      return this.form_field_jq.trigger("liszt:ready", {
+        chosen: this
+      });
+    };
+
+    Chosen.prototype.register_observers = function() {
+      var _this = this;
+      this.container.mousedown(function(evt) {
+        return _this.container_mousedown(evt);
+      });
+      this.container.mouseup(function(evt) {
+        return _this.container_mouseup(evt);
+      });
+      this.container.mouseenter(function(evt) {
+        return _this.mouse_enter(evt);
+      });
+      this.container.mouseleave(function(evt) {
+        return _this.mouse_leave(evt);
+      });
+      this.search_results.mouseup(function(evt) {
+        return _this.search_results_mouseup(evt);
+      });
+      this.search_results.mouseover(function(evt) {
+        return _this.search_results_mouseover(evt);
+      });
+      this.search_results.mouseout(function(evt) {
+        return _this.search_results_mouseout(evt);
+      });
+      this.form_field_jq.bind("liszt:updated", function(evt) {
+        return _this.results_update_field(evt);
+      });
+      this.form_field_jq.bind("liszt:activate", function(evt) {
+        return _this.activate_field(evt);
+      });
+      this.form_field_jq.bind("liszt:open", function(evt) {
+        return _this.container_mousedown(evt);
+      });
+      this.search_field.blur(function(evt) {
+        return _this.input_blur(evt);
+      });
+      this.search_field.keyup(function(evt) {
+        return _this.keyup_checker(evt);
+      });
+      this.search_field.keydown(function(evt) {
+        return _this.keydown_checker(evt);
+      });
+      this.search_field.focus(function(evt) {
+        return _this.input_focus(evt);
+      });
+      if (this.is_multiple) {
+        return this.search_choices.click(function(evt) {
+          return _this.choices_click(evt);
+        });
+      } else {
+        return this.container.click(function(evt) {
+          return evt.preventDefault();
+        });
+      }
+    };
+
+    Chosen.prototype.search_field_disabled = function() {
+      this.is_disabled = this.form_field_jq[0].disabled;
+      if (this.is_disabled) {
+        this.container.addClass('chzn-disabled');
+        this.search_field[0].disabled = true;
+        if (!this.is_multiple) {
+          this.selected_item.unbind("focus", this.activate_action);
+        }
+        return this.close_field();
+      } else {
+        this.container.removeClass('chzn-disabled');
+        this.search_field[0].disabled = false;
+        if (!this.is_multiple) {
+          return this.selected_item.bind("focus", this.activate_action);
+        }
+      }
+    };
+
+    Chosen.prototype.container_mousedown = function(evt) {
+      var target_closelink;
+      if (!this.is_disabled) {
+        target_closelink = evt != null ? ($(evt.target)).hasClass("search-choice-close") : false;
+        if (evt && evt.type === "mousedown" && !this.results_showing) {
+          evt.preventDefault();
+        }
+        if (!this.pending_destroy_click && !target_closelink) {
+          if (!this.active_field) {
+            if (this.is_multiple) {
+              this.search_field.val("");
+            }
+            $(document).click(this.click_test_action);
+            this.results_show();
+          } else if (!this.is_multiple && evt && (($(evt.target)[0] === this.selected_item[0]) || $(evt.target).parents("a.chzn-single").length)) {
+            evt.preventDefault();
+            this.results_toggle();
+          }
+          return this.activate_field();
+        } else {
+          return this.pending_destroy_click = false;
+        }
+      }
+    };
+
+    Chosen.prototype.container_mouseup = function(evt) {
+      if (evt.target.nodeName === "ABBR" && !this.is_disabled) {
+        return this.results_reset(evt);
+      }
+    };
+
+    Chosen.prototype.blur_test = function(evt) {
+      if (!this.active_field && this.container.hasClass("chzn-container-active")) {
+        return this.close_field();
+      }
+    };
+
+    Chosen.prototype.close_field = function() {
+      $(document).unbind("click", this.click_test_action);
+      this.active_field = false;
+      this.results_hide();
+      this.container.removeClass("chzn-container-active");
+      this.winnow_results_clear();
+      this.clear_backstroke();
+      this.show_search_field_default();
+      return this.search_field_scale();
+    };
+
+    Chosen.prototype.activate_field = function() {
+      this.container.addClass("chzn-container-active");
+      this.active_field = true;
+      this.search_field.val(this.search_field.val());
+      return this.search_field.focus();
+    };
+
+    Chosen.prototype.test_active_click = function(evt) {
+      if ($(evt.target).parents('#' + this.container_id).length) {
+        return this.active_field = true;
+      } else {
+        return this.close_field();
+      }
+    };
+
+    Chosen.prototype.results_build = function() {
+      var content, data, _i, _len, _ref;
+      this.parsing = true;
+      this.results_data = root.SelectParser.select_to_array(this.form_field);
+      if (this.is_multiple && this.choices > 0) {
+        this.search_choices.find("li.search-choice").remove();
+        this.choices = 0;
+      } else if (!this.is_multiple) {
+        this.selected_item.addClass("chzn-default").find("span").text(this.default_text);
+        if (this.disable_search || this.form_field.options.length <= this.disable_search_threshold) {
+          this.container.addClass("chzn-container-single-nosearch");
+        } else {
+          this.container.removeClass("chzn-container-single-nosearch");
+        }
+      }
+      content = '';
+      _ref = this.results_data;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        data = _ref[_i];
+        if (data.group) {
+          content += this.result_add_group(data);
+        } else if (!data.empty) {
+          content += this.result_add_option(data);
+          if (data.selected && this.is_multiple) {
+            this.choice_build(data);
+          } else if (data.selected && !this.is_multiple) {
+            this.selected_item.removeClass("chzn-default").find("span").text(data.text);
+            if (this.allow_single_deselect) {
+              this.single_deselect_control_build();
+            }
+          }
+        }
+      }
+      this.search_field_disabled();
+      this.show_search_field_default();
+      this.search_field_scale();
+      this.search_results.html(content);
+      return this.parsing = false;
+    };
+
+    Chosen.prototype.result_add_group = function(group) {
+      if (!group.disabled) {
+        group.dom_id = this.container_id + "_g_" + group.array_index;
+        return '<li id="' + group.dom_id + '" class="group-result">' + $("<div />").text(group.label).html() + '</li>';
+      } else {
+        return "";
+      }
+    };
+
+    Chosen.prototype.result_do_highlight = function(el) {
+      var high_bottom, high_top, maxHeight, visible_bottom, visible_top;
+      if (el.length) {
+        this.result_clear_highlight();
+        this.result_highlight = el;
+        this.result_highlight.addClass("highlighted");
+        maxHeight = parseInt(this.search_results.css("maxHeight"), 10);
+        visible_top = this.search_results.scrollTop();
+        visible_bottom = maxHeight + visible_top;
+        high_top = this.result_highlight.position().top + this.search_results.scrollTop();
+        high_bottom = high_top + this.result_highlight.outerHeight();
+        if (high_bottom >= visible_bottom) {
+          return this.search_results.scrollTop((high_bottom - maxHeight) > 0 ? high_bottom - maxHeight : 0);
+        } else if (high_top < visible_top) {
+          return this.search_results.scrollTop(high_top);
+        }
+      }
+    };
+
+    Chosen.prototype.result_clear_highlight = function() {
+      if (this.result_highlight) {
+        this.result_highlight.removeClass("highlighted");
+      }
+      return this.result_highlight = null;
+    };
+
+    Chosen.prototype.results_show = function() {
+      var dd_top;
+      if (!this.is_multiple) {
+        this.selected_item.addClass("chzn-single-with-drop");
+        if (this.result_single_selected) {
+          this.result_do_highlight(this.result_single_selected);
+        }
+      } else if (this.max_selected_options <= this.choices) {
+        this.form_field_jq.trigger("liszt:maxselected", {
+          chosen: this
+        });
+        return false;
+      }
+      dd_top = this.is_multiple ? this.container.height() : this.container.height() - 1;
+      this.form_field_jq.trigger("liszt:showing_dropdown", {
+        chosen: this
+      });
+      this.dropdown.css({
+        "top": dd_top + "px",
+        "left": 0
+      });
+      this.results_showing = true;
+      this.search_field.focus();
+      this.search_field.val(this.search_field.val());
+      return this.winnow_results();
+    };
+
+    Chosen.prototype.results_hide = function() {
+      if (!this.is_multiple) {
+        this.selected_item.removeClass("chzn-single-with-drop");
+      }
+      this.result_clear_highlight();
+      this.form_field_jq.trigger("liszt:hiding_dropdown", {
+        chosen: this
+      });
+      this.dropdown.css({
+        "left": "-9000px"
+      });
+      return this.results_showing = false;
+    };
+
+    Chosen.prototype.set_tab_index = function(el) {
+      var ti;
+      if (this.form_field_jq.attr("tabindex")) {
+        ti = this.form_field_jq.attr("tabindex");
+        this.form_field_jq.attr("tabindex", -1);
+        return this.search_field.attr("tabindex", ti);
+      }
+    };
+
+    Chosen.prototype.show_search_field_default = function() {
+      if (this.is_multiple && this.choices < 1 && !this.active_field) {
+        this.search_field.val(this.default_text);
+        return this.search_field.addClass("default");
+      } else {
+        this.search_field.val("");
+        return this.search_field.removeClass("default");
+      }
+    };
+
+    Chosen.prototype.search_results_mouseup = function(evt) {
+      var target;
+      target = $(evt.target).hasClass("active-result") ? $(evt.target) : $(evt.target).parents(".active-result").first();
+      if (target.length) {
+        this.result_highlight = target;
+        this.result_select(evt);
+        return this.search_field.focus();
+      }
+    };
+
+    Chosen.prototype.search_results_mouseover = function(evt) {
+      var target;
+      target = $(evt.target).hasClass("active-result") ? $(evt.target) : $(evt.target).parents(".active-result").first();
+      if (target) {
+        return this.result_do_highlight(target);
+      }
+    };
+
+    Chosen.prototype.search_results_mouseout = function(evt) {
+      if ($(evt.target).hasClass("active-result" || $(evt.target).parents('.active-result').first())) {
+        return this.result_clear_highlight();
+      }
+    };
+
+    Chosen.prototype.choices_click = function(evt) {
+      evt.preventDefault();
+      if (this.active_field && !($(evt.target).hasClass("search-choice" || $(evt.target).parents('.search-choice').first)) && !this.results_showing) {
+        return this.results_show();
+      }
+    };
+
+    Chosen.prototype.choice_build = function(item) {
+      var choice_id, html, link,
+        _this = this;
+      if (this.is_multiple && this.max_selected_options <= this.choices) {
+        this.form_field_jq.trigger("liszt:maxselected", {
+          chosen: this
+        });
+        return false;
+      }
+      choice_id = this.container_id + "_c_" + item.array_index;
+      this.choices += 1;
+      if (item.disabled) {
+        html = '<li class="search-choice search-choice-disabled" id="' + choice_id + '"><span>' + item.html + '</span></li>';
+      } else {
+        html = '<li class="search-choice" id="' + choice_id + '"><span>' + item.html + '</span><a href="javascript:void(0)" class="search-choice-close" rel="' + item.array_index + '"></a></li>';
+      }
+      this.search_container.before(html);
+      link = $('#' + choice_id).find("a").first();
+      return link.click(function(evt) {
+        return _this.choice_destroy_link_click(evt);
+      });
+    };
+
+    Chosen.prototype.choice_destroy_link_click = function(evt) {
+      evt.preventDefault();
+      if (!this.is_disabled) {
+        this.pending_destroy_click = true;
+        return this.choice_destroy($(evt.target));
+      } else {
+        return evt.stopPropagation;
+      }
+    };
+
+    Chosen.prototype.choice_destroy = function(link) {
+      if (this.result_deselect(link.attr("rel"))) {
+        this.choices -= 1;
+        this.show_search_field_default();
+        if (this.is_multiple && this.choices > 0 && this.search_field.val().length < 1) {
+          this.results_hide();
+        }
+        link.parents('li').first().remove();
+        return this.search_field_scale();
+      }
+    };
+
+    Chosen.prototype.results_reset = function() {
+      this.form_field.options[0].selected = true;
+      this.selected_item.find("span").text(this.default_text);
+      if (!this.is_multiple) {
+        this.selected_item.addClass("chzn-default");
+      }
+      this.show_search_field_default();
+      this.results_reset_cleanup();
+      this.form_field_jq.trigger("change");
+      if (this.active_field) {
+        return this.results_hide();
+      }
+    };
+
+    Chosen.prototype.results_reset_cleanup = function() {
+      this.current_value = this.form_field_jq.val();
+      return this.selected_item.find("abbr").remove();
+    };
+
+    Chosen.prototype.result_select = function(evt) {
+      var high, high_id, item, position;
+      if (this.result_highlight) {
+        high = this.result_highlight;
+        high_id = high.attr("id");
+        this.result_clear_highlight();
+        if (this.is_multiple) {
+          this.result_deactivate(high);
+        } else {
+          this.search_results.find(".result-selected").removeClass("result-selected");
+          this.result_single_selected = high;
+          this.selected_item.removeClass("chzn-default");
+        }
+        high.addClass("result-selected");
+        position = high_id.substr(high_id.lastIndexOf("_") + 1);
+        item = this.results_data[position];
+        item.selected = true;
+        this.form_field.options[item.options_index].selected = true;
+        if (this.is_multiple) {
+          this.choice_build(item);
+        } else {
+          this.selected_item.find("span").first().text(item.text);
+          if (this.allow_single_deselect) {
+            this.single_deselect_control_build();
+          }
+        }
+        if (!((evt.metaKey || evt.ctrlKey) && this.is_multiple)) {
+          this.results_hide();
+        }
+        this.search_field.val("");
+        if (this.is_multiple || this.form_field_jq.val() !== this.current_value) {
+          this.form_field_jq.trigger("change", {
+            'selected': this.form_field.options[item.options_index].value
+          });
+        }
+        this.current_value = this.form_field_jq.val();
+        return this.search_field_scale();
+      }
+    };
+
+    Chosen.prototype.result_activate = function(el) {
+      return el.addClass("active-result");
+    };
+
+    Chosen.prototype.result_deactivate = function(el) {
+      return el.removeClass("active-result");
+    };
+
+    Chosen.prototype.result_deselect = function(pos) {
+      var result, result_data;
+      result_data = this.results_data[pos];
+      if (!this.form_field.options[result_data.options_index].disabled) {
+        result_data.selected = false;
+        this.form_field.options[result_data.options_index].selected = false;
+        result = $("#" + this.container_id + "_o_" + pos);
+        result.removeClass("result-selected").addClass("active-result").show();
+        this.result_clear_highlight();
+        this.winnow_results();
+        this.form_field_jq.trigger("change", {
+          deselected: this.form_field.options[result_data.options_index].value
+        });
+        this.search_field_scale();
+        return true;
+      } else {
+        return false;
+      }
+    };
+
+    Chosen.prototype.single_deselect_control_build = function() {
+      if (this.allow_single_deselect && this.selected_item.find("abbr").length < 1) {
+        return this.selected_item.find("span").first().after("<abbr class=\"search-choice-close\"></abbr>");
+      }
+    };
+
+    Chosen.prototype.winnow_results = function() {
+      var found, option, part, parts, regex, regexAnchor, result, result_id, results, searchText, startpos, text, zregex, _i, _j, _len, _len1, _ref;
+      this.no_results_clear();
+      results = 0;
+      searchText = this.search_field.val() === this.default_text ? "" : $('<div/>').text($.trim(this.search_field.val())).html();
+      regexAnchor = this.search_contains ? "" : "^";
+      regex = new RegExp(regexAnchor + searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), 'i');
+      zregex = new RegExp(searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), 'i');
+      _ref = this.results_data;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        option = _ref[_i];
+        if (!option.disabled && !option.empty) {
+          if (option.group) {
+            $('#' + option.dom_id).css('display', 'none');
+          } else if (!(this.is_multiple && option.selected)) {
+            found = false;
+            result_id = option.dom_id;
+            result = $("#" + result_id);
+            if (regex.test(option.html)) {
+              found = true;
+              results += 1;
+            } else if (this.enable_split_word_search && (option.html.indexOf(" ") >= 0 || option.html.indexOf("[") === 0)) {
+              parts = option.html.replace(/\[|\]/g, "").split(" ");
+              if (parts.length) {
+                for (_j = 0, _len1 = parts.length; _j < _len1; _j++) {
+                  part = parts[_j];
+                  if (regex.test(part)) {
+                    found = true;
+                    results += 1;
+                  }
+                }
+              }
+            }
+            if (found) {
+              if (searchText.length) {
+                startpos = option.html.search(zregex);
+                text = option.html.substr(0, startpos + searchText.length) + '</em>' + option.html.substr(startpos + searchText.length);
+                text = text.substr(0, startpos) + '<em>' + text.substr(startpos);
+              } else {
+                text = option.html;
+              }
+              result.html(text);
+              this.result_activate(result);
+              if (option.group_array_index != null) {
+                $("#" + this.results_data[option.group_array_index].dom_id).css('display', 'list-item');
+              }
+            } else {
+              if (this.result_highlight && result_id === this.result_highlight.attr('id')) {
+                this.result_clear_highlight();
+              }
+              this.result_deactivate(result);
+            }
+          }
+        }
+      }
+      if (results < 1 && searchText.length) {
+        return this.no_results(searchText);
+      } else {
+        return this.winnow_results_set_highlight();
+      }
+    };
+
+    Chosen.prototype.winnow_results_clear = function() {
+      var li, lis, _i, _len, _results;
+      this.search_field.val("");
+      lis = this.search_results.find("li");
+      _results = [];
+      for (_i = 0, _len = lis.length; _i < _len; _i++) {
+        li = lis[_i];
+        li = $(li);
+        if (li.hasClass("group-result")) {
+          _results.push(li.css('display', 'auto'));
+        } else if (!this.is_multiple || !li.hasClass("result-selected")) {
+          _results.push(this.result_activate(li));
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    };
+
+    Chosen.prototype.winnow_results_set_highlight = function() {
+      var do_high, selected_results;
+      if (!this.result_highlight) {
+        selected_results = !this.is_multiple ? this.search_results.find(".result-selected.active-result") : [];
+        do_high = selected_results.length ? selected_results.first() : this.search_results.find(".active-result").first();
+        if (do_high != null) {
+          return this.result_do_highlight(do_high);
+        }
+      }
+    };
+
+    Chosen.prototype.no_results = function(terms) {
+      var no_results_html;
+      no_results_html = $('<li class="no-results">' + this.results_none_found + ' "<span></span>"</li>');
+      no_results_html.find("span").first().html(terms);
+      return this.search_results.append(no_results_html);
+    };
+
+    Chosen.prototype.no_results_clear = function() {
+      return this.search_results.find(".no-results").remove();
+    };
+
+    Chosen.prototype.keydown_arrow = function() {
+      var first_active, next_sib;
+      if (!this.result_highlight) {
+        first_active = this.search_results.find("li.active-result").first();
+        if (first_active) {
+          this.result_do_highlight($(first_active));
+        }
+      } else if (this.results_showing) {
+        next_sib = this.result_highlight.nextAll("li.active-result").first();
+        if (next_sib) {
+          this.result_do_highlight(next_sib);
+        }
+      }
+      if (!this.results_showing) {
+        return this.results_show();
+      }
+    };
+
+    Chosen.prototype.keyup_arrow = function() {
+      var prev_sibs;
+      if (!this.results_showing && !this.is_multiple) {
+        return this.results_show();
+      } else if (this.result_highlight) {
+        prev_sibs = this.result_highlight.prevAll("li.active-result");
+        if (prev_sibs.length) {
+          return this.result_do_highlight(prev_sibs.first());
+        } else {
+          if (this.choices > 0) {
+            this.results_hide();
+          }
+          return this.result_clear_highlight();
+        }
+      }
+    };
+
+    Chosen.prototype.keydown_backstroke = function() {
+      var next_available_destroy;
+      if (this.pending_backstroke) {
+        this.choice_destroy(this.pending_backstroke.find("a").first());
+        return this.clear_backstroke();
+      } else {
+        next_available_destroy = this.search_container.siblings("li.search-choice").last();
+        if (next_available_destroy.length && !next_available_destroy.hasClass("search-choice-disabled")) {
+          this.pending_backstroke = next_available_destroy;
+          if (this.single_backstroke_delete) {
+            return this.keydown_backstroke();
+          } else {
+            return this.pending_backstroke.addClass("search-choice-focus");
+          }
+        }
+      }
+    };
+
+    Chosen.prototype.clear_backstroke = function() {
+      if (this.pending_backstroke) {
+        this.pending_backstroke.removeClass("search-choice-focus");
+      }
+      return this.pending_backstroke = null;
+    };
+
+    Chosen.prototype.keydown_checker = function(evt) {
+      var stroke, _ref;
+      stroke = (_ref = evt.which) != null ? _ref : evt.keyCode;
+      this.search_field_scale();
+      if (stroke !== 8 && this.pending_backstroke) {
+        this.clear_backstroke();
+      }
+      switch (stroke) {
+        case 8:
+          this.backstroke_length = this.search_field.val().length;
+          break;
+        case 9:
+          if (this.results_showing && !this.is_multiple) {
+            this.result_select(evt);
+          }
+          this.mouse_on_container = false;
+          break;
+        case 13:
+          evt.preventDefault();
+          break;
+        case 38:
+          evt.preventDefault();
+          this.keyup_arrow();
+          break;
+        case 40:
+          this.keydown_arrow();
+          break;
+      }
+    };
+
+    Chosen.prototype.search_field_scale = function() {
+      var dd_top, div, h, style, style_block, styles, w, _i, _len;
+      if (this.is_multiple) {
+        h = 0;
+        w = 0;
+        style_block = "position:absolute; left: -1000px; top: -1000px; display:none;";
+        styles = ['font-size', 'font-style', 'font-weight', 'font-family', 'line-height', 'text-transform', 'letter-spacing'];
+        for (_i = 0, _len = styles.length; _i < _len; _i++) {
+          style = styles[_i];
+          style_block += style + ":" + this.search_field.css(style) + ";";
+        }
+        div = $('<div />', {
+          'style': style_block
+        });
+        div.text(this.search_field.val());
+        $('body').append(div);
+        w = div.width() + 25;
+        div.remove();
+        if (w > this.f_width - 10) {
+          w = this.f_width - 10;
+        }
+        this.search_field.css({
+          'width': w + 'px'
+        });
+        dd_top = this.container.height();
+        return this.dropdown.css({
+          "top": dd_top + "px"
+        });
+      }
+    };
+
+    Chosen.prototype.generate_random_id = function() {
+      var string;
+      string = "sel" + this.generate_random_char() + this.generate_random_char() + this.generate_random_char();
+      while ($("#" + string).length > 0) {
+        string += this.generate_random_char();
+      }
+      return string;
+    };
+
+    return Chosen;
+
+  })(AbstractChosen);
+
+  root.Chosen = Chosen;
+
+  get_side_border_padding = function(elmt) {
+    var side_border_padding;
+    return side_border_padding = elmt.outerWidth() - elmt.width();
+  };
+
+  root.get_side_border_padding = get_side_border_padding;
+
+}).call(this);
+
 /*! jQuery UI - v1.10.0 - 2013-01-17
 * http://jqueryui.com
 * Includes: jquery.ui.core.js, jquery.ui.widget.js, jquery.ui.mouse.js, jquery.ui.position.js, jquery.ui.accordion.js, jquery.ui.autocomplete.js, jquery.ui.button.js, jquery.ui.datepicker.js, jquery.ui.dialog.js, jquery.ui.draggable.js, jquery.ui.droppable.js, jquery.ui.effect.js, jquery.ui.effect-blind.js, jquery.ui.effect-bounce.js, jquery.ui.effect-clip.js, jquery.ui.effect-drop.js, jquery.ui.effect-explode.js, jquery.ui.effect-fade.js, jquery.ui.effect-fold.js, jquery.ui.effect-highlight.js, jquery.ui.effect-pulsate.js, jquery.ui.effect-scale.js, jquery.ui.effect-shake.js, jquery.ui.effect-slide.js, jquery.ui.effect-transfer.js, jquery.ui.menu.js, jquery.ui.progressbar.js, jquery.ui.resizable.js, jquery.ui.selectable.js, jquery.ui.slider.js, jquery.ui.sortable.js, jquery.ui.spinner.js, jquery.ui.tabs.js, jquery.ui.tooltip.js
@@ -1189,6 +7331,7 @@ $.fn.position = function( options ) {
 			position.left -= elemWidth / 2;
 		}
 
+>>>>>>> feature/grunt
 		if ( options.my[ 1 ] === "bottom" ) {
 			position.top -= elemHeight;
 		} else if ( options.my[ 1 ] === "center" ) {
@@ -15940,8 +22083,12 @@ Copyright (c) 2011 by Harvest
 
   root.get_side_border_padding = get_side_border_padding;
 
+<<<<<<< HEAD
 }).call(this);
 ;
+=======
+}( jQuery ) );
+>>>>>>> feature/grunt
 
 /*
  * jQuery File Upload Plugin 5.21
@@ -17107,7 +23254,6 @@ Copyright (c) 2011 by Harvest
     });
 
 }));
-;
 
 //fgnass.github.com/spin.js#v1.2.8
 !function(window, document, undefined) {
@@ -17429,7 +23575,6 @@ Copyright (c) 2011 by Harvest
     window.Spinner = Spinner
 
 }(window, document);
-;
 
 
 angular.module("Mac").directive("macAutocomplete", [
@@ -17537,6 +23682,7 @@ angular.module("Mac").directive("macAutocomplete", [
   }
 ]);
 
+
 angular.module("Mac").directive("macBind", [
   "$parse", function($parse) {
     return {
@@ -17570,6 +23716,7 @@ angular.module("Mac").directive("macBind", [
     };
   }
 ]);
+
 
 angular.module("Mac").directive("macDatepicker", [
   "util", function(util) {
@@ -17751,6 +23898,154 @@ angular.module("Mac").directive "macEditable", [
 */
 
 
+<<<<<<< HEAD
+=======
+
+angular.module("Mac").directive("macEditable", [
+  "$rootScope", "util", function($rootScope, util) {
+    return {
+      restrict: "E",
+      scope: {
+        onHidden: "&macEditableOnHidden",
+        onInit: "&macEditableOnInit",
+        onSave: "&macEditableOnSave",
+        onShown: "&macEditableOnShown",
+        success: "&macEditableSuccess",
+        validate: "&macEditableValidate",
+        model: "=macEditableModel",
+        display: "=macEditableDisplay",
+        source: "=macEditableSource"
+      },
+      replace: true,
+      template: "<a></a>",
+      link: function($scope, element, attrs) {
+        var componentsDefaults, defaults, extraDefaults, opts;
+        defaults = {
+          anim: "fast",
+          autotext: "auto",
+          disabled: "false",
+          emptyclass: "editable-empty",
+          emptytext: "Empty",
+          mode: "popup",
+          name: null,
+          onblur: "cancel",
+          params: null,
+          placement: "top",
+          saveonchange: false,
+          selector: null,
+          send: "never",
+          showbuttons: true,
+          toggle: "click",
+          type: "text",
+          unsavedclass: "editable-unsaved",
+          url: null,
+          title: ""
+        };
+        componentsDefaults = {
+          text: {
+            tpl: "<input type='text'>",
+            placeholder: null,
+            clear: true,
+            inputclass: "input-medium"
+          },
+          textarea: {
+            tp: "<textarea></textarea>",
+            inputclass: "input-large",
+            placeholder: null,
+            rows: 7
+          },
+          select: {
+            tpl: "<select></select>",
+            prepend: false,
+            sourceError: "Error when loading list",
+            sourceCache: true,
+            inputclass: "input-medium"
+          }
+        };
+        attrs.macEditableType = attrs.macEditableType || "text";
+        extraDefaults = (function() {
+          switch (attrs.macEditableType) {
+            case "textarea":
+            case "select":
+              return componentsDefaults[attrs.macEditableType];
+            default:
+              return componentsDefaults["text"];
+          }
+        })();
+        angular.extend(defaults, extraDefaults);
+        opts = util.extendAttributes("macEditable", defaults, attrs);
+        opts.validate = function(value) {
+          if (attrs.macEditableValidate != null) {
+            return $scope.validate({
+              value: value
+            });
+          }
+        };
+        opts.success = function(response, newValue) {
+          if (attrs.macEditableSuccess != null) {
+            return $scope.success({
+              response: response,
+              newValue: newValue
+            });
+          }
+        };
+        if (attrs.macEditableType === "select") {
+          opts.source = function() {
+            return $scope.source;
+          };
+        }
+        $scope.$watch("model", function(value) {
+          if (value != null) {
+            element.editable("destroy");
+            return $scope.initialize();
+          }
+        });
+        $scope.$watch("display", function(value) {
+          return element.text(value || $scope.model);
+        });
+        return $scope.initialize = function() {
+          opts.value = $scope.model;
+          opts.display = false;
+          return element.editable(opts).on("hidden", function(event, reason) {
+            if (attrs.macEditableOnHidden != null) {
+              return $scope.onHidden({
+                event: event,
+                reason: reason
+              });
+            }
+          }).on("init", function(event, editable) {
+            if (attrs.macEditableOnInit != null) {
+              return $scope.onInit({
+                event: event,
+                editable: editable
+              });
+            }
+          }).on("save", function(event, params) {
+            if (attrs.macEditableOnSave != null) {
+              params = $scope.onSave({
+                event: event,
+                params: params
+              });
+            }
+            if ((params != null ? params.newValue : void 0) != null) {
+              return $scope.$apply(function() {
+                return $scope.model = params.newValue;
+              });
+            }
+          }).on("shown", function(event) {
+            if (attrs.macEditableOnShown != null) {
+              return $scope.onShown({
+                event: event
+              });
+            }
+          });
+        };
+      }
+    };
+  }
+]);
+
+>>>>>>> feature/grunt
 var event, key, _fn, _fn1, _i, _j, _len, _len1, _ref, _ref1;
 
 _ref = ["Blur", "Focus", "Keydown", "Keyup", "Mouseenter", "Mouseleave"];
@@ -17902,6 +24197,7 @@ angular.module("Mac").directive("macPauseTyping", [
   }
 ]);
 
+
 angular.module("Mac").directive("macUpload", [
   function() {
     return {
@@ -17991,6 +24287,7 @@ angular.module("Mac").directive("macUpload", [
     };
   }
 ]);
+
 
 angular.module("Mac").factory("keys", function() {
   return {
@@ -18111,6 +24408,7 @@ angular.module("Mac").factory("keys", function() {
     META: 224
   };
 });
+
 var __hasProp = {}.hasOwnProperty;
 
 angular.module("Mac").directive("macSpinner", function() {
@@ -18139,6 +24437,7 @@ angular.module("Mac").directive("macSpinner", function() {
     }
   };
 });
+
 
 angular.module("Mac").directive("macTable", [
   "$rootScope", "$compile", "$filter", "util", function($rootScope, $compile, $filter, util) {
@@ -18674,6 +24973,7 @@ angular.module("Mac").directive("macTable", [
     };
   }
 ]);
+
 var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 angular.module("Mac").directive("macTagAutocomplete", [
@@ -18795,6 +25095,7 @@ angular.module("Mac").directive("macTagAutocomplete", [
     };
   }
 ]);
+
 var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 angular.module("Mac").directive("macTagInput", [
@@ -18865,6 +25166,7 @@ angular.module("Mac").directive("macTagInput", [
     };
   }
 ]);
+
 
 angular.module("Mac").directive("macTime", [
   "util", "keys", "$filter", function(util, keys, $filter) {
@@ -19036,6 +25338,7 @@ angular.module("Mac").directive("macTime", [
     };
   }
 ]);
+
 var module;
 
 module = angular.module("Mac");
@@ -19144,6 +25447,7 @@ module.controller("ExampleController", [
     return $scope.startTime = "11:59 AM";
   }
 ]);
+
 var module;
 
 module = angular.module("Mac");
@@ -19190,6 +25494,7 @@ module.filter("false", function() {
   };
 });
 
+
 angular.module("Mac").filter("pluralize", [
   "util", function(util) {
     return function(string, count, includeCount) {
@@ -19200,6 +25505,7 @@ angular.module("Mac").filter("pluralize", [
     };
   }
 ]);
+
 
 angular.module("Mac").filter("timestamp", [
   "util", function(util) {
@@ -19247,6 +25553,7 @@ angular.module("Mac").filter("timestamp", [
     };
   }
 ]);
+
 var util,
   __hasProp = {}.hasOwnProperty;
 
