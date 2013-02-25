@@ -137,12 +137,10 @@ module.exports = (grunt) ->
     #
     clean: ["tmp"]
 
-    ###
-    uglify
+    uglify:
       dist:
         files:
           "lib/<%= pkg.name %>.min.js": "lib/<%= pkg.name %>.js"
-    ###
 
     #
     # watch section
@@ -203,7 +201,7 @@ module.exports = (grunt) ->
         done()
 
   grunt.registerTask "deploy", "Build and copy to lib/",
-    ["compile", "copy", "embed:html", "update:component"]
+    ["compile", "copy", "embed:html", "update:component", "uglify"]
 
   grunt.registerTask "compile", "Compile files",[
     "coffee"
