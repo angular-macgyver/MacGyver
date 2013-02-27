@@ -34,6 +34,9 @@
 ## - mac-table-allow-reorder:     Allow user to click on the header to reorder rows                (default true)
 ## - mac-table-object-prefix:     Useful when using backbone object where data is in attributes    (default "")
 ## - mac-table-calculate-total-locally: A boolean value to determine if total should be calculated (default false)
+## - mac-table-auto-height:       Boolean value to determine if the height should readjust when
+##                                the number of data rows is less than display rows                (default true)
+## - mac-table-show-loader:       Boolean value to determine if loading spinner should be shown    (default true)
 ##
 ## @attributes (cell)
 ## - column:  Column name
@@ -79,6 +82,8 @@ angular.module("Mac").directive "macTable", [
         objectPrefix:          ""
         calculateTotalLocally: false
         fluidWidth:            false
+        autoHeight:            true
+        showLoader:            true
 
       transcludedBlock = $(".mac-table-transclude", element)
       headerBlock      = $(".mac-table-header", element)
@@ -394,7 +399,7 @@ angular.module("Mac").directive "macTable", [
         #
         $scope.getTableCss = ->
           dataLength      = $scope.data?.length or 0
-          totalRows       = if dataLength is 0
+          totalRows       = if dataLength is 0 or not opts.autoHeight
                               opts.numDisplayRows
                             else
                               Math.min dataLength, opts.numDisplayRows
@@ -548,7 +553,7 @@ angular.module("Mac").directive "macTable", [
 
           setTimeout ( ->
             dataLength = $scope.data?.length or 0
-            numRows    = if dataLength is 0
+            numRows    = if dataLength is 0 or not opts.autoHeight
                            opts.numDisplayRows
                          else
                            Math.min dataLength, opts.numDisplayRows
