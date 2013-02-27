@@ -24,7 +24,7 @@ module.controller "ExampleController", ["$scope", ($scope) ->
 
       $scope.data.push obj
     $scope.$digest()
-  ), 5000
+  ), 2500
 
   $scope.createRow = (event) ->
     event.stopPropagation()
@@ -33,6 +33,9 @@ module.controller "ExampleController", ["$scope", ($scope) ->
   $scope.loadMoreRows = ->
     event.stopPropagation()
     alert "Loading 20 more rows"
+
+  $scope.getRandomText = ->
+    "Random Text"
 
   # Columns to display and their order
   $scope.columnOrder = ["Name", "anotherName", "d", "c", "b", "Created"]
