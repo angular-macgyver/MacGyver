@@ -81,7 +81,12 @@ util.factory "util", ->
   extendAttributes: (prefix, defaults, attributes) ->
     output = {}
     for own key, value of defaults
-      output[key] = attributes["#{prefix}#{@capitalize key}"] or value
+      macKey = "#{prefix}#{@capitalize key}"
+      output[key] =
+        if attributes[macKey]?
+          attributes[macKey] or true
+        else
+          value
 
       # Convert to true boolean if passing in boolean string
       if output[key] in ["true", "false"]
