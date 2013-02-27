@@ -52,10 +52,9 @@ angular.module("Mac").directive "macTable", [
   ($rootScope, $compile, $filter, util) ->
     restrict: "EA"
     scope:
-      data:            "=macTableData"
-      totalData:       "=macTableTotalData"
-      columns:         "=macTableColumns"
-      lockTitleColumn: "@macTableLockFirstColumn"
+      data:      "=macTableData"
+      totalData: "=macTableTotalData"
+      columns:   "=macTableColumns"
     replace:     true
     transclude:  true
     templateUrl: "template/table_view.html"
@@ -103,26 +102,20 @@ angular.module("Mac").directive "macTable", [
       opts.hasTotalFooter = opts.calculateTotalLocally if opts.calculateTotalLocally
 
       cellOuterHeight = opts.rowHeight + opts.cellPadding * 2
-      totalRows       = opts.numDisplayRows
-      totalRows      += opts.hasFooter + opts.hasTotalFooter
-      elementHeight   = cellOuterHeight * totalRows
-      elementHeight  += opts.hasHeader * (opts.headerHeight + 2 * opts.cellPadding + opts.borderWidth)
-      elementHeight  += 2 * opts.borderWidth
-
-      (->
-        # Update the width and height of the whole table
-        width = if opts.fluidWidth then "100%" else (opts.width - 2 * opts.borderWidth)
-        element.css
-          height: elementHeight
-          width:  width
-      )()
 
       ($scope, element, attrs) ->
         # Get all the columns defined in the body template
-        bodyColumns = $(".table-body-template .cell", transcludedBlock).map (i, item) ->
+        bodyTemplateCells = $(".table-body-template .cell", transcludedBlock)
+        if bodyTemplateCells.length is 0
+          throw "Missing cell templates"
+        bodyColumns = bodyTemplateCells.map (i, item) ->
           return $(item).attr "column"
 
-        # Function called when data has been updated and require rendering
+        #
+        # @name render
+        # @description
+        # Called when data has been updated and require rendering
+        #
         render = ->
           if $scope.data? and $scope.tableInitialized
             reOrderingRows()
@@ -133,38 +126,32 @@ angular.module("Mac").directive "macTable", [
 
             $scope.calculateBodyDimension()
 
-            # Recalculate body block width after cells are populated
-            if opts.lockFirstColumn and $scope.columns?
-              firstColumnName = $scope.columns[0]
-
-              unless $scope.columnsCss[firstColumnName]?
-                throw "Missing body template for first column cell '#{firstColumnName}'"
-
-              width           = $scope.columnsCss[firstColumnName]?.width or 0
-              bodyBlock.width element.width() - width
-
+        # Update table when data changes
         $scope.$watch "data",        render
         $scope.$watch "data.length", render
 
+        # Render table when all columns are set
+        # Or when columns change
         $scope.$watch "columns.length", ->
           if $scope.columns?
-            return unless _($scope.columns).every()
-            unless $scope.tableInitialized
-              $scope.renderTable()
-              calculateColumnCss()
+            return               unless _($scope.columns).every()
+            $scope.renderTable() unless $scope.tableInitialized
+
             calculateRowCss()
 
-        $scope.$watch "predicate", (value) ->
-          reOrderingRows() if value?
-
-        $scope.$watch "reverse", (value) ->
-          reOrderingRows() if value?
+        $scope.$watch "predicate", (value) -> reOrderingRows() if value?
+        $scope.$watch "reverse",   (value) -> reOrderingRows() if value?
 
         Object.defineProperty $scope, "total",
           get: ->
             totalKey = if opts.calculateTotalLocally then "localTotal" else "totalData"
             $scope[totalKey]
 
+        #
+        # @name reOrderingRows
+        # @description
+        # Used for reordering all the rows with predicate and reverse variable
+        #
         reOrderingRows = ->
           data               = $scope.data or []
           $scope.orderedRows =
@@ -174,12 +161,18 @@ angular.module("Mac").directive "macTable", [
               data
           updateDisplayRows()
 
+        #
+        # @name updateDisplayRows
+        # @description
+        # Calculate the current scrolling offset and display the correct rows
+        #
         updateDisplayRows = ->
           data               = $scope.orderedRows or []
           scrollTop          = bodyWrapperBlock.scrollTop()
-          index              = Math.floor scrollTop / cellOuterHeight
+          index              = Math.ceil scrollTop / cellOuterHeight
           endIndex           = index + opts.numDisplayRows - 1
-          $scope.displayRows = data[index..endIndex]
+          parent             = $scope.$parent
+          $scope.displayRows = _(data[index..endIndex]).map (value) -> {value, parent}
 
         #
         # @name calculateColumnCss
@@ -315,26 +308,26 @@ angular.module("Mac").directive "macTable", [
         # @params {String} section Table section
         # @return {jQuery Element} template row
         #
-        createRowTemplate = (section="") ->
+        createRowTemplate = (section="", isFirst = false) ->
           rowWidth   = 0
           startIndex = if opts.lockFirstColumn then 1 else 0
-
-          rowTemplates = $(".table-#{section}-template .mac-table-row", transcludedBlock)
 
           # Create template cell with ng-repeat and ng-switch
           cssClass  = "mac-table-#{section}-cell"
           cssClass += " mac-table-cell" unless section is "header"
-          row       = $("<div>").attr
-                        "ng-switch":   ""
-                        "on":          "column"
-                        "ng-repeat":   "column in columns.slice(#{startIndex})"
-                        "data-column": "{{column}}"
-                        "ng-style":    "getColumnCss(column, '#{section}')"
 
-          # Check if row template exist
-          if rowTemplates.length > 0
-            rowTemplate = $(rowTemplates[0]).removeClass "mac-table-row"
-            row.attr "class", rowTemplate.attr("class")
+          # Only repeat columns when the row template is not generated for first column
+          if isFirst
+            row = $("<div>").attr
+              "ng-switch":   "columns[0]"
+              "ng-style":    "getColumnCss(columns[0], '#{section}')"
+              "data-column": "{{columns[0]}}"
+          else
+            row = $("<div>").attr
+              "ng-switch":   "column"
+              "ng-repeat":   "column in columns.slice(#{startIndex})"
+              "ng-style":    "getColumnCss(column, '#{section}')"
+              "data-column": "{{column}}"
 
           row.addClass cssClass
 
@@ -356,7 +349,8 @@ angular.module("Mac").directive "macTable", [
         # A get function for getting CSS object
         # @params {String} column Column name
         # @params {String} section Section for the css
-        # @result {Object} Object with CSS attributes
+        # @params {Boolean} isFirst First column or not
+        # @return {Object} Object with CSS attributes
         #
         $scope.getColumnCss = (column, section) ->
           return {} unless column and column?
@@ -368,7 +362,54 @@ angular.module("Mac").directive "macTable", [
 
           css        = angular.copy $scope.columnsCss[column]
           css.height = opts.headerHeight if section is "header"
+
           return css
+
+        #
+        # @name $scope.getBodyBlockCss
+        # @description
+        # Get the css for the body section
+        # @params {String} section Section of the body
+        # @return {Object} Object with CSS properties
+        #
+        $scope.getBodyBlockCss = (section="body") ->
+          width   = $scope.getColumnCss($scope.columns[0], "body").width or 0
+          width  += 2 * opts.cellPadding if width > 0
+          isFirst = opts.lockFirstColumn
+          if isFirst and width?
+            switch section
+              when "total-footer"
+                "padding-left": width
+              else
+                "margin-left": width
+                width:         element.width() - width
+          else
+            {}
+
+        #
+        # @name $scope.getTableCss
+        # @description
+        # Get table height and width styling
+        # @return {Object} Object with height and width
+        #
+        $scope.getTableCss = ->
+          dataLength      = $scope.data?.length or 0
+          totalRows       = if dataLength is 0
+                              opts.numDisplayRows
+                            else
+                              Math.min dataLength, opts.numDisplayRows
+          totalRows      += opts.hasFooter + opts.hasTotalFooter
+          elementHeight   = cellOuterHeight * totalRows
+          elementHeight  += opts.hasHeader * (opts.headerHeight + 2 * opts.cellPadding + opts.borderWidth)
+          elementHeight  += 2 * opts.borderWidth
+
+          # Update the width and height of the whole table
+          width = if opts.fluidWidth then "100%" else (opts.width - 2 * opts.borderWidth)
+
+          return {
+            height: elementHeight
+            width:  width
+          }
 
         #
         # @name $scope.orderBy
@@ -430,14 +471,16 @@ angular.module("Mac").directive "macTable", [
 
           # Create a separate cell if the first cell is locked
           if opts.lockFirstColumn
-            columnName    = $scope.columns[0]
-            {cell, width} = createHeaderCellTemplate columnName, true
-            cell.addClass("mac-table-locked-cell mac-table-header-cell").attr
-              "ng-style": "getColumnCss('#{columnName}', 'header')"
+            {row, width} = createRowTemplate "header", true
+            row.addClass("mac-cell mac-table-locked-cell mac-table-header-cell").attr
+              "ng-style": "getColumnCss(columns[0], 'header')"
 
-            headerBlock.append cell
+            cellWidth  = $scope.getColumnCss($scope.columns[0], "header").width or 0
+            cellWidth += 2 * opts.cellPadding if cellWidth > 0
 
-            headerRow.css "margin-left", width
+            headerRow.css "margin-left", cellWidth
+
+            headerBlock.append row
 
             # Compile the column to render carets
             $compile(headerBlock) $scope
@@ -471,15 +514,20 @@ angular.module("Mac").directive "macTable", [
           totalRow.append(row).attr "ng-style", "rowCss"
 
           if opts.lockFirstColumn
-            columnName  = $scope.columns[0]
-            {cell, width} = createCellTemplate "total-footer", columnName
-            cell.addClass("mac-table-locked-cell").attr
-              "ng-style": "getColumnCss('#{columnName}', 'total-footer')"
-            totalRow.prepend(cell).css "padding-left", width
+            {row, width} = createRowTemplate "total-footer", true
+
+            row.addClass("mac-cell mac-table-locked-cell").attr
+              "ng-style": "getColumnCss(columns[0], 'total-footer')"
+            totalRow.prepend row
 
           # Compile the column to render carets
           $compile(totalRow) $scope
 
+        #
+        # @name $scope.drawFooter
+        # @description
+        # To create custom footer of the table
+        #
         $scope.drawFooter = ->
           footerTemplate = $(".table-footer-template", transcludedBlock)
           customFooterRow.html(footerTemplate.html()).css
@@ -494,11 +542,17 @@ angular.module("Mac").directive "macTable", [
         #
         $scope.calculateBodyDimension = ->
           data = $scope.data or []
+
           # Calculate the height to display scrollbar correctly
           bodyHeightBlock.height data.length * cellOuterHeight
 
           setTimeout ( ->
-            wrapperHeight = opts.numDisplayRows * cellOuterHeight
+            dataLength = $scope.data?.length or 0
+            numRows    = if dataLength is 0
+                           opts.numDisplayRows
+                         else
+                           Math.min dataLength, opts.numDisplayRows
+            wrapperHeight = numRows * cellOuterHeight
 
             # Check if x-axis scrollbar exist
             if bodyBlock[0].scrollWidth > bodyBlock.width()
@@ -506,6 +560,7 @@ angular.module("Mac").directive "macTable", [
               element.height element.height() + 10 - 2 * opts.borderWidth
 
             bodyWrapperBlock.height wrapperHeight
+            firstColumn.height wrapperHeight if opts.lockFirstColumn
           ), 0
 
         #
@@ -525,40 +580,35 @@ angular.module("Mac").directive "macTable", [
             "ng-repeat": "row in displayRows"
             "ng-cloak":  "ng-cloak"
 
-          # Set the first set of rows to show up
-          endIndex           = opts.numDisplayRows - 1
-          $scope.displayRows = data[..endIndex]
-
           {row, width} = createRowTemplate "body"
 
-          tableRow.append(row).attr
-            "ng-style": "rowCss"
+          tableRow.append(row).attr "ng-style", "rowCss"
+
+          # Check if row template exist
+          rowTemplates = $(".table-body-template .mac-table-row", transcludedBlock)
+          if rowTemplates.length > 0
+            rowTemplate = $(rowTemplates[0]).removeClass "mac-table-row"
+            tableRow.addClass rowTemplate.attr("class")
+
           bodyBlock.append tableRow
 
           # Compile the body block to bind all values correctly
           $compile(bodyBlock) $scope
 
+          updateDisplayRows()
+
           # if the first column is locked, create a separate column with
           # fixed position
           if opts.lockFirstColumn
             fcTableRow    = $(".mac-table-row", firstColumn)
-            columnName    = $scope.columns[0]
-            {cell, width} = createCellTemplate "body", columnName
-            cell.attr
-              "ng-style": "getColumnCss('#{columnName}', 'body')"
-            fcTableRow.attr
-                        "ng-repeat": "row in displayRows"
-                        "ng-cloak":  "ng-cloak"
+            {row, width}  = createRowTemplate "body", true
+
+            fcTableRow.attr("ng-repeat", "row in displayRows")
                       .addClass("{{$index % 2 | boolean:'odd':'even'}}")
-                      .append cell
+                      .append row
+
             # Compile the column to render ng-repeat
             $compile(firstColumn) $scope
-
-            $scope.headerLeftMargin = width
-
-            bodyBlock.css
-              "margin-left": $scope.headerLeftMargin
-              "width":       element.width() - width
 
         # Up and down scrolling
         bodyWrapperBlock.scroll ->
@@ -586,30 +636,26 @@ angular.module("Mac").directive "macTable", [
         # @return {Boolean} true
         #
         $scope.renderTable = ->
+          # Set all required variables
           objectPrefix     = if opts.objectPrefix then "#{opts.objectPrefix}." else ""
           $scope.predicate =  if $scope.columns?.length > 0
                                 "#{objectPrefix}#{$scope.columns[0].toLowerCase()}"
                               else
                                 ""
-
           $scope.orderedRows = $scope.data
 
+          # Calculate each columns styling
           calculateColumnCss()
 
-          if opts.hasHeader
-            $scope.drawHeader()
+          $scope.drawHeader() if opts.hasHeader
 
           $scope.drawBody()
 
           # Only calculate total value if footer exist
-          if opts.calculateTotalLocally
-            $scope.calculateTotal()
+          $scope.calculateTotal() if opts.calculateTotalLocally
 
-          if opts.hasTotalFooter
-            $scope.drawTotalFooter()
-
-          if opts.hasFooter
-            $scope.drawFooter()
+          $scope.drawTotalFooter() if opts.hasTotalFooter
+          $scope.drawFooter()      if opts.hasFooter
 
           $scope.calculateBodyDimension()
 
@@ -636,9 +682,9 @@ angular.module("Mac").directive "macTable", [
           $scope.orderedRows      = []
           $scope.displayRows      = []
           $scope.index            = 0
-          $scope.headerLeftMargin = 0
           $scope.columnsCss       = {}
           $scope.bodyBlockTimeout = null
+          $scope.opts             = opts
 
           $scope.rowCss = {}
 
@@ -646,7 +692,7 @@ angular.module("Mac").directive "macTable", [
           $scope.tableInitialized = false
 
           $scope.predicate = ""
-          $scope.reverse = false
+          $scope.reverse   = false
 
         $scope.reset()
 ]
