@@ -2,6 +2,7 @@ server = require "./server"
 path   = require "path"
 fs     = require "fs"
 wrench = require "wrench"
+_      = require "underscore"
 
 # Path variables
 examplePath    = "example/"
@@ -112,15 +113,17 @@ module.exports = (grunt) ->
     copy:
       images:
         files: [
-          expand: true
-          src: ["example/img/**"]
-          dest: "lib/"
+          expand:  true
+          flatten: true
+          src:     ["example/img/**"]
+          dest:    "lib/img"
         ]
 
       public:
         files: [
-          expand: true
-          src: [
+          expand:  true
+          flatten: true
+          src:     [
             "example/css/<%= pkg.name %>.css"
             "example/js/<%= pkg.name %>.js"
           ]
