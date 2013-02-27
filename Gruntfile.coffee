@@ -19,14 +19,9 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks "grunt-contrib-uglify"
 
   # Internal functions
-  setupStream = (stream) ->
-    stream.setEncoding "utf8"
-    stream.on "data", (data) -> console.log data
-
   spawn = (options, done = ->) ->
-    fork = grunt.util.spawn options, done
-    setupStream fork.stdout
-    setupStream fork.stderr
+    options.opts ?= stdio: "inherit"
+    grunt.util.spawn options, done
 
   grunt.initConfig
     pkg: grunt.file.readJSON "package.json"
