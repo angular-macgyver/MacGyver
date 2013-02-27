@@ -106,7 +106,7 @@ html
                     a.btn(mac-click="createRow($event)") Create Row
                   .cell(column="anotherName", sort-by="a") Second Column
                 .table-body-template
-                  .mac-table-row(class="{{'what'}}")
+                  .mac-table-row(class="{{'true' | true:'hello'}}")
                     .cell(column="Name", style="width: 200px")
                       a(
                         mac-click       = "loadMoreRows()"

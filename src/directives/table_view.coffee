@@ -593,7 +593,8 @@ angular.module("Mac").directive "macTable", [
           rowTemplates = $(".table-body-template .mac-table-row", transcludedBlock)
           if rowTemplates.length > 0
             rowTemplate = $(rowTemplates[0]).removeClass "mac-table-row"
-            tableRow.addClass rowTemplate.attr("class")
+            origClasses = tableRow.attr "class"
+            tableRow.attr "class", [origClasses, rowTemplate.attr("class")].join " "
 
           bodyBlock.append tableRow
 
