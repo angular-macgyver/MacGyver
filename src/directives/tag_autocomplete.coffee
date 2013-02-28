@@ -73,6 +73,10 @@ angular.module("Mac").directive "macTagAutocomplete", [
             .attr
               "placeholder": $scope.placeholder
 
+        # Clicking on the element will focus on input
+        element.click ->
+          $(".text-input", element).focus()
+
         # Getting autocomplete url from parent scope
         Object.defineProperty $scope, "tags",
           get:         -> getSelected $scope.$parent

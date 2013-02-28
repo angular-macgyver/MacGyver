@@ -2073,6 +2073,6 @@ i.mac-icons.mac-icon-time{background-position:-32px 0}
 .mac-tag-autocomplete .tag-list .tag{padding:3px 20px 3px 5px;margin:3px 0 3px 5px;position:relative;float:left;list-style:none;font-size:13px;line-height:13px;-webkit-border-radius:3px;border-radius:3px;-webkit-box-shadow:0 0 2px #fff inset,0 1px 0 rgba(0,0,0,0.05);box-shadow:0 0 2px #fff inset,0 1px 0 rgba(0,0,0,0.05);}
 .mac-tag-autocomplete .tag-list .tag.label{background:-webkit-gradient(linear, left top, left bottom, color-stop(0, #eaf0ff), color-stop(1, #dee8ff));background:-webkit-linear-gradient(top, #eaf0ff 0%, #dee8ff 100%);background:-moz-linear-gradient(top, #eaf0ff 0%, #dee8ff 100%);background:-o-linear-gradient(top, #eaf0ff 0%, #dee8ff 100%);background:-ms-linear-gradient(top, #eaf0ff 0%, #dee8ff 100%);background:linear-gradient(top, #eaf0ff 0%, #dee8ff 100%);border:1px solid #bfc9e1;text-shadow:none;color:#000;font-weight:normal}
 .mac-tag-autocomplete .tag-list .tag .tag-close{position:absolute;right:6px;color:#9da6b7;cursor:pointer}
-.mac-tag-autocomplete .tag-list .tag.input-tag{white-space:nowrap;margin:0;padding:0;}
+.mac-tag-autocomplete .tag-list .tag.input-tag{white-space:nowrap;margin:0 0 0 5px;padding:0;}
 .mac-tag-autocomplete .tag-list .tag.input-tag input.text-input{color:#666;background:transparent;font-size:100%;padding:5px;margin:1px 0;border:0 !important}
 
