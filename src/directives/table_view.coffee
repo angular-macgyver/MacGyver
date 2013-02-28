@@ -17,6 +17,8 @@
 ## - mac-table-data:              Array of objects with table data
 ## - mac-table-total-data:        Object with total value
 ## - mac-table-columns:           Array of columns to display
+## - mac-table-loading:           Boolean to indicate if table is loading data
+##
 ## - mac-table-has-header:        A boolean value to determine if header should be shown           (default true)
 ## - mac-table-has-total-footer:  Boolean determining if footer with total should be shown         (default false)
 ## - mac-table-has-footer:        A boolean value to determine if footer should be shown           (default false)
@@ -37,6 +39,7 @@
 ## - mac-table-auto-height:       Boolean value to determine if the height should readjust when
 ##                                the number of data rows is less than display rows                (default true)
 ## - mac-table-show-loader:       Boolean value to determine if loading spinner should be shown    (default true)
+## - mac-table-empty-text:        Text to show when there is no data in table                      (default "No Data")
 ##
 ## @attributes (cell)
 ## - column:  Column name
@@ -577,7 +580,14 @@ angular.module("Mac").directive "macTable", [
         # Create a separate column if first column is locked with a ng-repeat
         #
         $scope.drawBody = ->
-          data = $scope.orderedRows or []
+          data         = $scope.orderedRows or []
+          extraClasses = ""
+
+          # Check if row template exist
+          rowTemplates = $(".table-body-template .mac-table-row", transcludedBlock)
+          if rowTemplates.length > 0
+            rowTemplate  = $(rowTemplates[0]).removeClass "mac-table-row"
+            extraClasses = rowTemplate.attr("class")
 
           # Create template row with ng-repeat
           tableRow = $("<div>").addClass "mac-table-row {{$index % 2 | boolean:'odd':'even'}}"
@@ -589,12 +599,9 @@ angular.module("Mac").directive "macTable", [
 
           tableRow.append(row).attr "ng-style", "rowCss"
 
-          # Check if row template exist
-          rowTemplates = $(".table-body-template .mac-table-row", transcludedBlock)
-          if rowTemplates.length > 0
-            rowTemplate = $(rowTemplates[0]).removeClass "mac-table-row"
-            origClasses = tableRow.attr "class"
-            tableRow.attr "class", [origClasses, rowTemplate.attr("class")].join " "
+          # Set table row classes
+          origClasses = tableRow.attr "class"
+          tableRow.attr "class", [origClasses, extraClasses].join " "
 
           bodyBlock.append tableRow
 
@@ -610,6 +617,10 @@ angular.module("Mac").directive "macTable", [
             fcTableRow.attr("ng-repeat", "row in displayRows")
                       .addClass("{{$index % 2 | boolean:'odd':'even'}}")
                       .append row
+
+            # Set first column classes
+            origClasses = fcTableRow.attr "class"
+            fcTableRow.attr "class", [origClasses, extraClasses].join " "
 
             # Compile the column to render ng-repeat
             $compile(firstColumn) $scope
