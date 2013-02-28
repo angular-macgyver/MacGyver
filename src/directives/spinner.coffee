@@ -21,7 +21,7 @@
 ## - mac-spinner-shadow:    Whether to render a shadow              (default false)
 ## - mac-spinner-hwaccel:   Whether to use hardware acceleration    (default false)
 ## - mac-spinner-className: The CSS class to assign to the spinner  (default "spinner")
-## - mac-spinner-zIndex:    The z-index (defaults to 2000000000)    (default 2e9)
+## - mac-spinner-z-index:   The z-index (defaults to 2000000000)    (default 2e9)
 ## - mac-spinner-top:       Top position relative to parent in px   (default "auto")
 ## - mac-spinner-left:      Left position relative to parent in px  (default "auto")
 ##
@@ -37,11 +37,15 @@ angular.module("Mac").directive "macSpinner", ->
     options.width = 2
 
     for own key,value of attributes
-      if key.indexOf("mac-spinner") is 0 and key isnt "mac-spinner"
-        k = key.slice("mac-spinner".length + 1)
+      if key.indexOf("macSpinner") is 0 and key isnt "macSpinner"
+        k = key.slice "macSpinner".length
+        k = k[0].toLowerCase() + k[1..]
         if k is "Size"
           options.radius = value / 5
           options.length = value / 5
         else
-          options[k.toLowerCase()] = value
+          if _(+value).isNaN()
+            options[k] = value
+          else
+            options[k] = +value
     spinner = new Spinner(options).spin(element[0])

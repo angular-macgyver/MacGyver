@@ -18129,13 +18129,18 @@ angular.module("Mac").directive("macSpinner", function() {
       for (key in attributes) {
         if (!__hasProp.call(attributes, key)) continue;
         value = attributes[key];
-        if (key.indexOf("mac-spinner") === 0 && key !== "mac-spinner") {
-          k = key.slice("mac-spinner".length + 1);
+        if (key.indexOf("macSpinner") === 0 && key !== "macSpinner") {
+          k = key.slice("macSpinner".length);
+          k = k[0].toLowerCase() + k.slice(1);
           if (k === "Size") {
             options.radius = value / 5;
             options.length = value / 5;
           } else {
-            options[k.toLowerCase()] = value;
+            if (_(+value).isNaN()) {
+              options[k] = value;
+            } else {
+              options[k] = +value;
+            }
           }
         }
       }
