@@ -18627,7 +18627,6 @@ angular.module("Mac").directive("macTable", [
             }
             bodyBlock.append(tableRow);
             $compile(bodyBlock)($scope);
-            updateDisplayRows();
             if (opts.lockFirstColumn) {
               fcTableRow = $(".mac-table-row", firstColumn);
               _ref1 = createRowTemplate("body", true), row = _ref1.row, width = _ref1.width;
