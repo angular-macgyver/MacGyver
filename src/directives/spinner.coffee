@@ -40,7 +40,7 @@ angular.module("Mac").directive "macSpinner", ->
       if key.indexOf("macSpinner") is 0 and key isnt "macSpinner"
         k = key.slice "macSpinner".length
         k = k[0].toLowerCase() + k[1..]
-        if k is "Size"
+        if k is "size"
           options.radius = value / 5
           options.length = value / 5
         else
