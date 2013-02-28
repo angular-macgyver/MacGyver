@@ -601,8 +601,6 @@ angular.module("Mac").directive "macTable", [
           # Compile the body block to bind all values correctly
           $compile(bodyBlock) $scope
 
-          #updateDisplayRows()
-
           # if the first column is locked, create a separate column with
           # fixed position
           if opts.lockFirstColumn
