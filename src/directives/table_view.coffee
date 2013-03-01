@@ -61,6 +61,7 @@ angular.module("Mac").directive "macTable", [
       data:      "=macTableData"
       totalData: "=macTableTotalData"
       columns:   "=macTableColumns"
+      loading:   "=macTableLoading"
     replace:     true
     transclude:  true
     templateUrl: "template/table_view.html"

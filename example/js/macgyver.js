@@ -18175,7 +18175,8 @@ angular.module("Mac").directive("macTable", [
       scope: {
         data: "=macTableData",
         totalData: "=macTableTotalData",
-        columns: "=macTableColumns"
+        columns: "=macTableColumns",
+        loading: "=macTableLoading"
       },
       replace: true,
       transclude: true,
@@ -19117,6 +19118,7 @@ module.controller("ExampleController", [
   "$scope", function($scope) {
     window.s = $scope;
     $scope.data = [];
+    $scope.loading = true;
     setTimeout((function() {
       var i, obj, _i;
       for (i = _i = 1; _i <= 5000; i = ++_i) {
@@ -19134,6 +19136,7 @@ module.controller("ExampleController", [
         };
         $scope.data.push(obj);
       }
+      $scope.loading = false;
       return $scope.$digest();
     }), 2500);
     $scope.createRow = function(event) {
