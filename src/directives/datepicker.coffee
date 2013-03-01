@@ -70,7 +70,7 @@ angular.module("Mac").directive "macDatepicker", [
       opts = util.extendAttributes "macDatepicker", defaults, attrs
 
       inputElement = $("input", element).attr
-        "id":          opts.id
+        "mac-id":          opts.id
         "ng-disabled": "disabled"
 
       ($scope, element, attrs) ->
