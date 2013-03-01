@@ -112,6 +112,8 @@ angular.module("Mac").directive "macTable", [
       cellOuterHeight = opts.rowHeight + opts.cellPadding * 2
 
       ($scope, element, attrs) ->
+        window.s = $scope
+
         # Get all the columns defined in the body template
         bodyTemplateCells = $(".table-body-template .cell", transcludedBlock)
         if bodyTemplateCells.length is 0
@@ -140,7 +142,7 @@ angular.module("Mac").directive "macTable", [
 
         # Render table when all columns are set
         # Or when columns change
-        $scope.$watch "columns.length", ->
+        $scope.$watch "columns", ->
           if $scope.columns?
             return               unless _($scope.columns).every()
             $scope.renderTable() unless $scope.tableInitialized
@@ -504,6 +506,11 @@ angular.module("Mac").directive "macTable", [
                 newOrder = []
                 $(".mac-table-header-cell", headerRow).each (i, e) ->
                   newOrder.push $(e).data "column"
+
+                # First column is locked and need to be readded back to new column order
+                if opts.lockFirstColumn and $scope.columns.length > 0
+                  newOrder.unshift $scope.columns[0]
+
                 $scope.$apply -> $scope.columns = newOrder
 
                 setTimeout (->
