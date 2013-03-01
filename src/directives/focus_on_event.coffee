@@ -2,7 +2,7 @@ module = angular.module "Mac"
 
 module.directive "macFocusOnEvent", ->
   (scope, element, attributes) ->
-    scope.$on attributes.geFocusOnEvent, ->
+    scope.$on attributes.macFocusOnEvent, ->
       setTimeout (->
         x = window.scrollX
         y = window.scrollY
