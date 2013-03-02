@@ -17604,7 +17604,7 @@ angular.module("Mac").directive("macDatepicker", [
         };
         opts = util.extendAttributes("macDatepicker", defaults, attrs);
         inputElement = $("input", element).attr({
-          "id": opts.id,
+          "mac-id": opts.id,
           "ng-disabled": "disabled"
         });
         return function($scope, element, attrs) {
@@ -17994,6 +17994,24 @@ angular.module("Mac").directive("macUpload", [
   }
 ]);
 
+var module;
+
+module = angular.module("Mac");
+
+module.directive("macFocusOnEvent", function() {
+  return function(scope, element, attributes) {
+    return scope.$on(attributes.macFocusOnEvent, function() {
+      return setTimeout((function() {
+        var x, y;
+        x = window.scrollX;
+        y = window.scrollY;
+        element.focus();
+        return window.scrollTo(x, y);
+      }), 0);
+    });
+  };
+});
+
 
 angular.module("Mac").factory("keys", function() {
   return {
@@ -18129,13 +18147,18 @@ angular.module("Mac").directive("macSpinner", function() {
       for (key in attributes) {
         if (!__hasProp.call(attributes, key)) continue;
         value = attributes[key];
-        if (key.indexOf("mac-spinner") === 0 && key !== "mac-spinner") {
-          k = key.slice("mac-spinner".length + 1);
-          if (k === "Size") {
+        if (key.indexOf("macSpinner") === 0 && key !== "macSpinner") {
+          k = key.slice("macSpinner".length);
+          k = k[0].toLowerCase() + k.slice(1);
+          if (k === "size") {
             options.radius = value / 5;
             options.length = value / 5;
           } else {
-            options[k.toLowerCase()] = value;
+            if (_(+value).isNaN()) {
+              options[k] = value;
+            } else {
+              options[k] = +value;
+            }
           }
         }
       }
@@ -18152,7 +18175,8 @@ angular.module("Mac").directive("macTable", [
       scope: {
         data: "=macTableData",
         totalData: "=macTableTotalData",
-        columns: "=macTableColumns"
+        columns: "=macTableColumns",
+        loading: "=macTableLoading"
       },
       replace: true,
       transclude: true,
@@ -18201,6 +18225,7 @@ angular.module("Mac").directive("macTable", [
         cellOuterHeight = opts.rowHeight + opts.cellPadding * 2;
         return function($scope, element, attrs) {
           var bodyColumns, bodyTemplateCells, calculateColumnCss, calculateRowCss, createCellTemplate, createHeaderCellTemplate, createRowTemplate, getTemplateCell, reOrderingRows, render, updateDisplayRows;
+          window.s = $scope;
           bodyTemplateCells = $(".table-body-template .cell", transcludedBlock);
           if (bodyTemplateCells.length === 0) {
             throw "Missing cell templates";
@@ -18220,7 +18245,7 @@ angular.module("Mac").directive("macTable", [
           };
           $scope.$watch("data", render);
           $scope.$watch("data.length", render);
-          $scope.$watch("columns.length", function() {
+          $scope.$watch("columns", function() {
             if ($scope.columns != null) {
               if (!_($scope.columns).every()) {
                 return;
@@ -18558,6 +18583,9 @@ angular.module("Mac").directive("macTable", [
                   $(".mac-table-header-cell", headerRow).each(function(i, e) {
                     return newOrder.push($(e).data("column"));
                   });
+                  if (opts.lockFirstColumn && $scope.columns.length > 0) {
+                    newOrder.unshift($scope.columns[0]);
+                  }
                   $scope.$apply(function() {
                     return $scope.columns = newOrder;
                   });
@@ -18610,8 +18638,14 @@ angular.module("Mac").directive("macTable", [
             }), 0);
           };
           $scope.drawBody = function() {
-            var data, fcTableRow, origClasses, row, rowTemplate, rowTemplates, tableRow, width, _ref, _ref1;
+            var data, extraClasses, fcTableRow, origClasses, row, rowTemplate, rowTemplates, tableRow, width, _ref, _ref1;
             data = $scope.orderedRows || [];
+            extraClasses = "";
+            rowTemplates = $(".table-body-template .mac-table-row", transcludedBlock);
+            if (rowTemplates.length > 0) {
+              rowTemplate = $(rowTemplates[0]).removeClass("mac-table-row");
+              extraClasses = rowTemplate.attr("class");
+            }
             tableRow = $("<div>").addClass("mac-table-row {{$index % 2 | boolean:'odd':'even'}}");
             tableRow.attr({
               "ng-repeat": "row in displayRows",
@@ -18619,19 +18653,16 @@ angular.module("Mac").directive("macTable", [
             });
             _ref = createRowTemplate("body"), row = _ref.row, width = _ref.width;
             tableRow.append(row).attr("ng-style", "rowCss");
-            rowTemplates = $(".table-body-template .mac-table-row", transcludedBlock);
-            if (rowTemplates.length > 0) {
-              rowTemplate = $(rowTemplates[0]).removeClass("mac-table-row");
-              origClasses = tableRow.attr("class");
-              tableRow.attr("class", [origClasses, rowTemplate.attr("class")].join(" "));
-            }
+            origClasses = tableRow.attr("class");
+            tableRow.attr("class", [origClasses, extraClasses].join(" "));
             bodyBlock.append(tableRow);
             $compile(bodyBlock)($scope);
-            updateDisplayRows();
             if (opts.lockFirstColumn) {
               fcTableRow = $(".mac-table-row", firstColumn);
               _ref1 = createRowTemplate("body", true), row = _ref1.row, width = _ref1.width;
               fcTableRow.attr("ng-repeat", "row in displayRows").addClass("{{$index % 2 | boolean:'odd':'even'}}").append(row);
+              origClasses = fcTableRow.attr("class");
+              fcTableRow.attr("class", [origClasses, extraClasses].join(" "));
               return $compile(firstColumn)($scope);
             }
           };
@@ -18761,6 +18792,9 @@ angular.module("Mac").directive("macTagAutocomplete", [
               "placeholder": $scope.placeholder
             });
           }
+          element.click(function() {
+            return $(".text-input", element).focus();
+          });
           Object.defineProperty($scope, "tags", {
             get: function() {
               return getSelected($scope.$parent);
@@ -19084,6 +19118,7 @@ module.controller("ExampleController", [
   "$scope", function($scope) {
     window.s = $scope;
     $scope.data = [];
+    $scope.loading = true;
     setTimeout((function() {
       var i, obj, _i;
       for (i = _i = 1; _i <= 5000; i = ++_i) {
@@ -19101,6 +19136,7 @@ module.controller("ExampleController", [
         };
         $scope.data.push(obj);
       }
+      $scope.loading = false;
       return $scope.$digest();
     }), 2500);
     $scope.createRow = function(event) {
