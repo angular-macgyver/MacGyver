@@ -6,29 +6,32 @@ html
       link(href='//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css', rel='stylesheet')
       link(href='css/vendor.css', rel='stylesheet')
       link(href='css/MacGyver.css', rel='stylesheet')
-      style(type='text/css')
-        body {padding: 40px 0px 100px 0px;}
-        section {padding-top: 30px;}
-        .mac-table .btn {line-height: 11px; float: right;}
-        .docs-example {min-height: 25px;}
-  body(ng-app='Mac')
+
+  body(ng-app="Mac", data-spy="scroll", data-target="#nav", data-offset="90")
     .container
       .row
         #nav.span2
-          ul.nav.nav-tabs.nav-stacked
+          ul.nav.nav-list.docs-sidenav(data-spy="affix", data-offset-top="0")
+            li: a(href="#mac-click") Mac Click
+            li: a(href="#autocomplete") Autocomplete
+            li: a(href="#tag-autocomplete") Tag Autocomplete
+            li: a(href="#datepicker") Date Picker
+            li: a(href="#time-input") Time Input
             li: a(href='#table-view') Table View
-            li: a(href='#') Tag Input
+            li: a(href='#tag-input') Tag Input
             li: a(href='#spinner') Spinner
+            li: a(href="#blur") Blur
+            li: a(href="#file-upload") File Upload
 
         #example.span10(ng-controller='ExampleController')
 
-          section
-            .page-header: h1 Buttons!
-            h2 Example
+          section#mac-click
+            .page-header: h1 Mac-click
+            h3 Example
             .docs-example
               .btn(mac-click="what()") Button
 
-          section
+          section#autocomplete
             .page-header: h1 Autocomplete
             h2 Example
             .docs-example
@@ -39,7 +42,7 @@ html
                 mac-autocomplete-placeholder = "'Autocomplete'"
               )
 
-          section
+          section#tag-autocomplete
             .page-header: h1 Tag Autocomplete
             h2 Example
             .docs-example
@@ -65,7 +68,7 @@ html
                 mac-tag-autocomplete-on-enter    = "tagAutocompleteOnSelected(item)"
               )
 
-          section
+          section#datepicker
             .page-header: h1 Datepicker
             h2 Example
             .docs-example
@@ -74,7 +77,7 @@ html
                 mac-datepicker-model    = "startDate"
               )
 
-          section
+          section#time-input
             .page-header: h1 Time input
             h2 Example
             .docs-example
@@ -83,7 +86,7 @@ html
                 mac-time-model = "startTime"
               )
 
-          section
+          section#table-view
             .page-header: h1 Table view
             h2 Example
             .docs-example
@@ -104,7 +107,6 @@ html
               )
                 .table-header-template
                   .cell(column="Name") Name
-                    a.btn(mac-click="createRow($event)") Create Row
                   .cell(column="anotherName", sort-by="a") Second Column
                 .table-body-template
                   .mac-table-row(class="{{'true' | true:'hello'}}")
@@ -125,7 +127,7 @@ html
                   .cell(column="Name") {{ "Row" | pluralize: data.length}}
                   .cell(column="b") {{ total.b | currency}}
 
-          section
+          section#tag-input
             .page-header: h1 Tag Input
             h2 Example
             .docs-example
@@ -137,19 +139,19 @@ html
                 mac-tag-input-label       = "name"
               )
 
-          section
+          section#spinner
             .page-header: h1 Spinner
             h2 Example
             .docs-example
               div(mac-spinner)
 
-          section
+          section#blur
             .page-header: h1 Blur
             h2 Example
             .docs-example
               input(type="text", mac-model-blur="onTextBlur()")
 
-          section
+          section#file-upload
             .page-header: h1 File Upload
             h2 Example
             .docs-example.example-hit-area
@@ -172,5 +174,6 @@ html
     script(src='//cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js', type='text/javascript')
     script(src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.3/underscore-min.js", text="text/javascript")
     script(src='//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/bootstrap.js', type="text/javascript")
+    script(src="//cdnjs.cloudflare.com/ajax/libs/prettify/r224/prettify.js", type="text/javascript")
     script(src='js/vendor.js', type="text/javascript")
     script(src='js/macgyver.js', type="text/javascript")
