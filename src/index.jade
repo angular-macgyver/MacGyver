@@ -10,7 +10,7 @@ html
   body(ng-app="Mac", data-spy="scroll", data-target="#nav", data-offset="90")
     .container
       .row
-        #nav.span2
+        #nav.span3
           ul.nav.nav-list.docs-sidenav(data-spy="affix", data-offset-top="0")
             li: a(href="#mac-click") Mac Click
             li: a(href="#autocomplete") Autocomplete
@@ -23,7 +23,7 @@ html
             li: a(href="#blur") Blur
             li: a(href="#file-upload") File Upload
 
-        #example.span10(ng-controller='ExampleController')
+        #example.span9(ng-controller='ExampleController')
 
           section#mac-click
             .page-header: h1 Mac-click
