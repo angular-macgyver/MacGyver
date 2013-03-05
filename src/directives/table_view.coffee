@@ -113,8 +113,6 @@ angular.module("Mac").directive "macTable", [
       cellOuterHeight = opts.rowHeight + opts.cellPadding * 2
 
       ($scope, element, attrs) ->
-        window.s = $scope
-
         # Get all the columns defined in the body template
         bodyTemplateCells = $(".table-body-template .cell", transcludedBlock)
         if bodyTemplateCells.length is 0

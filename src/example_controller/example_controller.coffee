@@ -1,7 +1,6 @@
 module = angular.module("Mac")
 
 module.controller "ExampleController", ["$scope", ($scope) ->
-  window.s = $scope
   # Table view section
   # Data for table view
   # Current generating 10000 rows of entries to make sure table view can handle large
@@ -35,9 +34,6 @@ module.controller "ExampleController", ["$scope", ($scope) ->
   $scope.loadMoreRows = ->
     event.stopPropagation()
     alert "Loading 20 more rows"
-
-  $scope.getRandomText = ->
-    "Random Text"
 
   # Columns to display and their order
   $scope.columnOrder = ["Name", "anotherName", "d", "c", "b", "Created"]
