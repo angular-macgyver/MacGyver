@@ -18225,7 +18225,6 @@ angular.module("Mac").directive("macTable", [
         cellOuterHeight = opts.rowHeight + opts.cellPadding * 2;
         return function($scope, element, attrs) {
           var bodyColumns, bodyTemplateCells, calculateColumnCss, calculateRowCss, createCellTemplate, createHeaderCellTemplate, createRowTemplate, getTemplateCell, reOrderingRows, render, updateDisplayRows;
-          window.s = $scope;
           bodyTemplateCells = $(".table-body-template .cell", transcludedBlock);
           if (bodyTemplateCells.length === 0) {
             throw "Missing cell templates";
@@ -19116,7 +19115,6 @@ module = angular.module("Mac");
 
 module.controller("ExampleController", [
   "$scope", function($scope) {
-    window.s = $scope;
     $scope.data = [];
     $scope.loading = true;
     setTimeout((function() {
@@ -19146,9 +19144,6 @@ module.controller("ExampleController", [
     $scope.loadMoreRows = function() {
       event.stopPropagation();
       return alert("Loading 20 more rows");
-    };
-    $scope.getRandomText = function() {
-      return "Random Text";
     };
     $scope.columnOrder = ["Name", "anotherName", "d", "c", "b", "Created"];
     $scope.editableTest = "Hello";
