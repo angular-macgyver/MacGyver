@@ -8,6 +8,12 @@ util = angular.module "Mac.Util", []
 
 # Expose an object with a bunch of utility functions on it.
 util.factory "util", ->
+  # Underscore function section
+  ArrayProto    = Array.prototype
+  ObjProto      = Object.prototype
+  FuncProto     = Function.prototype
+  toString      = ObjProto.toString
+  nativeIsArray = Array.isArray
 
   _inflectionConstants:
     uncountables: [
@@ -66,6 +72,8 @@ util.factory "util", ->
 
   capitalize:   (string) -> string[0].toUpperCase() + string[1..]
   uncapitalize: (string) -> string[0].toLowerCase() + string[1..]
+
+  isArray: nativeIsArray or (obj) -> toString.call(obj) is "[object Array]"
 
   ##
   ## @name
