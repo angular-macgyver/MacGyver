@@ -187,16 +187,20 @@ angular.module("Mac").directive "macTable", [
           index   = Math.floor scrollTop / cellOuterHeight
           start   = Math.max 0, index - buffer
 
-          if scroll and (0 <= index < buffer or
-            Math.abs($scope.index - index) < buffer)
-              return 0
+          # Don't update displayRows and scrollTop
+          # If scrolling and
+          # scroll less than buffer or
+          # the first "buffer" rows (there's no upper buffer)
+          if scroll and (Math.abs($scope.index - index) < buffer or
+            (0 <= index < buffer and $scope.index < buffer ))
+              return -1
 
           $scope.index       = index
           endIndex           = index + opts.numDisplayRows - 1 + buffer
           parent             = $scope.$parent
           $scope.displayRows = _(data[start..endIndex]).map (value) -> {value, parent}
 
-          return buffer * cellOuterHeight
+          return start * cellOuterHeight
 
         #
         # @name calculateColumnCss
@@ -657,10 +661,10 @@ angular.module("Mac").directive "macTable", [
           $scope.$apply ->
             upperBuffer = updateDisplayRows true
 
-            if upperBuffer
+            unless upperBuffer is -1
               # Fix the table at the same position
-              bodyBlock.css "top", scrollTop - upperBuffer
-              firstColumn.css "top", scrollTop - upperBuffer if opts.lockFirstColumn
+              bodyBlock.css "top", upperBuffer
+              firstColumn.css "top", upperBuffer if opts.lockFirstColumn
 
         # Left and right scrolling
         bodyBlock.scroll ->

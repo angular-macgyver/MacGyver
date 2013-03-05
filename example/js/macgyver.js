@@ -18291,8 +18291,8 @@ angular.module("Mac").directive("macTable", [
             buffer += buffer % 2;
             index = Math.floor(scrollTop / cellOuterHeight);
             start = Math.max(0, index - buffer);
-            if (scroll && ((0 <= index && index < buffer) || Math.abs($scope.index - index) < buffer)) {
-              return 0;
+            if (scroll && (Math.abs($scope.index - index) < buffer || ((0 <= index && index < buffer) && $scope.index < buffer))) {
+              return -1;
             }
             $scope.index = index;
             endIndex = index + opts.numDisplayRows - 1 + buffer;
@@ -18303,7 +18303,7 @@ angular.module("Mac").directive("macTable", [
                 parent: parent
               };
             });
-            return buffer * cellOuterHeight;
+            return start * cellOuterHeight;
           };
           calculateColumnCss = function() {
             var bodyCell, calculatedWidth, column, numColumns, setWidth, unit, width, widthMatch, _i, _len;
@@ -18689,10 +18689,10 @@ angular.module("Mac").directive("macTable", [
             return $scope.$apply(function() {
               var upperBuffer;
               upperBuffer = updateDisplayRows(true);
-              if (upperBuffer) {
-                bodyBlock.css("top", scrollTop - upperBuffer);
+              if (upperBuffer !== -1) {
+                bodyBlock.css("top", upperBuffer);
                 if (opts.lockFirstColumn) {
-                  return firstColumn.css("top", scrollTop - upperBuffer);
+                  return firstColumn.css("top", upperBuffer);
                 }
               }
             });
