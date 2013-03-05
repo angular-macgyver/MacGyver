@@ -18169,7 +18169,7 @@ angular.module("Mac").directive("macSpinner", function() {
 
 
 angular.module("Mac").directive("macTable", [
-  "$rootScope", "$compile", "$filter", "util", function($rootScope, $compile, $filter, util) {
+  "$compile", "$filter", "util", function($compile, $filter, util) {
     return {
       restrict: "EA",
       scope: {
@@ -18244,8 +18244,8 @@ angular.module("Mac").directive("macTable", [
           };
           $scope.$watch("data", render);
           $scope.$watch("data.length", render);
-          $scope.$watch("columns", function() {
-            if ($scope.columns != null) {
+          $scope.$watch("columns", function(value) {
+            if ((value != null) && util.isArray(value)) {
               if (!_($scope.columns).every()) {
                 return;
               }
@@ -18253,6 +18253,8 @@ angular.module("Mac").directive("macTable", [
                 $scope.renderTable();
               }
               return calculateRowCss();
+            } else if (!util.isArray(value)) {
+              throw "Mac table columns require an array";
             }
           });
           $scope.$watch("predicate", function(value) {
@@ -18278,19 +18280,30 @@ angular.module("Mac").directive("macTable", [
             $scope.orderedRows = opts.allowReorder ? $filter("orderBy")(data, $scope.predicate, $scope.reverse) : data;
             return updateDisplayRows();
           };
-          updateDisplayRows = function() {
-            var data, endIndex, index, parent, scrollTop;
+          updateDisplayRows = function(scroll) {
+            var buffer, data, endIndex, index, parent, scrollTop, start;
+            if (scroll == null) {
+              scroll = false;
+            }
             data = $scope.orderedRows || [];
             scrollTop = bodyWrapperBlock.scrollTop();
-            index = Math.ceil(scrollTop / cellOuterHeight);
-            endIndex = index + opts.numDisplayRows - 1;
+            buffer = Math.floor(opts.numDisplayRows / 2);
+            buffer += buffer % 2;
+            index = Math.floor(scrollTop / cellOuterHeight);
+            start = Math.max(0, index - buffer);
+            if (scroll && ((0 <= index && index < buffer) || Math.abs($scope.index - index) < buffer)) {
+              return 0;
+            }
+            $scope.index = index;
+            endIndex = index + opts.numDisplayRows - 1 + buffer;
             parent = $scope.$parent;
-            return $scope.displayRows = _(data.slice(index, +endIndex + 1 || 9e9)).map(function(value) {
+            $scope.displayRows = _(data.slice(start, +endIndex + 1 || 9e9)).map(function(value) {
               return {
                 value: value,
                 parent: parent
               };
             });
+            return buffer * cellOuterHeight;
           };
           calculateColumnCss = function() {
             var bodyCell, calculatedWidth, column, numColumns, setWidth, unit, width, widthMatch, _i, _len;
@@ -18478,22 +18491,26 @@ angular.module("Mac").directive("macTable", [
             if (section == null) {
               section = "body";
             }
-            width = $scope.getColumnCss($scope.columns[0], "body").width || 0;
-            if (width > 0) {
-              width += 2 * opts.cellPadding;
-            }
-            isFirst = opts.lockFirstColumn;
-            if (isFirst && (width != null)) {
-              switch (section) {
-                case "total-footer":
-                  return {
-                    "padding-left": width
-                  };
-                default:
-                  return {
-                    "margin-left": width,
-                    width: element.width() - width
-                  };
+            if (util.isArray($scope.columns) && $scope.columns.length > 0) {
+              width = $scope.getColumnCss($scope.columns[0], "body").width || 0;
+              if (width > 0) {
+                width += 2 * opts.cellPadding;
+              }
+              isFirst = opts.lockFirstColumn;
+              if (isFirst && (width != null)) {
+                switch (section) {
+                  case "total-footer":
+                    return {
+                      "padding-left": width
+                    };
+                  default:
+                    return {
+                      "margin-left": width,
+                      width: element.width() - width
+                    };
+                }
+              } else {
+                return {};
               }
             } else {
               return {};
@@ -18669,12 +18686,15 @@ angular.module("Mac").directive("macTable", [
             var $this, scrollTop;
             $this = $(this);
             scrollTop = $this.scrollTop();
-            bodyBlock.css("top", scrollTop);
-            if (opts.lockFirstColumn) {
-              firstColumn.css("top", scrollTop);
-            }
             return $scope.$apply(function() {
-              return updateDisplayRows();
+              var upperBuffer;
+              upperBuffer = updateDisplayRows(true);
+              if (upperBuffer) {
+                bodyBlock.css("top", scrollTop - upperBuffer);
+                if (opts.lockFirstColumn) {
+                  return firstColumn.css("top", scrollTop - upperBuffer);
+                }
+              }
             });
           });
           bodyBlock.scroll(function() {
@@ -19328,6 +19348,12 @@ var util,
 util = angular.module("Mac.Util", []);
 
 util.factory("util", function() {
+  var ArrayProto, FuncProto, ObjProto, nativeIsArray, toString;
+  ArrayProto = Array.prototype;
+  ObjProto = Object.prototype;
+  FuncProto = Function.prototype;
+  toString = ObjProto.toString;
+  nativeIsArray = Array.isArray;
   return {
     _inflectionConstants: {
       uncountables: ["sheep", "fish", "moose", "series", "species", "money", "rice", "information", "info", "equipment", "min"],
@@ -19388,6 +19414,9 @@ util.factory("util", function() {
     },
     uncapitalize: function(string) {
       return string[0].toLowerCase() + string.slice(1);
+    },
+    isArray: nativeIsArray || function(obj) {
+      return toString.call(obj) === "[object Array]";
     },
     extendAttributes: function(prefix, defaults, attributes) {
       var key, macKey, output, value, _ref, _ref1;

@@ -2061,7 +2061,7 @@ i.mac-icons.mac-icon-time{background-position:-32px 0}
 .mac-table-container .mac-table-header .mac-cell.resizable,.mac-table-container .mac-table-footer .mac-cell.resizable{border-right:1px solid #000}
 .mac-table-container .mac-table-body-wrapper{overflow-y:auto;overflow-x:hidden;position:relative;width:100%;}
 .mac-table-container .mac-table-body-wrapper .mac-table-body,.mac-table-container .mac-table-body-wrapper .mac-title-column{position:absolute}
-.mac-table-container .mac-table-body-wrapper .mac-table-body{width:100%;overflow:hidden;overflow-x:auto;height:100%}
+.mac-table-container .mac-table-body-wrapper .mac-table-body{width:100%;overflow:hidden;overflow-x:auto}
 .mac-table-container .mac-table-body-wrapper .mac-table-body-height{position:absolute;top:0;width:50px;pointer-events:none}
 .mac-table-container .mac-cell{white-space:nowrap;overflow:hidden;-o-text-overflow:ellipsis;text-overflow:ellipsis;width:100%;text-align:left}
 .mac-table-container .mac-table-transclude{display:none}

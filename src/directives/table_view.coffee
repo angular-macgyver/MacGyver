@@ -51,11 +51,10 @@
 ##
 
 angular.module("Mac").directive "macTable", [
-  "$rootScope"
   "$compile"
   "$filter"
   "util"
-  ($rootScope, $compile, $filter, util) ->
+  ($compile, $filter, util) ->
     restrict: "EA"
     scope:
       data:      "=macTableData"
@@ -141,12 +140,14 @@ angular.module("Mac").directive "macTable", [
 
         # Render table when all columns are set
         # Or when columns change
-        $scope.$watch "columns", ->
-          if $scope.columns?
+        $scope.$watch "columns", (value) ->
+          if value? and util.isArray(value)
             return               unless _($scope.columns).every()
             $scope.renderTable() unless $scope.tableInitialized
 
             calculateRowCss()
+          else if not util.isArray(value)
+            throw "Mac table columns require an array"
 
         $scope.$watch "predicate", (value) -> reOrderingRows() if value?
         $scope.$watch "reverse",   (value) -> reOrderingRows() if value?
@@ -174,14 +175,28 @@ angular.module("Mac").directive "macTable", [
         # @name updateDisplayRows
         # @description
         # Calculate the current scrolling offset and display the correct rows
+        # @return {Boolean} If displayRows has been updated
         #
-        updateDisplayRows = ->
-          data               = $scope.orderedRows or []
-          scrollTop          = bodyWrapperBlock.scrollTop()
-          index              = Math.ceil scrollTop / cellOuterHeight
-          endIndex           = index + opts.numDisplayRows - 1
+        updateDisplayRows = (scroll = false) ->
+          data      = $scope.orderedRows or []
+          scrollTop = bodyWrapperBlock.scrollTop()
+          # index and endIndex should buffer with opts.numDisplayRows/2
+          buffer  = Math.floor opts.numDisplayRows / 2
+          # Force buffer to be an even number to prevent row color from switching
+          buffer += buffer % 2
+          index   = Math.floor scrollTop / cellOuterHeight
+          start   = Math.max 0, index - buffer
+
+          if scroll and (0 <= index < buffer or
+            Math.abs($scope.index - index) < buffer)
+              return 0
+
+          $scope.index       = index
+          endIndex           = index + opts.numDisplayRows - 1 + buffer
           parent             = $scope.$parent
-          $scope.displayRows = _(data[index..endIndex]).map (value) -> {value, parent}
+          $scope.displayRows = _(data[start..endIndex]).map (value) -> {value, parent}
+
+          return buffer * cellOuterHeight
 
         #
         # @name calculateColumnCss
@@ -382,16 +397,19 @@ angular.module("Mac").directive "macTable", [
         # @return {Object} Object with CSS properties
         #
         $scope.getBodyBlockCss = (section="body") ->
-          width   = $scope.getColumnCss($scope.columns[0], "body").width or 0
-          width  += 2 * opts.cellPadding if width > 0
-          isFirst = opts.lockFirstColumn
-          if isFirst and width?
-            switch section
-              when "total-footer"
-                "padding-left": width
-              else
-                "margin-left": width
-                width:         element.width() - width
+          if util.isArray($scope.columns) and $scope.columns.length > 0
+            width   = $scope.getColumnCss($scope.columns[0], "body").width or 0
+            width  += 2 * opts.cellPadding if width > 0
+            isFirst = opts.lockFirstColumn
+            if isFirst and width?
+              switch section
+                when "total-footer"
+                  "padding-left": width
+                else
+                  "margin-left": width
+                  width:         element.width() - width
+            else
+              {}
           else
             {}
 
@@ -636,11 +654,13 @@ angular.module("Mac").directive "macTable", [
           $this     = $(this)
           scrollTop = $this.scrollTop()
 
-          # Fix the table at the same position
-          bodyBlock.css "top", scrollTop
-          firstColumn.css "top", scrollTop if opts.lockFirstColumn
+          $scope.$apply ->
+            upperBuffer = updateDisplayRows true
 
-          $scope.$apply -> updateDisplayRows()
+            if upperBuffer
+              # Fix the table at the same position
+              bodyBlock.css "top", scrollTop - upperBuffer
+              firstColumn.css "top", scrollTop - upperBuffer if opts.lockFirstColumn
 
         # Left and right scrolling
         bodyBlock.scroll ->
