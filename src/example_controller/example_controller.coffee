@@ -10,7 +10,8 @@ module.controller "ExampleController", ["$scope", ($scope) ->
   # Added setTimeout to mimic ajax delay
   $scope.loading = true
   setTimeout (->
-    for i in [1..5000]
+    #for i in [1..5000]
+    for i in [1..23]
       obj =
         name: "Test " + i
         a: Math.random() * 100000
