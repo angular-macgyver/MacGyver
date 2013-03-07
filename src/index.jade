@@ -22,6 +22,7 @@ html
             li: a(href='#spinner') Spinner
             li: a(href="#blur") Blur
             li: a(href="#file-upload") File Upload
+            li: a(href="#underscore-string") Underscore String Filter
 
         #example.span9(ng-controller='ExampleController')
 
@@ -170,6 +171,11 @@ html
                     mac-upload-enable-on  = "fileUploaderEndabled"
                     mac-upload-drop-zone  = ".example-hit-area"
                   )
+
+          section#underscore-string
+            .page-header: h1 Underscore String
+            h2 Example
+            .docs-example {{ "this_Is_aTestFor_Underscore_string" | underscoreString: "humanize" }}
 
     script(src='//cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js', type='text/javascript')
     script(src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.3/underscore-min.js", text="text/javascript")
