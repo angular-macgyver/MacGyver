@@ -36,7 +36,6 @@ angular.module("Mac").directive "macTagAutocomplete", [
       autocompleteQuery:    "=macTagAutocompleteQuery"
       autocompleteDelay:    "=macTagAutocompleteDelay"
       placeholder:          "=macTagAutocompletePlaceholder"
-      disabled:             "=macTagAutocompleteDisabled"
       autocompleteOnEnter:  "&macTagAutocompleteOnEnter"
 
     templateUrl: "template/tag_autocomplete.html"
@@ -50,7 +49,7 @@ angular.module("Mac").directive "macTagAutocomplete", [
       queryKey    = attr.macTagAutocompleteQuery    or "q"
       delay       = +attr.macTagAutocompleteDelay   or 800
       selectedExp = attr.macTagAutocompleteSelected
-      disabled    = attr.macTagAutocompleteDisabled or false
+      disabled    = attr.macTagAutocompleteDisabled?
 
       getSelected = $parse selectedExp
 
@@ -66,6 +65,9 @@ angular.module("Mac").directive "macTagAutocomplete", [
         "mac-autocomplete-placeholder": "placeholder"
 
       ($scope, element, attrs) ->
+        # Put disabled inside template scope:
+        $scope.disabled = disabled
+
         if $scope.disabled
           $(".no-complete", element)
             .on "keydown", (event) ->

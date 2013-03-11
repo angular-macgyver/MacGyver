@@ -51,7 +51,7 @@ angular.module("Mac").directive "macAutocomplete", [
       labelKey      = attrs.macAutocompleteLabel       or "name"
       queryKey      = attrs.macAutocompleteQuery       or "q"
       delay         = +attrs.macAutocompleteDelay      or 800
-      clearOnSelect = attrs.macAutocompleteClearOnSelect is "true"
+      clearOnSelect = attrs.macAutocompleteClearOnSelect?
 
       ($scope, element, attrs) ->
         # Set the placeholder
