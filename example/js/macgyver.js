@@ -13021,38 +13021,65 @@ angular.module("Mac").directive("macTagAutocomplete", [
         autocompleteQuery: "=macTagAutocompleteQuery",
         autocompleteDelay: "=macTagAutocompleteDelay",
         placeholder: "=macTagAutocompletePlaceholder",
-        autocompleteOnEnter: "&macTagAutocompleteOnEnter"
+        autocompleteOnEnter: "&macTagAutocompleteOnEnter",
+        events: "@macTagAutocompleteEvents"
       },
       templateUrl: "template/tag_autocomplete.html",
       replace: true,
-      compile: function(element, attr) {
-        var delay, disabled, getSelected, labelKey, queryKey, selectedExp, tagLabelKey, valueKey;
-        valueKey = attr.macTagAutocompleteValue;
+      compile: function(element, attrs) {
+        var delay, disabled, events, getSelected, labelKey, queryKey, selectedExp, tagLabelKey, textInput, valueKey;
+        valueKey = attrs.macTagAutocompleteValue;
         if (valueKey == null) {
           valueKey = "id";
         }
-        labelKey = attr.macTagAutocompleteLabel;
+        labelKey = attrs.macTagAutocompleteLabel;
         if (labelKey == null) {
           labelKey = "name";
         }
-        queryKey = attr.macTagAutocompleteQuery || "q";
-        delay = +attr.macTagAutocompleteDelay || 800;
-        selectedExp = attr.macTagAutocompleteSelected;
-        disabled = attr.macTagAutocompleteDisabled != null;
+        queryKey = attrs.macTagAutocompleteQuery || "q";
+        delay = +attrs.macTagAutocompleteDelay || 800;
+        selectedExp = attrs.macTagAutocompleteSelected;
+        events = attrs.macTagAutocompleteEvents || "";
+        disabled = attrs.macTagAutocompleteDisabled != null;
         getSelected = $parse(selectedExp);
         tagLabelKey = labelKey === "" ? labelKey : "." + labelKey;
         $(".tag-label", element).text("{{tag" + tagLabelKey + "}}");
-        $(".text-input", element).attr({
+        textInput = $(".text-input", element);
+        textInput.attr({
           "mac-autocomplete-value": valueKey,
           "mac-autocomplete-label": labelKey,
           "mac-autocomplete-query": queryKey,
           "mac-autocomplete-delay": delay,
+          "mac-autocomplete-events": events,
           "mac-autocomplete-placeholder": "placeholder"
         });
         return function($scope, element, attrs) {
+          var attrEvent, el, event, eventFn, _fn, _i, _len, _ref;
           $scope.disabled = disabled;
           if ($scope.disabled) {
-            $(".no-complete", element).on("keydown", function(event) {
+            _ref = events.split(",");
+            _fn = function(eventFn) {
+              return $(".no-complete", element).on(event, function($event) {
+                var expression;
+                expression = $parse(eventFn);
+                return $scope.$apply(function() {
+                  return expression($scope.$parent, {
+                    $event: $event,
+                    item: $scope.textInput
+                  });
+                });
+              });
+            };
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              event = _ref[_i];
+              attrEvent = _.string.capitalize(event);
+              eventFn = attrs["macTagAutocompleteOn" + attrEvent];
+              if (!eventFn) {
+                continue;
+              }
+              _fn(eventFn);
+            }
+            el = $(".no-complete", element).on("keydown", function(event) {
               return $scope.onKeyDown(event, $scope.textInput);
             }).attr({
               "placeholder": $scope.placeholder
@@ -13078,12 +13105,12 @@ angular.module("Mac").directive("macTagAutocomplete", [
             }
           });
           $scope.removeTag = function(tag) {
-            var index, _ref;
+            var index, _ref1;
             index = $scope.tags.indexOf(tag);
             if (index === -1) {
               return;
             }
-            return ([].splice.apply($scope.tags, [index, index - index + 1].concat(_ref = [])), _ref);
+            return ([].splice.apply($scope.tags, [index, index - index + 1].concat(_ref1 = [])), _ref1);
           };
           $scope.onKeyDown = function(event, value) {
             var stroke;
@@ -13110,8 +13137,8 @@ angular.module("Mac").directive("macTagAutocomplete", [
             var existingValues;
             existingValues = _($scope.tags).pluck(valueKey);
             return _(data.data).reject(function(item) {
-              var _ref;
-              return _ref = item[valueKey] || item, __indexOf.call(existingValues, _ref) >= 0;
+              var _ref1;
+              return _ref1 = item[valueKey] || item, __indexOf.call(existingValues, _ref1) >= 0;
             });
           };
           $scope.onSelect = function(item) {
@@ -13446,11 +13473,20 @@ module.controller("ExampleController", [
     $scope.autocompleteUrl = "data.json";
     $scope.tagAutocompleteSelected = [];
     $scope.tagAutocompleteDisabledSelected = [];
+    $scope.tagAutocompleteEvents = [];
     $scope.tagAutocompletePlaceholder = "Hello";
     $scope.tagAutocompleteOnSelected = function(item) {
       return {
         key: item
       };
+    };
+    $scope.tagAutocompleteOnBlur = function(event, item) {
+      return $scope.tagAutocompleteEvents.push({
+        key: item
+      });
+    };
+    $scope.tagAutocompleteOnKeyup = function() {
+      return console.debug("You just typed something");
     };
     $scope.onTextBlur = function() {
       return alert("You just blurred out of text input");
