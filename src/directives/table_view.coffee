@@ -32,6 +32,7 @@
 ## - mac-table-num-display-rows:  The total number of rows to display                              (default 10)
 ## - mac-table-cell-padding:      Should match the css padding value on each cell                  (default 8)
 ## - mac-table-border-width:      Should match the css border width value on each cell             (default 1)
+## - mac-table-bottom-border:     Boolean value to determine if bottom border exist for all rows   (default true)
 ## - mac-table-sortable:          Allow user to change the order of columns                        (default false)
 ## - mac-table-resizable:         Allow each column to be resized by the user                      (default false)
 ## - mac-table-lock-first-column: Lock first column to a static position                           (default false)
@@ -82,6 +83,7 @@ angular.module("Mac").directive "macTable", [
         numDisplayRows:        10
         cellPadding:           8
         borderWidth:           1
+        bottomBorder:          true
         sortable:              false
         resizable:             false
         lockFirstColumn:       false
@@ -115,7 +117,8 @@ angular.module("Mac").directive "macTable", [
       # Total header should show if total is calculated locally
       opts.hasTotalFooter = opts.calculateTotalLocally if opts.calculateTotalLocally
 
-      cellOuterHeight = opts.rowHeight + opts.cellPadding * 2
+      cellOuterHeight  = opts.rowHeight + opts.cellPadding * 2
+      cellOuterHeight += opts.borderWidth * opts.bottomBorder
 
       ($scope, element, attrs) ->
         # Get all the columns defined in the body template
@@ -632,6 +635,7 @@ angular.module("Mac").directive "macTable", [
 
           # Create template row with ng-repeat
           tableRow = $("<div>").addClass "mac-table-row {{$index % 2 | boolean:'odd':'even'}}"
+          tableRow.addClass "bottom-bordered" if opts.bottomBorder
           tableRow.attr
             "ng-repeat": "row in displayRows"
             "ng-cloak":  "ng-cloak"
@@ -658,6 +662,7 @@ angular.module("Mac").directive "macTable", [
             fcTableRow.attr("ng-repeat", "row in displayRows")
                       .addClass("{{$index % 2 | boolean:'odd':'even'}}")
                       .append row
+            fcTableRow.addClass "bottom-bordered" if opts.bottomBorder
 
             # Set first column classes
             origClasses = fcTableRow.attr "class"

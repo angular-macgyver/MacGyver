@@ -23,8 +23,13 @@ border-radius    = 4px
 
     &.even
       background-color even-background
+      &.bottom-bordered
+        border-bottom 1px solid even-background
+
     &.odd
       background-color odd-background
+      &.bottom-bordered
+        border-bottom 1px solid odd-background
 
     .mac-table-cell
       text-align  left
