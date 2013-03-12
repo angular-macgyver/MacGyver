@@ -48,7 +48,17 @@ angular.module("Mac").directive "macUpload", [ () ->
 
           error: (response, status) ->
             if attributes.macUploadError?
-              scope.$apply scope.macUploadError $response: response, $data: response.data, $status: status
+              responseObject = {}
+              for own key, value of response
+                unless typeof value is "function"
+                  responseObject[key] = value
+
+              args =
+                $response: responseObject
+                $data:     response.data
+                $status:   status
+
+              scope.$apply scope.macUploadError args
 
           success: (response, status) ->
             if attributes.macUploadSuccess?
