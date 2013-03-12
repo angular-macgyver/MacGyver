@@ -25,6 +25,8 @@
 ##                                       @params {Object} event jQuery event
 ##                                       @params {String} value Value in the input text
 ##
+## @events
+## - mac-tag-autocomplete-clear-input: $broadcast message; clears text input when received
 ##
 
 angular.module("Mac").directive "macTagAutocomplete", [
@@ -141,4 +143,7 @@ angular.module("Mac").directive "macTagAutocomplete", [
 
         $scope.reset = ->
           $scope.textInput = ""
+
+        $scope.$on "mac-tag-autocomplete-clear-input", ->
+          $(".text-input", element).val ""
 ]
