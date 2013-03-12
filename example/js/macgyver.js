@@ -11685,7 +11685,7 @@ angular.module("Mac").directive("macAutocomplete", [
         labelKey = attrs.macAutocompleteLabel || "name";
         queryKey = attrs.macAutocompleteQuery || "q";
         delay = +attrs.macAutocompleteDelay || 800;
-        clearOnSelect = attrs.macAutocompleteClearOnSelect === "true";
+        clearOnSelect = attrs.macAutocompleteClearOnSelect != null;
         return function($scope, element, attrs) {
           element.attr("placeholder", $scope.placeholder);
           if (attrs.macAutocompleteOnKeyDown) {
@@ -12139,6 +12139,7 @@ angular.module("Mac").directive("macPauseTyping", [
   }
 ]);
 
+var __hasProp = {}.hasOwnProperty;
 
 angular.module("Mac").directive("macUpload", [
   function() {
@@ -12199,12 +12200,22 @@ angular.module("Mac").directive("macUpload", [
               }
             },
             error: function(response, status) {
+              var args, key, responseObject, value;
               if (attributes.macUploadError != null) {
-                return scope.$apply(scope.macUploadError({
-                  $response: response,
+                responseObject = {};
+                for (key in response) {
+                  if (!__hasProp.call(response, key)) continue;
+                  value = response[key];
+                  if (typeof value !== "function") {
+                    responseObject[key] = value;
+                  }
+                }
+                args = {
+                  $response: responseObject,
                   $data: response.data,
                   $status: status
-                }));
+                };
+                return scope.$apply(scope.macUploadError(args));
               }
             },
             success: function(response, status) {
@@ -13010,7 +13021,6 @@ angular.module("Mac").directive("macTagAutocomplete", [
         autocompleteQuery: "=macTagAutocompleteQuery",
         autocompleteDelay: "=macTagAutocompleteDelay",
         placeholder: "=macTagAutocompletePlaceholder",
-        disabled: "=macTagAutocompleteDisabled",
         autocompleteOnEnter: "&macTagAutocompleteOnEnter"
       },
       templateUrl: "template/tag_autocomplete.html",
@@ -13028,7 +13038,7 @@ angular.module("Mac").directive("macTagAutocomplete", [
         queryKey = attr.macTagAutocompleteQuery || "q";
         delay = +attr.macTagAutocompleteDelay || 800;
         selectedExp = attr.macTagAutocompleteSelected;
-        disabled = attr.macTagAutocompleteDisabled || false;
+        disabled = attr.macTagAutocompleteDisabled != null;
         getSelected = $parse(selectedExp);
         tagLabelKey = labelKey === "" ? labelKey : "." + labelKey;
         $(".tag-label", element).text("{{tag" + tagLabelKey + "}}");
@@ -13040,6 +13050,7 @@ angular.module("Mac").directive("macTagAutocomplete", [
           "mac-autocomplete-placeholder": "placeholder"
         });
         return function($scope, element, attrs) {
+          $scope.disabled = disabled;
           if ($scope.disabled) {
             $(".no-complete", element).on("keydown", function(event) {
               return $scope.onKeyDown(event, $scope.textInput);
