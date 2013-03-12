@@ -80,6 +80,9 @@ module.controller "ExampleController", ["$scope", ($scope) ->
   $scope.tagAutocompleteOnKeyup = ->
     console.debug "You just typed something"
 
+  $scope.tagAutocompleteClearText = ->
+    $scope.$broadcast "mac-tag-autocomplete-clear-input"
+
   # Blur section
   # Called with blur directive on blur
   $scope.onTextBlur = ->
