@@ -20,6 +20,10 @@
 ## - mac-tag-autocomplete-on-enter:    When autocomplete is disabled, this function is called on enter
 ##                                     Should return either string, object or boolean. If false, item is not added
 ##                                       @params {String} item User input
+## - mac-tag-autocomplete-events:      a CSV list of events to attach functions to
+## - mac-tag-autocomplete-on-[event]:  the function to be called when specified event is fired
+##                                       @params {Object} event jQuery event
+##                                       @params {String} value Value in the input text
 ##
 ##
 
@@ -37,19 +41,21 @@ angular.module("Mac").directive "macTagAutocomplete", [
       autocompleteDelay:    "=macTagAutocompleteDelay"
       placeholder:          "=macTagAutocompletePlaceholder"
       autocompleteOnEnter:  "&macTagAutocompleteOnEnter"
+      events:               "@macTagAutocompleteEvents"
 
     templateUrl: "template/tag_autocomplete.html"
     replace:     true
 
-    compile: (element, attr) ->
-      valueKey    = attr.macTagAutocompleteValue
+    compile: (element, attrs) ->
+      valueKey    = attrs.macTagAutocompleteValue
       valueKey   ?= "id"
-      labelKey    = attr.macTagAutocompleteLabel
+      labelKey    = attrs.macTagAutocompleteLabel
       labelKey   ?= "name"
-      queryKey    = attr.macTagAutocompleteQuery    or "q"
-      delay       = +attr.macTagAutocompleteDelay   or 800
-      selectedExp = attr.macTagAutocompleteSelected
-      disabled    = attr.macTagAutocompleteDisabled?
+      queryKey    = attrs.macTagAutocompleteQuery    or "q"
+      delay       = +attrs.macTagAutocompleteDelay   or 800
+      selectedExp = attrs.macTagAutocompleteSelected
+      events      = attrs.macTagAutocompleteEvents   or ""
+      disabled    = attrs.macTagAutocompleteDisabled?
 
       getSelected = $parse selectedExp
 
@@ -57,11 +63,13 @@ angular.module("Mac").directive "macTagAutocomplete", [
       tagLabelKey = if labelKey is "" then labelKey else ".#{labelKey}"
       $(".tag-label", element).text "{{tag#{tagLabelKey}}}"
 
-      $(".text-input", element).attr
+      textInput = $(".text-input", element)
+      textInput.attr
         "mac-autocomplete-value":       valueKey
         "mac-autocomplete-label":       labelKey
         "mac-autocomplete-query":       queryKey
         "mac-autocomplete-delay":       delay
+        "mac-autocomplete-events":      events
         "mac-autocomplete-placeholder": "placeholder"
 
       ($scope, element, attrs) ->
@@ -69,7 +77,18 @@ angular.module("Mac").directive "macTagAutocomplete", [
         $scope.disabled = disabled
 
         if $scope.disabled
-          $(".no-complete", element)
+          for event in events.split ","
+            attrEvent = _.string.capitalize event
+            eventFn   = attrs["macTagAutocompleteOn#{attrEvent}"]
+            continue unless eventFn
+
+            do (eventFn) ->
+              $(".no-complete", element).on event, ($event) ->
+                expression = $parse eventFn
+                $scope.$apply ->
+                  expression $scope.$parent, {$event, item: $scope.textInput}
+
+          el = $(".no-complete", element)
             .on "keydown", (event) ->
               $scope.onKeyDown event, $scope.textInput
             .attr

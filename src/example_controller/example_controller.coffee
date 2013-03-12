@@ -66,11 +66,19 @@ module.controller "ExampleController", ["$scope", ($scope) ->
   # Selected tags in tag autocomplete
   $scope.tagAutocompleteSelected         = []
   $scope.tagAutocompleteDisabledSelected = []
+  $scope.tagAutocompleteEvents           = []
 
   $scope.tagAutocompletePlaceholder = "Hello"
 
   $scope.tagAutocompleteOnSelected = (item) ->
     return {key: item}
+
+  $scope.tagAutocompleteOnBlur = (event, item) ->
+    # Tokenize on blur
+    $scope.tagAutocompleteEvents.push key: item
+
+  $scope.tagAutocompleteOnKeyup = ->
+    console.debug "You just typed something"
 
   # Blur section
   # Called with blur directive on blur
