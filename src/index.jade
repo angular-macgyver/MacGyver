@@ -67,6 +67,20 @@ html
                 mac-tag-autocomplete-disabled
               )
 
+            h2 Example with custom actions on events
+            .docs-example
+              mac-tag-autocomplete(
+                mac-tag-autocomplete-selected    = "tagAutocompleteEvents"
+                mac-tag-autocomplete-placeholder = "tagAutocompletePlaceholder"
+                mac-tag-autocomplete-value       = "key"
+                mac-tag-autocomplete-label       = "key"
+                mac-tag-autocomplete-on-enter    = "tagAutocompleteOnSelected(item)"
+                mac-tag-autocomplete-events      = "blur,keyup"
+                mac-tag-autocomplete-on-blur     = "tagAutocompleteOnBlur($event, item)"
+                mac-tag-autocomplete-on-keyup    = "tagAutocompleteOnKeyup()"
+                mac-tag-autocomplete-disabled
+              )
+
           section#datepicker
             .page-header: h1 Datepicker
             h2 Example
