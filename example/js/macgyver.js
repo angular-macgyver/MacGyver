@@ -12437,10 +12437,13 @@ angular.module("Mac").directive("macTable", [
           width: 800,
           columnWidth: 140,
           headerHeight: 20,
+          totalFooterHeight: 20,
+          footerHeight: 20,
           rowHeight: 20,
           numDisplayRows: 10,
           cellPadding: 8,
           borderWidth: 1,
+          bottomBorder: true,
           sortable: false,
           resizable: false,
           lockFirstColumn: false,
@@ -12466,10 +12469,17 @@ angular.module("Mac").directive("macTable", [
         if (attrs.macTableHeaderHeight == null) {
           opts.headerHeight = opts.rowHeight;
         }
+        if (attrs.macTableTotalFooterHeight == null) {
+          opts.totalFooterHeight = opts.rowHeight;
+        }
+        if (attrs.macTableFooterHeight == null) {
+          opts.footerHeight = opts.rowHeight;
+        }
         if (opts.calculateTotalLocally) {
           opts.hasTotalFooter = opts.calculateTotalLocally;
         }
         cellOuterHeight = opts.rowHeight + opts.cellPadding * 2;
+        cellOuterHeight += opts.borderWidth * opts.bottomBorder;
         return function($scope, element, attrs) {
           var bodyColumns, bodyTemplateCells, calculateColumnCss, calculateRowCss, createCellTemplate, createHeaderCellTemplate, createRowTemplate, getTemplateCell, reOrderingRows, render, updateDisplayRows;
           bodyTemplateCells = $(".table-body-template .cell", transcludedBlock);
@@ -12728,9 +12738,18 @@ angular.module("Mac").directive("macTable", [
               return {};
             }
             css = angular.copy($scope.columnsCss[column]);
-            if (section === "header") {
-              css.height = opts.headerHeight;
-            }
+            css.height = (function() {
+              switch (section) {
+                case "header":
+                  return opts.headerHeight;
+                case "total-footer":
+                  return opts.totalFooterHeight;
+                case "footer":
+                  return opts.footerHeight;
+                default:
+                  return css.height;
+              }
+            })();
             return css;
           };
           $scope.getBodyBlockCss = function(section) {
@@ -12764,12 +12783,14 @@ angular.module("Mac").directive("macTable", [
             }
           };
           $scope.getTableCss = function() {
-            var dataLength, elementHeight, totalRows, width, _ref;
+            var dataLength, elementHeight, paddings, totalRows, width, _ref;
             dataLength = ((_ref = $scope.data) != null ? _ref.length : void 0) || 0;
             totalRows = dataLength === 0 || !opts.autoHeight ? opts.numDisplayRows : Math.min(dataLength, opts.numDisplayRows);
-            totalRows += opts.hasFooter + opts.hasTotalFooter;
+            paddings = 2 * opts.cellPadding;
             elementHeight = cellOuterHeight * totalRows;
-            elementHeight += opts.hasHeader * (opts.headerHeight + 2 * opts.cellPadding + opts.borderWidth);
+            elementHeight += opts.hasFooter * (opts.footerHeight + paddings);
+            elementHeight += opts.hasTotalFooter * (opts.totalFooterHeight + paddings);
+            elementHeight += opts.hasHeader * (opts.headerHeight + paddings + opts.borderWidth);
             elementHeight += 2 * opts.borderWidth;
             width = opts.fluidWidth ? "100%" : opts.width - 2 * opts.borderWidth;
             return {
@@ -12910,6 +12931,9 @@ angular.module("Mac").directive("macTable", [
               extraClasses = rowTemplate.attr("class");
             }
             tableRow = $("<div>").addClass("mac-table-row {{$index % 2 | boolean:'odd':'even'}}");
+            if (opts.bottomBorder) {
+              tableRow.addClass("bottom-bordered");
+            }
             tableRow.attr({
               "ng-repeat": "row in displayRows",
               "ng-cloak": "ng-cloak"
@@ -12924,6 +12948,9 @@ angular.module("Mac").directive("macTable", [
               fcTableRow = $(".mac-table-row", firstColumn);
               _ref1 = createRowTemplate("body", true), row = _ref1.row, width = _ref1.width;
               fcTableRow.attr("ng-repeat", "row in displayRows").addClass("{{$index % 2 | boolean:'odd':'even'}}").append(row);
+              if (opts.bottomBorder) {
+                fcTableRow.addClass("bottom-bordered");
+              }
               origClasses = fcTableRow.attr("class");
               fcTableRow.attr("class", [origClasses, extraClasses].join(" "));
               return $compile(firstColumn)($scope);
@@ -13151,9 +13178,12 @@ angular.module("Mac").directive("macTagAutocomplete", [
               return $scope.tags.push(item);
             }
           };
-          return $scope.reset = function() {
+          $scope.reset = function() {
             return $scope.textInput = "";
           };
+          return $scope.$on("mac-tag-autocomplete-clear-input", function() {
+            return $(".text-input", element).val("");
+          });
         };
       }
     };
@@ -13487,6 +13517,9 @@ module.controller("ExampleController", [
     };
     $scope.tagAutocompleteOnKeyup = function() {
       return console.debug("You just typed something");
+    };
+    $scope.tagAutocompleteClearText = function() {
+      return $scope.$broadcast("mac-tag-autocomplete-clear-input");
     };
     $scope.onTextBlur = function() {
       return alert("You just blurred out of text input");
