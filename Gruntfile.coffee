@@ -194,6 +194,8 @@ module.exports = (grunt) ->
 
       newArray = JSON.stringify fileList
       data     = data.replace /"main": \[[^\]]+]/, "\"main\": #{newArray}"
+      data     = data.replace /"name": [^,]+/ , "\"name\": \"#{grunt.config.get("pkg").name}\""
+      data     = data.replace /"version": [^,]+/, "\"version\": \"#{grunt.config.get("pkg").version}\""
 
       fs.writeFile componentFile, data, "utf8", (err, data) ->
         grunt.log.writeln "Updated component.json"
