@@ -26,6 +26,8 @@
 ## - mac-table-fluid-width:       When true, width of the table is 100% of the parent container    (default false)
 ## - mac-table-column-width:      The minimum width of a column                                    (default 140)
 ## - mac-table-header-height:     The height of the header row                                     (default mac-table-row-height)
+## - mac-table-total-footer-height: The height of the total footer row                             (default mac-table-row-height)
+## - mac-table-footer-height:     The height of the footer row                                     (default mac-table-row-height)
 ## - mac-table-row-height:        The height of each row in the table                              (default 20)
 ## - mac-table-num-display-rows:  The total number of rows to display                              (default 10)
 ## - mac-table-cell-padding:      Should match the css padding value on each cell                  (default 8)
@@ -74,6 +76,8 @@ angular.module("Mac").directive "macTable", [
         width:                 800
         columnWidth:           140
         headerHeight:          20
+        totalFooterHeight:     20
+        footerHeight:          20
         rowHeight:             20
         numDisplayRows:        10
         cellPadding:           8
@@ -103,8 +107,10 @@ angular.module("Mac").directive "macTable", [
       # Calculate all the options based on defaults
       opts = util.extendAttributes "macTable", defaults, attrs
 
-      # Default header height to row height if header height is not defined
-      opts.headerHeight   = opts.rowHeight unless attrs.macTableHeaderHeight?
+      # Default special row height to row height if height is not defined
+      opts.headerHeight      = opts.rowHeight unless attrs.macTableHeaderHeight?
+      opts.totalFooterHeight = opts.rowHeight unless attrs.macTableTotalFooterHeight?
+      opts.footerHeight      = opts.rowHeight unless attrs.macTableFooterHeight?
 
       # Total header should show if total is calculated locally
       opts.hasTotalFooter = opts.calculateTotalLocally if opts.calculateTotalLocally
@@ -389,7 +395,12 @@ angular.module("Mac").directive "macTable", [
             return {}
 
           css        = angular.copy $scope.columnsCss[column]
-          css.height = opts.headerHeight if section is "header"
+          css.height =
+            switch section
+              when "header"       then opts.headerHeight
+              when "total-footer" then opts.totalFooterHeight
+              when "footer"       then opts.footerHeight
+              else                     css.height
 
           return css
 
@@ -429,10 +440,12 @@ angular.module("Mac").directive "macTable", [
                               opts.numDisplayRows
                             else
                               Math.min dataLength, opts.numDisplayRows
-          totalRows      += opts.hasFooter + opts.hasTotalFooter
-          elementHeight   = cellOuterHeight * totalRows
-          elementHeight  += opts.hasHeader * (opts.headerHeight + 2 * opts.cellPadding + opts.borderWidth)
-          elementHeight  += 2 * opts.borderWidth
+          paddings       = 2 * opts.cellPadding
+          elementHeight  = cellOuterHeight * totalRows
+          elementHeight += opts.hasFooter * (opts.footerHeight + paddings)
+          elementHeight += opts.hasTotalFooter * (opts.totalFooterHeight + paddings)
+          elementHeight += opts.hasHeader * (opts.headerHeight + paddings + opts.borderWidth)
+          elementHeight += 2 * opts.borderWidth
 
           # Update the width and height of the whole table
           width = if opts.fluidWidth then "100%" else (opts.width - 2 * opts.borderWidth)
