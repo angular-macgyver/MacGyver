@@ -46,7 +46,7 @@ angular.module("Mac").directive "macTime", [
           markers: -> inputDOM.setSelectionRange 6, 8
 
         $scope.$watch "model", (value) ->
-          element.val value if value?
+          updateScopeTime() if value?
 
         $scope.reset = ->
           $scope.time = new Date()
