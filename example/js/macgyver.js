@@ -12153,7 +12153,7 @@ angular.module("Mac").directive("macUpload", [
         macUploadDisableOn: "=macUploadDisableOn"
       },
       link: function(scope, element, attributes) {
-        var disableOn, disabled, enableOn;
+        var disableOn, disabled, enableOn, parent;
         if (attributes.macUploadDisableOn != null) {
           disableOn = attributes.macUploadDisableOn;
         }
@@ -12183,11 +12183,13 @@ angular.module("Mac").directive("macUpload", [
             return element.fileupload("enable");
           });
         }
+        parent = element.parent();
         return scope.$watch("macUploadRoute", function(route) {
-          var options;
+          var input, options;
           if (disabled) {
             return;
           }
+          input = parent.find("input");
           options = {
             url: route,
             replaceFileInput: true,
@@ -12229,8 +12231,8 @@ angular.module("Mac").directive("macUpload", [
             }
           };
           options.dropZone = attributes.macUploadDropZone != null ? $(attributes.macUploadDropZone) : null;
-          element.fileupload(options);
-          return element.fileupload({
+          input.fileupload(options);
+          return input.fileupload({
             add: function(event, data) {
               return data.submit();
             }
