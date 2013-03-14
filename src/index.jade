@@ -61,9 +61,8 @@ html
               mac-tag-autocomplete(
                 mac-tag-autocomplete-selected    = "tagAutocompleteDisabledSelected"
                 mac-tag-autocomplete-placeholder = "tagAutocompletePlaceholder"
-                mac-tag-autocomplete-value       = "key"
-                mac-tag-autocomplete-label       = "key"
-                mac-tag-autocomplete-on-enter    = "tagAutocompleteOnSelected(item)"
+                mac-tag-autocomplete-value       = ""
+                mac-tag-autocomplete-label       = ""
                 mac-tag-autocomplete-disabled
               )
 
@@ -144,6 +143,7 @@ html
 
           section#tag-input
             .page-header: h1 Tag Input
+            p Proxy directive to mac tag autocomplete
             h2 Example
             .docs-example
               mac-tag-input(
@@ -153,7 +153,6 @@ html
                 mac-tag-input-value       = "id"
                 mac-tag-input-label       = "name"
               )
-
           section#spinner
             .page-header: h1 Spinner
             h2 Example

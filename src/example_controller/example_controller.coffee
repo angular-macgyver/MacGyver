@@ -106,6 +106,6 @@ module.controller "ExampleController", ["$scope", ($scope) ->
     console.log "success"
 
   $scope.startDate = "01/01/2013"
-  $scope.startTime = "11:59 AM"
+  $scope.startTime = "04:42 PM"
 
 ]
