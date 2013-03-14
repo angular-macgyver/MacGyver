@@ -36,8 +36,11 @@ angular.module("Mac").directive "macUpload", [ () ->
       scope.$on(disableOn, -> element.fileupload "disable") if disableOn?
       scope.$on(enableOn,  -> element.fileupload "enable")  if enableOn?
 
+      parent = element.parent()
+
       scope.$watch "macUploadRoute", (route) ->
         return if disabled
+        input = parent.find "input"
         options =
           url:              route
           replaceFileInput: true
@@ -66,9 +69,9 @@ angular.module("Mac").directive "macUpload", [ () ->
 
         options.dropZone = if attributes.macUploadDropZone? then $(attributes.macUploadDropZone) else null
 
-        element.fileupload options
+        input.fileupload options
 
-        element.fileupload(
+        input.fileupload(
           add: (event, data) ->
             data.submit()
         )
