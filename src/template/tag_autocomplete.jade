@@ -1,19 +1,19 @@
 .mac-tag-autocomplete
   ul.tag-list
-    li.tag.label(ng-repeat="tag in tags")
-      .tag-close(ng-click="removeTag(tag)") &times;
+    li.tag.label(ng-repeat="tag in selected")
+      .tag-close(ng-click="selected.splice($index, 1)") &times;
       span.tag-label
-    li.tag.input-tag
-      span(ng-show="disabled")
+    li.tag.input-tag(ng-switch="disabled")
+      span(ng-switch-when="true")
         input.text-input.no-complete(
-          type     = "text"
-          ng-model = "textInput"
+          type        = "text"
+          placeholder = "{{placeholder}}"
         )
-      span(ng-hide="disabled")
-        mac-autocomplete.text-input(
-          mac-autocomplete-url         = "autocompleteUrl"
+      span(ng-switch-when="false")
+        mac-autocomplete.text-input.mac-autocomplete(
           mac-autocomplete-on-select   = "onSelect(selected)"
           mac-autocomplete-on-success  = "onSuccess(data)"
           mac-autocomplete-on-key-down = "onKeyDown(event, value)"
+          mac-autocomplete-placeholder = "placeholder"
           mac-autocomplete-clear-on-select
         )

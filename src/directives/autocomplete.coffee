@@ -29,12 +29,14 @@
 ## - mac-autocomplete-delay:           time delayed on fetching autocomplete data after keyup (default 800)
 ## - mac-autocomplete-clear-on-select: Clear text input on select                             (default false)
 ## - mac-autocomplete-placeholder:     Placeholder text of the text input                     (default "")
+## -
 ##
 
 angular.module("Mac").directive "macAutocomplete", [
-  "$http",
-  "$parse",
-  ($http, $parse) ->
+  "$http"
+  "$parse"
+  "$filter"
+  ($http, $parse, $filter) ->
     restrict:    "E"
     templateUrl: "template/autocomplete.html"
     replace:     true
@@ -45,26 +47,24 @@ angular.module("Mac").directive "macAutocomplete", [
       onError:         "&macAutocompleteOnError"
       onKeyDown:       "&macAutocompleteOnKeyDown"
       placeholder:     "=macAutocompletePlaceholder"
+      source:          "=macAutocompleteSource"
 
     compile: (element, attrs) ->
       valueKey      = attrs.macAutocompleteValue       or "id"
       labelKey      = attrs.macAutocompleteLabel       or "name"
       queryKey      = attrs.macAutocompleteQuery       or "q"
       delay         = +attrs.macAutocompleteDelay      or 800
+      events        = attrs.macAutocompleteEvents      or ""
       clearOnSelect = attrs.macAutocompleteClearOnSelect?
 
       ($scope, element, attrs) ->
-        # Set the placeholder
-        element.attr "placeholder", $scope.placeholder
-
         if attrs.macAutocompleteOnKeyDown
           element.bind "keydown", (event) ->
             $scope.onKeyDown {event, value: $(this).val()}
 
-        element.autocomplete
-          delay:     delay
-          autoFocus: true
-          source: (req, resp) ->
+        # Used by jquery ui autocomplete to populate options
+        sourceFn = (req, resp) ->
+          if attrs.macAutocompleteUrl?
             options =
               method: "GET"
               url:    $scope.autocompleteUrl
@@ -74,19 +74,22 @@ angular.module("Mac").directive "macAutocomplete", [
             $http(options)
               .success (data, status, headers, config) ->
                   if attrs.macAutocompleteOnSuccess?
-                    list = $scope.onSuccess {data, status, headers}
+                    fetchedList = $scope.onSuccess {data, status, headers}
 
-                  list ?= data.data
+                  fetchedList ?= data.data
 
-                  # convert tags to jquery ui autocomplete format
-                  resp _(list).map (item) ->
-                    label = value = if labelKey? then item[labelKey] else item
-                    return {label, value}
-                  # store the current data for revert lookup
-                  $scope.currentAutocomplete = data.data
+                  resp $scope.updateList fetchedList
               .error (data, status, headers, config) ->
                 if attrs.macAutocompleteOnError?
                   $scope.onError {data, status, headers}
+          else
+            list = $scope.updateList($scope.source or [])
+            resp $filter("filter") list, req.term
+
+        element.autocomplete
+          delay:     delay
+          autoFocus: true
+          source:    sourceFn
 
           select: (event, ui) ->
             $scope.$apply ->
@@ -98,7 +101,19 @@ angular.module("Mac").directive "macAutocomplete", [
                 element.val ""
               ), 0
 
+        #
+        # Angular event listener section
+        #
         $scope.$on "resetAutocomplete", -> $scope.reset()
+
+        $scope.updateList = (data = []) ->
+          # store the current data for revert lookup
+          $scope.currentAutocomplete = data
+
+          # convert tags to jquery ui autocomplete format
+          _(data).map (item) ->
+            label = value = if labelKey? then item[labelKey] else item
+            return {label, value}
 
         $scope.reset = ->
           $scope.currentAutocomplete = []

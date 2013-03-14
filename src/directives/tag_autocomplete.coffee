@@ -33,8 +33,10 @@ angular.module("Mac").directive "macTagAutocomplete", [
   "$parse",
   "$http",
   "keys",
-  ($parse, $http, key) ->
+  ($parse, $http, keys) ->
     restrict:    "E"
+    templateUrl: "template/tag_autocomplete.html"
+    replace:     true
     scope:
       autocompleteUrl:      "=macTagAutocompleteUrl"
       autocompleteValue:    "=macTagAutocompleteValue"
@@ -44,9 +46,8 @@ angular.module("Mac").directive "macTagAutocomplete", [
       placeholder:          "=macTagAutocompletePlaceholder"
       autocompleteOnEnter:  "&macTagAutocompleteOnEnter"
       events:               "@macTagAutocompleteEvents"
-
-    templateUrl: "template/tag_autocomplete.html"
-    replace:     true
+      selected:             "=macTagAutocompleteSelected"
+      source:               "=macTagAutocompleteSource"
 
     compile: (element, attrs) ->
       valueKey    = attrs.macTagAutocompleteValue
@@ -58,72 +59,87 @@ angular.module("Mac").directive "macTagAutocomplete", [
       selectedExp = attrs.macTagAutocompleteSelected
       events      = attrs.macTagAutocompleteEvents   or ""
       disabled    = attrs.macTagAutocompleteDisabled?
-
-      getSelected = $parse selectedExp
+      eventsList  = _(events.split ",").map (item) ->
+        attrEvent = _.string.capitalize item
+        name:        item
+        capitalized: attrEvent
+        eventFn:     attrs["macTagAutocompleteOn#{attrEvent}"]
 
       # Update template on label variable name
       tagLabelKey = if labelKey is "" then labelKey else ".#{labelKey}"
       $(".tag-label", element).text "{{tag#{tagLabelKey}}}"
 
-      textInput = $(".text-input", element)
-      textInput.attr
-        "mac-autocomplete-value":       valueKey
-        "mac-autocomplete-label":       labelKey
-        "mac-autocomplete-query":       queryKey
-        "mac-autocomplete-delay":       delay
-        "mac-autocomplete-events":      events
-        "mac-autocomplete-placeholder": "placeholder"
+      textInput   = $(".mac-autocomplete", element)
+      attrsObject =
+        "mac-autocomplete-value":  valueKey
+        "mac-autocomplete-label":  labelKey
+        "mac-autocomplete-query":  queryKey
+        "mac-autocomplete-delay":  delay
+        "mac-autocomplete-events": events
+
+      if attrs.macTagAutocompleteUrl?
+        attrsObject["mac-autocomplete-url"] = "autocompleteUrl"
+      else
+        attrsObject["mac-autocomplete-source"] = "autocompleteSource"
+
+      textInput.attr attrsObject
 
       ($scope, element, attrs) ->
         # Put disabled inside template scope:
         $scope.disabled = disabled
 
-        if $scope.disabled
-          for event in events.split ","
-            attrEvent = _.string.capitalize event
-            eventFn   = attrs["macTagAutocompleteOn#{attrEvent}"]
-            continue unless eventFn
-
-            do (eventFn) ->
-              $(".no-complete", element).on event, ($event) ->
-                expression = $parse eventFn
-                $scope.$apply ->
-                  expression $scope.$parent, {$event, item: $scope.textInput}
-
-          el = $(".no-complete", element)
-            .on "keydown", (event) ->
-              $scope.onKeyDown event, $scope.textInput
-            .attr
-              "placeholder": $scope.placeholder
-
         # Clicking on the element will focus on input
         element.click ->
           $(".text-input", element).focus()
 
-        # Getting autocomplete url from parent scope
-        Object.defineProperty $scope, "tags",
-          get:         -> getSelected $scope.$parent
-          set: (_tags) ->
-            outputTags = _(_tags).map (item, i) ->
-              output           = {}
-              output[labelKey] = item[labelKey]
-              output[valueKey] = item[valueKey]
-              return output
-            getSelected.assign $scope.$parent, outputTags
+        # Rebind events after ng-switch
+        $scope.$watch "disabled", (value) ->
+          if value
+            # Enable keydown event on disabled
+            $(".no-complete", element)
+              .on "keydown", (event) ->
+                $scope.onKeyDown event, $(this).val()
 
-        $scope.removeTag = (tag) ->
-          index = $scope.tags.indexOf tag
-          return if index is -1
+            # Loop through the list of events user specified
+            for event in eventsList
+              continue unless event.eventFn
 
-          $scope.tags[index..index] = []
+              do (event) ->
+                $(".text-input", element).on event.name, ($event) ->
+                  expression = $parse event.eventFn
+                  $scope.$apply ->
+                    expression $scope.$parent, {$event, item: $(".text-input", element).val() }
 
-        $scope.onKeyDown = (event, value) ->
+        $scope.$watch "selected.length", (length) ->
+          $scope.updateSource()
+
+        $scope.$watch "textInput", (value) ->
+          $(".no-complete", element).val value
+
+        $scope.pushToSelected = (item) ->
+          output           = {}
+          output[labelKey] = item[labelKey] if labelKey
+          output[valueKey] = item[valueKey] if valueKey
+
+          output = item if not labelKey and not valueKey
+
+          $scope.selected.push output
+
+        $scope.updateSource = ->
+          sourceValues   = _($scope.source or []).pluck valueKey
+          selectedValues = _($scope.selected or []).pluck valueKey
+          difference     = _(sourceValues).difference selectedValues
+
+          $scope.autocompleteSource = _($scope.source).filter (item) ->
+            item[valueKey] in difference
+
+        $scope.onKeyDown = (event, value = "") ->
           stroke = event.which or event.keyCode
           switch stroke
-            when key.BACKSPACE
+            when keys.BACKSPACE
               if value.length is 0
-                $scope.$apply -> $scope.tags.pop()
-            when key.ENTER
+                $scope.$apply -> $scope.selected.pop()
+            when keys.ENTER
               # Used when autocomplete is not needed
               if value.length > 0 and $scope.disabled
                 $scope.$apply ->
@@ -133,16 +149,17 @@ angular.module("Mac").directive "macTagAutocomplete", [
 
         $scope.onSuccess = (data) ->
           # get all selected values
-          existingValues = _($scope.tags).pluck valueKey
+          existingValues = _($scope.selected).pluck valueKey
           # remove selected tags on autocomplete dropdown
           return _(data.data).reject (item) -> (item[valueKey] or item) in existingValues
 
         $scope.onSelect = (item) ->
           item = $scope.autocompleteOnEnter {item} if attrs.macTagAutocompleteOnEnter?
-          $scope.tags.push item if item
+          $scope.pushToSelected item if item
 
         $scope.reset = ->
           $scope.textInput = ""
+          $scope.updateSource()
 
         $scope.$on "mac-tag-autocomplete-clear-input", ->
           $(".text-input", element).val ""
