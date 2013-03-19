@@ -77,7 +77,7 @@ module.controller "ExampleController", ["$scope", ($scope) ->
     # Tokenize on blur
     $scope.tagAutocompleteEvents.push key: item
 
-  $scope.tagAutocompleteOnKeyup = ->
+  $scope.tagAutocompleteOnKeyup = (event, item) ->
     console.debug "You just typed something"
 
   $scope.tagAutocompleteClearText = ->

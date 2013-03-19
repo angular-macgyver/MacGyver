@@ -102,15 +102,15 @@ angular.module("Mac").directive "macTagAutocomplete", [
               .on "keydown", (event) ->
                 $scope.onKeyDown event, $(this).val()
 
-            # Loop through the list of events user specified
-            for event in eventsList
-              continue unless event.eventFn
+          # Loop through the list of events user specified
+          for event in eventsList
+            continue unless event.eventFn and event.name isnt "keydown"
 
-              do (event) ->
-                $(".text-input", element).on event.name, ($event) ->
-                  expression = $parse event.eventFn
-                  $scope.$apply ->
-                    expression $scope.$parent, {$event, item: $(".text-input", element).val() }
+            do (event) ->
+              $(".text-input", element).on event.name, ($event) ->
+                expression = $parse event.eventFn
+                $scope.$apply ->
+                  expression $scope.$parent, {$event, item: $(".text-input", element).val() }
 
         $scope.$watch "selected.length", (length) ->
           $scope.updateSource()
@@ -136,8 +136,8 @@ angular.module("Mac").directive "macTagAutocomplete", [
           $scope.autocompleteSource = _($scope.source).filter (item) ->
             item[valueKey] in difference
 
-        $scope.onKeyDown = (event, value = "") ->
-          stroke = event.which or event.keyCode
+        $scope.onKeyDown = ($event, value = "") ->
+          stroke = $event.which or $event.keyCode
           switch stroke
             when keys.BACKSPACE
               if value.length is 0
@@ -148,6 +148,12 @@ angular.module("Mac").directive "macTagAutocomplete", [
                 $scope.$apply ->
                   $scope.textInput = ""
                   $scope.onSelect value
+
+          if attrs.macTagAutocompleteOnKeydown?
+            $scope.$apply ->
+              expression = $parse attrs.macTagAutocompleteOnKeydown
+              expression $scope.$parent, {$event, item: value}
+
           return true
 
         $scope.onSuccess = (data) ->
