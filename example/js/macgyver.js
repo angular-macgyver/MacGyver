@@ -11979,7 +11979,8 @@ angular.module("Mac").directive("macTagAutocomplete", [
         autocompleteOnEnter: "&macTagAutocompleteOnEnter",
         events: "@macTagAutocompleteEvents",
         selected: "=macTagAutocompleteSelected",
-        source: "=macTagAutocompleteSource"
+        source: "=macTagAutocompleteSource",
+        fullObject: "&macTagAutocompleteFullObject"
       },
       compile: function(element, attrs) {
         var attrsObject, delay, disabled, events, eventsList, labelKey, queryKey, selectedExp, tagLabelKey, textInput, valueKey;
@@ -12069,7 +12070,7 @@ angular.module("Mac").directive("macTagAutocomplete", [
             if (valueKey) {
               output[valueKey] = item[valueKey];
             }
-            if (!labelKey && !valueKey) {
+            if ($scope.fullObject || (!labelKey && !valueKey)) {
               output = item;
             }
             return $scope.selected.push(output);
@@ -12153,8 +12154,8 @@ angular.module("Mac").directive("macTagInput", [
       },
       compile: function(element, attrs) {
         var textKey, valueKey;
-        valueKey = attrs.macTagInputValue || "id";
-        textKey = attrs.macTagInputLabel || "name";
+        valueKey = attrs.macTagInputValue || "";
+        textKey = attrs.macTagInputLabel || "";
         $(".tag-autocomplete", element).attr({
           "mac-tag-autocomplete-value": valueKey,
           "mac-tag-autocomplete-label": textKey

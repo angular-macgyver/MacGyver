@@ -12,6 +12,7 @@
 ## - mac-tag-autocomplete-url:         url to fetch autocomplete dropdown list data
 ## - mac-tag-autocomplete-value:       the value to be sent back upon selection                (default "id")
 ## - mac-tag-autocomplete-label:       the label to display to the users                       (default "name")
+## - mac-tag-autocomplete-full-object: Push the full object into the selected array            (default false)
 ## - mac-tag-autocomplete-selected:    the list of elements selected by the user
 ## - mac-tag-autocomplete-query:       the query parameter on GET command                      (defualt "q")
 ## - mac-tag-autocomplete-delay:       time delayed on fetching autocomplete data after keyup  (default 800)
@@ -48,6 +49,7 @@ angular.module("Mac").directive "macTagAutocomplete", [
       events:               "@macTagAutocompleteEvents"
       selected:             "=macTagAutocompleteSelected"
       source:               "=macTagAutocompleteSource"
+      fullObject:           "&macTagAutocompleteFullObject"
 
     compile: (element, attrs) ->
       valueKey    = attrs.macTagAutocompleteValue
@@ -121,7 +123,8 @@ angular.module("Mac").directive "macTagAutocomplete", [
           output[labelKey] = item[labelKey] if labelKey
           output[valueKey] = item[valueKey] if valueKey
 
-          output = item if not labelKey and not valueKey
+          if $scope.fullObject or (not labelKey and not valueKey)
+            output = item
 
           $scope.selected.push output
 
