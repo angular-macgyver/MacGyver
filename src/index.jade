@@ -188,7 +188,10 @@ html
           section#underscore-string
             .page-header: h1 Underscore String
             h2 Example
-            .docs-example {{ "this_Is_aTestFor_Underscore_string" | underscoreString: "humanize" }}
+            .docs-example
+              p {{ "this_Is_aTestFor_Underscore_string" | underscoreString: "humanize" }}
+              p {{ "Truncating: lorem ipsum dolor sit amet, consectetur adipiscing elit." | underscoreString: "truncate": 42 }}
+              p {{ "Pruning: lorem ipsum dolor sit amet, consectetur adipiscing elit." | underscoreString: "prune": 42: "... (show more)" }}
 
     script(src='//cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js', type='text/javascript')
     script(src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.3/underscore-min.js", text="text/javascript")

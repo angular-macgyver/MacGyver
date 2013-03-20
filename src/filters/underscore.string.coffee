@@ -5,4 +5,7 @@
 ##
 
 angular.module("Mac").filter "underscoreString", ->
-  (string, fn) -> _.string[fn] string
+  (string, fn, params...) ->
+    # A single array of params is needed when using function.apply():
+    params.unshift string
+    _.string[fn].apply this, params
