@@ -57,9 +57,9 @@ angular.module("Mac").directive "macTime", [
         # @name inputSelectAction
         # @description
         # Based on the index given, execute certain actions
-        # @params {Integer} index Start index of selection
-        # @params {Integer} endIndex End index of selection (default index)
-        # @params {Object} actions Three functions to execute out based on selection
+        # @param {Integer} index Start index of selection
+        # @param {Integer} endIndex End index of selection (default index)
+        # @param {Object} actions Three functions to execute out based on selection
         #
         inputSelectAction = (index, endIndex = index, actions = {}) ->
           # Allow user to pass actions as the second parameter
@@ -83,7 +83,7 @@ angular.module("Mac").directive "macTime", [
         # @name updateInput
         # @description
         # Update the text input with the current set time and highlight section accordingly
-        # @params {Object} actions Three functions to execute out based on selection
+        # @param {Object} actions Three functions to execute out based on selection
         #
         updateInput = (actions = {}) ->
           start = inputDOM.selectionStart

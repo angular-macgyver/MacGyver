@@ -20,11 +20,11 @@
 ## - mac-tag-autocomplete-disabled:    If autocomplete is enabled or disabled                  (default false)
 ## - mac-tag-autocomplete-on-enter:    When autocomplete is disabled, this function is called on enter
 ##                                     Should return either string, object or boolean. If false, item is not added
-##                                       @params {String} item User input
+##                                       @param {String} item User input
 ## - mac-tag-autocomplete-events:      a CSV list of events to attach functions to
 ## - mac-tag-autocomplete-on-[event]:  the function to be called when specified event is fired
-##                                       @params {Object} event jQuery event
-##                                       @params {String} value Value in the input text
+##                                       @param {Object} event jQuery event
+##                                       @param {String} value Value in the input text
 ##
 ## @events
 ## - mac-tag-autocomplete-clear-input: $broadcast message; clears text input when received
@@ -94,7 +94,12 @@ angular.module("Mac").directive "macTagAutocomplete", [
         element.click ->
           $(".text-input", element).focus()
 
+        #
+        # @watcher
+        # @name disabled
+        # @description
         # Rebind events after ng-switch
+        #
         $scope.$watch "disabled", (value) ->
           if value
             # Enable keydown event on disabled
@@ -118,6 +123,13 @@ angular.module("Mac").directive "macTagAutocomplete", [
         $scope.$watch "textInput", (value) ->
           $(".no-complete", element).val value
 
+        #
+        # @function
+        # @name $scope.pushToSelected
+        # @description
+        # Convert item to the correct format before adding to the selected array
+        # @param {Any} item Item to be pushed to selected array
+        #
         $scope.pushToSelected = (item) ->
           output           = {}
           output[labelKey] = item[labelKey] if labelKey

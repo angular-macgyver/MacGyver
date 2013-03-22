@@ -56,7 +56,7 @@ angular.module("Mac").directive "macClick", ["$parse", ($parse) ->
 #
 # @attributes
 # - mac-parent-click: function called on user click
-#                       @params {Object} $event Click event
+#                       @param {Object} $event Click event
 #
 angular.module("Mac").directive "macParentClick", ["$parse", ($parse) ->
   link: ($scope, element, attr) ->

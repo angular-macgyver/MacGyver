@@ -11,18 +11,18 @@
 ## @attributes
 ## - mac-autocomplete-url:             url to fetch autocomplete dropdown list data
 ## - mac-autocomplete-on-select:       function called when user select on an item
-##                                       @params {Object} selected The item selected
+##                                       @param {Object} selected The item selected
 ## - mac-autocomplete-on-success:      function called on success ajax request
-##                                       @params {Object} data Data returned from the request
-##                                       @params {Number} status The status code of the response
-##                                       @params {Object} headeres Header of the response
+##                                       @param {Object} data Data returned from the request
+##                                       @param {Number} status The status code of the response
+##                                       @param {Object} headeres Header of the response
 ## - mac-autocomplete-on-error:        function called on ajax request error
-##                                       @params {Object} data Data returned from the request
-##                                       @params {Number} status The status code of the response
-##                                       @params {Object} headeres Header of the response
+##                                       @param {Object} data Data returned from the request
+##                                       @param {Number} status The status code of the response
+##                                       @param {Object} headeres Header of the response
 ## - mac-autocomplete-on-key-down:     function called on key down
-##                                       @params {Object} event jQuery event
-##                                       @params {String} value Value in the input text
+##                                       @param {Object} event jQuery event
+##                                       @param {String} value Value in the input text
 ## - mac-autocomplete-value:           the value to be sent back upon selection               (default "id")
 ## - mac-autocomplete-label:           the label to display to the users                      (default "name")
 ## - mac-autocomplete-query:           the query parameter on GET command                     (default "q")
@@ -62,7 +62,15 @@ angular.module("Mac").directive "macAutocomplete", [
           element.bind "keydown", (event) ->
             $scope.onKeyDown {event, value: $(this).val()}
 
-        # Used by jquery ui autocomplete to populate options
+        #
+        # @function
+        # @name sourceFn
+        # @description
+        # Used by jQuery UI autocomplete to populate options
+        # The list of objects will be populated through the response function
+        # @param {Request Object} req Request object from jQuery UI
+        # @param {Response function} resp Response callback function for jQuery UI
+        #
         sourceFn = (req, resp) ->
           if attrs.macAutocompleteUrl?
             options =
@@ -102,10 +110,20 @@ angular.module("Mac").directive "macAutocomplete", [
               ), 0
 
         #
-        # Angular event listener section
+        # @event
+        # @name resetAutocomplete
+        # @description
+        # Event to reset autocomplete
         #
         $scope.$on "resetAutocomplete", -> $scope.reset()
 
+        #
+        # @function
+        # @name $scope.updateList
+        # @description
+        # Convert given data to the format used by autocomplete
+        # @param {Array} data Raw data
+        #
         $scope.updateList = (data = []) ->
           # store the current data for revert lookup
           $scope.currentAutocomplete = data
@@ -115,6 +133,12 @@ angular.module("Mac").directive "macAutocomplete", [
             label = value = if labelKey? then item[labelKey] else item
             return {label, value}
 
+        #
+        # @function
+        # @name $scope.reset
+        # @description
+        # Resetting autocomplete
+        #
         $scope.reset = ->
           $scope.currentAutocomplete = []
 

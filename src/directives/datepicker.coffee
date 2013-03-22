@@ -13,10 +13,10 @@
 ## - mac-datepicker-id:                   The id of the text input field
 ## - mac-datepicker-model:                The model to store the selected date
 ## - mac-datepicker-on-before-select:     Function called before setting the value to the model
-##                                          @params {String} date Selected date from the datepicker
+##                                          @param {String} date Selected date from the datepicker
 ## - mac-datepicker-on-before-close:      Function called before closing datepicker
-##                                          @params {String} date Selected date from the datepicker
-##                                          @params {Object} instance Datepicker instance
+##                                          @param {String} date Selected date from the datepicker
+##                                          @param {Object} instance Datepicker instance
 ## - mac-datepicker-append-text:          The text to display after each date field
 ## - mac-datepicker-auto-size:            automatically resize the input to accommodate dates in the current dateFormat
 ## - mac-datepicker-change-month:         Whether the month should be rendered as a dropdown instead of text

@@ -184,7 +184,7 @@ angular.module("Mac").directive "macTable", [
         # @name updateDisplayRows
         # @description
         # Calculate the current scrolling offset and display the correct rows
-        # @return {Boolean} If displayRows has been updated
+        # @returns {Boolean} If displayRows has been updated
         #
         updateDisplayRows = (scroll = false) ->
           data      = $scope.orderedRows or []
@@ -215,7 +215,7 @@ angular.module("Mac").directive "macTable", [
         # @name calculateColumnCss
         # @description
         # Calculate CSS attributes of all columns and store to $scope.columnCss
-        # @return {Boolean} true
+        # @returns {Boolean} true
         #
         calculateColumnCss = ->
           for column in bodyColumns
@@ -254,7 +254,7 @@ angular.module("Mac").directive "macTable", [
         # @name calculateRowCss
         # @description
         # Calculate the row width based on user defined columns
-        # @return {Boolean} true
+        # @returns {Boolean} true
         #
         calculateRowCss = ->
           calculateRowWidth = 0
@@ -277,8 +277,8 @@ angular.module("Mac").directive "macTable", [
         # @name getTemplateCell
         # @description
         # Get the correct template cell transcluded block
-        # @params {String} section Either header, body or footer (default "")
-        # @params {String} column Column needed                  (default "")
+        # @param {String} section Either header, body or footer (default "")
+        # @param {String} column Column needed                  (default "")
         #
         getTemplateCell = (section = "", column = "") ->
           templateSelector = """.table-#{section}-template .cell[column="#{column}"]"""
@@ -294,8 +294,8 @@ angular.module("Mac").directive "macTable", [
         # Get the template cell user has defined in template, create empty cell if not found
         # The width and height will be calculated and set before returning
         #
-        # @params {String} section Either header, body or footer (default "")
-        # @params {String} column Column needed                  (default "")
+        # @param {String} section Either header, body or footer (default "")
+        # @param {String} column Column needed                  (default "")
         #
         createCellTemplate = (section="", column="") ->
           return {cell: $("<div>"), width: 0} unless column
@@ -316,7 +316,7 @@ angular.module("Mac").directive "macTable", [
         # @description
         # This is a shortcut call for header version of createCellTemplate
         # Caret is added to the cell before returning
-        # @params {String} column Column needed (default "")
+        # @param {String} column Column needed (default "")
         #
         createHeaderCellTemplate = (column = "", firstColumn = false) ->
           {cell, width} = createCellTemplate "header", column
@@ -348,8 +348,8 @@ angular.module("Mac").directive "macTable", [
         # @name createRowTemplate
         # @description
         # Create template row with switches to select the correct column template
-        # @params {String} section Table section
-        # @return {jQuery Element} template row
+        # @param {String} section Table section
+        # @returns {jQuery Element} template row
         #
         createRowTemplate = (section="", isFirst = false) ->
           rowWidth   = 0
@@ -428,8 +428,8 @@ angular.module("Mac").directive "macTable", [
         # @name $scope.getBodyBlockCss
         # @description
         # Get the css for the body section
-        # @params {String} section Section of the body
-        # @return {Object} Object with CSS properties
+        # @param {String} section Section of the body
+        # @returns {Object} Object with CSS properties
         #
         $scope.getBodyBlockCss = (section="body") ->
           if util.isArray($scope.columns) and $scope.columns.length > 0
@@ -452,7 +452,7 @@ angular.module("Mac").directive "macTable", [
         # @name $scope.getTableCss
         # @description
         # Get table height and width styling
-        # @return {Object} Object with height and width
+        # @returns {Object} Object with height and width
         #
         $scope.getTableCss = ->
           dataLength      = $scope.data?.length or 0
@@ -480,7 +480,7 @@ angular.module("Mac").directive "macTable", [
         # @description
         # Function to call when user click on header cell
         # $scope.predicate and $scope.reverse
-        # @params {jQuery Object} column The element to bind click event to
+        # @param {jQuery Object} column The element to bind click event to
         #
         $scope.orderBy = (column) ->
           columnTitle = column.toLowerCase()
@@ -714,7 +714,7 @@ angular.module("Mac").directive "macTable", [
         # @name $scope.renderTable
         # @description
         # Function tto draw all components of the table
-        # @return {Boolean} true
+        # @returns {Boolean} true
         #
         $scope.renderTable = ->
           # Set all required variables
