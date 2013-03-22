@@ -708,7 +708,7 @@ angular.module("Mac").directive "macTable", [
           scrollLeft = $this.scrollLeft()
 
           headerBlock.scrollLeft scrollLeft if opts.hasHeader
-          footerBlock.scrollLeft scrollLeft if opts.hasFooter
+          footerBlock.scrollLeft scrollLeft if opts.hasFooter or opts.hasTotalFooter
 
         #
         # @name $scope.renderTable
