@@ -11512,16 +11512,16 @@ angular.module("Mac").directive("macTable", [
                 width = setWidth;
               }
               $scope.columnsCss[column] = {
-                "width": width,
-                "padding": opts.cellPadding,
-                "height": opts.rowHeight,
-                "line-height": "" + opts.rowHeight + "px"
+                width: width,
+                height: opts.rowHeight,
+                padding: opts.cellPadding,
+                lineHeight: "" + opts.rowHeight + "px"
               };
             }
             return true;
           };
           calculateRowCss = function() {
-            var calculateRowWidth, column, startIndex, _i, _len, _ref;
+            var calculateRowWidth, cellWidth, column, startIndex, _i, _len, _ref;
             calculateRowWidth = 0;
             startIndex = opts.lockFirstColumn ? 1 : 0;
             _ref = $scope.columns.slice(startIndex);
@@ -11538,6 +11538,13 @@ angular.module("Mac").directive("macTable", [
             $scope.rowCss = {
               width: calculateRowWidth
             };
+            if (opts.lockFirstColumn) {
+              cellWidth = $scope.getColumnCss($scope.columns[0], "header").width || 0;
+              if (cellWidth > 0) {
+                cellWidth += 2 * opts.cellPadding;
+              }
+              headerRow.css("margin-left", cellWidth);
+            }
             return true;
           };
           getTemplateCell = function(section, column) {
@@ -11655,8 +11662,8 @@ angular.module("Mac").directive("macTable", [
               width: rowWidth
             };
           };
-          $scope.getColumnCss = function(column, section) {
-            var css;
+          $scope.getColumnCss = function(column, section, attribute) {
+            var css, key, newCss, _i, _len;
             if (!(column && (column != null))) {
               return {};
             }
@@ -11676,7 +11683,22 @@ angular.module("Mac").directive("macTable", [
                   return css.height;
               }
             })();
-            return css;
+            if (attribute != null) {
+              newCss = {};
+              if (typeof attribute === "string") {
+                newCss[attribute] = css[attribute];
+              } else if (util.isArray(attribute)) {
+                for (_i = 0, _len = attribute.length; _i < _len; _i++) {
+                  key = attribute[_i];
+                  if (css[key] != null) {
+                    newCss[key] = css[key];
+                  }
+                }
+              }
+              return newCss;
+            } else {
+              return css;
+            }
           };
           $scope.getBodyBlockCss = function(section) {
             var isFirst, width;
@@ -11754,16 +11776,8 @@ angular.module("Mac").directive("macTable", [
             }, {});
           };
           $scope.drawHeader = function() {
-            var cellWidth, row, width, _ref, _ref1;
+            var row, width, _ref, _ref1;
             _ref = createRowTemplate("header"), row = _ref.row, width = _ref.width;
-            if (opts.resizable) {
-              row.resizable({
-                containment: "parent",
-                minHeight: opts.rowHeight,
-                maxHeight: opts.rowHeight,
-                handles: "e, w"
-              }).addClass("resizable");
-            }
             headerRow.append(row).attr({
               "ng-style": "rowCss"
             });
@@ -11773,16 +11787,11 @@ angular.module("Mac").directive("macTable", [
               row.addClass("mac-cell mac-table-locked-cell mac-table-header-cell").attr({
                 "ng-style": "getColumnCss(columns[0], 'header')"
               });
-              cellWidth = $scope.getColumnCss($scope.columns[0], "header").width || 0;
-              if (cellWidth > 0) {
-                cellWidth += 2 * opts.cellPadding;
-              }
-              headerRow.css("margin-left", cellWidth);
               headerBlock.append(row);
               $compile(headerBlock)($scope);
             }
             if (opts.sortable) {
-              return headerRow.sortable({
+              headerRow.sortable({
                 items: "> .mac-table-header-cell",
                 cursor: "move",
                 opacity: 0.8,
@@ -11804,6 +11813,24 @@ angular.module("Mac").directive("macTable", [
                   }), 0);
                 }
               });
+            }
+            if (opts.resizable) {
+              return setTimeout(function() {
+                return $(".mac-table-header-cell", headerBlock).resizable({
+                  axis: "x",
+                  containment: "parent",
+                  handles: "e",
+                  resize: function(event, ui) {
+                    var column, newWidth;
+                    column = ui.element.data("column");
+                    newWidth = ui.size.width;
+                    return $scope.$apply(function() {
+                      $scope.columnsCss[column].width = newWidth;
+                      return calculateRowCss();
+                    });
+                  }
+                }).addClass("resizable");
+              }, 0);
             }
           };
           $scope.drawTotalFooter = function() {
