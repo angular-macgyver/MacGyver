@@ -243,10 +243,10 @@ angular.module("Mac").directive "macTable", [
               width    = setWidth
 
             $scope.columnsCss[column] =
-              "width":       width
-              "padding":     opts.cellPadding
-              "height":      opts.rowHeight
-              "line-height": "#{opts.rowHeight}px"
+              width:       width
+              height:      opts.rowHeight
+              padding:     opts.cellPadding
+              lineHeight: "#{opts.rowHeight}px"
 
           return true
 
@@ -265,6 +265,12 @@ angular.module("Mac").directive "macTable", [
             calculateRowWidth += $scope.columnsCss[column].width + opts.cellPadding * 2 + opts.borderWidth
           $scope.rowCss = {width: calculateRowWidth}
 
+          if opts.lockFirstColumn
+            cellWidth  = $scope.getColumnCss($scope.columns[0], "header").width or 0
+            cellWidth += 2 * opts.cellPadding if cellWidth > 0
+
+            headerRow.css "margin-left", cellWidth
+
           return true
 
         #
@@ -276,7 +282,7 @@ angular.module("Mac").directive "macTable", [
         #
         getTemplateCell = (section = "", column = "") ->
           templateSelector = """.table-#{section}-template .cell[column="#{column}"]"""
-          selected = $(templateSelector, transcludedBlock)
+          selected         = $(templateSelector, transcludedBlock)
           if selected.length > 1
             throw "More than 1 definition of '#{column}' in '#{section}' section"
             selected = selected.first()
@@ -384,12 +390,12 @@ angular.module("Mac").directive "macTable", [
         # @name $scope.getColumnCss
         # @description
         # A get function for getting CSS object
-        # @params {String} column Column name
-        # @params {String} section Section for the css
-        # @params {Boolean} isFirst First column or not
-        # @return {Object} Object with CSS attributes
+        # @param {String} column Column name
+        # @param {String} section Section for the css
+        # @param {Array | String} attribute Certain css keys to take
+        # @returns {Object} Object with CSS attributes
         #
-        $scope.getColumnCss = (column, section) ->
+        $scope.getColumnCss = (column, section, attribute) ->
           return {} unless column and column?
 
           unless $scope.columnsCss[column]?
@@ -405,7 +411,18 @@ angular.module("Mac").directive "macTable", [
               when "footer"       then opts.footerHeight
               else                     css.height
 
-          return css
+          if attribute?
+            newCss = {}
+            if typeof attribute is "string"
+              newCss[attribute] = css[attribute]
+            else if util.isArray attribute
+              for key in attribute
+                newCss[key] = css[key] if css[key]?
+
+            return newCss
+
+          else
+            return css
 
         #
         # @name $scope.getBodyBlockCss
@@ -500,15 +517,6 @@ angular.module("Mac").directive "macTable", [
         $scope.drawHeader = ->
           {row, width} = createRowTemplate "header"
 
-          # TODO: Enable column resizing
-          if opts.resizable
-            row.resizable
-              containment: "parent"
-              minHeight:   opts.rowHeight
-              maxHeight:   opts.rowHeight
-              handles:     "e, w"
-            .addClass "resizable"
-
           # Set the header to be the width of all columns
           headerRow.append(row).attr
             "ng-style": "rowCss"
@@ -522,11 +530,6 @@ angular.module("Mac").directive "macTable", [
             row.addClass("mac-cell mac-table-locked-cell mac-table-header-cell").attr
               "ng-style": "getColumnCss(columns[0], 'header')"
 
-            cellWidth  = $scope.getColumnCss($scope.columns[0], "header").width or 0
-            cellWidth += 2 * opts.cellPadding if cellWidth > 0
-
-            headerRow.css "margin-left", cellWidth
-
             headerBlock.append row
 
             # Compile the column to render carets
@@ -535,11 +538,11 @@ angular.module("Mac").directive "macTable", [
           # Enable drag and drop on header cell
           if opts.sortable
             headerRow.sortable
-              items:       "> .mac-table-header-cell"
-              cursor:      "move"
-              opacity:     0.8
-              tolerance:   "pointer"
-              update:      (event, ui) ->
+              items:     "> .mac-table-header-cell"
+              cursor:    "move"
+              opacity:   0.8
+              tolerance: "pointer"
+              update:    (event, ui) ->
                 newOrder = []
                 $(".mac-table-header-cell", headerRow).each (i, e) ->
                   newOrder.push $(e).data "column"
@@ -553,6 +556,21 @@ angular.module("Mac").directive "macTable", [
                 setTimeout (->
                   bodyBlock.scrollLeft headerBlock.scrollLeft()
                 ), 0
+
+          if opts.resizable
+            setTimeout ->
+              $(".mac-table-header-cell", headerBlock).resizable
+                axis:        "x"
+                containment: "parent"
+                handles:     "e"
+                resize:      (event, ui) ->
+                  column   = ui.element.data "column"
+                  newWidth = ui.size.width
+                  $scope.$apply ->
+                    $scope.columnsCss[column].width = newWidth
+                    calculateRowCss()
+              .addClass "resizable"
+            , 0
 
         #
         # @name $scope.drawTotalFooter
