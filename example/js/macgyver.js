@@ -11091,7 +11091,7 @@ angular.module("Mac").directive("macUpload", [
         input = parent.find("input");
         initialize = function() {
           var options;
-          if (scope.macUploadDisabled || !scope.route) {
+          if (((attrs.macUploadDisabled != null) && scope.macUploadDisabled) || !scope.route) {
             return;
           }
           if (isInitialized) {
