@@ -96,7 +96,7 @@ angular.module("Mac").directive "macUpload", [ ->
       if isDisabled
         input.prop("disabled", "disabled")
       else
-        input.removeProp()
+        input.removeProp "disabled"
       initialize()
 
     scope.$on(disableOn, -> input.fileupload "disable") if disableOn?

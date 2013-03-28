@@ -11166,7 +11166,7 @@ angular.module("Mac").directive("macUpload", [
           if (isDisabled) {
             input.prop("disabled", "disabled");
           } else {
-            input.removeProp();
+            input.removeProp("disabled");
           }
           return initialize();
         });
