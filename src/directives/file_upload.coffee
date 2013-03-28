@@ -41,7 +41,6 @@ angular.module("Mac").directive "macUpload", [ ->
     input         = parent.find "input"
 
     initialize = ->
-      console.log scope.route, scope.macUploadDisabled
       return if scope.macUploadDisabled or not scope.route
 
       input.fileupload "destroy" if isInitialized
