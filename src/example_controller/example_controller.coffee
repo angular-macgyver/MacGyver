@@ -97,7 +97,7 @@ module.controller "ExampleController", ["$scope", ($scope) ->
 
   # File Uploader handling
   $scope.uploadRoute          = "/test_upload"
-  $scope.fileUploaderEndabled = true
+  $scope.fileUploaderEnabled = true
 
   $scope.fileUploadSubmit = ($event, $response) ->
     console.log "submitted"
