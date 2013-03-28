@@ -20,6 +20,7 @@
 ## - mac-upload-disable-on: The broadcast message to catch to disable file upload
 ## - mac-upload-disabled:   Boolean value to disable or enable file upload
 ## - mac-upload-form-data:  Additional form data
+## - mac-upload-param-name: Parameter name for the file
 ##
 
 angular.module("Mac").directive "macUpload", [ ->
@@ -32,6 +33,7 @@ angular.module("Mac").directive "macUpload", [ ->
     macUploadDisableOn: "=macUploadDisableOn"
     macUploadDisabled:  "=macUploadDisabled"
     macUploadFormData:  "=macUploadFormData"
+    macUploadParamName: "=macUploadParamName"
 
   link: (scope, element, attributes) ->
     isInitialized = false
@@ -73,8 +75,9 @@ angular.module("Mac").directive "macUpload", [ ->
           if attributes.macUploadSuccess?
             scope.$apply scope.macUploadSuccess $response: response, $data: response.data, $status: status
 
-      options.dropZone = if attributes.macUploadDropZone? then $(attributes.macUploadDropZone) else null
-      options.formData = scope.macUPloadFormData if attributes.macUploadFormData?
+      options.dropZone  = if attributes.macUploadDropZone? then $(attributes.macUploadDropZone) else null
+      options.formData  = scope.macUploadFormData if attributes.macUploadFormData?
+      options.paramName = scope.macUploadParamName if attributes.macUploadParamName?
 
       input.fileupload options
       isInitialized = true

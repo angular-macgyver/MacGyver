@@ -11076,7 +11076,8 @@ angular.module("Mac").directive("macUpload", [
         macUploadEnableOn: "=macUploadEnableOn",
         macUploadDisableOn: "=macUploadDisableOn",
         macUploadDisabled: "=macUploadDisabled",
-        macUploadFormData: "=macUploadFormData"
+        macUploadFormData: "=macUploadFormData",
+        macUploadParamName: "=macUploadParamName"
       },
       link: function(scope, element, attributes) {
         var disableOn, enableOn, initialize, input, isInitialized, parent;
@@ -11142,7 +11143,10 @@ angular.module("Mac").directive("macUpload", [
           };
           options.dropZone = attributes.macUploadDropZone != null ? $(attributes.macUploadDropZone) : null;
           if (attributes.macUploadFormData != null) {
-            options.formData = scope.macUPloadFormData;
+            options.formData = scope.macUploadFormData;
+          }
+          if (attributes.macUploadParamName != null) {
+            options.paramName = scope.macUploadParamName;
           }
           input.fileupload(options);
           return isInitialized = true;
