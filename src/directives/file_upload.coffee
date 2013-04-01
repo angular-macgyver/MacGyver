@@ -102,6 +102,10 @@ angular.module("Mac").directive "macUpload", [ ->
         input.removeProp "disabled"
       initialize()
 
+    scope.$watch "macUploadFormData", (value) ->
+      if value? and isInitialized
+        input.fileupload "options", formData: value
+
     scope.$on(disableOn, -> input.fileupload "disable") if disableOn?
     scope.$on(enableOn,  -> input.fileupload "enable")  if enableOn?
 
