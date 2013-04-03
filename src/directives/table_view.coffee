@@ -113,7 +113,7 @@ angular.module("Mac").directive "macTable", [
       opts = util.extendAttributes "macTable", defaults, attrs
 
       # Disable lockFirstColumn if rowAutoHeight is true
-      opts.lockFirstColumn = false if opts.rowAutoHeight is true
+      opts.lockFirstColumn = false if opts.rowAutoHeight
 
       # Default special row height to row height if height is not defined
       opts.headerHeight      = opts.rowHeight unless attrs.macTableHeaderHeight?
