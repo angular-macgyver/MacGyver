@@ -11719,7 +11719,7 @@ angular.module("Mac").directive("macTable", [
                   return css.height;
               }
             })();
-            css.lineHeight = css.height;
+            css.lineHeight = "" + css.height + "px";
             if (attribute != null) {
               newCss = {};
               if (typeof attribute === "string") {

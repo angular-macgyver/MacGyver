@@ -411,7 +411,7 @@ angular.module("Mac").directive "macTable", [
               when "footer"       then opts.footerHeight
               else                     css.height
 
-          css.lineHeight = css.height
+          css.lineHeight = "#{css.height}px"
 
           if attribute?
             newCss = {}
