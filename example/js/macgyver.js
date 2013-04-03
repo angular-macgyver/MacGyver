@@ -11414,7 +11414,8 @@ angular.module("Mac").directive("macTable", [
           calculateTotalLocally: false,
           fluidWidth: false,
           autoHeight: true,
-          showLoader: true
+          showLoader: true,
+          rowAutoHeight: false
         };
         transcludedBlock = $(".mac-table-transclude", element);
         headerBlock = $(".mac-table-header", element);
@@ -11428,6 +11429,9 @@ angular.module("Mac").directive("macTable", [
         customFooterRow = $(".custom-footer-row", footerBlock);
         emptyCell = $("<div>").addClass("mac-cell");
         opts = util.extendAttributes("macTable", defaults, attrs);
+        if (opts.rowAutoHeight) {
+          opts.lockFirstColumn = false;
+        }
         if (attrs.macTableHeaderHeight == null) {
           opts.headerHeight = opts.rowHeight;
         }
@@ -11525,7 +11529,7 @@ angular.module("Mac").directive("macTable", [
             return start * cellOuterHeight;
           };
           calculateColumnCss = function() {
-            var bodyCell, calculatedWidth, column, numColumns, setWidth, unit, width, widthMatch, _i, _len;
+            var bodyCell, calculatedWidth, column, columnCss, numColumns, setWidth, unit, width, widthMatch, _i, _len;
             for (_i = 0, _len = bodyColumns.length; _i < _len; _i++) {
               column = bodyColumns[_i];
               bodyCell = getTemplateCell("body", column);
@@ -11547,12 +11551,17 @@ angular.module("Mac").directive("macTable", [
                 }
                 width = setWidth;
               }
-              $scope.columnsCss[column] = {
+              columnCss = {
                 width: width,
-                height: opts.rowHeight,
                 padding: opts.cellPadding,
                 lineHeight: "" + opts.rowHeight + "px"
               };
+              if (opts.rowAutoHeight) {
+                columnCss["min-height"] = opts.rowHeight;
+              } else {
+                columnCss.height = opts.rowHeight;
+              }
+              $scope.columnsCss[column] = columnCss;
             }
             return true;
           };
