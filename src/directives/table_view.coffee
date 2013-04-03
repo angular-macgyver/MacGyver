@@ -469,9 +469,9 @@ angular.module("Mac").directive "macTable", [
         # @returns {Object} Object with height and width
         #
         $scope.getTableCss = ->
-          dataLength    = $scope.data?.length or 0
-          paddings      = 2 * opts.cellPadding
-          elementHeight = bodyWrapperBlock.outerHeight()
+          dataLength     = $scope.data?.length or 0
+          paddings       = 2 * opts.cellPadding
+          elementHeight  = bodyWrapperBlock.outerHeight()
           elementHeight += opts.hasFooter * (opts.footerHeight + paddings)
           elementHeight += opts.hasTotalFooter * (opts.totalFooterHeight + paddings)
           elementHeight += opts.hasHeader * (opts.headerHeight + paddings + opts.borderWidth)
@@ -633,13 +633,12 @@ angular.module("Mac").directive "macTable", [
                          else
                            Math.min dataLength, opts.numDisplayRows
 
+            # If we are using rowAutoHeight we use the first numRows total height
+            # to calculate the table body instead of cellOuterHeight
             if opts.rowAutoHeight
               nFirstRows = $(".mac-table-row", bodyBlock)[0..numRows]
               wrapperHeight =
-                _(nFirstRows).reduce(
-                  (memo, el) -> memo += $(el).outerHeight()
-                  0
-                )
+                _(nFirstRows).reduce ((memo, el) -> memo += $(el).outerHeight()), 0
             else
               wrapperHeight = numRows * cellOuterHeight
 
