@@ -469,13 +469,9 @@ angular.module("Mac").directive "macTable", [
         # @returns {Object} Object with height and width
         #
         $scope.getTableCss = ->
-          dataLength      = $scope.data?.length or 0
-          totalRows       = if dataLength is 0 or not opts.autoHeight
-                              opts.numDisplayRows
-                            else
-                              Math.min dataLength, opts.numDisplayRows
-          paddings       = 2 * opts.cellPadding
-          elementHeight  = cellOuterHeight * totalRows
+          dataLength    = $scope.data?.length or 0
+          paddings      = 2 * opts.cellPadding
+          elementHeight = bodyWrapperBlock.outerHeight()
           elementHeight += opts.hasFooter * (opts.footerHeight + paddings)
           elementHeight += opts.hasTotalFooter * (opts.totalFooterHeight + paddings)
           elementHeight += opts.hasHeader * (opts.headerHeight + paddings + opts.borderWidth)
@@ -636,7 +632,16 @@ angular.module("Mac").directive "macTable", [
                            opts.numDisplayRows
                          else
                            Math.min dataLength, opts.numDisplayRows
-            wrapperHeight = numRows * cellOuterHeight
+
+            if opts.rowAutoHeight
+              nFirstRows = $(".mac-table-row", bodyBlock)[0..numRows]
+              wrapperHeight =
+                _(nFirstRows).reduce(
+                  (memo, el) -> memo += $(el).outerHeight()
+                  0
+                )
+            else
+              wrapperHeight = numRows * cellOuterHeight
 
             # Check if x-axis scrollbar exist
             if bodyBlock[0].scrollWidth > bodyBlock.width()
