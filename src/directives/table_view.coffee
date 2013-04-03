@@ -43,6 +43,8 @@
 ##                                the number of data rows is less than display rows                (default true)
 ## - mac-table-show-loader:       Boolean value to determine if loading spinner should be shown    (default true)
 ## - mac-table-empty-text:        Text to show when there is no data in table                      (default "No Data")
+## - mac-table-row-auto-height:   Grow height for rows based on content. Forces the disabling of   (default false)
+##                                mac-table-lock-first-column
 ##
 ## @attributes (cell)
 ## - column:  Column name
@@ -93,6 +95,7 @@ angular.module("Mac").directive "macTable", [
         fluidWidth:            false
         autoHeight:            true
         showLoader:            true
+        rowAutoHeight:         false
 
       transcludedBlock = $(".mac-table-transclude", element)
       headerBlock      = $(".mac-table-header", element)
@@ -108,6 +111,9 @@ angular.module("Mac").directive "macTable", [
 
       # Calculate all the options based on defaults
       opts = util.extendAttributes "macTable", defaults, attrs
+
+      # Disable lockFirstColumn if rowAutoHeight is true
+      opts.lockFirstColumn = false if opts.rowAutoHeight is true
 
       # Default special row height to row height if height is not defined
       opts.headerHeight      = opts.rowHeight unless attrs.macTableHeaderHeight?
@@ -242,11 +248,17 @@ angular.module("Mac").directive "macTable", [
               setWidth = element.width() * (setWidth / 100) if unit is "%"
               width    = setWidth
 
-            $scope.columnsCss[column] =
+            columnCss =
               width:       width
-              height:      opts.rowHeight
               padding:     opts.cellPadding
               lineHeight: "#{opts.rowHeight}px"
+
+            if opts.rowAutoHeight
+              columnCss["min-height"] = opts.rowHeight
+            else
+              columnCss.height = opts.rowHeight
+
+            $scope.columnsCss[column] = columnCss
 
           return true
 
