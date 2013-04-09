@@ -57,8 +57,9 @@ util.factory "util", [
 
       # If the user is expecting count to be anything other
       # than the default, check if it is actually a number
-      if includeCount and typeof count isnt "number"
-        throw new Error("You must pass pluralize a number for count, got '#{count}'")
+      # If not, return an empty string
+      if includeCount and isNaN +count
+        return ""
 
       # Manually set our default here
       count = 2 unless count?
