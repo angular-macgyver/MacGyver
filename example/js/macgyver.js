@@ -12699,8 +12699,8 @@ util.factory("util", [
         if (!((string != null ? string.trim().length : void 0) > 0)) {
           return string;
         }
-        if (includeCount && typeof count !== "number") {
-          throw new Error("You must pass pluralize a number for count, got '" + count + "'");
+        if (includeCount && isNaN(+count)) {
+          return "";
         }
         if (count == null) {
           count = 2;
