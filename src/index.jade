@@ -23,6 +23,7 @@ html
             li: a(href="#blur") Blur
             li: a(href="#file-upload") File Upload
             li: a(href="#underscore-string") Underscore String Filter
+            li: a(href="#pluralize-filter") Pluralize Filter
 
         #example.span9(ng-controller='ExampleController')
 
@@ -192,6 +193,15 @@ html
               p {{ "this_Is_aTestFor_Underscore_string" | underscoreString: "humanize" }}
               p {{ "Truncating: lorem ipsum dolor sit amet, consectetur adipiscing elit." | underscoreString: "truncate": 42 }}
               p {{ "Pruning: lorem ipsum dolor sit amet, consectetur adipiscing elit." | underscoreString: "prune": 42: "... (show more)" }}
+
+          section#pluralize-filter
+            .page-header: h1 Pluralize
+            dl.dl-horizontal
+              dt Single
+              dd {{"person" | pluralize:1}}
+              dt Multiple
+              dd {{"person" | pluralize:1500}}
+
 
     script(src='//cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js', type='text/javascript')
     script(src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.3/underscore-min.js", text="text/javascript")
