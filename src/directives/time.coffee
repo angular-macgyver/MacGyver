@@ -53,7 +53,14 @@ angular.module("Mac").directive "macTime", [
 
         $scope.reset = ->
           # TODO: Have this be looser with formatting (only accepts XX:XX XX)
-          $scope.time = new Date Date.parse "Jan 1, 1970, " + opts.default
+          prefix = "Jan 1, 1970, "
+          time   = new Date (prefix + opts.default)
+
+          if isNaN time.getTime()
+            # Invalid Date
+            time = new Date prefix + "12:00 AM"
+
+          $scope.time = time
 
         #
         # @name inputSelectAction
