@@ -10,6 +10,8 @@
 ## - mac-time-model:       Model to bind input to
 ## - mac-time-placeholder: Placeholder text of the text input (default --:--)
 ## - mac-time-disabled:    Enable or disable time input
+## - mac-time-default:     If model is undefined, use this    (default 12:00 PM)
+##                         as the starting value
 ##
 angular.module("Mac").directive "macTime", [
   "util"
@@ -28,6 +30,7 @@ angular.module("Mac").directive "macTime", [
       defaults =
         id:          "time-input"
         placeholder: "--:--"
+        default:     "12:00 PM"
 
       opts = util.extendAttributes "macTime", defaults, attrs
 
@@ -49,9 +52,8 @@ angular.module("Mac").directive "macTime", [
           updateScopeTime() if value?
 
         $scope.reset = ->
-          $scope.time = new Date()
-          # Set datetime to midnight
-          $scope.time.setHours 0, 0, 0, 0
+          # TODO: Have this be looser with formatting (only accepts XX:XX XX)
+          $scope.time = new Date Date.parse "Jan 1, 1972, " + opts.default
 
         #
         # @name inputSelectAction
