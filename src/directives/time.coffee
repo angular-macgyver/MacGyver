@@ -30,7 +30,7 @@ angular.module("Mac").directive "macTime", [
       defaults =
         id:          "time-input"
         placeholder: "--:--"
-        default:     "12:00 PM"
+        default:     "12:00 AM"
 
       opts = util.extendAttributes "macTime", defaults, attrs
 
@@ -53,7 +53,7 @@ angular.module("Mac").directive "macTime", [
 
         $scope.reset = ->
           # TODO: Have this be looser with formatting (only accepts XX:XX XX)
-          $scope.time = new Date Date.parse "Jan 1, 1972, " + opts.default
+          $scope.time = new Date Date.parse "Jan 1, 1970, " + opts.default
 
         #
         # @name inputSelectAction
