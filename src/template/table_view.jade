@@ -1,6 +1,4 @@
 .mac-table-container.mac-table(ng-style="getTableCss()")
-  .mac-table-loader(ng-hide="!opts.showLoader || !loading", ng-cloak)
-    mac-spinner(mac-spinner-z-index="0")
   .mac-table-header(ng-show="opts.hasHeader"): .mac-table-row
   .mac-table-body-wrapper
     .mac-title-column(ng-show="opts.lockFirstColumn")
@@ -13,4 +11,6 @@
       ng-show  = "opts.hasTotalFooter"
       ng-style = "getBodyBlockCss('total-footer')"
     )
+  .mac-table-loader(ng-hide="!opts.showLoader || !loading", ng-cloak)
+    mac-spinner(mac-spinner-z-index="0")
   .mac-table-transclude(ng-transclude, ng-cloak)
