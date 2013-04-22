@@ -1,0 +1,187 @@
+.search-box
+  border        1px solid gray
+  border-color  transparent
+  border-radius 14px
+  height        28px
+  width         28px
+  position      relative
+  z-index       100
+  transition    width 0.15s linear, border-color 0.15s linear
+  display       block
+  position      absolute
+  right         0
+  top           0
+  transition-delay .25s
+  .icon
+    height     28px
+    width      28px
+    background url(../img/search.jpg) no-repeat center
+  .search-popover
+    width      258px
+    height     174px
+    background url(../img/search-popover.png) no-repeat 0 0
+    position   absolute
+    left       -40px
+    top        40px
+    opacity    0
+    transition top 0.15s linear, opacity 0.15s linear
+    transition-delay 0
+  &:active
+    border-color #dddddd
+    width        180px
+    transition-delay 0
+    .search-popover
+      transition-delay .25s
+      top     28px
+      opacity 1
+
+
+
+
+.table-view-container
+  padding-top 40px
+  position    relative
+  width       960px
+  .t-header
+    width      100%
+    height     42px
+    background url(../img/header.jpg) no-repeat 0 0
+  .t-body
+    height 350px
+    overflow-y scroll
+    position relative
+    .t-row
+      border-right 1px solid #dddddd
+      .row-block
+        position relative
+        &.one
+          height     69px
+          background url(../img/row1.jpg) no-repeat 0 0
+        &.two
+          height     40px
+          background url(../img/row2.jpg) no-repeat 0 0
+        &.three
+          height     48px
+          background url(../img/row3.jpg) no-repeat 0 0
+        .first-cell
+          position    absolute
+          top         0
+          bottom      0
+          left        0
+          width       140px
+          background  white
+          &.blue
+            background #f0f5ff
+          .type-bar
+            width    7px
+            position absolute
+            top      0
+            bottom   0
+            left     0
+            transition width 0.15s linear
+            &.blue
+              background-color #0072bc
+            &.green
+              background-color: #39b54a
+            &.red
+              background-color: #cc52b6
+          input
+            position   absolute
+            top        50%
+            margin-top -6px
+            left       10px
+            transition left 0.15s linear
+          .name
+            font-size   12px
+            padding-top 6px
+            display     inline-block
+            margin-left 30px
+            line-height 14px
+            transition  margin-left 0.15s linear
+          // &:hover
+          //   .type-bar
+          //     width 14px
+          //   input
+          //     left 17px
+          //   .name
+          //     margin-left 37px
+
+      .details-wrapper
+        position   relative
+        display    block
+        overflow   hidden
+        background #e1e1e1 url(../img/small-gradient.png) repeat-x 0 -3px
+        height     0
+        opacity    0
+        transition opacity 0.15s linear, height 0.15s linear
+        .arrow
+          display     block
+          color       white
+          text-align  center
+          line-height 9px
+          font-size   11px
+        .details
+          background-color #dddddd
+          opacity          0
+          transition       opacity 0.15s linear
+          top              0
+          bottom           0
+          left             0
+          right            0
+          position         absolute
+          box-sizing       border-box
+          padding          0 20px
+          .target-group, .ad-preview
+            float left
+            width 30%
+          .ad-preview:after
+            content "http://facebook.com/324234"
+      &:hover .details-wrapper
+        opacity 1
+        height 9px
+      &:hover .details-wrapper:active
+        height 200px
+        .details
+          opacity 1
+  .t-footer
+    border-top 1px solid #ddd
+    height     39px
+    position   relative
+
+    .placeholder
+      height     39px
+      background url(../img/footer.jpg) no-repeat 0 0
+      position   relative
+
+    .status-bar
+      height        39px
+      border-radius 2px 2px 0 0
+      background    rgba(0,0,0,.25)
+      text-align    center
+      line-height   39px
+      font-weight   bold
+      position      absolute
+      bottom        0px
+      left          0
+      right         0
+      overflow      hidden
+      transition bottom 0.15s ease-in
+      .ads, .stats, .more-ads
+        display none
+
+// Global States
+body.loading-ads, body.loading-stats, body.loading-more-ads
+  .table-view-container .t-footer .status-bar
+    bottom 39px
+
+body.loading-ads
+  .table-view-container .t-footer .status-bar .ads
+    display inline
+
+body.loading-stats
+  .table-view-container .t-footer .status-bar .stats
+    display inline
+
+body.loading-more-ads
+  .table-view-container .t-footer .status-bar .more-ads
+    display inline
