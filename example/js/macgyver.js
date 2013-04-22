@@ -12668,6 +12668,215 @@ angular.module("Mac").filter("underscoreString", function() {
   };
 });
 
+
+angular.module("Mac").factory("Table", [
+  "$q", function($q) {
+    var BaseColumn, ColumnsController, Row, RowsController, SectionController, Table, cellFactory, columnFactory, sectionFactory;
+    BaseColumn = (function() {
+
+      function BaseColumn() {}
+
+      return BaseColumn;
+
+    })();
+    columnFactory = function(colName, proto) {
+      var Column;
+      if (proto == null) {
+        proto = {};
+      }
+      Column = function(colName) {
+        this.colName = colName;
+      };
+      Column.prototype = proto;
+      return new Column(colName);
+    };
+    SectionController = (function() {
+
+      function SectionController(section) {
+        this.section = section;
+      }
+
+      SectionController.prototype.cellValue = function(row, colName) {
+        return this.defaultCellValue(row, colName);
+      };
+
+      SectionController.prototype.defaultCellValue = function(row, colName) {
+        return row.model[colName];
+      };
+
+      return SectionController;
+
+    })();
+    sectionFactory = function(table, sectionName, controller) {
+      var Section;
+      if (controller == null) {
+        controller = SectionController;
+      }
+      Section = function(controller, table, name, rows) {
+        this.table = table;
+        this.name = name;
+        this.rows = rows != null ? rows : [];
+        this.ctrl = new controller(this);
+      };
+      return new Section(controller, table, sectionName);
+    };
+    cellFactory = function(row, proto) {
+      var Cell;
+      if (proto == null) {
+        proto = {};
+      }
+      Cell = function(row) {
+        this.row = row;
+        this.value = function() {
+          var _ref, _ref1;
+          return (_ref = this.row) != null ? (_ref1 = _ref.section) != null ? _ref1.ctrl.cellValue(this.row, this.colName) : void 0 : void 0;
+        };
+      };
+      Cell.prototype = proto;
+      return new Cell(row);
+    };
+    Row = (function() {
+
+      function Row(section, model, cells, cellsMap) {
+        this.section = section;
+        this.model = model;
+        this.cells = cells != null ? cells : [];
+        this.cellsMap = cellsMap != null ? cellsMap : {};
+      }
+
+      return Row;
+
+    })();
+    ColumnsController = (function() {
+
+      function ColumnsController(table) {
+        this.table = table;
+      }
+
+      ColumnsController.prototype.dynamic = function(models) {
+        var columns, first, key, model;
+        first = models[0];
+        columns = [];
+        for (key in first) {
+          model = first[key];
+          columns.push(key);
+        }
+        return this.set(columns);
+      };
+
+      ColumnsController.prototype.reset = function() {
+        this.table.columnsOrder = [];
+        this.table.columns = [];
+        return this.table.columnsMap = {};
+      };
+
+      ColumnsController.prototype.set = function(columns) {
+        var colName, column, _i, _len, _results;
+        this.reset();
+        this.table.columnsOrder = columns;
+        _results = [];
+        for (_i = 0, _len = columns.length; _i < _len; _i++) {
+          colName = columns[_i];
+          column = columnFactory(colName, this.table.baseColumn);
+          this.table.columnsMap[colName] = column;
+          _results.push(this.table.columns.push(column));
+        }
+        return _results;
+      };
+
+      ColumnsController.prototype.syncOrder = function() {
+        var cells, colName, columns, row, rows, section, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
+        _ref = this.table.sections;
+        for (section in _ref) {
+          rows = _ref[section];
+          for (_i = 0, _len = rows.length; _i < _len; _i++) {
+            row = rows[_i];
+            cells = [];
+            _ref1 = this.table.columnsOrder;
+            for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+              colName = _ref1[_j];
+              cells.push(row.cellsMap[colName]);
+            }
+            row.cells = cells;
+          }
+        }
+        columns = [];
+        _ref2 = this.table.columnsOrder;
+        for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
+          colName = _ref2[_k];
+          columns.push(this.table.columnsMap[colName]);
+        }
+        return this.table.columns = columns;
+      };
+
+      return ColumnsController;
+
+    })();
+    RowsController = (function() {
+
+      function RowsController(table) {
+        this.table = table;
+      }
+
+      RowsController.prototype.set = function(sectionName, models, sectionController) {
+        var cell, colName, column, model, row, rows, section, _i, _len, _ref;
+        this.table.sections[sectionName] = section = sectionFactory(this.table, sectionName, sectionController);
+        if (this.table.dynamicColumns) {
+          this.table.columnsCtrl.dynamic(models);
+        }
+        rows = [];
+        for (_i = 0, _len = models.length; _i < _len; _i++) {
+          model = models[_i];
+          row = new Row(section, model);
+          _ref = this.table.columnsMap;
+          for (colName in _ref) {
+            column = _ref[colName];
+            cell = cellFactory(row, column);
+            row.cellsMap[colName] = cell;
+            row.cells.push(cell);
+          }
+          rows.push(row);
+        }
+        return section.rows = rows;
+      };
+
+      return RowsController;
+
+    })();
+    return Table = (function() {
+
+      function Table(columns, baseColumn) {
+        if (columns == null) {
+          columns = 'dynamic';
+        }
+        this.baseColumn = baseColumn != null ? baseColumn : new BaseColumn();
+        this.sections = {};
+        this.columns = [];
+        this.columnsCtrl = new ColumnsController(this);
+        this.rowsCtrl = new RowsController(this);
+        this.dynamicColumns = columns === 'dynamic';
+        if (!this.dynamicColumns) {
+          this.columnsCtrl.set(columns);
+        }
+        return;
+      }
+
+      Table.prototype.load = function(section, models, sectionController) {
+        if (!!models.then) {
+          return models.then(function(models) {
+            return this.rowsCtrl.set(section, models, sectionController);
+          });
+        } else {
+          return this.rowsCtrl.set(section, models, sectionController);
+        }
+      };
+
+      return Table;
+
+    })();
+  }
+]);
+
 var util,
   __hasProp = {}.hasOwnProperty;
 
