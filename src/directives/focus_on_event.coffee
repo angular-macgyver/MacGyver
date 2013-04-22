@@ -1,6 +1,4 @@
-module = angular.module "Mac"
-
-module.directive "macFocusOnEvent", ->
+angular.module("Mac").directive "macFocusOnEvent", ->
   (scope, element, attributes) ->
     scope.$on attributes.macFocusOnEvent, ->
       setTimeout (->

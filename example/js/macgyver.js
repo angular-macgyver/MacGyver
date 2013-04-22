@@ -11203,11 +11203,8 @@ angular.module("Mac").directive("macUpload", [
   }
 ]);
 
-var module;
 
-module = angular.module("Mac");
-
-module.directive("macFocusOnEvent", function() {
+angular.module("Mac").directive("macFocusOnEvent", function() {
   return function(scope, element, attributes) {
     return scope.$on(attributes.macFocusOnEvent, function() {
       return setTimeout((function() {
