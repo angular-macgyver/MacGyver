@@ -1,4 +1,4 @@
-// Testacular configuration
+// Karma configuration
 
 
 // base path, that will be used to resolve files and exclude
@@ -12,17 +12,14 @@ files = [
   // Application Code //
   'example/js/vendor.js',
   'src/*.coffee',
+  'src/**/*.coffee',
 
   // Javascript //
-  //'test/vendor/angular/angular-mocks.js',
-
-  // Specs //
+  'test/vendor/angular-mocks.js',
 
   // CoffeeScript //
   'test/unit/*.spec.coffee'
 
-  // Javascript //
-  // 'test/unit/**/*.spec.js'
 ];
 
 // list of files to exclude
@@ -31,7 +28,7 @@ exclude = [];
 // use dots reporter, as travis terminal does not support escaping sequences
 // possible values: 'dots', 'progress', 'junit'
 // CLI --reporters progress
-reporters = ['progress', 'junit'];
+reporters = ['progress'];
 
 //junitReporter = {
 //  // will be resolved to basePath (in the same way as files/exclude patterns)
@@ -73,16 +70,3 @@ browsers = ["Chrome"];
 // If browser does not capture in given timeout [ms], kill it
 // CLI --capture-timeout 5000
 captureTimeout = 30000;
-
-// Auto run tests on start (when browsers are captured) and exit
-// CLI --single-run --no-single-run
-singleRun = false;
-
-// report which specs are slower than 500ms
-// CLI --report-slower-than 500
-reportSlowerThan = 500;
-
-// compile coffee scripts
-preprocessors = {
-  '**/*.coffee': 'coffee'
-};

@@ -18,6 +18,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks "grunt-contrib-clean"
   grunt.loadNpmTasks "grunt-contrib-watch"
   grunt.loadNpmTasks "grunt-contrib-uglify"
+  grunt.loadNpmTasks "grunt-karma"
 
   # Internal functions
   spawn = (options, done = ->) ->
@@ -159,6 +160,11 @@ module.exports = (grunt) ->
         tasks: ["jade"]
         options: interrupt: true
 
+    karma:
+      unit:
+        configFile: "test/karma.conf.js"
+        autoWatch: true
+
   # Replace templateUrl with actual html
   grunt.registerTask "embed:html", "Replace templateUrl with actual html", ->
     fromFile         = path.join examplePath, "js/macgyver.js"
@@ -211,13 +217,6 @@ module.exports = (grunt) ->
     "concat"
     "clean"
   ]
-
-  grunt.registerTask "test", "Run testacular for unit tests", ->
-    @async()
-
-    spawn
-      cmd:  "./node_modules/.bin/testacular"
-      args: ["start", "test/testacular.conf.js"]
 
   grunt.registerTask "run", "Watch src and run test server", ->
     @async()
