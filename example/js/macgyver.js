@@ -12669,28 +12669,23 @@ angular.module("Mac").filter("underscoreString", function() {
 });
 
 
-angular.module("Mac").factory("Table", [
-  "$q", function($q) {
-    var BaseColumn, ColumnsController, Row, RowsController, SectionController, Table, cellFactory, columnFactory, sectionFactory;
-    BaseColumn = (function() {
+angular.module("Mac").factory("BaseColumn", [
+  function() {
+    var BaseColumn;
+    return BaseColumn = (function() {
 
       function BaseColumn() {}
 
       return BaseColumn;
 
     })();
-    columnFactory = function(colName, proto) {
-      var Column;
-      if (proto == null) {
-        proto = {};
-      }
-      Column = function(colName) {
-        this.colName = colName;
-      };
-      Column.prototype = proto;
-      return new Column(colName);
-    };
-    SectionController = (function() {
+  }
+]);
+
+angular.module("Mac").factory("SectionController", [
+  function() {
+    var SectionController;
+    return SectionController = (function() {
 
       function SectionController(section) {
         this.section = section;
@@ -12707,35 +12702,13 @@ angular.module("Mac").factory("Table", [
       return SectionController;
 
     })();
-    sectionFactory = function(table, sectionName, controller) {
-      var Section;
-      if (controller == null) {
-        controller = SectionController;
-      }
-      Section = function(controller, table, name, rows) {
-        this.table = table;
-        this.name = name;
-        this.rows = rows != null ? rows : [];
-        this.ctrl = new controller(this);
-      };
-      return new Section(controller, table, sectionName);
-    };
-    cellFactory = function(row, proto) {
-      var Cell;
-      if (proto == null) {
-        proto = {};
-      }
-      Cell = function(row) {
-        this.row = row;
-        this.value = function() {
-          var _ref, _ref1;
-          return (_ref = this.row) != null ? (_ref1 = _ref.section) != null ? _ref1.ctrl.cellValue(this.row, this.colName) : void 0 : void 0;
-        };
-      };
-      Cell.prototype = proto;
-      return new Cell(row);
-    };
-    Row = (function() {
+  }
+]);
+
+angular.module("Mac").factory("Row", [
+  function() {
+    var Row;
+    return Row = (function() {
 
       function Row(section, model, cells, cellsMap) {
         this.section = section;
@@ -12747,7 +12720,62 @@ angular.module("Mac").factory("Table", [
       return Row;
 
     })();
-    ColumnsController = (function() {
+  }
+]);
+
+angular.module("Mac").factory("tableComponents", [
+  "SectionController", "Row", function(SectionController, Row) {
+    return {
+      rowFactory: function(section, model) {
+        return new Row(section, model);
+      },
+      columnFactory: function(colName, proto) {
+        var Column;
+        if (proto == null) {
+          proto = {};
+        }
+        Column = function(colName) {
+          this.colName = colName;
+        };
+        Column.prototype = proto;
+        return new Column(colName);
+      },
+      sectionFactory: function(table, sectionName, controller) {
+        var Section;
+        if (controller == null) {
+          controller = SectionController;
+        }
+        Section = function(controller, table, name, rows) {
+          this.table = table;
+          this.name = name;
+          this.rows = rows != null ? rows : [];
+          this.ctrl = new controller(this);
+        };
+        return new Section(controller, table, sectionName);
+      },
+      cellFactory: function(row, proto) {
+        var Cell;
+        if (proto == null) {
+          proto = {};
+        }
+        Cell = function(row) {
+          this.row = row;
+          this.value = function() {
+            var _ref, _ref1;
+            return (_ref = this.row) != null ? (_ref1 = _ref.section) != null ? _ref1.ctrl.cellValue(this.row, this.colName) : void 0 : void 0;
+          };
+        };
+        Cell.prototype = proto;
+        return new Cell(row);
+      }
+    };
+  }
+]);
+
+angular.module("Mac").factory("ColumnsController", [
+  "tableComponents", function(tableComponents) {
+    var ColumnsController;
+    return ColumnsController = (function() {
 
       function ColumnsController(table) {
         this.table = table;
@@ -12777,7 +12805,7 @@ angular.module("Mac").factory("Table", [
         _results = [];
         for (_i = 0, _len = columns.length; _i < _len; _i++) {
           colName = columns[_i];
-          column = columnFactory(colName, this.table.baseColumn);
+          column = tableComponents.columnFactory(colName, this.table.baseColumn);
           this.table.columnsMap[colName] = column;
           _results.push(this.table.columns.push(column));
         }
@@ -12812,7 +12840,13 @@ angular.module("Mac").factory("Table", [
       return ColumnsController;
 
     })();
-    RowsController = (function() {
+  }
+]);
+
+angular.module("Mac").factory("RowsController", [
+  "tableComponents", function(tableComponents) {
+    var RowsController;
+    return RowsController = (function() {
 
       function RowsController(table) {
         this.table = table;
@@ -12820,18 +12854,21 @@ angular.module("Mac").factory("Table", [
 
       RowsController.prototype.set = function(sectionName, models, sectionController) {
         var cell, colName, column, model, row, rows, section, _i, _len, _ref;
-        this.table.sections[sectionName] = section = sectionFactory(this.table, sectionName, sectionController);
+        this.table.sections[sectionName] = section = tableComponents.sectionFactory(this.table, sectionName, sectionController);
         if (this.table.dynamicColumns) {
+          if (!models.length) {
+            return;
+          }
           this.table.columnsCtrl.dynamic(models);
         }
         rows = [];
         for (_i = 0, _len = models.length; _i < _len; _i++) {
           model = models[_i];
-          row = new Row(section, model);
+          row = tableComponents.rowFactory(section, model);
           _ref = this.table.columnsMap;
           for (colName in _ref) {
             column = _ref[colName];
-            cell = cellFactory(row, column);
+            cell = tableComponents.cellFactory(row, column);
             row.cellsMap[colName] = cell;
             row.cells.push(cell);
           }
@@ -12843,6 +12880,12 @@ angular.module("Mac").factory("Table", [
       return RowsController;
 
     })();
+  }
+]);
+
+angular.module("Mac").factory("Table", [
+  "$q", "BaseColumn", "ColumnsController", "RowsController", function($q, BaseColumn, ColumnsController, RowsController) {
+    var Table;
     return Table = (function() {
 
       function Table(columns, baseColumn) {
@@ -12862,6 +12905,9 @@ angular.module("Mac").factory("Table", [
       }
 
       Table.prototype.load = function(section, models, sectionController) {
+        if (models == null) {
+          models = "auto";
+        }
         if (!!models.then) {
           return models.then(function(models) {
             return this.rowsCtrl.set(section, models, sectionController);
