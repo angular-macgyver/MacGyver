@@ -65,6 +65,16 @@ module.exports = (grunt) ->
           "tmp/app/**/*.js"
         ]
 
+      deployAppJs:
+        dest: "lib/<%= pkg.name %>.js"
+        src: [
+          "tmp/app/main.js"
+          "vendor/js/jquery-ui.js"
+          "vendor/js/*.js"
+          "tmp/app/**/*.js"
+          "!tmp/app/example_controller/*.js"
+        ]
+
       vendorCss:
         dest: "example/css/vendor.css"
         src: [
@@ -126,7 +136,6 @@ module.exports = (grunt) ->
           flatten: true
           src:     [
             "example/css/<%= pkg.name %>.css"
-            "example/js/<%= pkg.name %>.js"
           ]
           dest: "lib/"
         ]
@@ -167,7 +176,7 @@ module.exports = (grunt) ->
 
   # Replace templateUrl with actual html
   grunt.registerTask "embed:html", "Replace templateUrl with actual html", ->
-    fromFile         = path.join examplePath, "js/macgyver.js"
+    fromFile         = path.join finalBuildPath, "macgyver.js"
     writeFile        = path.join finalBuildPath, "macgyver.js"
     templateUrlRegex = /templateUrl: "([^"]+)"/g
     done             = @async()
@@ -207,14 +216,26 @@ module.exports = (grunt) ->
         grunt.log.writeln "Updated component.json"
         done()
 
-  grunt.registerTask "deploy", "Build and copy to lib/",
-    ["compile", "copy", "embed:html", "update:component", "uglify"]
+  grunt.registerTask "deploy", "Build and copy to lib/", [
+      "coffee"
+      "stylus"
+      "jade"
+      "concat"
+      "clean"
+      "copy"
+      "embed:html"
+      "update:component"
+      "uglify"
+    ]
 
-  grunt.registerTask "compile", "Compile files",[
+  grunt.registerTask "compile", "Compile files", [
     "coffee"
     "stylus"
     "jade"
-    "concat"
+    "concat:vendorJs"
+    "concat:appJs"
+    "concat:vendorCss"
+    "concat:appCss"
     "clean"
   ]
 
