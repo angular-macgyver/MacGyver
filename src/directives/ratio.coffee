@@ -4,6 +4,26 @@ angular.module("Mac").directive "macGovernRatio", [ "$rootScope", ($rootScope) -
     children = {}
     total    = 0
 
+    resizeIt = (scope, element, children, cElement, args) ->
+      [event, ui] = args
+      column      = cElement.scope().cell.column
+      width       = ui.size.width
+      # Reset the width that jQuery will assign
+      cElement.css("width", "")
+      scope.$apply ->
+        column.ratio = (width/element.width())*100
+
+    reorderIt = (scope, element, children, cElement, args) ->
+      [matchedElements, event, ui] = args
+      columnsOrder                 = []
+      changedElement               = angular.element(ui.item)
+      table                        = changedElement.scope().cell.row.section.table
+      matchedElements.each ->
+        columnsOrder.push angular.element(this).scope().cell.colName
+      scope.$apply ->
+        table.columnsOrder = columnsOrder
+        table.columnsCtrl.syncOrder()
+
     getSiblingScopes = (siblings) ->
       # We're querying elements vs using $$prevSibling $$nextSibling on the
       # scope since it seems like angular won't update those properties as we
@@ -20,7 +40,6 @@ angular.module("Mac").directive "macGovernRatio", [ "$rootScope", ($rootScope) -
       children[childScope.$id] =
         element: childElement
         scope:   childScope
-      console.log total
 
     scope.$on "mac-ratio-#{scope.$id}-changed", (event, id, newValue, oldValue) ->
       # We only work with numbers...
@@ -50,6 +69,21 @@ angular.module("Mac").directive "macGovernRatio", [ "$rootScope", ($rootScope) -
       for siblingScope in nextSiblings
         siblingScope.cell.column.width =
           nextSiblingsWidthMap[siblingScope.$id]
+
+    # This is our main hookable function
+    # this will delegate events to either other MAC directives or callbacks
+    # on properties on the governing directive
+    scope.$on "mac-element-#{scope.$id}-changed", (event, type, cElement, args...) ->
+      titlizedType  = _.string.titleize type
+      attributeName = "mac#{titlizedType}Callback"
+      if attrs[attributeName]?
+        callback = scope.$eval attrs[attributeName]
+        callback scope, element, children, cElement, args
+      # MacGyver Builtins
+      else if attributeName is "macResizedCallback"
+        resizeIt scope, element, children, cElement, args
+      else if attributeName is "macReorderedCallback"
+        reorderIt scope, element, children, cElement, args
 
 ]
 

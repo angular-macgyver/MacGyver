@@ -1,8 +1,6 @@
 angular.module("Mac").directive "macReorderable", [ ->
   (scope, element, attrs) ->
-    selector        = attrs.macReorderable
-    # TODO: do a check here
-    callback = scope.$eval attrs.macReorderableCallback
+    selector = attrs.macReorderable
     element.sortable
       items:     selector
       cursor:    "move"
@@ -10,5 +8,6 @@ angular.module("Mac").directive "macReorderable", [ ->
       tolerance: "pointer"
       update:    (event, ui) ->
         matched = element.find selector
-        callback matched, element, event, ui, scope
+        scope.$emit "mac-element-#{scope.$id}-changed", "reordered", element, matched, event, ui,
+        scope.$emit "mac-element-#{scope.$parent.$id}-changed", "reordered", element, matched, event, ui,
 ]

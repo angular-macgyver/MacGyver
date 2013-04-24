@@ -109,13 +109,11 @@ html
               table.table.table-striped.mac-table-default
                 tr(
                   mac-reorderable="> th"
-                  mac-reorderable-callback="reorderIt"
                   mac-govern-ratio
                 )
                   th(
                     ng-repeat="cell in table.sections.header.rows[0].cells"
                     mac-resizable
-                    mac-resizable-callback="resizeIt"
                     mac-ratio="{{100/cell.row.cells.length}}"
                     width="{{cell.width}}%"
                     )

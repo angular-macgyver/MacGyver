@@ -11339,13 +11339,38 @@ angular.module("Mac").factory("keys", function() {
   };
 });
 
+var __slice = [].slice;
 
 angular.module("Mac").directive("macGovernRatio", [
   "$rootScope", function($rootScope) {
     return function(scope, element, attrs) {
-      var children, getSiblingScopes, total;
+      var children, getSiblingScopes, reorderIt, resizeIt, total;
       children = {};
       total = 0;
+      resizeIt = function(scope, element, children, cElement, args) {
+        var column, event, ui, width;
+        event = args[0], ui = args[1];
+        column = cElement.scope().cell.column;
+        width = ui.size.width;
+        cElement.css("width", "");
+        return scope.$apply(function() {
+          return column.ratio = (width / element.width()) * 100;
+        });
+      };
+      reorderIt = function(scope, element, children, cElement, args) {
+        var changedElement, columnsOrder, event, matchedElements, table, ui;
+        matchedElements = args[0], event = args[1], ui = args[2];
+        columnsOrder = [];
+        changedElement = angular.element(ui.item);
+        table = changedElement.scope().cell.row.section.table;
+        matchedElements.each(function() {
+          return columnsOrder.push(angular.element(this).scope().cell.colName);
+        });
+        return scope.$apply(function() {
+          table.columnsOrder = columnsOrder;
+          return table.columnsCtrl.syncOrder();
+        });
+      };
       getSiblingScopes = function(siblings) {
         var el, li, siblingScope, _i, _len;
         li = [];
@@ -11360,13 +11385,12 @@ angular.module("Mac").directive("macGovernRatio", [
       };
       scope.$on("mac-ratio-" + scope.$id + "-register", function(event, childElement, childScope) {
         total++;
-        children[childScope.$id] = {
+        return children[childScope.$id] = {
           element: childElement,
           scope: childScope
         };
-        return console.log(total);
       });
-      return scope.$on("mac-ratio-" + scope.$id + "-changed", function(event, id, newValue, oldValue) {
+      scope.$on("mac-ratio-" + scope.$id + "-changed", function(event, id, newValue, oldValue) {
         var cElement, cScope, nextSiblings, nextSiblingsWidthMap, prevSiblings, scale, siblingScope, siblingsTotalWidth, width, _i, _j, _len, _len1, _ref, _results;
         if (!(!isNaN(newValue) && !isNaN(oldValue))) {
           return;
@@ -11400,6 +11424,20 @@ angular.module("Mac").directive("macGovernRatio", [
         }
         return _results;
       });
+      return scope.$on("mac-element-" + scope.$id + "-changed", function() {
+        var args, attributeName, cElement, callback, event, titlizedType, type;
+        event = arguments[0], type = arguments[1], cElement = arguments[2], args = 4 <= arguments.length ? __slice.call(arguments, 3) : [];
+        titlizedType = _.string.titleize(type);
+        attributeName = "mac" + titlizedType + "Callback";
+        if (attrs[attributeName] != null) {
+          callback = scope.$eval(attrs[attributeName]);
+          return callback(scope, element, children, cElement, args);
+        } else if (attributeName === "macResizedCallback") {
+          return resizeIt(scope, element, children, cElement, args);
+        } else if (attributeName === "macReorderedCallback") {
+          return reorderIt(scope, element, children, cElement, args);
+        }
+      });
     };
   }
 ]);
@@ -11422,31 +11460,11 @@ angular.module("Mac").directive("macRatio", [
 ]);
 
 
-angular.module("Mac").directive("macResizable", [
-  function() {
-    return function(scope, element, attrs) {
-      var axis, callback;
-      axis = attrs.macResizable || "x";
-      callback = scope.$eval(attrs.macResizableCallback);
-      return element.resizable({
-        axis: axis,
-        containment: "parent",
-        handles: "e",
-        resize: function(event, ui) {
-          return callback(element, event, ui, scope);
-        }
-      });
-    };
-  }
-]);
-
-
 angular.module("Mac").directive("macReorderable", [
   function() {
     return function(scope, element, attrs) {
-      var callback, selector;
+      var selector;
       selector = attrs.macReorderable;
-      callback = scope.$eval(attrs.macReorderableCallback);
       return element.sortable({
         items: selector,
         cursor: "move",
@@ -11455,7 +11473,25 @@ angular.module("Mac").directive("macReorderable", [
         update: function(event, ui) {
           var matched;
           matched = element.find(selector);
-          return callback(matched, element, event, ui, scope);
+          return scope.$emit("mac-element-" + scope.$id + "-changed", "reordered", element, matched, event, ui, scope.$emit("mac-element-" + scope.$parent.$id + "-changed", "reordered", element, matched, event, ui));
+        }
+      });
+    };
+  }
+]);
+
+
+angular.module("Mac").directive("macResizable", [
+  function() {
+    return function(scope, element, attrs) {
+      var axis;
+      axis = attrs.macResizable || "x";
+      return element.resizable({
+        axis: axis,
+        containment: "parent",
+        handles: "e",
+        resize: function(event, ui) {
+          return scope.$emit("mac-element-" + scope.$id + "-changed", "resized", element, event, ui, scope.$emit("mac-element-" + scope.$parent.$id + "-changed", "resized", element, event, ui));
         }
       });
     };

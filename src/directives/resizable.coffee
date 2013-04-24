@@ -2,17 +2,15 @@
 #
 # Example:
 # mac-resizable
-# mac-resizable-callback="resizeIt"
 #
 angular.module("Mac").directive "macResizable", [ ->
   (scope, element, attrs) ->
     axis = attrs.macResizable or "x"
-    # TODO: do a check here
-    callback = scope.$eval attrs.macResizableCallback
     element.resizable
       axis:        axis
       containment: "parent"
       handles:     "e"
       resize:      (event, ui) ->
-        callback element, event, ui, scope
+        scope.$emit "mac-element-#{scope.$id}-changed", "resized", element, event, ui,
+        scope.$emit "mac-element-#{scope.$parent.$id}-changed", "resized", element, event, ui,
 ]
