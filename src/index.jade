@@ -106,42 +106,32 @@ html
             .page-header: h1 Table view
             h2 Example
             .docs-example
-              .table-view-wrapper(
-                mac-table
-                mac-table-data          = "data"
-                mac-table-width         = "750"
-                mac-table-header-height = "30"
-                mac-table-columns       = "columnOrder"
-                mac-table-loading       = "loading"
-                mac-table-resizable
-                mac-table-has-footer
-                mac-table-sortable
-                mac-table-lock-first-column
-                mac-table-calculate-total-locally
-                mac-table-fluid-width
-                ng-cloak
-              )
-                .table-header-template
-                  .cell(column="Name") Name
-                  .cell(column="anotherName", sort-by="a") Second Column
-                .table-body-template
-                  .mac-table-row(class="{{'true' | true:'hello'}}")
-                    .cell(column="Name", style="width: 200px")
-                      a(
-                        mac-click       = "loadMoreRows()"
-                        mac-click-depth = "5"
-                      ) {{row.value.name}}
-                    .cell(column="anotherName") {{row.value.a | number: 0}}
-                    .cell(column="d") {{row.value.d | number: 4}}
-                    .cell(column="c") {{row.value.c | number: 4}}
-                    .cell(column="b") {{row.parent.getRandomText()}} {{row.value.b | currency}}
-                    .cell(column="Abc") {{row.value.attributes.abc | number:4}}
-                    .cell(column="Created") {{row.value.created | date: 'mediumDate'}}
-                .table-footer-template
-                  a.btn(mac-click="loadMoreRows()") Load 20 More Rows
-                .table-total-footer-template
-                  .cell(column="Name") {{ "Row" | pluralize: data.length}}
-                  .cell(column="b") {{ total.b | currency}}
+              table.table.table-striped.mac-table-default
+                tr(
+                  mac-reorderable="> th"
+                  mac-reorderable-callback="reorderIt"
+                  mac-govern-ratio
+                )
+                  th(
+                    ng-repeat="cell in table.sections.header.rows[0].cells"
+                    mac-resizable
+                    mac-resizable-callback="resizeIt"
+                    mac-ratio="{{100/cell.row.cells.length}}"
+                    width="{{cell.width}}%"
+                    )
+                    span {{cell.value()}}
+                tr(
+                  mac-reorderable="> td"
+                  mac-reorderable-callback="reorderIt"
+                  ng-repeat="row in table.sections.body.rows"
+                )
+                  td(
+                    ng-repeat="cell in row.cells"
+                    width="{{cell.width}}%"
+                  )
+                    span {{cell.value()}}
+                    .extra-info(ng-show="cell.colName == 'name'")
+                      small {{cell.colName}}
 
           section#tag-input
             .page-header: h1 Tag Input

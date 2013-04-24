@@ -1,7 +1,17 @@
 module = angular.module("Mac")
 
-module.controller "ExampleController", ["$scope", ($scope) ->
+module.controller "ExampleController", ["$scope", "Table", ($scope, Table) ->
   # Table view section
+  columns = ["name", "a", "b", "c", "d", "created"]
+  $scope.table = new Table(columns)
+  headerObject =
+      name: "Name"
+      a: "A"
+      b: "B"
+      c: "C"
+      d: "D"
+      created: "Created"
+  $scope.table.load("header", [headerObject])
   # Data for table view
   # Current generating 10000 rows of entries to make sure table view can handle large
   # amount of data
@@ -11,7 +21,7 @@ module.controller "ExampleController", ["$scope", ($scope) ->
   $scope.loading = true
   setTimeout (->
     #for i in [1..5000]
-    for i in [1..23]
+    for i in [1..1]
       obj =
         name: "Test " + i
         a: Math.random() * 100000
@@ -24,9 +34,38 @@ module.controller "ExampleController", ["$scope", ($scope) ->
           abc: Math.random() * 1000
 
       $scope.data.push obj
+    $scope.table.load("body", $scope.data)
     $scope.loading = false
     $scope.$digest()
-  ), 2500
+    $scope.$apply ->
+      #$scope.setColumnWidths $scope.table, 830, 8
+  ), 0 #2500
+
+
+
+  $scope.setColumnWidths = (table) ->
+    colNumber = table.columnsOrder.length
+    percent   = Math.floor 100/colNumber
+    for column in table.columns
+      column.width = "#{percent}%"
+
+  $scope.logIt = () ->
+    console.log.apply console, arguments
+
+  $scope.reorderIt = (elements, element, event, ui, scope) ->
+    columnsOrder = []
+    elements.each ->
+      columnsOrder.push angular.element(this).scope().cell.colName
+    $scope.$apply ->
+      $scope.table.columnsOrder = columnsOrder
+      $scope.table.columnsCtrl.syncOrder()
+
+  $scope.resizeIt = (element, event, ui) ->
+    column  = element.scope().cell.column
+    width   = ui.size.width
+    element.css("width", "")
+    $scope.$apply ->
+      column.ratio = (width/830)*100
 
   $scope.createRow = (event) ->
     event.stopPropagation()

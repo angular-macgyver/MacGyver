@@ -39,12 +39,12 @@ angular.module("Mac").factory "tableComponents", [
             return new Section(controller, table, sectionName)
 
         cellFactory: (row, proto = {}) ->
-            Cell = (@row) ->
+            Cell = (@row, @column) ->
                 # TODO: Find a better place for this, we can't use our prototype though...
                 @value = -> @row?.section?.ctrl.cellValue(@row, @colName)
                 return
             Cell.prototype = proto
-            return new Cell(row)
+            return new Cell(row, proto)
 ]
 
 angular.module("Mac").factory "ColumnsController", [
@@ -115,7 +115,7 @@ angular.module("Mac").factory "RowsController", [
                     tableComponents.sectionFactory(
                         @table, sectionName, sectionController)
 
-                # Don't continue with no models
+                # Don't continue if no models
                 return unless models?.length?
 
                 if @table.dynamicColumns

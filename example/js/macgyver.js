@@ -11339,6 +11339,155 @@ angular.module("Mac").factory("keys", function() {
   };
 });
 
+
+angular.module("Mac").directive("macGovernRatio", [
+  "$rootScope", function($rootScope) {
+    return function(scope, element, attrs) {
+      var children, getSiblingScopes, total;
+      children = {};
+      total = 0;
+      getSiblingScopes = function(siblings) {
+        var el, li, siblingScope, _i, _len;
+        li = [];
+        for (_i = 0, _len = siblings.length; _i < _len; _i++) {
+          el = siblings[_i];
+          siblingScope = angular.element(el).scope();
+          if (children[siblingScope.$id] != null) {
+            li.push(siblingScope);
+          }
+        }
+        return li;
+      };
+      scope.$on("mac-ratio-" + scope.$id + "-register", function(event, childElement, childScope) {
+        total++;
+        children[childScope.$id] = {
+          element: childElement,
+          scope: childScope
+        };
+        return console.log(total);
+      });
+      return scope.$on("mac-ratio-" + scope.$id + "-changed", function(event, id, newValue, oldValue) {
+        var cElement, cScope, nextSiblings, nextSiblingsWidthMap, prevSiblings, scale, siblingScope, siblingsTotalWidth, width, _i, _j, _len, _len1, _ref, _results;
+        if (!(!isNaN(newValue) && !isNaN(oldValue))) {
+          return;
+        }
+        _ref = [children[id].element, children[id].scope], cElement = _ref[0], cScope = _ref[1];
+        nextSiblings = getSiblingScopes(cElement.nextAll());
+        scale = (oldValue - newValue) / nextSiblings.length;
+        nextSiblingsWidthMap = {};
+        siblingsTotalWidth = 0;
+        for (_i = 0, _len = nextSiblings.length; _i < _len; _i++) {
+          siblingScope = nextSiblings[_i];
+          width = +siblingScope.cell.column.width + scale;
+          if (width < 5) {
+            width = 5;
+          }
+          nextSiblingsWidthMap[siblingScope.$id] = width;
+          siblingsTotalWidth += width;
+        }
+        prevSiblings = getSiblingScopes(cElement.prevAll());
+        siblingsTotalWidth += _(prevSiblings).reduce(function(m, v) {
+          return +v.cell.column.width + m;
+        }, 0);
+        if (!((siblingsTotalWidth + newValue) < 100)) {
+          return;
+        }
+        children[id].scope.cell.column.width = newValue;
+        _results = [];
+        for (_j = 0, _len1 = nextSiblings.length; _j < _len1; _j++) {
+          siblingScope = nextSiblings[_j];
+          _results.push(siblingScope.cell.column.width = nextSiblingsWidthMap[siblingScope.$id]);
+        }
+        return _results;
+      });
+    };
+  }
+]);
+
+angular.module("Mac").directive("macRatio", [
+  "$rootScope", function($rootScope) {
+    return function(scope, element, attrs) {
+      scope.$emit("mac-ratio-" + scope.$parent.$id + "-register", element, scope);
+      attrs.$observe("macRatio", function(value) {
+        return scope.cell.column.width = value;
+      });
+      return scope.$watch("cell.column.ratio", function(newValue, oldValue) {
+        if (newValue === oldValue) {
+          return;
+        }
+        return scope.$emit("mac-ratio-" + scope.$parent.$id + "-changed", scope.$id, newValue, oldValue);
+      });
+    };
+  }
+]);
+
+
+angular.module("Mac").directive("macResizable", [
+  function() {
+    return function(scope, element, attrs) {
+      var axis, callback;
+      axis = attrs.macResizable || "x";
+      callback = scope.$eval(attrs.macResizableCallback);
+      return element.resizable({
+        axis: axis,
+        containment: "parent",
+        handles: "e",
+        resize: function(event, ui) {
+          return callback(element, event, ui, scope);
+        }
+      });
+    };
+  }
+]);
+
+
+angular.module("Mac").directive("macReorderable", [
+  function() {
+    return function(scope, element, attrs) {
+      var callback, selector;
+      selector = attrs.macReorderable;
+      callback = scope.$eval(attrs.macReorderableCallback);
+      return element.sortable({
+        items: selector,
+        cursor: "move",
+        opacity: 0.8,
+        tolerance: "pointer",
+        update: function(event, ui) {
+          var matched;
+          matched = element.find(selector);
+          return callback(matched, element, event, ui, scope);
+        }
+      });
+    };
+  }
+]);
+
+/*
+@chalk overview
+@name Spinner
+
+@description
+A directive for generating spinner using spin.js
+
+@dependencies
+- spin.js
+
+@param {Integer} mac-spinner-lines The number of lines to draw (default 10)
+@param {Integer} mac-spinner-width The lines thickness (default 2)
+@param {Integer} mac-spinner-radius The radius of the inner circle (default 10)
+@param {Integer} mac-spinner-corners Corner roundness (0..1) (default 1)
+@param {Integer} mac-spinner-rotate The rotation offset (default 0)
+@param {String} mac-spinner-color rgb or #rrggbb (default "#000")
+@param {Integer} mac-spinner-speed Rounds per second (default 1)
+@param {Integer} mac-spinner-trail Afterglow percentage (default 60)
+@param {Boolean} mac-spinner-shadow Whether to render a shadow (default false)
+@param {Boolean} mac-spinner-hwaccel Whether to use hardware acceleration (default false)
+@param {String} mac-spinner-className The CSS class to assign to the spinner (default "spinner")
+@param {Integer} mac-spinner-z-index The z-index (default 2e9)
+@param {String} mac-spinner-top Top position relative to parent in px (default "auto")
+@param {String} mac-spinner-left Left position relative to parent in px (default "auto")
+*/
+
 var __hasProp = {}.hasOwnProperty;
 
 angular.module("Mac").directive("macSpinner", function() {
@@ -12037,6 +12186,35 @@ angular.module("Mac").directive("macTable", [
   }
 ]);
 
+/*
+@chalk overview
+@name Tag Autocomplete
+
+@description
+A directive for generating tag input with autocomplete support on text input
+
+@dependencies
+- jQuery UI autocomplete
+
+@param {String} mac-tag-autocomplete-url Url to fetch autocomplete dropdown list data
+@param {String} mac-tag-autocomplete-value The value to be sent back upon selection (default "id")
+@param {String} mac-tag-autocomplete-label The label to display to the users (default "name")
+@param {Boolean} mac-tag-autocomplete-full-object Push the full object into the selected array (default false)
+@param {Array} mac-tag-autocomplete-selected The list of elements selected by the user
+@param {String} mac-tag-autocomplete-query The query parameter on GET command (defualt "q")
+@param {Integer} mac-tag-autocomplete-delay Time delayed on fetching autocomplete data after keyup  (default 800)
+@param {String} mac-tag-autocomplete-placeholder Placeholder text of the text input (default "")
+@param {Boolean} mac-tag-autocomplete-disabled If autocomplete is enabled or disabled (default false)
+@param {Expression} mac-tag-autocomplete-on-enter When autocomplete is disabled, this function is called on enter, Should return either string, object or boolean. If false, item is not added
+        - `item` - {String} User input
+@param {String} mac-tag-autocomplete-events a CSV list of events to attach functions to
+@param {Expression} mac-tag-autocomplete-on- The function to be called when specified event is fired
+        - `event` - {Object} jQuery event
+        - `value` - {String} Value in the input text
+
+@param {Event} mac-tag-autocomplete-clear-input $broadcast message; clears text input when received
+*/
+
 var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 angular.module("Mac").directive("macTagAutocomplete", [
@@ -12437,12 +12615,24 @@ var module;
 module = angular.module("Mac");
 
 module.controller("ExampleController", [
-  "$scope", function($scope) {
+  "$scope", "Table", function($scope, Table) {
+    var columns, headerObject;
+    columns = ["name", "a", "b", "c", "d", "created"];
+    $scope.table = new Table(columns);
+    headerObject = {
+      name: "Name",
+      a: "A",
+      b: "B",
+      c: "C",
+      d: "D",
+      created: "Created"
+    };
+    $scope.table.load("header", [headerObject]);
     $scope.data = [];
     $scope.loading = true;
     setTimeout((function() {
       var i, obj, _i;
-      for (i = _i = 1; _i <= 23; i = ++_i) {
+      for (i = _i = 1; _i <= 1; i = ++_i) {
         obj = {
           name: "Test " + i,
           a: Math.random() * 100000,
@@ -12457,9 +12647,46 @@ module.controller("ExampleController", [
         };
         $scope.data.push(obj);
       }
+      $scope.table.load("body", $scope.data);
       $scope.loading = false;
-      return $scope.$digest();
-    }), 2500);
+      $scope.$digest();
+      return $scope.$apply(function() {});
+    }), 0);
+    $scope.setColumnWidths = function(table) {
+      var colNumber, column, percent, _i, _len, _ref, _results;
+      colNumber = table.columnsOrder.length;
+      percent = Math.floor(100 / colNumber);
+      _ref = table.columns;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        column = _ref[_i];
+        _results.push(column.width = "" + percent + "%");
+      }
+      return _results;
+    };
+    $scope.logIt = function() {
+      return console.log.apply(console, arguments);
+    };
+    $scope.reorderIt = function(elements, element, event, ui, scope) {
+      var columnsOrder;
+      columnsOrder = [];
+      elements.each(function() {
+        return columnsOrder.push(angular.element(this).scope().cell.colName);
+      });
+      return $scope.$apply(function() {
+        $scope.table.columnsOrder = columnsOrder;
+        return $scope.table.columnsCtrl.syncOrder();
+      });
+    };
+    $scope.resizeIt = function(element, event, ui) {
+      var column, width;
+      column = element.scope().cell.column;
+      width = ui.size.width;
+      element.css("width", "");
+      return $scope.$apply(function() {
+        return column.ratio = (width / 830) * 100;
+      });
+    };
     $scope.createRow = function(event) {
       event.stopPropagation();
       return console.log("Creating row");
@@ -12758,15 +12985,16 @@ angular.module("Mac").factory("tableComponents", [
         if (proto == null) {
           proto = {};
         }
-        Cell = function(row) {
+        Cell = function(row, column) {
           this.row = row;
+          this.column = column;
           this.value = function() {
             var _ref, _ref1;
             return (_ref = this.row) != null ? (_ref1 = _ref.section) != null ? _ref1.ctrl.cellValue(this.row, this.colName) : void 0 : void 0;
           };
         };
         Cell.prototype = proto;
-        return new Cell(row);
+        return new Cell(row, proto);
       }
     };
   }
@@ -12792,6 +13020,17 @@ angular.module("Mac").factory("ColumnsController", [
         return this.set(columns);
       };
 
+      ColumnsController.prototype.blank = function() {
+        var colName, obj, _i, _len, _ref;
+        obj = {};
+        _ref = this.table.columnsOrder;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          colName = _ref[_i];
+          obj[colName] = null;
+        }
+        return obj;
+      };
+
       ColumnsController.prototype.reset = function() {
         this.table.columnsOrder = [];
         this.table.columns = [];
@@ -12813,25 +13052,26 @@ angular.module("Mac").factory("ColumnsController", [
       };
 
       ColumnsController.prototype.syncOrder = function() {
-        var cells, colName, columns, row, rows, section, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
+        var cells, colName, columns, row, section, sectionName, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3;
         _ref = this.table.sections;
-        for (section in _ref) {
-          rows = _ref[section];
-          for (_i = 0, _len = rows.length; _i < _len; _i++) {
-            row = rows[_i];
+        for (sectionName in _ref) {
+          section = _ref[sectionName];
+          _ref1 = section.rows;
+          for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+            row = _ref1[_i];
             cells = [];
-            _ref1 = this.table.columnsOrder;
-            for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-              colName = _ref1[_j];
+            _ref2 = this.table.columnsOrder;
+            for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
+              colName = _ref2[_j];
               cells.push(row.cellsMap[colName]);
             }
             row.cells = cells;
           }
         }
         columns = [];
-        _ref2 = this.table.columnsOrder;
-        for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
-          colName = _ref2[_k];
+        _ref3 = this.table.columnsOrder;
+        for (_k = 0, _len2 = _ref3.length; _k < _len2; _k++) {
+          colName = _ref3[_k];
           columns.push(this.table.columnsMap[colName]);
         }
         return this.table.columns = columns;
@@ -12852,29 +13092,47 @@ angular.module("Mac").factory("RowsController", [
         this.table = table;
       }
 
+      RowsController.prototype.make = function(section, model) {
+        var cell, colName, column, row, _ref;
+        row = tableComponents.rowFactory(section, model);
+        _ref = this.table.columnsMap;
+        for (colName in _ref) {
+          column = _ref[colName];
+          cell = tableComponents.cellFactory(row, column);
+          row.cellsMap[colName] = cell;
+          row.cells.push(cell);
+        }
+        return row;
+      };
+
       RowsController.prototype.set = function(sectionName, models, sectionController) {
-        var cell, colName, column, model, row, rows, section, _i, _len, _ref;
+        var model, rows, section, _i, _len;
         this.table.sections[sectionName] = section = tableComponents.sectionFactory(this.table, sectionName, sectionController);
+        if ((models != null ? models.length : void 0) == null) {
+          return;
+        }
         if (this.table.dynamicColumns) {
-          if (!models.length) {
-            return;
-          }
           this.table.columnsCtrl.dynamic(models);
         }
         rows = [];
         for (_i = 0, _len = models.length; _i < _len; _i++) {
           model = models[_i];
-          row = tableComponents.rowFactory(section, model);
-          _ref = this.table.columnsMap;
-          for (colName in _ref) {
-            column = _ref[colName];
-            cell = tableComponents.cellFactory(row, column);
-            row.cellsMap[colName] = cell;
-            row.cells.push(cell);
-          }
-          rows.push(row);
+          rows.push(this.make(section, model));
         }
         return section.rows = rows;
+      };
+
+      RowsController.prototype.insert = function(sectionName, model, index) {
+        var row, section;
+        section = this.table.sections[sectionName];
+        row = this.make(section, model);
+        return section.rows.splice(index, 0, row);
+      };
+
+      RowsController.prototype.remove = function(sectionName, index) {
+        var section;
+        section = this.table.sections[sectionName];
+        return section.rows.splice(index, 1);
       };
 
       return RowsController;
@@ -12884,7 +13142,7 @@ angular.module("Mac").factory("RowsController", [
 ]);
 
 angular.module("Mac").factory("Table", [
-  "$q", "BaseColumn", "ColumnsController", "RowsController", function($q, BaseColumn, ColumnsController, RowsController) {
+  "BaseColumn", "ColumnsController", "RowsController", function(BaseColumn, ColumnsController, RowsController) {
     var Table;
     return Table = (function() {
 
@@ -12904,17 +13162,32 @@ angular.module("Mac").factory("Table", [
         return;
       }
 
-      Table.prototype.load = function(section, models, sectionController) {
-        if (models == null) {
-          models = "auto";
-        }
-        if (!!models.then) {
+      Table.prototype.load = function(sectionName, models, sectionController) {
+        if ((models != null ? models.then : void 0) != null) {
           return models.then(function(models) {
-            return this.rowsCtrl.set(section, models, sectionController);
+            return this.rowsCtrl.set(sectionName, models, sectionController);
           });
         } else {
-          return this.rowsCtrl.set(section, models, sectionController);
+          return this.rowsCtrl.set(sectionName, models, sectionController);
         }
+      };
+
+      Table.prototype.insert = function(sectionName, model, index) {
+        if (index == null) {
+          index = 0;
+        }
+        return this.rowsCtrl.insert(sectionName, model, index);
+      };
+
+      Table.prototype.remove = function(sectionName, index) {
+        if (index == null) {
+          index = 0;
+        }
+        return this.rowsCtrl.remove(sectionName, index);
+      };
+
+      Table.prototype.blankRow = function() {
+        return this.columnsCtrl.blank();
       };
 
       return Table;
