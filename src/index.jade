@@ -117,11 +117,11 @@ html
                     mac-ratio="{{100/cell.row.cells.length}}"
                     width="{{cell.width}}%"
                     )
-                    span {{cell.value()}}
+                    a(ng-click="$parent.predicate=genPredicate(cell.colName);$parent.reverse=!reverse") {{cell.value()}}
                 tr(
                   mac-reorderable="> td"
                   mac-reorderable-callback="reorderIt"
-                  ng-repeat="row in table.sections.body.rows"
+                  ng-repeat="row in table.sections.body.rows | orderBy:predicate:reverse"
                 )
                   td(
                     ng-repeat="cell in row.cells"

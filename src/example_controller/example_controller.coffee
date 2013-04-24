@@ -21,7 +21,7 @@ module.controller "ExampleController", ["$scope", "Table", ($scope, Table) ->
   $scope.loading = true
   setTimeout (->
     #for i in [1..5000]
-    for i in [1..1]
+    for i in [1..4]
       obj =
         name: "Test " + i
         a: Math.random() * 100000
@@ -41,7 +41,10 @@ module.controller "ExampleController", ["$scope", "Table", ($scope, Table) ->
       #$scope.setColumnWidths $scope.table, 830, 8
   ), 0 #2500
 
+  $scope.reverse = false
 
+  $scope.genPredicate = (colName) ->
+    (row) -> row.cellsMap[colName].value()
 
   $scope.setColumnWidths = (table) ->
     colNumber = table.columnsOrder.length
