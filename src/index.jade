@@ -106,6 +106,15 @@ html
             .page-header: h1 Table view
             h2 Example
             .docs-example
+              input(
+                ng-model="searchTerm"
+                mac-pause-typing="search=genSearchPredicate(selectedSearchKey.colName, searchTerm)"
+              )
+              select(
+                ng-model="selectedSearchKey"
+                ng-options="column.colName for column in table.columns"
+              )
+                option(value="") -- Choose Search Key --
               table.table.table-striped.mac-table-default
                 tr(
                   mac-reorderable="> th"
@@ -121,7 +130,7 @@ html
                 tr(
                   mac-reorderable="> td"
                   mac-reorderable-callback="reorderIt"
-                  ng-repeat="row in table.sections.body.rows | orderBy:predicate:reverse"
+                  ng-repeat="row in table.sections.body.rows | orderBy:predicate:reverse | filter:search"
                 )
                   td(
                     ng-repeat="cell in row.cells"

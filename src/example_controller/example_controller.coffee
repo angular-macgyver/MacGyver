@@ -46,6 +46,12 @@ module.controller "ExampleController", ["$scope", "Table", ($scope, Table) ->
   $scope.genPredicate = (colName) ->
     (row) -> row.cellsMap[colName].value()
 
+  $scope.genSearchPredicate = (colName, value) ->
+    (row) ->
+      cellValue = String(row.cellsMap[colName].value()).toLowerCase()
+      value     = String(value).toLowerCase()
+      cellValue.indexOf(value) != -1
+
   $scope.setColumnWidths = (table) ->
     colNumber = table.columnsOrder.length
     percent   = Math.floor 100/colNumber
