@@ -12700,29 +12700,6 @@ module.controller("ExampleController", [
       }
       return _results;
     };
-    $scope.logIt = function() {
-      return console.log.apply(console, arguments);
-    };
-    $scope.reorderIt = function(elements, element, event, ui, scope) {
-      var columnsOrder;
-      columnsOrder = [];
-      elements.each(function() {
-        return columnsOrder.push(angular.element(this).scope().cell.colName);
-      });
-      return $scope.$apply(function() {
-        $scope.table.columnsOrder = columnsOrder;
-        return $scope.table.columnsCtrl.syncOrder();
-      });
-    };
-    $scope.resizeIt = function(element, event, ui) {
-      var column, width;
-      column = element.scope().cell.column;
-      width = ui.size.width;
-      element.css("width", "");
-      return $scope.$apply(function() {
-        return column.ratio = (width / 830) * 100;
-      });
-    };
     $scope.createRow = function(event) {
       event.stopPropagation();
       return console.log("Creating row");

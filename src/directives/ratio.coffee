@@ -64,7 +64,7 @@ angular.module("Mac").directive "macGovernRatio", [ "$rootScope", ($rootScope) -
 
       # Abort if we're gonna make the size bigger than the total width
       return unless (siblingsTotalWidth + newValue) < 100
-      # These values are good, lets do it!
+      # Valid resize, lets do it!
       children[id].scope.cell.column.width = newValue
       for siblingScope in nextSiblings
         siblingScope.cell.column.width =

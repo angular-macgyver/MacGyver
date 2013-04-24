@@ -49,24 +49,6 @@ module.controller "ExampleController", ["$scope", "Table", ($scope, Table) ->
     for column in table.columns
       column.width = "#{percent}%"
 
-  $scope.logIt = () ->
-    console.log.apply console, arguments
-
-  $scope.reorderIt = (elements, element, event, ui, scope) ->
-    columnsOrder = []
-    elements.each ->
-      columnsOrder.push angular.element(this).scope().cell.colName
-    $scope.$apply ->
-      $scope.table.columnsOrder = columnsOrder
-      $scope.table.columnsCtrl.syncOrder()
-
-  $scope.resizeIt = (element, event, ui) ->
-    column  = element.scope().cell.column
-    width   = ui.size.width
-    element.css("width", "")
-    $scope.$apply ->
-      column.ratio = (width/830)*100
-
   $scope.createRow = (event) ->
     event.stopPropagation()
     console.log "Creating row"
