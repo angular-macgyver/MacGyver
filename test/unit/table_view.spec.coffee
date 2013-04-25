@@ -90,6 +90,15 @@ describe "Table", ->
       table.insert("footer", table.blankRow())
       expect(table.sections.footer.rows[0].cells[1].value()).toBe 59
 
+    it "can set a header from a blank row", ->
+      table = @scope.table
+      # Remove the header we set above
+      delete table.sections.header
+      blankRow = table.blankRow()
+      table.load "header", [blankRow]
+      expect(table.sections.header.rows[0].model).toEqual blankRow
+      expect(table.sections.header.rows[0].cells[0].value()).toBe null
+
     describe "Dynamic Table", ->
       beforeEach inject ($rootScope, Table, SectionController) ->
         # Our custom header controller, we'll use this later

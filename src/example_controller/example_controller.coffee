@@ -1,10 +1,10 @@
 module = angular.module("Mac")
 
-module.controller "ExampleController", ["$scope", "Table", ($scope, Table) ->
+module.controller "ExampleController", ["$scope", "$timeout", "Table", ($scope, $timeout, Table) ->
   # Table view section
-  columns = ["name", "a", "b", "c", "d", "created"]
+  $scope.columns = columns = ["name", "a", "b", "c", "d", "created"]
   $scope.table = new Table(columns)
-  headerObject =
+  $scope.header = headerObject =
       name: "Name"
       a: "A"
       b: "B"
@@ -15,11 +15,11 @@ module.controller "ExampleController", ["$scope", "Table", ($scope, Table) ->
   # Data for table view
   # Current generating 10000 rows of entries to make sure table view can handle large
   # amount of data
-  $scope.data = []
+  $scope.data = $scope.tableData = []
   #for i in [1..10000]
   # Added setTimeout to mimic ajax delay
   $scope.loading = true
-  setTimeout (->
+  $timeout (->
     #for i in [1..5000]
     for i in [1..4]
       obj =

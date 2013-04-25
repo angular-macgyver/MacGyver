@@ -1,16 +1,16 @@
-.mac-table-container.mac-table(ng-style="getTableCss()")
-  .mac-table-header(ng-show="opts.hasHeader"): .mac-table-row
-  .mac-table-body-wrapper
-    .mac-title-column(ng-show="opts.lockFirstColumn")
-      .mac-table-row
-    .mac-table-body(ng-style="getBodyBlockCss()")
-    .mac-table-body-height
-  .mac-table-footer
-    .mac-table-row.custom-footer-row(ng-show="opts.hasFooter")
-    .mac-table-row.total-footer-row(
-      ng-show  = "opts.hasTotalFooter"
-      ng-style = "getBodyBlockCss('total-footer')"
-    )
-  .mac-table-loader(ng-hide="!opts.showLoader || !loading", ng-cloak)
-    mac-spinner(mac-spinner-z-index="0")
-  .mac-table-transclude(ng-transclude, ng-cloak)
+table.table.table-striped.mac-table-default
+  tr(
+    mac-columns
+    mac-reorderable="> th"
+  )
+    th(
+      ng-repeat="cell in table.sections.header.rows[0].cells"
+      mac-resizable
+      mac-column-width="{{100/cell.row.cells.length}}"
+      width="{{cell.width}}%"
+      )
+      a(ng-click="$parent.predicate=genPredicate(cell.colName);$parent.reverse=!reverse") {{cell.value()}}
+  tr(
+    ng-repeat="row in table.sections.body.rows | orderBy:predicate:reverse | filter:search"
+    mac-cells="row.cells"
+  )

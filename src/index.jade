@@ -106,6 +106,28 @@ html
             .page-header: h1 Table view
             h2 Example
             .docs-example
+              table.table.mac-table-default(
+                mac-table
+                columns="columns"
+                models="tableData"
+              )
+                tr(
+                  mac-columns
+                  mac-cells="table.sections.header.rows[0].cells"
+                  mac-cells-resizable
+                )
+                  th(mac-cell-template="name")
+                    span THE NAME!
+
+                  th(mac-cell-template-default)
+                    a(ng-click="") {{cell.value()||"Unknown"}}
+                tr(
+                  mac-rows="body"
+                  mac-cells="row.cells"
+                )
+                  td(mac-cell-template-default)
+                    span {{cell.value()}}
+
               input(
                 ng-model="searchTerm"
                 mac-pause-typing="search=genSearchPredicate(selectedSearchKey.colName, searchTerm)"
@@ -117,13 +139,13 @@ html
                 option(value="") -- Choose Search Key --
               table.table.table-striped.mac-table-default
                 tr(
+                  mac-columns
                   mac-reorderable="> th"
-                  mac-govern-ratio
                 )
                   th(
                     ng-repeat="cell in table.sections.header.rows[0].cells"
                     mac-resizable
-                    mac-ratio="{{100/cell.row.cells.length}}"
+                    mac-column-width="{{100/cell.row.cells.length}}"
                     width="{{cell.width}}%"
                     )
                     a(ng-click="$parent.predicate=genPredicate(cell.colName);$parent.reverse=!reverse") {{cell.value()}}

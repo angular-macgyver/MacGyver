@@ -1,19 +1,21 @@
-angular.module("Mac").directive "macGovernRatio", [ "$rootScope", ($rootScope) ->
-  (scope, element, attrs) ->
-    # Some GLOBALS
-    children = {}
-    total    = 0
+angular.module("Mac").directive "macColumns", [ ->
+  require: "macColumns"
+  controller: ->
+    # Track our columns
+    this.trackedColumns = {}
 
-    resizeIt = (scope, element, children, cElement, args) ->
+    # Some utility functions
+    this.resizeIt = (scope, element, children, cElement, args) ->
       [event, ui] = args
       column      = cElement.scope().cell.column
       width       = ui.size.width
+      percentage  = (width/element.width())*100
       # Reset the width that jQuery will assign
       cElement.css("width", "")
-      scope.$apply ->
-        column.ratio = (width/element.width())*100
+      scope.$apply =>
+        this.recalculateWidths null, cElement.scope().$id, percentage, +column.width
 
-    reorderIt = (scope, element, children, cElement, args) ->
+    this.reorderIt = (scope, element, children, cElement, args) ->
       [matchedElements, event, ui] = args
       columnsOrder                 = []
       changedElement               = angular.element(ui.item)
@@ -24,29 +26,23 @@ angular.module("Mac").directive "macGovernRatio", [ "$rootScope", ($rootScope) -
         table.columnsOrder = columnsOrder
         table.columnsCtrl.syncOrder()
 
-    getSiblingScopes = (siblings) ->
+    this.getSiblingScopes = (siblings) ->
       # We're querying elements vs using $$prevSibling $$nextSibling on the
       # scope since it seems like angular won't update those properties as we
       # reorder the elements
       li = []
       for el in siblings
         siblingScope = angular.element(el).scope()
-        if children[siblingScope.$id]?
+        if this.trackedColumns[siblingScope.$id]?
           li.push siblingScope
       li
 
-    scope.$on "mac-ratio-#{scope.$id}-register", (event, childElement, childScope) ->
-      total++
-      children[childScope.$id] =
-        element: childElement
-        scope:   childScope
-
-    scope.$on "mac-ratio-#{scope.$id}-changed", (event, id, newValue, oldValue) ->
+    this.recalculateWidths = (event, id, newValue, oldValue) ->
       # We only work with numbers...
       return unless !isNaN(newValue) and !isNaN(oldValue)
 
-      [cElement, cScope]   = [children[id].element, children[id].scope]
-      nextSiblings         = getSiblingScopes cElement.nextAll()
+      [cScope, cElement]   = this.trackedColumns[id]
+      nextSiblings         = this.getSiblingScopes cElement.nextAll()
       scale                = (oldValue - newValue)/nextSiblings.length
       nextSiblingsWidthMap = {}
       siblingsTotalWidth   = 0
@@ -57,18 +53,25 @@ angular.module("Mac").directive "macGovernRatio", [ "$rootScope", ($rootScope) -
         nextSiblingsWidthMap[siblingScope.$id] = width
         siblingsTotalWidth                    += width
 
-      prevSiblings = getSiblingScopes cElement.prevAll()
+      prevSiblings = this.getSiblingScopes cElement.prevAll()
       siblingsTotalWidth += _(prevSiblings).reduce (m, v) ->
         +v.cell.column.width + m
       , 0
 
       # Abort if we're gonna make the size bigger than the total width
-      return unless (siblingsTotalWidth + newValue) < 100
+      return unless (siblingsTotalWidth + newValue) <= 100
       # Valid resize, lets do it!
-      children[id].scope.cell.column.width = newValue
+      cScope.cell.column.width = newValue
       for siblingScope in nextSiblings
         siblingScope.cell.column.width =
           nextSiblingsWidthMap[siblingScope.$id]
+
+
+  link: (scope, element, attrs, ctrl) ->
+
+    scope.$on "mac-ratio-#{scope.$id}-changed", ->
+      # Call our controllers 'recalculateWidths' method
+      ctrl.recalculateWidths.apply ctrl, arguments
 
     # This is our main hookable function
     # this will delegate events to either other MAC directives or callbacks
@@ -78,24 +81,23 @@ angular.module("Mac").directive "macGovernRatio", [ "$rootScope", ($rootScope) -
       attributeName = "mac#{titlizedType}Callback"
       if attrs[attributeName]?
         callback = scope.$eval attrs[attributeName]
-        callback scope, element, children, cElement, args
+        callback scope, element, ctrl.trackedColumns, cElement, args
       # MacGyver Builtins
       else if attributeName is "macResizedCallback"
-        resizeIt scope, element, children, cElement, args
+        ctrl.resizeIt scope, element, ctrl.trackedColumns, cElement, args
       else if attributeName is "macReorderedCallback"
-        reorderIt scope, element, children, cElement, args
+        ctrl.reorderIt scope, element, ctrl.trackedColumns, cElement, args
 
 ]
 
-angular.module("Mac").directive "macRatio", [ "$rootScope", ($rootScope) ->
-  (scope, element, attrs) ->
-    scope.$emit "mac-ratio-#{scope.$parent.$id}-register", element, scope
+angular.module("Mac").directive "macColumnWidth", [ ->
+  require:  "^macColumns"
+  priority: 250
+  link: (scope, element, attrs, ctrl) ->
+    # Register our column
+    ctrl.trackedColumns[scope.$id] = [scope, element]
 
     # Set the initial percentage
-    attrs.$observe "macRatio", (value) ->
+    attrs.$observe "macColumnWidth", (value) ->
       scope.cell.column.width = value
-
-    scope.$watch "cell.column.ratio", (newValue, oldValue) ->
-      return unless newValue isnt oldValue
-      scope.$emit "mac-ratio-#{scope.$parent.$id}-changed", scope.$id, newValue, oldValue
 ]
