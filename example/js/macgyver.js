@@ -10737,16 +10737,20 @@ angular.module("Mac").directive("macCells", [
       controller: function() {
         this.templates = {};
       },
-      link: function($scope, $element, $attrs, macCellsController) {
+      link: function($scope, $element, $attrs, ctrl) {
         return $scope.$watch($attrs.macCells, function(cells) {
-          var cScope, cell, nScope, transcludeFn, _i, _len, _ref, _results;
+          var cScope, cell, columnName, nScope, transcludeFn, _i, _len, _ref, _results;
+          $element.children().remove();
           _results = [];
           for (_i = 0, _len = cells.length; _i < _len; _i++) {
             cell = cells[_i];
-            if (macCellsController.templates[cell.colName] == null) {
+            columnName = cell.colName;
+            if (!(ctrl.templates[columnName] != null) && (ctrl.templates["?"] != null)) {
+              columnName = "?";
+            } else if (!(ctrl.templates[columnName] != null)) {
               continue;
             }
-            _ref = macCellsController.templates[cell.colName], transcludeFn = _ref[0], cScope = _ref[1];
+            _ref = ctrl.templates[columnName], transcludeFn = _ref[0], cScope = _ref[1];
             nScope = cScope.$new();
             nScope.cell = cell;
             _results.push(transcludeFn(nScope, function(clone) {
@@ -10769,6 +10773,21 @@ angular.module("Mac").directive("macCellTemplate", [
       compile: function(element, attrs, transclude) {
         return function($scope, $element, $attrs, macCellsController) {
           return macCellsController.templates[$attrs.macCellTemplate] = [transclude, $scope];
+        };
+      }
+    };
+  }
+]);
+
+angular.module("Mac").directive("macCellTemplateDefault", [
+  function() {
+    return {
+      require: "^macCells",
+      transclude: "element",
+      priority: 500,
+      compile: function(element, attrs, transclude) {
+        return function($scope, $element, $attrs, macCellsController) {
+          return macCellsController.templates["?"] = [transclude, $scope];
         };
       }
     };

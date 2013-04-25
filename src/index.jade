@@ -128,8 +128,6 @@ html
                     )
                     a(ng-click="$parent.predicate=genPredicate(cell.colName);$parent.reverse=!reverse") {{cell.value()}}
                 tr(
-                  mac-reorderable="> td"
-                  mac-reorderable-callback="reorderIt"
                   ng-repeat="row in table.sections.body.rows | orderBy:predicate:reverse | filter:search"
                   mac-cells="row.cells"
                 )
@@ -139,6 +137,9 @@ html
                       small {{cell.colName}}
                   td(mac-cell-template="a", width="{{cell.width}}%")
                     span The value for "A" is {{cell.value()}}
+
+                  td(mac-cell-template-default, width="{{cell.width}}%")
+                    span {{cell.value()}}
 
 
           section#tag-input
