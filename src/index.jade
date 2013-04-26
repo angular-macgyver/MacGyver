@@ -111,11 +111,11 @@ html
                 columns="columns"
                 models="tableData"
               )
-                tr(mac-row="header")
-                  th(mac-cell-template="name")
+                tr(mac-row="header", mac-columns)
+                  th(mac-cell-template="name", mac-resizable)
                     span THE NAME!
 
-                  th(mac-cell-template-default)
+                  th(mac-cell-template-default, mac-resizable)
                     a(ng-click="") {{cell.value()||"Unknown"}}
 
                 tr(mac-row="body")

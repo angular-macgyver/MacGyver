@@ -3,7 +3,7 @@
 # A combo of ngRepeat and ngSwitch that specifically works on table data
 #
 angular.module("Mac").directive "macRow", [ ->
-  require: ["^macTable", "macRow"]
+  require: ["^macTable", "macRow", "?macColumns"]
   transclude: "element"
   terminal: true
   controller: ->
@@ -58,6 +58,8 @@ angular.module("Mac").directive "macRow", [ ->
               # https://groups.google.com/forum/?fromgroups=#!topic/angular/_TEvNgws4T0
               clone.data "$macTableController", tableCtrl
               clone.data "$macRowController", rowCtrl
+              if controllers[2]
+                clone.data "$macColumnsController", controllers[2]
               clone
 
           # Insert our element into the DOM
@@ -97,7 +99,7 @@ angular.module("Mac").directive "macRow", [ ->
 ]
 
 angular.module("Mac").directive "macCellTemplate", [ ->
-  require: ["^macTable", "^macRow"]
+  require: ["^macTable", "^macRow", "^?macColumns"]
   transclude: "element"
   priority: 1000
   compile: (element, attrs, transclude) ->
@@ -107,11 +109,16 @@ angular.module("Mac").directive "macCellTemplate", [ ->
 ]
 
 angular.module("Mac").directive "macCellTemplateDefault", [ "$timeout", ($timeout) ->
-  require: ["^macTable", "^macRow"]
+  require: ["^macTable", "^macRow", "^?macColumns"]
   transclude: "element"
   priority: 1000
   compile: (element, attrs, transclude) ->
     ($scope, $element, $attrs, controllers) ->
+      if controllers[2]
+        controllers[2].trackedColumns[$scope.$id] = [$scope, $element]
+        #attrs.$observe "width", (value) ->
+        #  scope.cell.column.width = value
+
       [tableCtrl, rowCtrl]   = controllers
       rowCtrl.templates["?"] = [$element, transclude]
 ]

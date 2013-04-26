@@ -10733,7 +10733,7 @@ angular.module("Mac").directive("macBind", [
 angular.module("Mac").directive("macRow", [
   function() {
     return {
-      require: ["^macTable", "macRow"],
+      require: ["^macTable", "macRow", "?macColumns"],
       transclude: "element",
       terminal: true,
       controller: function() {
@@ -10785,6 +10785,9 @@ angular.module("Mac").directive("macRow", [
                 block.element = linker(block.scope, function(clone) {
                   clone.data("$macTableController", tableCtrl);
                   clone.data("$macRowController", rowCtrl);
+                  if (controllers[2]) {
+                    clone.data("$macColumnsController", controllers[2]);
+                  }
                   return clone;
                 });
               }
@@ -10825,7 +10828,7 @@ angular.module("Mac").directive("macRow", [
 angular.module("Mac").directive("macCellTemplate", [
   function() {
     return {
-      require: ["^macTable", "^macRow"],
+      require: ["^macTable", "^macRow", "^?macColumns"],
       transclude: "element",
       priority: 1000,
       compile: function(element, attrs, transclude) {
@@ -10842,12 +10845,15 @@ angular.module("Mac").directive("macCellTemplate", [
 angular.module("Mac").directive("macCellTemplateDefault", [
   "$timeout", function($timeout) {
     return {
-      require: ["^macTable", "^macRow"],
+      require: ["^macTable", "^macRow", "^?macColumns"],
       transclude: "element",
       priority: 1000,
       compile: function(element, attrs, transclude) {
         return function($scope, $element, $attrs, controllers) {
           var rowCtrl, tableCtrl;
+          if (controllers[2]) {
+            controllers[2].trackedColumns[$scope.$id] = [$scope, $element];
+          }
           tableCtrl = controllers[0], rowCtrl = controllers[1];
           return rowCtrl.templates["?"] = [$element, transclude];
         };
@@ -11549,6 +11555,7 @@ angular.module("Mac").directive("macColumns", [
       },
       link: function(scope, element, attrs, ctrl) {
         scope.$on("mac-ratio-" + scope.$id + "-changed", function() {
+          console.log("HERE");
           return ctrl.recalculateWidths.apply(ctrl, arguments);
         });
         return scope.$on("mac-element-" + scope.$id + "-changed", function() {

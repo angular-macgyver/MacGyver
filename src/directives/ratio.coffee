@@ -71,6 +71,7 @@ angular.module("Mac").directive "macColumns", [ ->
 
     scope.$on "mac-ratio-#{scope.$id}-changed", ->
       # Call our controllers 'recalculateWidths' method
+      console.log "HERE"
       ctrl.recalculateWidths.apply ctrl, arguments
 
     # This is our main hookable function
