@@ -10730,15 +10730,41 @@ angular.module("Mac").directive("macBind", [
 ]);
 
 
-angular.module("Mac").directive("macCells", [
+angular.module("Mac").directive("macRows", [
   function() {
     return {
-      require: "macCells",
+      require: ["^macTable", "macRows"],
       priority: 500,
+      transclude: true,
       controller: function($scope, $compile, $attrs, $element) {
         this.templates = {};
-        this.unsafeDirectives = ["mac-cell-template", "mac-cell-template-default"];
-        this.drawCells = function(cells) {
+        this.unsafeDirectives = ["mac-rows", "mac-cell-template", "mac-cell-template-default"];
+        this.drawRows = function(rows, transcludeFn) {
+          var nScope, row, _i, _len, _results,
+            _this = this;
+          _results = [];
+          for (_i = 0, _len = rows.length; _i < _len; _i++) {
+            row = rows[_i];
+            nScope = $scope.$new();
+            nScope.row = row;
+            _results.push(transcludeFn(nScope, function(clone) {
+              var ctrl, name, _ref;
+              _ref = $element.data();
+              for (name in _ref) {
+                ctrl = _ref[name];
+                clone.data(name, ctrl);
+              }
+              console.log(_this.templates);
+              $compile(clone)(nScope);
+              console.log(clone);
+              console.log(_this.tableCtrl.$element);
+              _this.tableCtrl.$element.append(clone);
+              return _this.drawCells(clone, row.cells);
+            }));
+          }
+          return _results;
+        };
+        this.drawCells = function($element, cells) {
           var cScope, cell, columnName, nScope, transcludeFn, _i, _len, _ref, _results,
             _this = this;
           if (!cells) {
@@ -10786,10 +10812,23 @@ angular.module("Mac").directive("macCells", [
           }
         };
       },
-      link: function($scope, $element, $attrs, ctrl) {
-        return $scope.$watch($attrs.macCells, function(cells) {
-          return ctrl.drawCells(cells, $element, $attrs);
-        });
+      compile: function(element, attr, transclude) {
+        return function($scope, $element, $attrs, controllers) {
+          var macRowsController, macTableController, rowsExpression, sectionName;
+          macTableController = controllers[0], macRowsController = controllers[1];
+          macRowsController.tableCtrl = macTableController;
+          $scope.table = macTableController.table;
+          sectionName = $attrs.macRows;
+          rowsExpression = "table.sections." + sectionName + ".rows";
+          console.log(rowsExpression);
+          return $scope.$watch(rowsExpression, function(rows) {
+            if (!rows) {
+              return;
+            }
+            console.log(rows);
+            return macRowsController.drawRows(rows, transclude);
+          });
+        };
       }
     };
   }
@@ -10798,7 +10837,7 @@ angular.module("Mac").directive("macCells", [
 angular.module("Mac").directive("macCellTemplate", [
   function() {
     return {
-      require: "^macCells",
+      require: "^macRows",
       transclude: "element",
       priority: 1000,
       compile: function(element, attrs, transclude) {
@@ -10813,10 +10852,11 @@ angular.module("Mac").directive("macCellTemplate", [
 angular.module("Mac").directive("macCellTemplateDefault", [
   function() {
     return {
-      require: "^macCells",
+      require: "^macRows",
       transclude: "element",
       priority: 1000,
       compile: function(element, attrs, transclude) {
+        console.log("Fired");
         return function($scope, $element, $attrs, macCellsController) {
           return macCellsController.templates["?"] = [transclude, $scope];
         };
@@ -11594,20 +11634,7 @@ angular.module("Mac").directive("macResizable", [
 ]);
 
 
-angular.module("Mac").directive("macRows", [
-  "$compile", function($compile) {
-    return {
-      require: "^macTable",
-      compile: function($scope, $element, $attrs) {
-        var section;
-        section = $attrs.macRows;
-        $element.attr("ng-repeat", "row in table.sections['" + section + "'].rows");
-        $compile($element)($scope);
-        return function($scope, $element, $attrs, ctrl) {};
-      }
-    };
-  }
-]);
+
 
 /*
 @chalk overview
@@ -11681,6 +11708,7 @@ angular.module("Mac").directive("macTable", [
       },
       controller: function() {},
       link: function(scope, element, attrs, ctrl) {
+        ctrl.$element = element;
         scope.$watch("columns", function(value) {
           return ctrl.table = scope.table = new Table(scope.columns);
         }, true);

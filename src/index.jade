@@ -113,7 +113,7 @@ html
               )
                 tr(
                   mac-columns
-                  mac-cells="table.sections.header.rows[0].cells"
+                  mac-rows="header"
                   mac-cells-resizable
                 )
                   th(mac-cell-template="name")
@@ -123,7 +123,6 @@ html
                     a(ng-click="") {{cell.value()||"Unknown"}}
                 tr(
                   mac-rows="body"
-                  mac-cells="row.cells"
                 )
                   td(mac-cell-template-default)
                     span {{cell.value()}}
@@ -137,7 +136,7 @@ html
                 ng-options="column.colName for column in table.columns"
               )
                 option(value="") -- Choose Search Key --
-              table.table.table-striped.mac-table-default
+              //- table.table.table-striped.mac-table-default
                 tr(
                   mac-columns
                   mac-reorderable="> th"

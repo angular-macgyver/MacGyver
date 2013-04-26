@@ -8,6 +8,8 @@ angular.module("Mac").directive "macTable", [ "Table", (Table) ->
   controller: ->
     return
   link: (scope, element, attrs, ctrl) ->
+    ctrl.$element = element
+
     scope.$watch "columns", (value) ->
       ctrl.table = scope.table = new Table scope.columns
     , true
