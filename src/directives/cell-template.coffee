@@ -2,11 +2,55 @@
 # macCells and macCellTemplate
 # Basically a simplified version of ngSwitch that loops over table cells
 #
+angular.module("Mac").directive "macRowsTest", [ ->
+  priority: 500
+  transclude: "element"
+  terminal: true
+  compile: (element, attr, linker) ->
 
-angular.module("Mac").directive "macRows", [ ->
+    ($scope, $element, $attr) ->
+      sectionName = $attr.macRowsTest
+      trackExpression = "table.sections.#{sectionName}.rows"
+      uid = 0
+      hashKey = (row) ->
+        if not key = row.model.$$hashKey
+          key                 = "M#{++uid}"
+          row.model.$$hashKey = key
+        key
+
+      $scope.$watch trackExpression, (rows) ->
+        $scope.lastRowMap = {} unless $scope.lastRowMap?
+
+        return unless rows
+        cursor = $element
+
+        for row in rows
+          nextRowMap = {}
+          key = hashKey row
+          if $scope.lastRowMap[key]?
+            # Existing Row
+            block = nextRowMap[key] = $scope.lastRowMap[key]
+          else
+            # New Row
+            block = {}
+            block.scope = $scope.$new()
+            nextRowMap[key] = block
+
+          if not block.element?
+            block.element = linker block.scope, (clone) -> clone
+
+          cursor.after block.element
+          cursor = block.element
+
+        $scope.lastRowMap = nextRowMap
+
+      return
+]
+
+angular.module("Mac").directive "macRows", [ "$compile", ($compile) ->
   require:    ["^macTable", "macRows"]
   priority:   500
-  transclude: true
+  #terminal: true
   controller: ($scope, $compile, $attrs, $element) ->
     this.templates = {}
     # We can't recompile with
@@ -16,20 +60,33 @@ angular.module("Mac").directive "macRows", [ ->
       "mac-cell-template-default"
     ]
 
+    this.prepClone = (clone, $element) ->
+      # Copy all controllers to the new element
+      for name, ctrl of $element.data()
+        clone.data name, ctrl
+
+      # Remove directives we cannot safely re-compile with
+      for attributeName in this.unsafeDirectives
+        clone[0].removeAttribute attributeName
+
     this.drawRows = (rows, transcludeFn) ->
+      #$element.
+
       for row in rows
         nScope     = $scope.$new()
         nScope.row = row
+        $compile($element.contents()) nScope, (clone) ->
+          console.log "clone", clone
+          $element.parent.append clone
+        return
         transcludeFn nScope, (clone) =>
-          for name, ctrl of $element.data()
-            clone.data name, ctrl
-
-          console.log this.templates
-          $compile(clone)(nScope)
-          console.log clone
-          console.log this.tableCtrl.$element
+          # this.prepClone clone, $element
+          #console.log "content", clone.contents()
+          $compile(clone.contents()) nScope, (clone) ->
+            console.log "clone", clone[0].attributes
+          # console.log this.tableCtrl.$element
           this.tableCtrl.$element.append clone
-          this.drawCells(clone, row.cells)
+          #this.drawCells(clone, row.cells)
 
     this.drawCells = ($element, cells) ->
       return unless cells
@@ -48,20 +105,16 @@ angular.module("Mac").directive "macRows", [ ->
         nScope                 = $scope.$new()
         nScope.cell            = cell
         transcludeFn nScope, (clone) =>
-          # Copy all controllers to the new element
-          for name, ctrl of $element.data()
-            clone.data name, ctrl
 
-          this.addDefaultAttributes clone
-
-          # Remove directives we cannot safely re-compile with
-          for attributeName in this.unsafeDirectives
-            clone[0].removeAttribute attributeName
+          #this.prepClone clone, $element
+          #this.addDefaultAttributes clone
 
           # Recompile with our new attribute and other safely removed
-          $compile(clone)(nScope)
+          $compile(clone.contents())(nScope)
+          console.log this.templates
 
           # Append it to the parent element
+          # console.log "element", $element
           $element.append clone
 
     this.addDefaultAttributes = (clone) ->
@@ -79,20 +132,43 @@ angular.module("Mac").directive "macRows", [ ->
 
     return
 
-  compile: (element, attr, transclude) ->
-    ($scope, $element, $attrs, controllers) ->
-      [macTableController, macRowsController] = controllers
-      macRowsController.tableCtrl             = macTableController
-      $scope.table                            = macTableController.table
-      sectionName                             = $attrs.macRows
-      rowsExpression                          = "table.sections.#{sectionName}.rows"
-      console.log rowsExpression
+  # template: "<div ng-repeat='row in table.sections.body.rows' ng-transclude></div>"
+  compile: (element, attrs, transclude) ->
+    console.log "FIRED"
 
-      $scope.$watch rowsExpression, (rows) ->
-        return unless rows
-        console.log rows
-        macRowsController.drawRows rows, transclude
-        # ctrl.drawCells cells
+    sectionName = attrs.macRows
+    #element.attr("ng-repeat", "row in table.sections.#{sectionName}.rows")
+    $parent = element.parent()
+    $contents = element.contents()
+    #element.remove()
+    #element.removeAttr("mac-rows")
+    #element.attr("ng-repeat", "row in table.sections.#{sectionName}.rows")
+    #parent = element.parent
+    #element.remove()
+    $tr = angular.element("<tr ng-repeat='row in table.sections.#{sectionName}.rows'></tr>")
+
+    compiledContents = null
+
+    ($scope, $element, $attrs, controllers) ->
+      $element.remove()
+      #console.log $element.data()
+      $tr.data("$macRowsController", controllers[1])
+      #console.log $tr
+      #console.log $tr.data()
+      compiledContents = $compile($tr) unless compiledContents
+      $clone = compiledContents $scope, (clone) ->
+        #clone.append($contents)
+        #clone.append("Hello!")
+        #console.log clone, $contents
+        clone
+
+      $parent.append $clone
+      setTimeout ->
+        console.log $parent.children()
+        console.log $parent.children().append($contents)
+        #$clone.append("Hello!")
+        #console.log $clone
+      , 0
 
 ]
 
@@ -110,7 +186,7 @@ angular.module("Mac").directive "macCellTemplateDefault", [ ->
   transclude: "element"
   priority: 1000
   compile: (element, attrs, transclude) ->
-    console.log "Fired"
     ($scope, $element, $attrs, macCellsController) ->
+      console.log "Fired"
       macCellsController.templates["?"] = [transclude, $scope]
 ]

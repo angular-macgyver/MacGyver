@@ -111,19 +111,17 @@ html
                 columns="columns"
                 models="tableData"
               )
-                tr(
-                  mac-columns
-                  mac-rows="header"
-                  mac-cells-resizable
-                )
-                  th(mac-cell-template="name")
-                    span THE NAME!
+                //- tr(
+                //-   mac-columns
+                //-   mac-rows="header"
+                //-   mac-cells-resizable
+                //- )
+                //-   th(mac-cell-template="name")
+                //-     span THE NAME!
 
-                  th(mac-cell-template-default)
-                    a(ng-click="") {{cell.value()||"Unknown"}}
-                tr(
-                  mac-rows="body"
-                )
+                //-   th(mac-cell-template-default)
+                //-     a(ng-click="") {{cell.value()||"Unknown"}}
+                tr(mac-rows-test="body")
                   td(mac-cell-template-default)
                     span {{cell.value()}}
 
