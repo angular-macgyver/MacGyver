@@ -115,7 +115,7 @@ html
                   th(mac-cell-template="name", mac-resizable)
                     span THE NAME!
 
-                  th(mac-cell-template-default, mac-resizable)
+                  th(mac-cell-template-default, mac-resizable, initial-width="10%")
                     a(ng-click="") {{cell.value()||"Unknown"}}
 
                 tr(mac-row="body")

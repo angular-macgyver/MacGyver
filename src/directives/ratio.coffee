@@ -66,6 +66,7 @@ angular.module("Mac").directive "macColumns", [ ->
         siblingScope.cell.column.width =
           nextSiblingsWidthMap[siblingScope.$id]
 
+    return
 
   link: (scope, element, attrs, ctrl) ->
 
@@ -91,14 +92,21 @@ angular.module("Mac").directive "macColumns", [ ->
 
 ]
 
-angular.module("Mac").directive "macColumnWidth", [ ->
-  require:  "^macColumns"
-  priority: 250
+angular.module("Mac").directive "initialWidth", [ ->
+  require:  "^?macColumns"
+  priority: 500
   link: (scope, element, attrs, ctrl) ->
+    console.log "HERE"
+    # Our controllers is optional, but we don't want to continue without it
+    return unless ctrl
+
+    console.log attrs, scope
+
     # Register our column
     ctrl.trackedColumns[scope.$id] = [scope, element]
 
     # Set the initial percentage
-    attrs.$observe "macColumnWidth", (value) ->
+    attrs.$observe "initialWidth", (value) ->
       scope.cell.column.width = value
 ]
+

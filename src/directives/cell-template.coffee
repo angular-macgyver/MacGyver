@@ -2,7 +2,7 @@
 # macRow and macCellTemplate
 # A combo of ngRepeat and ngSwitch that specifically works on table data
 #
-angular.module("Mac").directive "macRow", [ ->
+angular.module("Mac").directive "macRow", [ "$compile", ($compile) ->
   require: ["^macTable", "macRow", "?macColumns"]
   transclude: "element"
   terminal: true
@@ -83,13 +83,17 @@ angular.module("Mac").directive "macRow", [ ->
               # Pass if no template is found
               continue unless template
 
-              [$element, transclude]          = template
+              [$element, transclude, $attrs]  = template
               cellScope                       = $scope.$new()
               cellScope.cell                  = cell
+              console.log "<---About to clone"
               block.cells[columnName].element = transclude cellScope, (clone) -> clone
+              console.log "Did clone"
 
             # Append our clone element
+            console.log "About to append"
             block.element.append block.cells[columnName].element
+            console.log "Did append--->"
 
           cursor = block.element
 
@@ -105,7 +109,7 @@ angular.module("Mac").directive "macCellTemplate", [ ->
   compile: (element, attrs, transclude) ->
     ($scope, $element, $attrs, controllers) ->
       [tableCtrl, rowCtrl]                      = controllers
-      rowCtrl.templates[$attrs.macCellTemplate] = [$element, transclude]
+      rowCtrl.templates[$attrs.macCellTemplate] = [$element, transclude, $attrs]
 ]
 
 angular.module("Mac").directive "macCellTemplateDefault", [ "$timeout", ($timeout) ->
@@ -116,9 +120,7 @@ angular.module("Mac").directive "macCellTemplateDefault", [ "$timeout", ($timeou
     ($scope, $element, $attrs, controllers) ->
       if controllers[2]
         controllers[2].trackedColumns[$scope.$id] = [$scope, $element]
-        #attrs.$observe "width", (value) ->
-        #  scope.cell.column.width = value
 
       [tableCtrl, rowCtrl]   = controllers
-      rowCtrl.templates["?"] = [$element, transclude]
+      rowCtrl.templates["?"] = [$element, transclude, $attrs]
 ]
