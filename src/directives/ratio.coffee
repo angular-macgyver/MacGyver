@@ -1,3 +1,7 @@
+# TODO: Clean up the formatting on these:
+# - `controllers` instead of `ctrl`
+# - add macTable as required
+
 angular.module("Mac").directive "macColumns", [ ->
   require: "macColumns"
   controller: ->
@@ -20,8 +24,12 @@ angular.module("Mac").directive "macColumns", [ ->
       columnsOrder                 = []
       changedElement               = angular.element(ui.item)
       table                        = changedElement.scope().cell.row.section.table
+      console.log matchedElements
       matchedElements.each ->
+        console.log "MATCHED ELEMENT"
         columnsOrder.push angular.element(this).scope().cell.colName
+
+      console.log columnsOrder
       scope.$apply ->
         table.columnsOrder = columnsOrder
         table.columnsCtrl.syncOrder()
@@ -93,20 +101,16 @@ angular.module("Mac").directive "macColumns", [ ->
 ]
 
 angular.module("Mac").directive "initialWidth", [ ->
-  require:  "^?macColumns"
+  require:  ["^?macTable", "^?sectionRow", "^?macColumns"]
   priority: 500
-  link: (scope, element, attrs, ctrl) ->
-    console.log "HERE"
-    # Our controllers is optional, but we don't want to continue without it
-    return unless ctrl
+  compile: (element, attr) ->
+    ($scope, $element, $attrs, controllers) ->
+      console.log "initial-width: link", controllers
+      # Register our column
+      controllers[2].trackedColumns[$scope.$id] = [$scope, $element]
 
-    console.log attrs, scope
-
-    # Register our column
-    ctrl.trackedColumns[scope.$id] = [scope, element]
-
-    # Set the initial percentage
-    attrs.$observe "initialWidth", (value) ->
-      scope.cell.column.width = value
+      # Set the initial percentage
+      $attrs.$observe "initialWidth", (value) ->
+        $scope.cell.column.width = +value.replace "%", ""
 ]
 

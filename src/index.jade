@@ -106,14 +106,26 @@ html
             .page-header: h1 Table view
             h2 Example
             .docs-example
+
               table.table.mac-table-default(
                 mac-table
+                resizable-columns
+                reorderable-columns
                 columns="columns"
                 models="tableData"
               )
-                tr.repeat-rows(repeat-row="body", mac-test-1, section)
-                  th.cell-test(default-cell, mac-test-1)
-                    span.deep-cell-element(mac-test-1) "W/ Cell"
+                tr(section-row="header")
+                  th(cell-template="name", initial-width="50%")
+                    span NAME!
+                  th(cell-template, initial-width="10%")
+                    span other shit!
+
+                tr(section-row="body")
+                  td(cell-template="name")
+                    span NAME!!!
+
+                  td(cell-template)
+                    span {{cell.value()}}
 
                   //- th.repeat-cells-w-repeat-rows(ng-repeat="cell in row.cells", mac-test-1)
                     span.deep-element(mac-test-1) "repeatRows"
