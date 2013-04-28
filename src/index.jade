@@ -111,19 +111,30 @@ html
                 columns="columns"
                 models="tableData"
               )
-                tr(mac-row="header", mac-columns)
-                  th(mac-cell-template="name", mac-resizable)
+                tr.repeat-rows(repeat-row="body", mac-test-1, section)
+                  th.cell-test(default-cell, mac-test-1)
+                    span.deep-cell-element(mac-test-1) "W/ Cell"
+
+                  //- th.repeat-cells-w-repeat-rows(ng-repeat="cell in row.cells", mac-test-1)
+                    span.deep-element(mac-test-1) "repeatRows"
+
+                //- tr.repeat-rows(ng-repeat="row in table.sections.body.rows", mac-test-1)
+                  th.repeat-cells-w-ng-repeat(ng-repeat="cell in row.cells", mac-test-1)
+                    span "ngRepeat"
+
+                //- tr.table-header(mac-row="header", mac-test-1, mac-row-test)
+                  th.name-cell(mac-cell-template="name")
                     span THE NAME!
 
-                  th(mac-cell-template-default, mac-resizable, initial-width="10%")
+                  th.default-cell(mac-cell-template-default, mac-test-1)
                     a(ng-click="") {{cell.value()||"Unknown"}}
 
-                tr(mac-row="body")
-                  td(mac-cell-template="name")
-                    span MY NAMEZZZ
+                //- tr(mac-row="body")
+                //-   td(mac-cell-template="name")
+                //-     span MY NAMEZZZ
 
-                  td(mac-cell-template-default)
-                    span {{cell.value()}}
+                //-   td(mac-cell-template-default)
+                //-     span {{cell.value()}}
 
               input(
                 ng-model="searchTerm"

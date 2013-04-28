@@ -2,11 +2,122 @@
 # macRow and macCellTemplate
 # A combo of ngRepeat and ngSwitch that specifically works on table data
 #
+
+
+angular.module("Mac").factory "directiveHelpers", [ ->
+
+  # Ensures that controllers are propigated to stamped clones
+  # Issue: https://github.com/angular/angular.js/issues/2533
+  copyData: (el1, el2) ->
+    for name, value of el1.data()
+      el2.data name, value unless name is "$scope"
+
+  # ngRepeat-style cloning
+  # TODO: Optimize this similar to ngRepeat
+  repeater: (iterator, keyName, $scope, $element, linkerFactory, postClone) ->
+    #$element.children().remove()
+    cursor = $element
+    for item in iterator
+      nScope          = $scope.$new()
+      nScope[keyName] = item
+
+      if linkerFn = linkerFactory item
+        console.log "PRE-CLONE FOR:", keyName
+        clonedElement = linkerFn nScope, (clone) =>
+          @copyData $element, clone
+          console.log "CLONE", clone, clone.data()
+          cursor.after clone
+          cursor = clone
+        console.log "POST-CLONE FOR:", keyName
+        postClone and postClone item, clonedElement
+
+]
+
+angular.module("Mac").directive "repeatRow", [ "directiveHelpers", (directiveHelpers) ->
+  transclude: "element"
+  priority: 500
+  terminal: true
+  require: ["^?macTable", "^?repeatRow"]
+  controller: ->
+    @name = "repeat-row"
+    @cellTemplates = {}
+    @repeatCells = (row, rowElement) ->
+      console.log "CELL TEMPLATES", @cellTemplates
+      # Make a marker for where to insert our cells after
+      cellMarker = angular.element "<!-- cells: #{row.section.name} -->"
+      rowElement.children().remove()
+      rowElement.append cellMarker
+      linkerFactory = (cell) =>
+        templateName = _(@cellTemplates).has(cell.colName) and cell.colName or "?"
+        console.log "CELL TEMPLATE", templateName, @cellTemplates[templateName]
+        return template[1] if template = @cellTemplates[templateName]
+      directiveHelpers.repeater row.cells, "cell", rowElement.scope(), cellMarker, linkerFactory
+    return
+  compile: (element, attr, linker) ->
+    console.log "repeat-row: compile", attr
+    ($scope, $element, $attr, controllers) ->
+      console.log "repeat-row: link #{$scope.$id}", controllers, !!$scope.table
+      section = $attr.repeatRow
+      $scope.$watch "table.sections.#{section}.rows", (rows) ->
+        if rows
+          directiveHelpers.repeater(
+            rows
+            "row"
+            $scope
+            $element
+            -> linker
+            (row, rowElement) -> controllers[1].repeatCells row, rowElement
+          )
+]
+
+
+angular.module("Mac").directive "cell", [ ->
+  transclude: "element"
+  priority: 1000
+  require: ["?^macTable", "?^repeatRow"]
+  compile: (element, attr, linker) ->
+    console.log "cell: compile", attr
+    ($scope, $element, $attr, controllers) ->
+      console.log "cell: linker #{$scope.$id}", controllers, !!$scope.table, !!$scope.row
+      controllers[1].cellTemplates[$attr.cell] = [$element, linker, $attr]
+]
+
+angular.module("Mac").directive "defaultCell", [ ->
+  transclude: "element"
+  priority: 1000
+  transclude: "element"
+  require: ["?^macTable", "?^repeatRow"]
+  compile: (element, attr, linker) ->
+    console.log "default-cell: compile", attr
+    ($scope, $element, $attr, controllers) ->
+      console.log "default-cell: linker #{$scope.$id}", controllers, !!$scope.table, !!$scope.row
+      controllers[1].cellTemplates["?"] = [$element, linker, $attr]
+]
+
+angular.module("Mac").directive "macTest1", [ ->
+  priority: 2000
+  require: ["^?macTable", "^?repeatRow"]
+  compile: (element, attr) ->
+    console.log "test-1: compile", attr
+    ($scope, $element, $attr, controllers) ->
+      console.log "test-1: link #{$scope.$id}", controllers, $attr
+]
+
+angular.module("Mac").directive "macRowTest", [ ->
+  priority: 1000
+  compile: (element, attr) ->
+    console.log "mac-row-test: compile", attr
+    ($scope, $element, $attrs) ->
+      console.log "mac-row-test: linking #{$scope.$id}"
+]
+
 angular.module("Mac").directive "macRow", [ "$compile", ($compile) ->
   require: ["^macTable", "macRow", "?macColumns"]
   transclude: "element"
-  terminal: true
+  #terminal: true
+  priority: 1
   controller: ->
+    console.log "mac-row: controller"
     @templates = {}
     @getTemplate = (columnName) ->
       if not @templates[columnName]? and @templates["?"]?
@@ -15,8 +126,9 @@ angular.module("Mac").directive "macRow", [ "$compile", ($compile) ->
 
     return # implicit return for controller constructor
   compile: (element, attr, linker) ->
-
+    console.log "mac-row: compile", attr
     ($scope, $element, $attr, controllers) ->
+      console.log "mac-row: linking #{$scope.$id}"
       [tableCtrl, rowCtrl] = controllers
       sectionName          = $attr.macRow
       trackExpression      = "table.sections.#{sectionName}.rows"
@@ -105,7 +217,7 @@ angular.module("Mac").directive "macRow", [ "$compile", ($compile) ->
 angular.module("Mac").directive "macCellTemplate", [ ->
   require: ["^macTable", "^macRow", "^?macColumns"]
   transclude: "element"
-  priority: 1000
+  priority: 0
   compile: (element, attrs, transclude) ->
     ($scope, $element, $attrs, controllers) ->
       [tableCtrl, rowCtrl]                      = controllers
@@ -115,9 +227,11 @@ angular.module("Mac").directive "macCellTemplate", [ ->
 angular.module("Mac").directive "macCellTemplateDefault", [ "$timeout", ($timeout) ->
   require: ["^macTable", "^macRow", "^?macColumns"]
   transclude: "element"
-  priority: 1000
+  priority: 2000
   compile: (element, attrs, transclude) ->
+    console.log "cell-template-default: compile", attrs
     ($scope, $element, $attrs, controllers) ->
+      console.log "cell-template-default: linking #{$scope.$id}"
       if controllers[2]
         controllers[2].trackedColumns[$scope.$id] = [$scope, $element]
 

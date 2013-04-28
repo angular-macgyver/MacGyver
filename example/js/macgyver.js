@@ -10730,13 +10730,173 @@ angular.module("Mac").directive("macBind", [
 ]);
 
 
+angular.module("Mac").factory("directiveHelpers", [
+  function() {
+    return {
+      copyData: function(el1, el2) {
+        var name, value, _ref, _results;
+        _ref = el1.data();
+        _results = [];
+        for (name in _ref) {
+          value = _ref[name];
+          if (name !== "$scope") {
+            _results.push(el2.data(name, value));
+          } else {
+            _results.push(void 0);
+          }
+        }
+        return _results;
+      },
+      repeater: function(iterator, keyName, $scope, $element, linkerFactory, postClone) {
+        var clonedElement, cursor, item, linkerFn, nScope, _i, _len, _results,
+          _this = this;
+        cursor = $element;
+        _results = [];
+        for (_i = 0, _len = iterator.length; _i < _len; _i++) {
+          item = iterator[_i];
+          nScope = $scope.$new();
+          nScope[keyName] = item;
+          if (linkerFn = linkerFactory(item)) {
+            console.log("PRE-CLONE FOR:", keyName);
+            clonedElement = linkerFn(nScope, function(clone) {
+              _this.copyData($element, clone);
+              console.log("CLONE", clone, clone.data());
+              cursor.after(clone);
+              return cursor = clone;
+            });
+            console.log("POST-CLONE FOR:", keyName);
+            _results.push(postClone && postClone(item, clonedElement));
+          } else {
+            _results.push(void 0);
+          }
+        }
+        return _results;
+      }
+    };
+  }
+]);
+
+angular.module("Mac").directive("repeatRow", [
+  "directiveHelpers", function(directiveHelpers) {
+    return {
+      transclude: "element",
+      priority: 500,
+      terminal: true,
+      require: ["^?macTable", "^?repeatRow"],
+      controller: function() {
+        this.name = "repeat-row";
+        this.cellTemplates = {};
+        this.repeatCells = function(row, rowElement) {
+          var cellMarker, linkerFactory,
+            _this = this;
+          console.log("CELL TEMPLATES", this.cellTemplates);
+          cellMarker = angular.element("<!-- cells: " + row.section.name + " -->");
+          rowElement.children().remove();
+          rowElement.append(cellMarker);
+          linkerFactory = function(cell) {
+            var template, templateName;
+            templateName = _(_this.cellTemplates).has(cell.colName) && cell.colName || "?";
+            console.log("CELL TEMPLATE", templateName, _this.cellTemplates[templateName]);
+            if (template = _this.cellTemplates[templateName]) {
+              return template[1];
+            }
+          };
+          return directiveHelpers.repeater(row.cells, "cell", rowElement.scope(), cellMarker, linkerFactory);
+        };
+      },
+      compile: function(element, attr, linker) {
+        console.log("repeat-row: compile", attr);
+        return function($scope, $element, $attr, controllers) {
+          var section;
+          console.log("repeat-row: link " + $scope.$id, controllers, !!$scope.table);
+          section = $attr.repeatRow;
+          return $scope.$watch("table.sections." + section + ".rows", function(rows) {
+            if (rows) {
+              return directiveHelpers.repeater(rows, "row", $scope, $element, function() {
+                return linker;
+              }, function(row, rowElement) {
+                return controllers[1].repeatCells(row, rowElement);
+              });
+            }
+          });
+        };
+      }
+    };
+  }
+]);
+
+angular.module("Mac").directive("cell", [
+  function() {
+    return {
+      transclude: "element",
+      priority: 1000,
+      require: ["?^macTable", "?^repeatRow"],
+      compile: function(element, attr, linker) {
+        console.log("cell: compile", attr);
+        return function($scope, $element, $attr, controllers) {
+          console.log("cell: linker " + $scope.$id, controllers, !!$scope.table, !!$scope.row);
+          return controllers[1].cellTemplates[$attr.cell] = [$element, linker, $attr];
+        };
+      }
+    };
+  }
+]);
+
+angular.module("Mac").directive("defaultCell", [
+  function() {
+    return {
+      transclude: "element",
+      priority: 1000,
+      transclude: "element",
+      require: ["?^macTable", "?^repeatRow"],
+      compile: function(element, attr, linker) {
+        console.log("default-cell: compile", attr);
+        return function($scope, $element, $attr, controllers) {
+          console.log("default-cell: linker " + $scope.$id, controllers, !!$scope.table, !!$scope.row);
+          return controllers[1].cellTemplates["?"] = [$element, linker, $attr];
+        };
+      }
+    };
+  }
+]);
+
+angular.module("Mac").directive("macTest1", [
+  function() {
+    return {
+      priority: 2000,
+      require: ["^?macTable", "^?repeatRow"],
+      compile: function(element, attr) {
+        console.log("test-1: compile", attr);
+        return function($scope, $element, $attr, controllers) {
+          return console.log("test-1: link " + $scope.$id, controllers, $attr);
+        };
+      }
+    };
+  }
+]);
+
+angular.module("Mac").directive("macRowTest", [
+  function() {
+    return {
+      priority: 1000,
+      compile: function(element, attr) {
+        console.log("mac-row-test: compile", attr);
+        return function($scope, $element, $attrs) {
+          return console.log("mac-row-test: linking " + $scope.$id);
+        };
+      }
+    };
+  }
+]);
+
 angular.module("Mac").directive("macRow", [
   "$compile", function($compile) {
     return {
       require: ["^macTable", "macRow", "?macColumns"],
       transclude: "element",
-      terminal: true,
+      priority: 1,
       controller: function() {
+        console.log("mac-row: controller");
         this.templates = {};
         this.getTemplate = function(columnName) {
           if (!(this.templates[columnName] != null) && (this.templates["?"] != null)) {
@@ -10746,8 +10906,10 @@ angular.module("Mac").directive("macRow", [
         };
       },
       compile: function(element, attr, linker) {
+        console.log("mac-row: compile", attr);
         return function($scope, $element, $attr, controllers) {
           var hashKey, rowCtrl, sectionName, tableCtrl, trackExpression, uid;
+          console.log("mac-row: linking " + $scope.$id);
           tableCtrl = controllers[0], rowCtrl = controllers[1];
           sectionName = $attr.macRow;
           trackExpression = "table.sections." + sectionName + ".rows";
@@ -10834,7 +10996,7 @@ angular.module("Mac").directive("macCellTemplate", [
     return {
       require: ["^macTable", "^macRow", "^?macColumns"],
       transclude: "element",
-      priority: 1000,
+      priority: 0,
       compile: function(element, attrs, transclude) {
         return function($scope, $element, $attrs, controllers) {
           var rowCtrl, tableCtrl;
@@ -10851,10 +11013,12 @@ angular.module("Mac").directive("macCellTemplateDefault", [
     return {
       require: ["^macTable", "^macRow", "^?macColumns"],
       transclude: "element",
-      priority: 1000,
+      priority: 2000,
       compile: function(element, attrs, transclude) {
+        console.log("cell-template-default: compile", attrs);
         return function($scope, $element, $attrs, controllers) {
           var rowCtrl, tableCtrl;
+          console.log("cell-template-default: linking " + $scope.$id);
           if (controllers[2]) {
             controllers[2].trackedColumns[$scope.$id] = [$scope, $element];
           }
@@ -11824,7 +11988,9 @@ angular.module("Mac").directive("macTable", [
         columns: "=columns",
         header: "=header"
       },
-      controller: function() {},
+      controller: function() {
+        this.directive = "mac-table";
+      },
       link: function(scope, element, attrs, ctrl) {
         ctrl.$element = element;
         scope.$watch("columns", function(value) {

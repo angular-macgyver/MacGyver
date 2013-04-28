@@ -6,7 +6,9 @@ angular.module("Mac").directive "macTable", [ "Table", (Table) ->
     models:  "=models"
     columns: "=columns"
     header:  "=header"
-  controller: -> return
+  controller: ->
+    @directive = "mac-table"
+    return
   link: (scope, element, attrs, ctrl) ->
     ctrl.$element = element
 
