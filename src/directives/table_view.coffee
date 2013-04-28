@@ -2,16 +2,15 @@ angular.module("Mac").directive "macTable", [ "Table", (Table) ->
   # templateUrl: "template/table_view.html"
   require: "macTable"
   priority: 2000
-  scope:
-    models:  "=models"
-    columns: "=columns"
-    header:  "=header"
+
   controller: ->
     @directive = "mac-table"
     return
 
   compile: (element, attr) ->
     # Compile-o-rama! Add all our extra directives and interpolated values here
+
+    # TODO: Make these queries guard against applying to nested tables
 
     # Since initial-width depends on mac-columns,
     # add that to the parent of any we find

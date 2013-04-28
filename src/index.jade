@@ -121,11 +121,38 @@ html
                     span other shit!
 
                 tr(section-row="body")
+                  td(width="100%", before-templates)
+                    span this is a long cell before... {{row.model.name}}
+
+
                   td(cell-template="name")
-                    span NAME!!!
+                    table.table.mac-table-default(
+                      mac-table
+                      resizable-columns
+                      reorderable-columns
+                      columns="columns"
+                      models="tableData"
+                    )
+                      tr(section-row="header")
+                        th(cell-template="name", initial-width="50%")
+                          span NAME!
+                        th(cell-template, initial-width="10%")
+                          span other shit!
+
+                      tr(section-row="body")
+                        td(cell-template="name")
+                          span NAME!!!
+
+                        td(cell-template)
+                          span {{cell.value()}}
 
                   td(cell-template)
                     span {{cell.value()}}
+
+                  td(width="100%", after-templates)
+                    span this is a long cell after...
+
+
 
               input(
                 ng-model="searchTerm"

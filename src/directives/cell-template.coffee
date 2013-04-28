@@ -9,7 +9,7 @@ angular.module("Mac").factory "directiveHelpers", [ ->
   # Issue: https://github.com/angular/angular.js/issues/2533
   copyData: (el1, el2) ->
     for name, value of el1.data()
-      el2.data name, value unless name is "$scope"
+      el2.data name, value unless name is "$scope" # don't overwrite our $scope
 
   # ngRepeat-esque cloning
   # TODO: Optimize this similar to ngRepeat
@@ -37,10 +37,24 @@ angular.module("Mac").directive "sectionRow", [ "directiveHelpers", (directiveHe
     @name = "repeat-row"
     @cellTemplates = {}
     @repeatCells = (row, rowElement) ->
-      # Make a marker for where to insert our cells after
-      cellMarker = angular.element "<!-- cells: #{row.section.name} -->"
-      rowElement.children().remove()
-      rowElement.append cellMarker
+      # Clear out our existing cell-templates
+      rowElement.find("[cell-template]").remove()
+
+      # Figure out where to add in our cell templates
+      # we search for the markers "before-templates" && "after-templates"
+      # or else default to appending it first into the row
+      beforeElement = rowElement.find("[before-templates]:last")
+      afterElement  = rowElement.find("[after-templates]:first")
+
+      if beforeElement.length
+        cellMarker = beforeElement
+      else if afterElement.length
+        cellMarker = angular.element "<!-- cells: #{row.section.name} -->"
+        afterElement.before cellMarker
+      else
+        cellMarker = angular.element "<!-- cells: #{row.section.name} -->"
+        rowElement.append cellMarker
+
       linkerFactory = (cell) =>
         templateName = _(@cellTemplates).has(cell.colName) and cell.colName or "?"
         return template[1] if template = @cellTemplates[templateName]
@@ -52,7 +66,6 @@ angular.module("Mac").directive "sectionRow", [ "directiveHelpers", (directiveHe
       $scope.$watch "table.sections.#{section}.rows", (rows) ->
         if rows
           # Remove the old rows
-          # TODO: possibly make this a little less "jQuery"
           $element.parent()
             .find("[section-row=#{section}],[section=#{section}]").remove()
 
