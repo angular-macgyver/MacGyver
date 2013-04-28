@@ -32,20 +32,19 @@ angular.module("Mac").directive "macTable", [ "Table", (Table) ->
     ($scope, $element, $attr, ctrl) ->
       ctrl.$element = $element
 
-      $scope.$watch "columns", (value) ->
-        ctrl.table = $scope.table = new Table $scope.columns
+      $scope.$watch "columns", (columns) ->
+        ctrl.table = $scope.table = new Table columns
       , true
 
-      $scope.$watch "models", (value) ->
-        $scope.table.load "body", $scope.models
+      $scope.$watch "models", (models) ->
+        $scope.table.load "body", models
         # As a convenience, if there is no header, add one
         if not $scope.table.sections.header?
           blankRow = $scope.table.blankRow()
           $scope.table.load "header", [blankRow]
       , true
 
-      $scope.$watch "header", (value) ->
-        return unless value
-        $scope.table.load "header", [$scope.header]
+      $scope.$watch "header", (header) ->
+        $scope.table.load "header", [header]
       , true
 ]

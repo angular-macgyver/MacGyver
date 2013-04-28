@@ -24,12 +24,9 @@ angular.module("Mac").directive "macColumns", [ ->
       columnsOrder                 = []
       changedElement               = angular.element(ui.item)
       table                        = changedElement.scope().cell.row.section.table
-      console.log matchedElements
       matchedElements.each ->
-        console.log "MATCHED ELEMENT"
         columnsOrder.push angular.element(this).scope().cell.colName
 
-      console.log columnsOrder
       scope.$apply ->
         table.columnsOrder = columnsOrder
         table.columnsCtrl.syncOrder()
@@ -80,7 +77,6 @@ angular.module("Mac").directive "macColumns", [ ->
 
     scope.$on "mac-ratio-#{scope.$id}-changed", ->
       # Call our controllers 'recalculateWidths' method
-      console.log "HERE"
       ctrl.recalculateWidths.apply ctrl, arguments
 
     # This is our main hookable function
@@ -105,7 +101,6 @@ angular.module("Mac").directive "initialWidth", [ ->
   priority: 500
   compile: (element, attr) ->
     ($scope, $element, $attrs, controllers) ->
-      console.log "initial-width: link", controllers
       # Register our column
       controllers[2].trackedColumns[$scope.$id] = [$scope, $element]
 
