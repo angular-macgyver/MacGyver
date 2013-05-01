@@ -1,11 +1,20 @@
-angular.module("Mac").directive "macTable", [ "Table", (Table) ->
-  # templateUrl: "template/table_view.html"
+angular.module("Mac").directive "macTable", [ "Table", "$parse", (Table, $parse) ->
   require: "macTable"
   priority: 2000
+  scope: true
 
-  controller: ->
-    @directive = "mac-table"
+  controller: ["$scope", ($scope) ->
+    @directive      = "mac-table"
+    @setBodyContent = (models) ->
+
+      $scope.table.load "body", models
+      # As a convenience, if there is no header, add one
+      if not $scope.table.sections.header?
+        blankRow = $scope.table.blankRow()
+        $scope.table.load "header", [blankRow]
+
     return
+  ]
 
   compile: (element, attr) ->
     # Compile-o-rama! Add all our extra directives and interpolated values here
@@ -14,15 +23,15 @@ angular.module("Mac").directive "macTable", [ "Table", (Table) ->
 
     # Since initial-width depends on mac-columns,
     # add that to the parent of any we find
-    element.find("[initial-width]").parent().attr("mac-columns", "")
+    element.find("[initial-width]").parents("[table-row]").attr("mac-columns", "")
 
     # Resizable? F@@@ YEAH!
     if attr.resizableColumns?
-      element.find("[section-row=header],[section=header],[for=header]")
+      element.find("[table-section=header]")
         .find("[cell-template]").attr("mac-resizable", "")
 
     if attr.reorderableColumns?
-      element.find("[section-row=header],[section=header],[for=header]")
+      element.find("[table-section=header] [table-row]")
         .attr("mac-reorderable", "[cell-template]")
 
     # All cells should have widths, don't you agree?
@@ -33,14 +42,12 @@ angular.module("Mac").directive "macTable", [ "Table", (Table) ->
 
       $scope.$watch "columns", (columns) ->
         ctrl.table = $scope.table = new Table columns
-      , true
 
-      $scope.$watch "models", (models) ->
-        $scope.table.load "body", models
-        # As a convenience, if there is no header, add one
-        if not $scope.table.sections.header?
-          blankRow = $scope.table.blankRow()
-          $scope.table.load "header", [blankRow]
+        $attr.$observe "models", (modelsExp) ->
+          $scope.$watch modelsExp, (models) ->
+            ctrl.setBodyContent models
+          , true
+
       , true
 
       $scope.$watch "header", (header) ->

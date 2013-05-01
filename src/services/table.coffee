@@ -157,11 +157,7 @@ angular.module("Mac").factory "Table", [
                     this.columnsCtrl.set(columns)
                 return
             load: (sectionName, models, sectionController) ->
-                if models?.then? # deferred
-                    models.then (models) ->
-                        this.rowsCtrl.set(sectionName, models, sectionController)
-                else
-                    this.rowsCtrl.set(sectionName, models, sectionController)
+                this.rowsCtrl.set(sectionName, models, sectionController)
             # Insert a single model at the index
             insert: (sectionName, model, index = 0) ->
                 this.rowsCtrl.insert sectionName, model, index
@@ -171,4 +167,5 @@ angular.module("Mac").factory "Table", [
 
             blankRow: ->
                 this.columnsCtrl.blank()
+
 ]

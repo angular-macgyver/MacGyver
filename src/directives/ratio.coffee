@@ -97,7 +97,7 @@ angular.module("Mac").directive "macColumns", [ ->
 ]
 
 angular.module("Mac").directive "initialWidth", [ ->
-  require:  ["^?macTable", "^?sectionRow", "^?macColumns"]
+  require:  ["^?macTable", "^?tableSection", "^?macColumns"]
   priority: 500
   compile: (element, attr) ->
     ($scope, $element, $attrs, controllers) ->
