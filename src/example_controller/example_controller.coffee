@@ -1,8 +1,17 @@
 module = angular.module("Mac")
 
-module.controller "ExampleController", ["$scope", "$timeout", "Table", ($scope, $timeout, Table) ->
+module.controller "ExampleController", ["$scope", "$timeout", "Table", "SectionController", ($scope, $timeout, Table, SectionController) ->
+  class BodySectionController extends SectionController
+    cellValue: (row, colName) ->
+        switch colName
+            when "name" then ">>#{row.model.name}<<"
+            when "a_and_b" then row.model.a + row.model.b
+            else @defaultCellValue row, colName
+
+
+  $scope.bodyController = BodySectionController
   # Table view section
-  $scope.columns = columns = ["name", "a", "b", "c", "d", "created"]
+  $scope.columns = columns = ["name", "a_and_b", "c", "d", "created"]
   $scope.table = new Table(columns)
   $scope.header = headerObject =
       name: "Name"

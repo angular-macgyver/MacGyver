@@ -1,25 +1,18 @@
 angular.module("Mac").directive "macTable", [ "Table", "$parse", (Table, $parse) ->
-  require: "macTable"
+  require:  "macTable"
   priority: 2000
-  scope: true
+  scope:    true
 
   controller: ["$scope", ($scope) ->
     @directive      = "mac-table"
-    @setBodyContent = (models) ->
-
-      $scope.table.load "body", models
-      # As a convenience, if there is no header, add one
-      if not $scope.table.sections.header?
-        blankRow = $scope.table.blankRow()
-        $scope.table.load "header", [blankRow]
-
     return
   ]
 
   compile: (element, attr) ->
-    # Compile-o-rama! Add all our extra directives and interpolated values here
+    # Add all our extra directives and interpolated values here
 
     # TODO: Make these queries guard against applying to nested tables
+    # seems ok right now, but more testing has to be done...
 
     # Since initial-width depends on mac-columns,
     # add that to the parent of any we find
@@ -40,17 +33,14 @@ angular.module("Mac").directive "macTable", [ "Table", "$parse", (Table, $parse)
     ($scope, $element, $attr, ctrl) ->
       ctrl.$element = $element
 
-      $scope.$watch "columns", (columns) ->
-        ctrl.table = $scope.table = new Table columns
+      # A note about how we're $observing and then $watching
+      # this is done to avoid using an isolate scope
 
-        $attr.$observe "models", (modelsExp) ->
-          $scope.$watch modelsExp, (models) ->
-            ctrl.setBodyContent models
-          , true
-
-      , true
-
-      $scope.$watch "header", (header) ->
-        $scope.table.load "header", [header]
-      , true
+      # TODO: The way we *have* to have columns when we load the tbale
+      # for the sections rows to be populated correctly is an issue
+      $attr.$observe "columns", (columnsExp) ->
+        $scope.$watch columnsExp, (columns) ->
+          console.log "table was made..."
+          ctrl.table = $scope.table = new Table columns
+        , true
 ]

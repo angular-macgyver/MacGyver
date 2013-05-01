@@ -1,10 +1,9 @@
 #
-# sectionRow and cellTemplate
+# tableSection, tableRow, and cellTemplate
 # A combo of ngRepeat and ngSwitch that specifically works on table data
 #
 
 angular.module("Mac").factory "directiveHelpers", [ ->
-
   # ngRepeat-esque cloning
   # TODO: Optimize this similar to ngRepeat
   repeater: (iterator, keyName, $scope, $element, linkerFactory, postClone) ->
@@ -24,24 +23,70 @@ angular.module("Mac").factory "directiveHelpers", [ ->
 angular.module("Mac").directive "tableSection", [ "directiveHelpers", (directiveHelpers) ->
   require: ["^macTable", "tableSection"]
   scope: true
-  controller: ->
-    @name = "table-section"
+  controller: ["$scope", ($scope) ->
+    @directive          = "table-section"
+
     @cellTemplates = {}
+
+    @watchModels = (modelsExp, controller) ->
+      console.log this.name
+      $scope.$watch modelsExp, (models) =>
+        return unless models and models.length
+        @models = models
+
+        if controller?
+          $scope.table.load @name, models, controller
+        else
+          $scope.table.load @name, models
+      , true
+
+    @watchTable = (callback) ->
+      $scope.$watch "table", callback
+
     return
+  ]
   compile: (element, attr, linker) ->
     ($scope, $element, $attr, controllers) ->
+      # TODO: Clean this up... it's pretty confusing
 
+      # Track our section name / section data
       $attr.$observe "tableSection", (sectionName) ->
         return unless sectionName
-        $scope.$watch "table.sections.#{sectionName}", (section) ->
-          $scope.section = controllers[1].section = $scope.table.sections[sectionName]
+        controllers[1].name = sectionName
 
+        # Watch our table, then watch our section
+        $scope.$watch "table", (table) ->
+          return unless table
+
+          # Autogenerate a header if the section is header and there are no models
+          if not $attr.models? and sectionName is "header"
+            blankRow = table.blankRow()
+            table.load "header", [blankRow]
+            console.log "auto header"
+
+          # Watch for our section to be created (see below)
+          $scope.$watch "table.sections.#{sectionName}", (section) ->
+            $scope.section = controllers[1].section = $scope.table.sections[sectionName]
+
+        # Watch and evaluate for our models
+        $attr.$observe "models", (modelsExp) ->
+          $scope.$watch "table", (table) ->
+            return unless table
+
+            # If we've got a controller attribute, we need to grab that first
+            if $attr.controller?
+              $attr.$observe "controller", (controllerExp) ->
+                $scope.$watch controllerExp, (controller) ->
+                  controllers[1].watchModels modelsExp, controller
+            # Otherwise just make the section
+            else
+                controllers[1].watchModels modelsExp
 ]
 
 angular.module("Mac").directive "tableRow", [ "directiveHelpers", (directiveHelpers) ->
   require: ["^macTable", "^tableSection", "tableRow"]
   controller: ->
-    @name = "table-row"
+    @directive        = "table-row"
     @repeatCells = (cells, rowElement, sectionController) ->
       # Clear out our existing cell-templates
       rowElement.find("[cell-template]").remove()
@@ -82,9 +127,9 @@ angular.module("Mac").directive "tableRow", [ "directiveHelpers", (directiveHelp
 
 angular.module("Mac").directive "cellTemplate", [ ->
   transclude: "element"
-  priority: 1000
-  require: ["^macTable", "^tableSection", "^tableRow"]
-  compile: (element, attr, linker) ->
+  priority:   1000
+  require:    ["^macTable", "^tableSection", "^tableRow"]
+  compile:    (element, attr, linker) ->
     ($scope, $element, $attr, controllers) ->
       templateName = $attr.for or $attr.cellTemplate or "?" # == default
       controllers[1].cellTemplates[templateName] = [$element, linker, $attr]

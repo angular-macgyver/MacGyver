@@ -112,19 +112,19 @@ html
                 resizable-columns
                 reorderable-columns
                 columns="columns"
-                models="tableData"
               )
 
-                thead(table-section="header")
+                thead(table-section="header", models="[{name:'muh name'}]")
                   tr.leading-row
                     td {{section.name}}
                   tr(table-row, ng-repeat="row in section.rows")
-                    th(cell-template="name", initial-width="25%")
-                      span NAME!
-                    th(cell-template, initial-width="15%")
-                      span other shit!
+                    th(cell-template="name", initial-width="40%")
+                      span NAME! {{cell.value()}}
 
-                tbody(table-section="body")
+                    th(cell-template, initial-width="15%")
+                      span {{cell.colName}} {{cell.value()}}
+
+                tbody(table-section="body", models="tableData", controller="bodyController")
                   tr.leading-row
                     td {{section.name}}
                   tr(table-row, ng-repeat="row in section.rows")
