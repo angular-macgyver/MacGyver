@@ -1,34 +1,31 @@
-##
-## @name
-## Tag Autocomplete
-##
-## @description
-## A directive for generating tag input with autocomplete support on text input
-##
-## @dependencies
-## - jQuery UI autocomplete
-##
-## @attributes
-## - mac-tag-autocomplete-url:         url to fetch autocomplete dropdown list data
-## - mac-tag-autocomplete-value:       the value to be sent back upon selection                (default "id")
-## - mac-tag-autocomplete-label:       the label to display to the users                       (default "name")
-## - mac-tag-autocomplete-full-object: Push the full object into the selected array            (default false)
-## - mac-tag-autocomplete-selected:    the list of elements selected by the user
-## - mac-tag-autocomplete-query:       the query parameter on GET command                      (defualt "q")
-## - mac-tag-autocomplete-delay:       time delayed on fetching autocomplete data after keyup  (default 800)
-## - mac-tag-autocomplete-placeholder: Placeholder text of the text input                      (default "")
-## - mac-tag-autocomplete-disabled:    If autocomplete is enabled or disabled                  (default false)
-## - mac-tag-autocomplete-on-enter:    When autocomplete is disabled, this function is called on enter
-##                                     Should return either string, object or boolean. If false, item is not added
-##                                       @param {String} item User input
-## - mac-tag-autocomplete-events:      a CSV list of events to attach functions to
-## - mac-tag-autocomplete-on-[event]:  the function to be called when specified event is fired
-##                                       @param {Object} event jQuery event
-##                                       @param {String} value Value in the input text
-##
-## @events
-## - mac-tag-autocomplete-clear-input: $broadcast message; clears text input when received
-##
+###
+@chalk overview
+@name Tag Autocomplete
+
+@description
+A directive for generating tag input with autocomplete support on text input
+
+@dependencies
+- jQuery UI autocomplete
+
+@param {String} mac-tag-autocomplete-url Url to fetch autocomplete dropdown list data
+@param {String} mac-tag-autocomplete-value The value to be sent back upon selection (default "id")
+@param {String} mac-tag-autocomplete-label The label to display to the users (default "name")
+@param {Boolean} mac-tag-autocomplete-full-object Push the full object into the selected array (default false)
+@param {Array} mac-tag-autocomplete-selected The list of elements selected by the user
+@param {String} mac-tag-autocomplete-query The query parameter on GET command (defualt "q")
+@param {Integer} mac-tag-autocomplete-delay Time delayed on fetching autocomplete data after keyup  (default 800)
+@param {String} mac-tag-autocomplete-placeholder Placeholder text of the text input (default "")
+@param {Boolean} mac-tag-autocomplete-disabled If autocomplete is enabled or disabled (default false)
+@param {Expression} mac-tag-autocomplete-on-enter When autocomplete is disabled, this function is called on enter, Should return either string, object or boolean. If false, item is not added
+        - `item` - {String} User input
+@param {String} mac-tag-autocomplete-events a CSV list of events to attach functions to
+@param {Expression} mac-tag-autocomplete-on- The function to be called when specified event is fired
+        - `event` - {Object} jQuery event
+        - `value` - {String} Value in the input text
+
+@param {Event} mac-tag-autocomplete-clear-input $broadcast message; clears text input when received
+###
 
 angular.module("Mac").directive "macTagAutocomplete", [
   "$parse",

@@ -1,30 +1,28 @@
-##
-## @name
-## Spinner
-##
-## @description
-## A directive for generating spinner using spin.js
-##
-## @dependencies
-## - spin.js
-##
-## @attributes
-## - mac-spinner-lines:     The number of lines to draw             (default 10)
-## - mac-spinner-length:    The length of each line                 (default 7)
-## - mac-spinner-width:     The line thickness                      (defualt 2)
-## - mac-spinner-radius:    The radius of the inner circle          (default 10)
-## - mac-spinner-corners:   Corner roundness (0..1)                 (default 1)
-## - mac-spinner-rotate:    The rotation offset                     (default 0)
-## - mac-spinner-color:     #rgb or #rrggbb                         (default "#000")
-## - mac-spinner-speed:     Rounds per second                       (default 1)
-## - mac-spinner-trail:     Afterglow percentage                    (default 60)
-## - mac-spinner-shadow:    Whether to render a shadow              (default false)
-## - mac-spinner-hwaccel:   Whether to use hardware acceleration    (default false)
-## - mac-spinner-className: The CSS class to assign to the spinner  (default "spinner")
-## - mac-spinner-z-index:   The z-index (defaults to 2000000000)    (default 2e9)
-## - mac-spinner-top:       Top position relative to parent in px   (default "auto")
-## - mac-spinner-left:      Left position relative to parent in px  (default "auto")
-##
+###
+@chalk overview
+@name Spinner
+
+@description
+A directive for generating spinner using spin.js
+
+@dependencies
+- spin.js
+
+@param {Integer} mac-spinner-lines The number of lines to draw (default 10)
+@param {Integer} mac-spinner-width The lines thickness (default 2)
+@param {Integer} mac-spinner-radius The radius of the inner circle (default 10)
+@param {Integer} mac-spinner-corners Corner roundness (0..1) (default 1)
+@param {Integer} mac-spinner-rotate The rotation offset (default 0)
+@param {String} mac-spinner-color rgb or #rrggbb (default "#000")
+@param {Integer} mac-spinner-speed Rounds per second (default 1)
+@param {Integer} mac-spinner-trail Afterglow percentage (default 60)
+@param {Boolean} mac-spinner-shadow Whether to render a shadow (default false)
+@param {Boolean} mac-spinner-hwaccel Whether to use hardware acceleration (default false)
+@param {String} mac-spinner-className The CSS class to assign to the spinner (default "spinner")
+@param {Integer} mac-spinner-z-index The z-index (default 2e9)
+@param {String} mac-spinner-top Top position relative to parent in px (default "auto")
+@param {String} mac-spinner-left Left position relative to parent in px (default "auto")
+###
 
 angular.module("Mac").directive "macSpinner", ->
   restrict: "EA"
