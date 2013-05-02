@@ -21,12 +21,12 @@ Angular helpers for all your friends!
  - Boolean
  - Pluralize
  - Timestamp
+ - Underscore String
 
 ## 3rd party libraries dependencies ##
  - Underscore
  - jQuery
  - jQuery UI
- - Chosen
  - Spin.js
 
 ## Get Started ##
