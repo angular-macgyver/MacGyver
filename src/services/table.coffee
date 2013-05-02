@@ -42,6 +42,8 @@ angular.module("Mac").factory "tableComponents", [
             Cell = (@row, @column) ->
                 # TODO: Find a better place for this, we can't use our prototype though...
                 @value = -> @row?.section?.ctrl.cellValue(@row, @colName)
+                # Allow for custom functions on the controller
+                @get   = (name) -> @row?.section?.ctrl[name]?(@row, @colName)
                 return
             Cell.prototype = proto
             return new Cell(row, proto)

@@ -2,17 +2,30 @@ module = angular.module("Mac")
 
 module.controller "ExampleController", ["$scope", "$timeout", "Table", "SectionController", ($scope, $timeout, Table, SectionController) ->
   class BodySectionController extends SectionController
+    constructor: (@section) ->
+      @currentState = "on"
+
     cellValue: (row, colName) ->
         switch colName
             when "name" then ">>#{row.model.name}<<"
             when "a_and_b" then row.model.a + row.model.b
             else @defaultCellValue row, colName
 
+    state: (row, colName) ->
+      if @currentState is "on"
+        @currentState = "off"
+      else
+        @currentState = "on"
+
+      return @currentState
+
 
   $scope.bodyController = BodySectionController
   # Table view section
-  $scope.columns = columns = ["name", "a_and_b", "c", "d", "created"]
-  $scope.table = new Table(columns)
+  $timeout ->
+    $scope.columns = columns = ["name", "a_and_b", "c", "d", "created"]
+  , 5000
+  #$scope.table = new Table(columns)
   $scope.header = headerObject =
       name: "Name"
       a: "A"
@@ -20,7 +33,7 @@ module.controller "ExampleController", ["$scope", "$timeout", "Table", "SectionC
       c: "C"
       d: "D"
       created: "Created"
-  $scope.table.load("header", [headerObject])
+  #$scope.table.load("header", [headerObject])
   # Data for table view
   # Current generating 10000 rows of entries to make sure table view can handle large
   # amount of data
@@ -30,7 +43,7 @@ module.controller "ExampleController", ["$scope", "$timeout", "Table", "SectionC
   $scope.loading = true
   $timeout (->
     #for i in [1..5000]
-    for i in [1..4]
+    for i in [1..100]
       obj =
         name: "Test " + i
         a: Math.random() * 100000
@@ -43,7 +56,7 @@ module.controller "ExampleController", ["$scope", "$timeout", "Table", "SectionC
           abc: Math.random() * 1000
 
       $scope.data.push obj
-    $scope.table.load("body", $scope.data)
+    #$scope.table.load("body", $scope.data)
     $scope.loading = false
     $scope.$digest()
     $scope.$apply ->

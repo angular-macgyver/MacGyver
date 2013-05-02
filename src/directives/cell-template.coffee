@@ -29,7 +29,6 @@ angular.module("Mac").directive "tableSection", [ "directiveHelpers", (directive
     @cellTemplates = {}
 
     @watchModels = (modelsExp, controller) ->
-      console.log this.name
       $scope.$watch modelsExp, (models) =>
         return unless models and models.length
         @models = models
@@ -62,7 +61,6 @@ angular.module("Mac").directive "tableSection", [ "directiveHelpers", (directive
           if not $attr.models? and sectionName is "header"
             blankRow = table.blankRow()
             table.load "header", [blankRow]
-            console.log "auto header"
 
           # Watch for our section to be created (see below)
           $scope.$watch "table.sections.#{sectionName}", (section) ->

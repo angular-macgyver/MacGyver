@@ -132,7 +132,7 @@ html
                       span this is a long cell before... {{row.model.name}}
 
                     td(cell-template="name")
-                      span My Name is {{cell.value()}}
+                      span My Name is {{cell.value()}} {{cell.get("state")}}
 
                     td(cell-template)
                       span {{cell.value()}}

@@ -40,7 +40,6 @@ angular.module("Mac").directive "macTable", [ "Table", "$parse", (Table, $parse)
       # for the sections rows to be populated correctly is an issue
       $attr.$observe "columns", (columnsExp) ->
         $scope.$watch columnsExp, (columns) ->
-          console.log "table was made..."
           ctrl.table = $scope.table = new Table columns
         , true
 ]
