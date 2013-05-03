@@ -55,7 +55,7 @@
 ## - sort-by: The key to use for sorting for the column
 ##
 
-angular.module("Mac").directive "macTable2", [
+angular.module("Mac").directive "macTable", [
   "$compile"
   "$filter"
   "util"

@@ -10730,38 +10730,10 @@ angular.module("Mac").directive("macBind", [
 ]);
 
 
-angular.module("Mac").factory("directiveHelpers", [
-  function() {
-    return {
-      repeater: function(iterator, keyName, $scope, $element, linkerFactory, postClone) {
-        var clonedElement, cursor, item, linkerFn, nScope, _i, _len, _results,
-          _this = this;
-        cursor = $element;
-        _results = [];
-        for (_i = 0, _len = iterator.length; _i < _len; _i++) {
-          item = iterator[_i];
-          nScope = $scope.$new();
-          nScope[keyName] = item;
-          if (linkerFn = linkerFactory(item)) {
-            clonedElement = linkerFn(nScope, function(clone) {
-              cursor.after(clone);
-              return cursor = clone;
-            });
-            _results.push(postClone && postClone(item, clonedElement));
-          } else {
-            _results.push(void 0);
-          }
-        }
-        return _results;
-      }
-    };
-  }
-]);
-
 angular.module("Mac").directive("tableSection", [
   "directiveHelpers", function(directiveHelpers) {
     return {
-      require: ["^macTable", "tableSection"],
+      require: ["^macTableV2", "tableSection"],
       scope: true,
       controller: [
         "$scope", function($scope) {
@@ -10832,7 +10804,7 @@ angular.module("Mac").directive("tableSection", [
 angular.module("Mac").directive("tableRow", [
   "directiveHelpers", function(directiveHelpers) {
     return {
-      require: ["^macTable", "^tableSection", "tableRow"],
+      require: ["^macTableV2", "^tableSection", "tableRow"],
       controller: function() {
         this.directive = "table-row";
         this.repeatCells = function(cells, rowElement, sectionController) {
@@ -10880,7 +10852,7 @@ angular.module("Mac").directive("cellTemplate", [
     return {
       transclude: "element",
       priority: 1000,
-      require: ["^macTable", "^tableSection", "^tableRow"],
+      require: ["^macTableV2", "^tableSection", "^tableRow"],
       compile: function(element, attr, linker) {
         return function($scope, $element, $attr, controllers) {
           var templateName;
@@ -11609,7 +11581,7 @@ angular.module("Mac").directive("macColumns", [
 angular.module("Mac").directive("initialWidth", [
   function() {
     return {
-      require: ["^?macTable", "^?tableSection", "^?macColumns"],
+      require: ["^macTableV2", "^tableSection", "^macColumns"],
       priority: 500,
       compile: function(element, attr) {
         return function($scope, $element, $attrs, controllers) {
@@ -11658,116 +11630,6 @@ angular.module("Mac").directive("macResizable", [
           return scope.$emit("mac-element-" + scope.$id + "-changed", "resized", element, event, ui, scope.$emit("mac-element-" + scope.$parent.$id + "-changed", "resized", element, event, ui));
         }
       });
-    };
-  }
-]);
-
-
-angular.module("Mac").directive("macRowsDERPDERPDERP", [
-  "$compile", function($compile) {
-    return {
-      require: ["^macTable", "macRows"],
-      priority: 500,
-      controller: function($scope, $compile, $attrs, $element) {
-        this.templates = {};
-        this.unsafeDirectives = ["mac-rows", "mac-cell-template", "mac-cell-template-default"];
-        this.prepClone = function(clone, $element) {
-          var attributeName, ctrl, name, _i, _len, _ref, _ref1, _results;
-          _ref = $element.data();
-          for (name in _ref) {
-            ctrl = _ref[name];
-            clone.data(name, ctrl);
-          }
-          _ref1 = this.unsafeDirectives;
-          _results = [];
-          for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-            attributeName = _ref1[_i];
-            _results.push(clone[0].removeAttribute(attributeName));
-          }
-          return _results;
-        };
-        this.drawRows = function(rows, transcludeFn) {
-          var nScope, row, _i, _len,
-            _this = this;
-          for (_i = 0, _len = rows.length; _i < _len; _i++) {
-            row = rows[_i];
-            nScope = $scope.$new();
-            nScope.row = row;
-            $compile($element.contents())(nScope, function(clone) {
-              console.log("clone", clone);
-              return $element.parent.append(clone);
-            });
-            return;
-            transcludeFn(nScope, function(clone) {
-              $compile(clone.contents())(nScope, function(clone) {
-                return console.log("clone", clone[0].attributes);
-              });
-              return _this.tableCtrl.$element.append(clone);
-            });
-          }
-        };
-        this.drawCells = function($element, cells) {
-          var cScope, cell, columnName, nScope, transcludeFn, _i, _len, _ref, _results,
-            _this = this;
-          if (!cells) {
-            return;
-          }
-          $element.children().remove();
-          _results = [];
-          for (_i = 0, _len = cells.length; _i < _len; _i++) {
-            cell = cells[_i];
-            columnName = cell.colName;
-            if (!(this.templates[columnName] != null) && (this.templates["?"] != null)) {
-              columnName = "?";
-            } else if (!(this.templates[columnName] != null)) {
-              continue;
-            }
-            _ref = this.templates[columnName], transcludeFn = _ref[0], cScope = _ref[1];
-            nScope = $scope.$new();
-            nScope.cell = cell;
-            _results.push(transcludeFn(nScope, function(clone) {
-              $compile(clone.contents())(nScope);
-              console.log(_this.templates);
-              return $element.append(clone);
-            }));
-          }
-          return _results;
-        };
-        this.addDefaultAttributes = function(clone) {
-          if (!clone.attr("mac-column-width") && ($attrs.macColumns != null)) {
-            clone.attr("mac-column-width", "{{100/cell.row.cells.length}}");
-          }
-          clone.attr("width", "{{cell.width}}%");
-          if ($attrs.macCellsResizable != null) {
-            return clone.attr("mac-resizable", true);
-          }
-        };
-      },
-      compile: function(element, attrs, transclude) {
-        var $contents, $parent, $tr, compiledContents, sectionName;
-        console.log("FIRED");
-        sectionName = attrs.macRows;
-        $parent = element.parent();
-        $contents = element.contents();
-        $tr = angular.element("<tr ng-repeat='row in table.sections." + sectionName + ".rows'></tr>");
-        compiledContents = null;
-        return function($scope, $element, $attrs, controllers) {
-          var $clone;
-          $element.remove();
-          $tr.data("$macRowsController", controllers[1]);
-          if (!compiledContents) {
-            compiledContents = $compile($tr);
-          }
-          $clone = compiledContents($scope, function(clone) {
-            return clone;
-          });
-          $parent.append($clone);
-          return setTimeout(function() {
-            console.log($parent.children());
-            return console.log($parent.children().append($contents));
-          }, 0);
-        };
-      }
     };
   }
 ]);
@@ -11837,40 +11699,6 @@ angular.module("Mac").directive("macSpinner", function() {
 
 
 angular.module("Mac").directive("macTable", [
-  "Table", "$parse", function(Table, $parse) {
-    return {
-      require: "macTable",
-      priority: 2000,
-      scope: true,
-      controller: [
-        "$scope", function($scope) {
-          this.directive = "mac-table";
-        }
-      ],
-      compile: function(element, attr) {
-        element.find("[initial-width]").parents("[table-row]").attr("mac-columns", "");
-        if (attr.resizableColumns != null) {
-          element.find("[table-section=header]").find("[cell-template]").attr("mac-resizable", "");
-        }
-        if (attr.reorderableColumns != null) {
-          element.find("[table-section=header] [table-row]").attr("mac-reorderable", "[cell-template]");
-        }
-        element.find("[cell-template]").attr("width", "{{cell.width}}%");
-        return function($scope, $element, $attr, ctrl) {
-          ctrl.$element = $element;
-          return $attr.$observe("columns", function(columnsExp) {
-            return $scope.$watch(columnsExp, function(columns) {
-              return ctrl.table = $scope.table = new Table(columns);
-            }, true);
-          });
-        };
-      }
-    };
-  }
-]);
-
-
-angular.module("Mac").directive("macTable2", [
   "$compile", "$filter", "util", function($compile, $filter, util) {
     return {
       restrict: "EA",
@@ -12527,6 +12355,38 @@ angular.module("Mac").directive("macTable2", [
             return $scope.reverse = false;
           };
           return $scope.reset();
+        };
+      }
+    };
+  }
+]);
+
+
+angular.module("Mac").directive("macTableV2", [
+  "Table", function(Table) {
+    return {
+      require: "macTableV2",
+      priority: 2000,
+      scope: true,
+      controller: function() {
+        this.directive = "mac-table";
+      },
+      compile: function(element, attr) {
+        element.find("[initial-width]").parents("[table-row]").attr("mac-columns", "");
+        if (attr.resizableColumns != null) {
+          element.find("[table-section=header]").find("[cell-template]").attr("mac-resizable", "");
+        }
+        if (attr.reorderableColumns != null) {
+          element.find("[table-section=header] [table-row]").attr("mac-reorderable", "[cell-template]");
+        }
+        element.find("[cell-template]").attr("width", "{{cell.width}}%");
+        return function($scope, $element, $attr, controller) {
+          controller.$element = $element;
+          return $attr.$observe("columns", function(columnsExp) {
+            return $scope.$watch(columnsExp, function(columns) {
+              return controller.table = $scope.table = new Table(columns);
+            }, true);
+          });
         };
       }
     };
@@ -13267,6 +13127,35 @@ angular.module("Mac").filter("underscoreString", function() {
     return _.string[fn].apply(this, params);
   };
 });
+
+
+angular.module("Mac").factory("directiveHelpers", [
+  function() {
+    return {
+      repeater: function(iterator, keyName, $scope, $element, linkerFactory, postClone) {
+        var clonedElement, cursor, item, linkerFn, nScope, _i, _len, _results,
+          _this = this;
+        cursor = $element;
+        _results = [];
+        for (_i = 0, _len = iterator.length; _i < _len; _i++) {
+          item = iterator[_i];
+          nScope = $scope.$new();
+          nScope[keyName] = item;
+          if (linkerFn = linkerFactory(item)) {
+            clonedElement = linkerFn(nScope, function(clone) {
+              cursor.after(clone);
+              return cursor = clone;
+            });
+            _results.push(postClone && postClone(item, clonedElement));
+          } else {
+            _results.push(void 0);
+          }
+        }
+        return _results;
+      }
+    };
+  }
+]);
 
 
 angular.module("Mac").factory("BaseColumn", [

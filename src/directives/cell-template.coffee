@@ -1,30 +1,12 @@
 #
 # tableSection, tableRow, and cellTemplate
-# A combo of ngRepeat and ngSwitch that specifically works on table data
 #
 
-angular.module("Mac").factory "directiveHelpers", [ ->
-  # ngRepeat-esque cloning
-  # TODO: Optimize this similar to ngRepeat
-  repeater: (iterator, keyName, $scope, $element, linkerFactory, postClone) ->
-    cursor = $element
-    for item in iterator
-      nScope          = $scope.$new()
-      nScope[keyName] = item
-
-      if linkerFn = linkerFactory item
-        clonedElement = linkerFn nScope, (clone) =>
-          cursor.after clone
-          cursor = clone
-        postClone and postClone item, clonedElement
-
-]
-
 angular.module("Mac").directive "tableSection", [ "directiveHelpers", (directiveHelpers) ->
-  require: ["^macTable", "tableSection"]
+  require: ["^macTableV2", "tableSection"]
   scope: true
   controller: ["$scope", ($scope) ->
-    @directive          = "table-section"
+    @directive = "table-section"
 
     @cellTemplates = {}
 
@@ -82,9 +64,9 @@ angular.module("Mac").directive "tableSection", [ "directiveHelpers", (directive
 ]
 
 angular.module("Mac").directive "tableRow", [ "directiveHelpers", (directiveHelpers) ->
-  require: ["^macTable", "^tableSection", "tableRow"]
+  require: ["^macTableV2", "^tableSection", "tableRow"]
   controller: ->
-    @directive        = "table-row"
+    @directive   = "table-row"
     @repeatCells = (cells, rowElement, sectionController) ->
       # Clear out our existing cell-templates
       rowElement.find("[cell-template]").remove()
@@ -119,14 +101,12 @@ angular.module("Mac").directive "tableRow", [ "directiveHelpers", (directiveHelp
         # if so return without anymore processing
         return unless controllers[1].section?.name?
         controllers[2].repeatCells cells, $element, controllers[1]
-
 ]
-
 
 angular.module("Mac").directive "cellTemplate", [ ->
   transclude: "element"
   priority:   1000
-  require:    ["^macTable", "^tableSection", "^tableRow"]
+  require:    ["^macTableV2", "^tableSection", "^tableRow"]
   compile:    (element, attr, linker) ->
     ($scope, $element, $attr, controllers) ->
       templateName = $attr.for or $attr.cellTemplate or "?" # == default

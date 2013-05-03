@@ -1,6 +1,7 @@
 module = angular.module("Mac")
 
 module.controller "ExampleController", ["$scope", "$timeout", "Table", "SectionController", ($scope, $timeout, Table, SectionController) ->
+
   class BodySectionController extends SectionController
     constructor: (@section) ->
       @currentState = "on"
