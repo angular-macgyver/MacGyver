@@ -109,8 +109,8 @@ describe "Table", ->
             {first_name: "Paul", last_name: "McCartney", age: 30, date_of_birth: '6/18/1942'}
             {first_name: "John", last_name: "Lennon", age: 29, date_of_birth: '10/09/1940'} ]
         @table = table = new Table('dynamic')
-        table.load("body", models)
         table.load("header", null, HeaderController)
+        table.load("body", models)
 
       it "can make a blank model", ->
         columns = []
@@ -140,3 +140,19 @@ describe "Table", ->
         columns = []
         columns.push cell.colName for cell in @table.sections.body.rows[0].cells
         expect(columns).toEqual @table.columnsOrder
+
+      it "updates the properties on the cells with properties on that column", ->
+        #
+        # TODO: There is an issue here, if we used:
+        #
+        #   @table.load "header", [@table.blankRow()]
+        #
+        # it would clobber our current columns and make new ones, disjointing
+        # them from the other sections (in this case the body)
+        # this just applies to dynamic tables
+        #
+        @table.insert "header", @table.blankRow()
+        @table.columns[0].width = 50
+        expect(@table.sections.header.rows[0].cells[0].width).toBe 50
+        expect(@table.sections.body.rows[0].cells[0].width).toBe 50
+

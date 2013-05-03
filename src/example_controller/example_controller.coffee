@@ -2,67 +2,54 @@ module = angular.module("Mac")
 
 module.controller "ExampleController", ["$scope", "$timeout", "Table", "SectionController", ($scope, $timeout, Table, SectionController) ->
 
-  class BodySectionController extends SectionController
-    constructor: (@section) ->
-      @currentState = "on"
 
-    cellValue: (row, colName) ->
-        switch colName
-            when "name" then ">>#{row.model.name}<<"
-            when "a_and_b" then row.model.a + row.model.b
-            else @defaultCellValue row, colName
+  $scope.maGyverSeasonOne = [
+    {'No.': '1', 'Title': '"Pilot"', 'Directed by': 'Jerrold Freedman', 'Written by': 'Thackary Pallor', 'Original air date': 'September 29, 1985'}
+    {'No.': '2', 'Title': '"The Golden Triangle"', 'Directed by': 'Paul Stanley & Donald Petrie', 'Written by': 'Dennis R. Foley & Terry Nation', 'Original air date': 'October 6, 1985'}
+    {'No.': '3', 'Title': '"Thief of Budapest"', 'Directed by': 'Lee H. Katzin & John Patterson', 'Written by': 'Terry Nation & Stephen Downing & Joe Viola', 'Original air date': 'October 13, 1985'}
+    {'No.': '4', 'Title': '"The Gauntlet"', 'Directed by': 'Lee H. Katzin', 'Written by': 'Stephen Kandel', 'Original air date': 'October 20, 1985'}
+    {'No.': '5', 'Title': '"The Heist"', 'Directed by': 'Alan Smithee', 'Written by': 'Larry Alexander & James Schmerer', 'Original air date': 'November 3, 1985'}
+    {'No.': '6', 'Title': '"Trumbo\'s World"', 'Directed by': 'Donald Petrie & Lee H. Katzin', 'Written by': 'Stephen Kandel', 'Original air date': 'November 10, 1985'}
+    {'No.': '7', 'Title': '"Last Stand"', 'Directed by': 'John Florea', 'Written by': 'Judy Burns', 'Original air date': 'November 17, 1985'}
+    {'No.': '8', 'Title': '"Hellfire"', 'Directed by': 'Richard Colla', 'Written by': 'Story by: Douglas Brooks West', 'Original air date': 'November 24, 1985'}
+    {'No.': '9', 'Title': '"The Prodigal"', 'Directed by': 'Alexander Singer', 'Written by': 'Story by: David Abramowitz & Paul Savage', 'Original air date': 'December 8, 1985'}
+    {'No.': '10', 'Title': '"Target MacGyver"', 'Directed by': 'Lee H. Katzin & Ernest Pintoff', 'Written by': 'Story by: Mike Marvin', 'Original air date': 'December 22, 1985'}
+    {'No.': '11', 'Title': '"Nightmares"', 'Directed by': 'Cliff Bole', 'Written by': 'James Schmerer', 'Original air date': 'January 15, 1986'}
+    {'No.': '12', 'Title': '"Deathlock"', 'Directed by': 'Cliff Bole & Alexander Singer', 'Written by': 'Jerry Ludwig & Stephen Kandel', 'Original air date': 'January 22, 1986'}
+    {'No.': '13', 'Title': '"Flame\'s End"', 'Directed by': 'Bruce Seth Green', 'Written by': 'Story by: Hannah Louise Shearer', 'Original air date': 'January 29, 1986'}
+    {'No.': '14', 'Title': '"Countdown"', 'Directed by': 'Stan Jolley', 'Written by': 'Tony DiMarco & David Ketchum', 'Original air date': 'February 5, 1986'}
+    {'No.': '15', 'Title': '"The Enemy Within"', 'Directed by': 'Cliff Bole', 'Written by': 'David Abramowitz', 'Original air date': 'February 12, 1986'}
+    {'No.': '16', 'Title': '"Every Time She Smiles"', 'Directed by': 'Charlie Correll', 'Written by': 'James Schmerer', 'Original air date': 'February 19, 1986'}
+    {'No.': '17', 'Title': '"To Be a Man"', 'Directed by': 'Cliff Bole', 'Written by': 'Don Mankiewicz', 'Original air date': 'March 5, 1986'}
+    {'No.': '18', 'Title': '"Ugly Duckling"', 'Directed by': 'Charlie Correll', 'Written by': 'Larry Gross', 'Original air date': 'March 12, 1986'}
+    {'No.': '19', 'Title': '"Slow Death"', 'Directed by': 'Don Weis', 'Written by': 'Stephen Kandel', 'Original air date': 'April 2, 1986'}
+    {'No.': '20', 'Title': '"The Escape"', 'Directed by': 'Don Chaffey', 'Written by': 'Stephen Kandel', 'Original air date': 'April 16, 1986'}
+    {'No.': '21', 'Title': '"A Prisoner of Conscience"', 'Directed by': 'Cliff Bole', 'Written by': 'Stephen Kandel', 'Original air date': 'April 30, 1986'}
+    {'No.': '22', 'Title': '"The Assassin"', 'Directed by': 'Charlie Correll', 'Written by': 'James Schmerer', 'Original air date': 'May 7, 1986'}
+  ]
 
-    state: (row, colName) ->
-      if @currentState is "on"
-        @currentState = "off"
-      else
-        @currentState = "on"
+  # class BodySectionController extends SectionController
+  #   constructor: (@section) ->
+  #     @currentState = "on"
 
-      return @currentState
+  #   cellValue: (row, colName) ->
+  #       switch colName
+  #           when "name" then ">>#{row.model.name}<<"
+  #           when "a_and_b" then row.model.a + row.model.b
+  #           else @defaultCellValue row, colName
+
+  #   state: (row, colName) ->
+  #     if @currentState is "on"
+  #       @currentState = "off"
+  #     else
+  #       @currentState = "on"
+
+  #     return @currentState
+
+  # $scope.bodyController = BodySectionController
 
 
-  $scope.bodyController = BodySectionController
   # Table view section
-  $timeout ->
-    $scope.columns = columns = ["name", "a_and_b", "c", "d", "created"]
-  , 5000
-  #$scope.table = new Table(columns)
-  $scope.header = headerObject =
-      name: "Name"
-      a: "A"
-      b: "B"
-      c: "C"
-      d: "D"
-      created: "Created"
-  #$scope.table.load("header", [headerObject])
-  # Data for table view
-  # Current generating 10000 rows of entries to make sure table view can handle large
-  # amount of data
-  $scope.data = $scope.tableData = []
-  #for i in [1..10000]
-  # Added setTimeout to mimic ajax delay
-  $scope.loading = true
-  $timeout (->
-    #for i in [1..5000]
-    for i in [1..100]
-      obj =
-        name: "Test " + i
-        a: Math.random() * 100000
-        b: Math.random() * 10000
-        c: Math.random()
-        d: Math.random()
-        created: (new Date()).getTime()
-        attributes:
-          name: "Test " + i
-          abc: Math.random() * 1000
-
-      $scope.data.push obj
-    #$scope.table.load("body", $scope.data)
-    $scope.loading = false
-    $scope.$digest()
-    $scope.$apply ->
-      #$scope.setColumnWidths $scope.table, 830, 8
-  ), 0 #2500
 
   $scope.reverse = false
 
@@ -74,24 +61,6 @@ module.controller "ExampleController", ["$scope", "$timeout", "Table", "SectionC
       cellValue = String(row.cellsMap[colName].value()).toLowerCase()
       value     = String(value).toLowerCase()
       cellValue.indexOf(value) != -1
-
-  $scope.setColumnWidths = (table) ->
-    colNumber = table.columnsOrder.length
-    percent   = Math.floor 100/colNumber
-    for column in table.columns
-      column.width = "#{percent}%"
-
-  $scope.createRow = (event) ->
-    event.stopPropagation()
-    console.log "Creating row"
-
-  $scope.loadMoreRows = ->
-    event.stopPropagation()
-    alert "Loading 20 more rows"
-
-  # Columns to display and their order
-  $scope.columnOrder = ["Name", "anotherName", "d", "c", "b", "Created"]
-  #$scope.columnOrder = ["Name", "Abc"] # Used for testing values inside attributes
 
   # Editable
   $scope.editableTest = "Hello"

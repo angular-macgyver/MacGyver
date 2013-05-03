@@ -106,6 +106,8 @@ angular.module("Mac").directive "initialWidth", [ ->
 
       # Set the initial percentage
       $attrs.$observe "initialWidth", (value) ->
+        # Only set this if we don't have a width
+        return if $scope.cell.column.width
         $scope.cell.column.width = +value.replace "%", ""
 ]
 

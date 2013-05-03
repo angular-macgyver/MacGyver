@@ -1625,6 +1625,8 @@ i.mac-icons{background:url("../img/mac-sprite-icons.png") no-repeat;text-indent:
 i.mac-icons.mac-icon-calendar{background-position:0 0}
 i.mac-icons.mac-icon-time{background-position:-32px 0}
 
+table.mac-table-default thead{white-space:nowrap;}
+table.mac-table-default thead th{white-space:normal}
 table.mac-table-default th,table.mac-table-default td{display:inline-block;box-sizing:border-box}
 
 .search-box{border:1px solid #808080;border-color:transparent;border-radius:14px;height:28px;width:28px;position:relative;z-index:100;transition:width .15s linear,border-color .15s linear;display:block;position:absolute;right:0;top:0;transition-delay:.25s;}

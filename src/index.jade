@@ -107,40 +107,60 @@ html
             h2 Example
             .docs-example
 
+              //- table.table.mac-table-default(
+              //-   mac-table-v2
+              //-   resizable-columns
+              //-   reorderable-columns
+              //-   columns="columns"
+              //- )
+
+              //-   thead(table-section="header", models="[{name:'muh name'}]")
+              //-     tr.leading-row
+              //-       td {{section.name}}
+              //-     tr(table-row, ng-repeat="row in section.rows")
+              //-       th(cell-template="name", initial-width="40%")
+              //-         span NAME! {{cell.value()}}
+
+              //-       th(cell-template, initial-width="15%")
+              //-         span {{cell.colName}} {{cell.value()}}
+
+              //-   tbody(table-section="body", models="tableData", controller="bodyController")
+              //-     tr.leading-row
+              //-       td {{section.name}}
+              //-     tr(table-row, ng-repeat="row in section.rows")
+              //-       td(width="100%", before-templates)
+              //-         span this is a long cell before... {{row.model.name}}
+
+              //-       td(cell-template="name")
+              //-         span My Name is {{cell.value()}} {{cell.get("state")}}
+
+              //-       td(cell-template)
+              //-         span {{cell.value()}}
+
+              //-       td(width="100%", after-templates)
+              //-         span this is a long cell after...
+
               table.table.mac-table-default(
                 mac-table-v2
                 resizable-columns
                 reorderable-columns
-                columns="columns"
+                columns="dynamic"
               )
-
-                thead(table-section="header", models="[{name:'muh name'}]")
-                  tr.leading-row
-                    td {{section.name}}
+                thead(table-section="header")
                   tr(table-row, ng-repeat="row in section.rows")
-                    th(cell-template="name", initial-width="40%")
-                      span NAME! {{cell.value()}}
+                    th(cell-template="No.", initial-width="5%")
+                      span {{cell.colName}}
 
-                    th(cell-template, initial-width="15%")
-                      span {{cell.colName}} {{cell.value()}}
+                    th(cell-template="Title", initial-width="35%")
+                      span {{cell.colName}}
 
-                tbody(table-section="body", models="tableData", controller="bodyController")
-                  tr.leading-row
-                    td {{section.name}}
+                    th(cell-template, initial-width="auto")
+                      span {{cell.colName}}
+
+                tbody(table-section="body", models="maGyverSeasonOne")
                   tr(table-row, ng-repeat="row in section.rows")
-                    td(width="100%", before-templates)
-                      span this is a long cell before... {{row.model.name}}
-
-                    td(cell-template="name")
-                      span My Name is {{cell.value()}} {{cell.get("state")}}
-
                     td(cell-template)
                       span {{cell.value()}}
-
-                    td(width="100%", after-templates)
-                      span this is a long cell after...
-
-
 
               input(
                 ng-model="searchTerm"
