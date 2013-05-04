@@ -1,35 +1,9 @@
-# TODO: Clean up the formatting on these:
-# - `controllers` instead of `ctrl`
-# - add macTable as required
 
 angular.module("Mac").directive "macColumns", [ ->
-  require: "macColumns"
+  require: ["^macTableV2", "^tableSection", "tableRow", "macColumns"]
   controller: ->
     # Track our columns
     this.trackedColumns = {}
-
-    # Some utility functions
-    this.resizeIt = (scope, element, children, cElement, args) ->
-      [event, ui] = args
-      column      = cElement.scope().cell.column
-      width       = ui.size.width
-      percentage  = (width/element.width())*100
-      # Reset the width that jQuery will assign
-      cElement.css("width", "")
-      scope.$apply =>
-        this.recalculateWidths null, cElement.scope().$id, percentage, +column.width
-
-    this.reorderIt = (scope, element, children, cElement, args) ->
-      [matchedElements, event, ui] = args
-      columnsOrder                 = []
-      changedElement               = angular.element(ui.item)
-      table                        = changedElement.scope().cell.row.section.table
-      matchedElements.each ->
-        columnsOrder.push angular.element(this).scope().cell.colName
-
-      scope.$apply ->
-        table.columnsOrder = columnsOrder
-        table.columnsCtrl.syncOrder()
 
     this.getSiblingScopes = (siblings) ->
       # We're querying elements vs using $$prevSibling $$nextSibling on the
@@ -59,7 +33,7 @@ angular.module("Mac").directive "macColumns", [ ->
         siblingsTotalWidth                    += width
 
       prevSiblings = this.getSiblingScopes cElement.prevAll()
-      siblingsTotalWidth += _(prevSiblings).reduce (m, v) ->
+      siblingsTotalWidth += prevSiblings.reduce (m, v) ->
         +v.cell.column.width + m
       , 0
 
@@ -73,36 +47,21 @@ angular.module("Mac").directive "macColumns", [ ->
 
     return
 
-  link: (scope, element, attrs, ctrl) ->
+  link: ($scope, $element, $attrs, controllers) ->
+    controllers[3].$element = $element
 
-    scope.$on "mac-ratio-#{scope.$id}-changed", ->
-      # Call our controllers 'recalculateWidths' method
-      ctrl.recalculateWidths.apply ctrl, arguments
-
-    # This is our main hookable function
-    # this will delegate events to either other MAC directives or callbacks
-    # on properties on the governing directive
-    scope.$on "mac-element-#{scope.$id}-changed", (event, type, cElement, args...) ->
-      titlizedType  = _.string.titleize type
-      attributeName = "mac#{titlizedType}Callback"
-      if attrs[attributeName]?
-        callback = scope.$eval attrs[attributeName]
-        callback scope, element, ctrl.trackedColumns, cElement, args
-      # MacGyver Builtins
-      else if attributeName is "macResizedCallback"
-        ctrl.resizeIt scope, element, ctrl.trackedColumns, cElement, args
-      else if attributeName is "macReorderedCallback"
-        ctrl.reorderIt scope, element, ctrl.trackedColumns, cElement, args
+    $scope.$on "mac-columns-#{$scope.$id}-changed", (event, id, newValue, oldValue) ->
+      controllers[3].recalculateWidths.apply controllers[3], arguments
 
 ]
 
 angular.module("Mac").directive "initialWidth", [ ->
-  require:  ["^macTableV2", "^tableSection", "^macColumns"]
+  require:  ["^macTableV2", "^tableSection", "^tableRow", "^macColumns"]
   priority: 500
   compile: (element, attr) ->
     ($scope, $element, $attrs, controllers) ->
       # Register our column
-      controllers[2].trackedColumns[$scope.$id] = [$scope, $element]
+      controllers[3].trackedColumns[$scope.$id] = [$scope, $element]
 
       # Set the initial percentage
       $attrs.$observe "initialWidth", (value) ->

@@ -1,7 +1,7 @@
-describe "Table", ->
+describe "Table Data", ->
   beforeEach module "Mac"
 
-  describe "Normal Table", ->
+  describe "Normal Table Data", ->
     beforeEach inject ($rootScope, Table, SectionController) ->
       class BodySectionController extends SectionController
         cellValue: (row, colName) ->
@@ -156,3 +156,90 @@ describe "Table", ->
         expect(@table.sections.header.rows[0].cells[0].width).toBe 50
         expect(@table.sections.body.rows[0].cells[0].width).toBe 50
 
+describe "Table View", ->
+  # Initialize these values up here
+  scope    = null
+  $compile = null
+  models   = null
+  columns  = null
+
+  beforeEach module "Mac"
+
+  describe "Normal Table View", ->
+    beforeEach inject ($rootScope, _$compile_) ->
+      $compile = _$compile_
+      scope = $rootScope.$new()
+      models = [
+          {first_name: "Paul", last_name: "McCartney"}
+          {first_name: "John", last_name: "Lennon"} ]
+      columns = ["first_name", "last_name"]
+
+    describe "Table Structure", ->
+      element  = null
+      template =
+      """<table mac-table-v2 columns="tableColumns">
+          <thead table-section="header">
+            <tr table-row ng-repeat="row in section.rows">
+              <th cell-template initial-width="auto">Test</th>
+            </tr>
+          </thead>
+          <tbody table-section="body" models="tableData">
+            <tr table-row ng-repeat="row in section.rows">
+              <th cell-template initial-width="auto">{{cell.value()}}</th>
+            </tr>
+          </tbody>
+        </table>"""
+
+      beforeEach ->
+        element = $compile(template)(scope)
+        scope.$apply ->
+          scope.tableData    = models
+          scope.tableColumns = columns
+
+      it "Should repeat table-row for each item", ->
+        expect(element.find("[table-section=body] [table-row]").length).toBe 2
+
+      it "Should repeat cell-template for each column", ->
+        expect(element.find("[table-section=body] [table-row] [cell-template]").length).toBe 4
+
+      it "Should adjust when columns are removed", ->
+        scope.$apply -> scope.tableColumns.pop()
+        expect(element.find("[table-section=body] [table-row] [cell-template]").length).toBe 2
+
+      it "Should set mac-columns attribute on parent of initial-width directives", ->
+        expect(element.find("[table-section=header] [table-row][mac-columns]").length).toBe 1
+
+      it "Should set a width attribute on every cell-template", ->
+        # Counts header (1*2) + body (2*2)
+        expect(element.find("[cell-template][width]").length).toBe 6
+
+      it "Should set the width automatically", ->
+        expect(element.find("[cell-template]").first().attr("width")).toBe "50%"
+
+      describe "macColumns behaviour", ->
+        # We are collecting all this information to pass as arguments to our mac-columns event listener
+        changeColumnWidth = (width) ->
+          column                           = element.find("[table-section=header] [table-row] [cell-template]").first()
+          columnId                         = column.scope().$id
+          macColumnsId                     = element.find("[mac-columns]").scope().$id
+          column.scope().cell.column.width = width
+
+          return [macColumnsId, columnId]
+
+        it "Should adjust the widths correctly", ->
+          macColumnsId = null
+
+          scope.$apply ->
+            [macColumnsId, columnId] = changeColumnWidth 70
+            scope.$broadcast "mac-columns-#{macColumnsId}-changed", columnId, 70, 50
+
+          expect(element.find("[table-section=header] [table-row] [cell-template]").last().attr("width")).toBe "30%"
+
+        it "Should abort if it causes a column to be less than 5%", ->
+          macColumnsId = null
+
+          scope.$apply ->
+            [macColumnsId, columnId] = changeColumnWidth 100
+            scope.$broadcast "mac-columns-#{macColumnsId}-changed", columnId, 100, 50
+
+          expect(element.find("[table-section=header] [table-row] [cell-template]").last().attr("width")).toBe "50%"

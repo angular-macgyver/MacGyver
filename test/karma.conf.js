@@ -9,6 +9,8 @@ files = [
   JASMINE,
   JASMINE_ADAPTER,
 
+  'test/vendor/jquery.min.js',
+
   // Application Code //
   'example/js/vendor.js',
   'src/*.coffee',

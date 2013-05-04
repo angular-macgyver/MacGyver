@@ -95,7 +95,7 @@ angular.module("Mac").directive "tableRow", [ "directiveHelpers", (directiveHelp
         rowElement.append cellMarker
 
       linkerFactory = (cell) =>
-        templateName = _(sectionController.cellTemplates).has(cell.colName) and cell.colName or "?"
+        templateName = cell.colName of sectionController.cellTemplates and cell.colName or "?"
         return template[1] if template = sectionController.cellTemplates[templateName]
 
       directiveHelpers.repeater cells, "cell", rowElement.scope(), cellMarker, linkerFactory

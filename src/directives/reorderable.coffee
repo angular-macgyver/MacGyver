@@ -1,13 +1,32 @@
-angular.module("Mac").directive "macReorderable", [ ->
-  (scope, element, attrs) ->
-    selector = attrs.macReorderable
-    element.sortable
-      items:     selector
-      cursor:    "move"
-      opacity:   0.8
-      tolerance: "pointer"
-      update:    (event, ui) ->
-        matched = element.find selector
-        scope.$emit "mac-element-#{scope.$id}-changed", "reordered", element, matched, event, ui,
-        scope.$emit "mac-element-#{scope.$parent.$id}-changed", "reordered", element, matched, event, ui,
+angular.module("Mac").directive "macReorderable", [
+  "hookableDirectiveController"
+  (hookableDirectiveController) ->
+    require: ["macReorderable"]
+    controller: ["$scope", "$element", "$attrs", hookableDirectiveController]
+    link: ($scope, $element, $attrs, controllers) ->
+      selector = $attrs.macReorderable
+      $element.sortable
+        items:     selector
+        cursor:    "move"
+        opacity:   0.8
+        tolerance: "pointer"
+        update:    (event, ui) ->
+          controllers[0].fireCallbacks event, ui, $element.find selector
+]
+
+
+angular.module("Mac").directive "macReorderableColumns", [ ->
+  require: ["^macTableV2", "macReorderable"]
+  link: ($scope, $element, $attr, controllers) ->
+    controllers[1].registerCallback (event, ui, columnElements) ->
+      console.log "Columns Changed"
+      columnsOrder   = []
+      changedElement = $(ui.item)
+
+      columnElements.each ->
+        columnsOrder.push $(this).scope().cell.colName
+
+      $scope.$apply ->
+        controllers[0].table.columnsOrder = columnsOrder
+        controllers[0].table.columnsCtrl.syncOrder()
 ]

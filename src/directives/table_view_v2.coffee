@@ -1,6 +1,5 @@
 angular.module("Mac").directive "macTableV2", [ "Table", (Table) ->
   require:    "macTableV2"
-  priority:   2000
   scope:      true
   controller: ["$scope", ($scope) ->
     @directive = "mac-table"
@@ -18,18 +17,22 @@ angular.module("Mac").directive "macTableV2", [ "Table", (Table) ->
     # Resizable?
     if attr.resizableColumns?
       element.find("[table-section=header]")
-        .find("[cell-template]").attr("mac-resizable", "")
+        .find("[cell-template]")
+        .attr("mac-resizable", "")
+        .attr("mac-resizable-column", "")
+
 
     # Reorderable?
     if attr.reorderableColumns?
       element.find("[table-section=header] [table-row]")
         .attr("mac-reorderable", "[cell-template]")
+        .attr("mac-reorderable-columns", "")
 
     # Give our cells widths
     element.find("[cell-template]").attr("width", "{{cell.width}}%")
 
     # Generating the boilerplate initial-width calculations is a drag,
-    # lets do that automatically using the "auto" value in initialWidth directive
+    # lets do that automatically looking for "auto" in initial-width
     autoWidthTemplates = element.find("[initial-width=auto]")
     if autoWidthTemplates.length
       autoWidthTemplates.each ->
