@@ -167,42 +167,6 @@ html
                     td(cell-template)
                       span {{cell.value()}}
 
-              input(
-                ng-model="searchTerm"
-                mac-pause-typing="search=genSearchPredicate(selectedSearchKey.colName, searchTerm)"
-              )
-              select(
-                ng-model="selectedSearchKey"
-                ng-options="column.colName for column in table.columns"
-              )
-                option(value="") -- Choose Search Key --
-              //- table.table.table-striped.mac-table-default
-                tr(
-                  mac-columns
-                  mac-reorderable="> th"
-                )
-                  th(
-                    ng-repeat="cell in table.sections.header.rows[0].cells"
-                    mac-resizable
-                    mac-column-width="{{100/cell.row.cells.length}}"
-                    width="{{cell.width}}%"
-                    )
-                    a(ng-click="$parent.predicate=genPredicate(cell.colName);$parent.reverse=!reverse") {{cell.value()}}
-                tr(
-                  ng-repeat="row in table.sections.body.rows | orderBy:predicate:reverse | filter:search"
-                  mac-cells="row.cells"
-                )
-                  td(mac-cell-template="name", width="{{cell.width}}%")
-                    span {{cell.value()}}
-                    .extra-info
-                      small {{cell.colName}}
-                  td(mac-cell-template="a", width="{{cell.width}}%")
-                    span The value for "A" is {{cell.value()}}
-
-                  td(mac-cell-template-default, width="{{cell.width}}%")
-                    span {{cell.value()}}
-
-
           section#tag-input
             .page-header: h1 Tag Input
             p Proxy directive to mac tag autocomplete
