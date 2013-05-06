@@ -106,6 +106,7 @@ html
             .page-header: h1 Table view
             h2 Example
             .docs-example
+              h3 MacTableV1
               .table-view-wrapper(
                 mac-table
                 mac-table-data          = "data"
@@ -142,6 +143,29 @@ html
                 .table-total-footer-template
                   .cell(column="Name") {{ "Row" | pluralize: data.length}}
                   .cell(column="b") {{ total.b | currency}}
+
+              h3 MacTableV2
+              table.table.mac-table-default(
+                mac-table-v2
+                resizable-columns
+                reorderable-columns
+                columns="dynamic"
+              )
+                thead(table-section="header")
+                  tr(table-row, ng-repeat="row in section.rows")
+                    th(cell-template="No.", initial-width="5%")
+                      span {{cell.colName}}
+
+                    th(cell-template="Title", initial-width="35%")
+                      span {{cell.colName}}
+
+                    th(cell-template, initial-width="auto")
+                      span {{cell.colName}}
+
+                tbody(table-section="body", models="maGyverSeasonOne")
+                  tr(table-row, ng-repeat="row in section.rows")
+                    td(cell-template)
+                      span {{cell.value()}}
 
           section#tag-input
             .page-header: h1 Tag Input
