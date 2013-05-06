@@ -46,8 +46,9 @@ angular.module("Mac").factory "macColumnsController", ->
 
 
 angular.module("Mac").directive "macColumns", [ "macColumnsController", (macColumnsController) ->
-  require: ["^macTableV2", "^tableSection", "tableRow", "macColumns"]
+  require:    ["^macTableV2", "^tableSection", "tableRow", "macColumns"]
   controller: ["$scope", "$element", "$attrs", macColumnsController]
+
   link: ($scope, $element, $attrs, controllers) ->
     $scope.$on "mac-columns-#{$scope.$id}-changed", (event, id, newValue, oldValue) ->
       controllers[3].recalculateWidths.apply controllers[3], arguments
@@ -57,6 +58,7 @@ angular.module("Mac").directive "macColumns", [ "macColumnsController", (macColu
 angular.module("Mac").directive "initialWidth", [ ->
   require:  ["^macTableV2", "^tableSection", "^tableRow", "^macColumns"]
   priority: 500
+
   compile: (element, attr) ->
     ($scope, $element, $attrs, controllers) ->
       # Register our column

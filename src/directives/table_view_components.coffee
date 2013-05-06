@@ -3,8 +3,8 @@
 #
 
 angular.module("Mac").directive "tableSection", [ "directiveHelpers", (directiveHelpers) ->
-  require: ["^macTableV2", "tableSection"]
-  scope: true
+  require:    ["^macTableV2", "tableSection"]
+  scope:      true
   controller: ["$scope", ($scope) ->
     @directive = "table-section"
 
@@ -73,6 +73,7 @@ angular.module("Mac").directive "tableSection", [ "directiveHelpers", (directive
 
 angular.module("Mac").directive "tableRow", [ "directiveHelpers", (directiveHelpers) ->
   require: ["^macTableV2", "^tableSection", "tableRow"]
+
   controller: ->
     @directive   = "table-row"
     @repeatCells = (cells, rowElement, sectionController) ->
@@ -115,7 +116,8 @@ angular.module("Mac").directive "cellTemplate", [ ->
   transclude: "element"
   priority:   1000
   require:    ["^macTableV2", "^tableSection", "^tableRow"]
-  compile:    (element, attr, linker) ->
+
+  compile: (element, attr, linker) ->
     ($scope, $element, $attr, controllers) ->
       templateName = $attr.for or $attr.cellTemplate or "?" # == default
       controllers[1].cellTemplates[templateName] = [$element, linker, $attr]

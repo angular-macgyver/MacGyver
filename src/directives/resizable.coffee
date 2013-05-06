@@ -1,8 +1,9 @@
 angular.module("Mac").directive "macResizable", [
   "hookableDirectiveController"
   (hookableDirectiveController) ->
-    require: ["macResizable"]
+    require:    ["macResizable"]
     controller: ["$scope", "$element", "$attrs", hookableDirectiveController]
+
     link: ($scope, $element, $attrs, controllers) ->
       axis = $attrs.macResizable or "x"
       $element.resizable
@@ -14,6 +15,7 @@ angular.module("Mac").directive "macResizable", [
 
 angular.module("Mac").directive "macResizableColumn", [ ->
   require: ["^macColumns", "macResizable"]
+
   link: ($scope, $element, $attrs, controllers) ->
     controllers[1].registerCallback (event, ui) ->
       column      = $scope.cell.column
@@ -22,6 +24,6 @@ angular.module("Mac").directive "macResizableColumn", [ ->
 
       $element.css("width", "") # Reset the width that jQuery will assign
 
-      $scope.$apply =>
+      $scope.$apply ->
         controllers[0].recalculateWidths null, $scope.$id, percentage, +column.width
 ]

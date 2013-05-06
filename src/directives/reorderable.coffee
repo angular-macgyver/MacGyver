@@ -2,6 +2,7 @@ angular.module("Mac").directive "macReorderable", [
   "hookableDirectiveController"
   (hookableDirectiveController) ->
     require: ["macReorderable"]
+
     controller: ["$scope", "$element", "$attrs", hookableDirectiveController]
     link: ($scope, $element, $attrs, controllers) ->
       selector = $attrs.macReorderable
@@ -17,6 +18,7 @@ angular.module("Mac").directive "macReorderable", [
 
 angular.module("Mac").directive "macReorderableColumns", [ ->
   require: ["^macTableV2", "macReorderable"]
+
   link: ($scope, $element, $attr, controllers) ->
     controllers[1].registerCallback (event, ui, columnElements) ->
       columnsOrder   = []

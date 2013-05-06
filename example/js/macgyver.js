@@ -11511,8 +11511,7 @@ angular.module("Mac").directive("macResizableColumn", [
       require: ["^macColumns", "macResizable"],
       link: function($scope, $element, $attrs, controllers) {
         return controllers[1].registerCallback(function(event, ui) {
-          var column, percentage, width,
-            _this = this;
+          var column, percentage, width;
           column = $scope.cell.column;
           width = ui.size.width;
           percentage = (width / controllers[0].element.width()) * 100;

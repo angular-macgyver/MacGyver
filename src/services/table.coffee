@@ -56,22 +56,26 @@ angular.module("Mac").factory "ColumnsController", [
   ) ->
     class ColumnsController
       constructor: (@table) ->
+
       dynamic: (models) ->
         first = models[0]
         columns = []
         for key, model of first
             columns.push key
         @set(columns)
+
       blank: ->
         # Makes a blank object with our colNames as keys
         obj = {}
         for colName in @table.columnsOrder
           obj[colName] = null
         obj
+
       reset: ->
         @table.columnsOrder = []
         @table.columns      = []
         @table.columnsMap   = {}
+
       set: (columns) ->
         @reset()
         # Store the order
@@ -80,6 +84,7 @@ angular.module("Mac").factory "ColumnsController", [
           column = tableComponents.columnFactory(colName, @table.baseColumn)
           @table.columnsMap[colName] = column
           @table.columns.push column
+
       syncOrder: ->
         # Function might be better in table...
         for sectionName, section of @table.sections
@@ -101,6 +106,7 @@ angular.module("Mac").factory "RowsController", [
     ) ->
       class RowsController
         constructor: (@table) ->
+
         make: (section, model) ->
           row = tableComponents.rowFactory(section, model)
           for colName, column of @table.columnsMap
