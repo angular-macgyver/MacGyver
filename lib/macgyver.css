@@ -1625,6 +1625,10 @@ i.mac-icons{background:url("../img/mac-sprite-icons.png") no-repeat;text-indent:
 i.mac-icons.mac-icon-calendar{background-position:0 0}
 i.mac-icons.mac-icon-time{background-position:-32px 0}
 
+table.mac-table-default thead,table.mac-table-default tbody,table.mac-table-default tfoot{white-space:nowrap;}
+table.mac-table-default thead th,table.mac-table-default tbody th,table.mac-table-default tfoot th,table.mac-table-default thead td,table.mac-table-default tbody td,table.mac-table-default tfoot td{white-space:normal}
+table.mac-table-default th,table.mac-table-default td{display:inline-block;box-sizing:border-box}
+
 .mac-table-container{border:1px solid #ddd;position:relative;clear:both;}
 .mac-table-container .mac-table-loader{position:absolute;top:50%;left:50%}
 .mac-table-container .mac-table-row{clear:both;float:left;white-space:nowrap;}
