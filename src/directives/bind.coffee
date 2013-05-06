@@ -1,13 +1,12 @@
-#
-# @type directive
-# @name macBind
-# @description
-# macBind recurive go up parent scope to find the correct variable
-#
-# @attributes
-# - mac-bind:        expression to evaluate
-# - mac-bind-depth: Max parent scope depth it should go (default 2)
-#
+###
+@chalk overview
+@name macBind
+@description
+macBind recurive go up parent scope to find the correct variable
+
+@param {Expression} mac-bind       Expression to evaluate
+@param {Integer}    mac-bind-depth Max parent scope depth it should go (default 2)
+###
 
 angular.module("Mac").directive "macBind", ["$parse", ($parse) ->
   link: ($scope, element, attr) ->
