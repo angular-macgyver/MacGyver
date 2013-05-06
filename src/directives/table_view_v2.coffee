@@ -21,7 +21,6 @@ angular.module("Mac").directive "macTableV2", [ "Table", (Table) ->
         .attr("mac-resizable", "")
         .attr("mac-resizable-column", "")
 
-
     # Reorderable?
     if attr.reorderableColumns?
       element.find("[table-section=header] [table-row]")

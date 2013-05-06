@@ -18,7 +18,7 @@ angular.module("Mac").directive "macResizableColumn", [ ->
     controllers[1].registerCallback (event, ui) ->
       column      = $scope.cell.column
       width       = ui.size.width
-      percentage  = (width/controllers[0].$element.width())*100
+      percentage  = (width/controllers[0].element.width())*100
 
       $element.css("width", "") # Reset the width that jQuery will assign
 

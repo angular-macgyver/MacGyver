@@ -1,11 +1,10 @@
 
-angular.module("Mac").directive "macColumns", [ ->
-  require: ["^macTableV2", "^tableSection", "tableRow", "macColumns"]
-  controller: ->
-    # Track our columns
-    this.trackedColumns = {}
+angular.module("Mac").factory "macColumnsController", ->
+  class MacColumnsController
+    constructor: (@scope, @element, @attrs) ->
+      @trackedColumns = {}
 
-    this.getSiblingScopes = (siblings) ->
+    getSiblingScopes: (siblings) ->
       # We're querying elements vs using $$prevSibling $$nextSibling on the
       # scope since it seems like angular won't update those properties as we
       # reorder the elements
@@ -16,7 +15,7 @@ angular.module("Mac").directive "macColumns", [ ->
           li.push siblingScope
       li
 
-    this.recalculateWidths = (event, id, newValue, oldValue) ->
+    recalculateWidths: (event, id, newValue, oldValue) ->
       # We only work with numbers...
       return unless !isNaN(newValue) and !isNaN(oldValue)
 
@@ -45,11 +44,11 @@ angular.module("Mac").directive "macColumns", [ ->
         siblingScope.cell.column.width =
           nextSiblingsWidthMap[siblingScope.$id]
 
-    return
 
+angular.module("Mac").directive "macColumns", [ "macColumnsController", (macColumnsController) ->
+  require: ["^macTableV2", "^tableSection", "tableRow", "macColumns"]
+  controller: ["$scope", "$element", "$attrs", macColumnsController]
   link: ($scope, $element, $attrs, controllers) ->
-    controllers[3].$element = $element
-
     $scope.$on "mac-columns-#{$scope.$id}-changed", (event, id, newValue, oldValue) ->
       controllers[3].recalculateWidths.apply controllers[3], arguments
 
