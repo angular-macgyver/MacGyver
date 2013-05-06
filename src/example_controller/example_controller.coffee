@@ -3,6 +3,50 @@ module = angular.module("Mac")
 module.controller "ExampleController", ["$scope", "$timeout", "Table", "SectionController", ($scope, $timeout, Table, SectionController) ->
 
 
+  # Table view section
+
+  # MacTableV1
+
+  # Data for table view
+  # Current generating 10000 rows of entries to make sure table view can handle large
+  # amount of data
+  $scope.data = []
+  #for i in [1..10000]
+  # Added setTimeout to mimic ajax delay
+  $scope.loading = true
+  setTimeout (->
+    #for i in [1..5000]
+    for i in [1..23]
+      obj =
+        name: "Test " + i
+        a: Math.random() * 100000
+        b: Math.random() * 10000
+        c: Math.random()
+        d: Math.random()
+        created: (new Date()).getTime()
+        attributes:
+          name: "Test " + i
+          abc: Math.random() * 1000
+
+      $scope.data.push obj
+    $scope.loading = false
+    $scope.$digest()
+  ), 2500
+
+  $scope.createRow = (event) ->
+    event.stopPropagation()
+    console.log "Creating row"
+
+  $scope.loadMoreRows = ->
+    event.stopPropagation()
+    alert "Loading 20 more rows"
+
+  # Columns to display and their order
+  $scope.columnOrder = ["Name", "anotherName", "d", "c", "b", "Created"]
+  #$scope.columnOrder = ["Name", "Abc"] # Used for testing values inside attributes
+
+  # MacTableV2
+
   $scope.maGyverSeasonOne = [
     {'No.': '1', 'Title': '"Pilot"', 'Directed by': 'Jerrold Freedman', 'Written by': 'Thackary Pallor', 'Original air date': 'September 29, 1985'}
     {'No.': '2', 'Title': '"The Golden Triangle"', 'Directed by': 'Paul Stanley & Donald Petrie', 'Written by': 'Dennis R. Foley & Terry Nation', 'Original air date': 'October 6, 1985'}
@@ -27,29 +71,6 @@ module.controller "ExampleController", ["$scope", "$timeout", "Table", "SectionC
     {'No.': '21', 'Title': '"A Prisoner of Conscience"', 'Directed by': 'Cliff Bole', 'Written by': 'Stephen Kandel', 'Original air date': 'April 30, 1986'}
     {'No.': '22', 'Title': '"The Assassin"', 'Directed by': 'Charlie Correll', 'Written by': 'James Schmerer', 'Original air date': 'May 7, 1986'}
   ]
-
-  # class BodySectionController extends SectionController
-  #   constructor: (@section) ->
-  #     @currentState = "on"
-
-  #   cellValue: (row, colName) ->
-  #       switch colName
-  #           when "name" then ">>#{row.model.name}<<"
-  #           when "a_and_b" then row.model.a + row.model.b
-  #           else @defaultCellValue row, colName
-
-  #   state: (row, colName) ->
-  #     if @currentState is "on"
-  #       @currentState = "off"
-  #     else
-  #       @currentState = "on"
-
-  #     return @currentState
-
-  # $scope.bodyController = BodySectionController
-
-
-  # Table view section
 
   $scope.reverse = false
 

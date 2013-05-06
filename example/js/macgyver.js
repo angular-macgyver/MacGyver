@@ -11526,9 +11526,6 @@ angular.module("Mac").directive("macResizableColumn", [
   }
 ]);
 
-
-
-
 /*
 @chalk overview
 @name Spinner
@@ -12873,6 +12870,37 @@ module = angular.module("Mac");
 
 module.controller("ExampleController", [
   "$scope", "$timeout", "Table", "SectionController", function($scope, $timeout, Table, SectionController) {
+    $scope.data = [];
+    $scope.loading = true;
+    setTimeout((function() {
+      var i, obj, _i;
+      for (i = _i = 1; _i <= 23; i = ++_i) {
+        obj = {
+          name: "Test " + i,
+          a: Math.random() * 100000,
+          b: Math.random() * 10000,
+          c: Math.random(),
+          d: Math.random(),
+          created: (new Date()).getTime(),
+          attributes: {
+            name: "Test " + i,
+            abc: Math.random() * 1000
+          }
+        };
+        $scope.data.push(obj);
+      }
+      $scope.loading = false;
+      return $scope.$digest();
+    }), 2500);
+    $scope.createRow = function(event) {
+      event.stopPropagation();
+      return console.log("Creating row");
+    };
+    $scope.loadMoreRows = function() {
+      event.stopPropagation();
+      return alert("Loading 20 more rows");
+    };
+    $scope.columnOrder = ["Name", "anotherName", "d", "c", "b", "Created"];
     $scope.maGyverSeasonOne = [
       {
         'No.': '1',

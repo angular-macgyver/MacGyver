@@ -106,40 +106,45 @@ html
             .page-header: h1 Table view
             h2 Example
             .docs-example
+              h3 MacTableV1
+              .table-view-wrapper(
+                mac-table
+                mac-table-data          = "data"
+                mac-table-width         = "750"
+                mac-table-header-height = "30"
+                mac-table-columns       = "columnOrder"
+                mac-table-loading       = "loading"
+                mac-table-resizable
+                mac-table-has-footer
+                mac-table-sortable
+                mac-table-lock-first-column
+                mac-table-calculate-total-locally
+                mac-table-fluid-width
+                ng-cloak
+              )
+                .table-header-template
+                  .cell(column="Name") Name
+                  .cell(column="anotherName", sort-by="a") Second Column
+                .table-body-template
+                  .mac-table-row(class="{{'true' | true:'hello'}}")
+                    .cell(column="Name", style="width: 200px")
+                      a(
+                        mac-click       = "loadMoreRows()"
+                        mac-click-depth = "5"
+                      ) {{row.value.name}}
+                    .cell(column="anotherName") {{row.value.a | number: 0}}
+                    .cell(column="d") {{row.value.d | number: 4}}
+                    .cell(column="c") {{row.value.c | number: 4}}
+                    .cell(column="b") {{row.parent.getRandomText()}} {{row.value.b | currency}}
+                    .cell(column="Abc") {{row.value.attributes.abc | number:4}}
+                    .cell(column="Created") {{row.value.created | date: 'mediumDate'}}
+                .table-footer-template
+                  a.btn(mac-click="loadMoreRows()") Load 20 More Rows
+                .table-total-footer-template
+                  .cell(column="Name") {{ "Row" | pluralize: data.length}}
+                  .cell(column="b") {{ total.b | currency}}
 
-              //- table.table.mac-table-default(
-              //-   mac-table-v2
-              //-   resizable-columns
-              //-   reorderable-columns
-              //-   columns="columns"
-              //- )
-
-              //-   thead(table-section="header", models="[{name:'muh name'}]")
-              //-     tr.leading-row
-              //-       td {{section.name}}
-              //-     tr(table-row, ng-repeat="row in section.rows")
-              //-       th(cell-template="name", initial-width="40%")
-              //-         span NAME! {{cell.value()}}
-
-              //-       th(cell-template, initial-width="15%")
-              //-         span {{cell.colName}} {{cell.value()}}
-
-              //-   tbody(table-section="body", models="tableData", controller="bodyController")
-              //-     tr.leading-row
-              //-       td {{section.name}}
-              //-     tr(table-row, ng-repeat="row in section.rows")
-              //-       td(width="100%", before-templates)
-              //-         span this is a long cell before... {{row.model.name}}
-
-              //-       td(cell-template="name")
-              //-         span My Name is {{cell.value()}} {{cell.get("state")}}
-
-              //-       td(cell-template)
-              //-         span {{cell.value()}}
-
-              //-       td(width="100%", after-templates)
-              //-         span this is a long cell after...
-
+              h3 MacTableV2
               table.table.mac-table-default(
                 mac-table-v2
                 resizable-columns
