@@ -19,7 +19,6 @@ angular.module("Mac").directive "tableSection", [ "directiveHelpers", (directive
           $scope.table.load @name, models, controller
         else
           $scope.table.load @name, models
-      , true
 
     @watchTable = (callback) ->
       $scope.$watch "table", callback
