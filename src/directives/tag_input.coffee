@@ -1,17 +1,15 @@
-##
-## @name
-## Tag Input
-##
-## @description
-## A directive for generating tag input.
-##
-## @attributes
-## - mac-tag-input-tags:        the list of elements to populate the select input
-## - mac-tag-input-selected:    the list of elements selected by the user
-## - mac-tag-input-placeholder: placeholder text for tag input                    (default "")
-## - mac-tag-input-value:       the value to be sent back upon selection          (default "id")
-## - mac-tag-input-label:       the label to display to the users                 (default "name")
-##
+###
+@chalk overview
+@name Tag Input
+@description
+A directive for generating tag input.
+
+@param {String} mac-tag-input-tags         The list of elements to populate the select input
+@param {String} mac-tag-input-selected     The list of elements selected by the user
+@param {String} mac-tag-input-placeholder  Placeholder text for tag input                    (default "")
+@param {String} mac-tag-input-value        The value to be sent back upon selection          (default "id")
+@param {String} mac-tag-input-label        The label to display to the users                 (default "name")
+###
 
 angular.module("Mac").directive "macTagInput", [ ->
   restrict:    "E"
