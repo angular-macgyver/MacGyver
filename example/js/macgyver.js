@@ -10574,6 +10574,37 @@ $.widget( "ui.menu", {
   root._.string = root._.str = _s;
 }(this, String);
 
+/*
+@chalk overview
+@name Autocomplete
+
+@description
+A directive for providing suggestions while typing into the field
+
+@dependencies
+- jQuery UI autocomplete
+
+@param {String} mac-autocomplete-url Url to fetch autocomplete dropdown list data
+@param {Function} mac-autocomplete-on-select Function called when user select on an item
+       - `selected` - {Object} The item selected
+@param {Function} mac-autocomplete-on-success function called on success ajax request
+        - `data` - {Object} Data returned from the request
+        - `status` - {Number} The status code of the response
+        - `header` - {Object} Header of the response
+@param {Function} mac-autocomplete-on-error Function called on ajax request error
+        - `data` - {Object} Data returned from the request
+        - `status` - {Number} The status code of the response
+        - `header` - {Object} Header of the response
+@param {Function} mac-autocomplete-on-key-down function called on key down
+        - `event` - {Object} jQuery event
+        - `value` - {String} Value in the input text
+@param {String}  mac-autocomplete-value           The value to be sent back upon selection        (default "id")
+@param {String}  mac-autocomplete-label           The label to display to the users               (default "name")
+@param {String}  mac-autocomplete-query           The query parameter on GET command              (default "q")
+@param {Integer} mac-autocomplete-delay           Delay on fetching autocomplete data after keyup (default 800)
+@param {Boolean} mac-autocomplete-clear-on-select Clear text input on select                      (default false)
+@param {String}  mac-autocomplete-placeholder     Placeholder text of the text input              (default "")
+*/
 
 angular.module("Mac").directive("macAutocomplete", [
   "$http", "$parse", "$filter", function($http, $parse, $filter) {
@@ -12271,7 +12302,7 @@ angular.module("Mac").directive("tableSection", [
               } else {
                 return $scope.table.load(_this.name, models);
               }
-            }, true);
+            });
           };
           this.watchTable = function(callback) {
             return $scope.$watch("table", callback);
