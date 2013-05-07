@@ -1,18 +1,17 @@
-##
-## @name
-## Time
-##
-## @description
-## A directive for creating a time input field
-##
-## @attributes
-## - mac-time-id:          ID of the text input field         (default: time-input)
-## - mac-time-model:       Model to bind input to
-## - mac-time-placeholder: Placeholder text of the text input (default --:--)
-## - mac-time-disabled:    Enable or disable time input
-## - mac-time-default:     If model is undefined, use this    (default 12:00 PM)
-##                         as the starting value
-##
+###
+@chalk overview
+@name Time
+@description
+A directive for creating a time input field
+
+@param {String} mac-time-id           ID of the text input field (default: time-input)
+@param {String} mac-time-model        Model to bind input to
+@param {String} mac-time-placeholder  Placeholder text of the text input (default --:--)
+@param {String} mac-time-disabled     Enable or disable time input
+@param {String} mac-time-default      If model is undefined, use this as the starting value (default 12:00 PM)
+
+###
+
 angular.module("Mac").directive "macTime", [
   "util"
   "keys"
