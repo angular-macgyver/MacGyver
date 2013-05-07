@@ -1,27 +1,24 @@
-##
-## @name
-## File upload
-##
-## @description
-## Directive for proxying jQuery file upload
-##
-## @dependencies
-## - jQuery file upload
-##
-## @attributes
-## - mac-upload
-## - mac-upload-route:      The route we're uploading our files
-## - mac-upload-submit:     function to call on submit
-## - mac-upload-success:    upload success callback
-## - mac-upload-error:      upload error callback
-## - mac-upload-selector:   Selector to proxy clicking on file upload
-## - mac-upload-drop-zone:  The selector that we can drop files onto
-## - mac-upload-enable-on:  The broadcast message to catch to enable file upload
-## - mac-upload-disable-on: The broadcast message to catch to disable file upload
-## - mac-upload-disabled:   Boolean value to disable or enable file upload
-## - mac-upload-form-data:  Additional form data
-## - mac-upload-param-name: Parameter name for the file
-##
+###
+@chalk overview
+@name File upload
+@description
+Directive for proxying jQuery file upload
+
+@dependencies
+- jQuery file upload
+
+@param {String}   mac-upload-route      The route we're uploading our files
+@param {Function} mac-upload-submit     Function to call on submit
+@param {Function} mac-upload-success    Upload success callback
+@param {Function} mac-upload-error      Upload error callback
+@param {String}   mac-upload-selector   Selector to proxy clicking on file upload
+@param {String}   mac-upload-drop-zone  The selector that we can drop files onto
+@param {String}   mac-upload-enable-on  The broadcast message to catch to enable file upload
+@param {String}   mac-upload-disable-on The broadcast message to catch to disable file upload
+@param {Boolean}  mac-upload-disabled   Boolean value to disable or enable file upload
+@param {String}   mac-upload-form-data  Additional form data
+@param {String}   mac-upload-param-name Parameter name for the file
+###
 
 angular.module("Mac").directive "macUpload", [ ->
   scope:
