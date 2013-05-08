@@ -1,0 +1,69 @@
+@import "nib"
+
+.mac-spinner
+  display  inline-block
+  height   20px
+  position relative
+  width    20px
+
+  &.block
+    display block
+    margin  0 auto
+
+  .bar
+    animation     fade 1s linear infinite
+    background    #2f3035
+    border-radius 2em
+    box-shadow    0 0 3px rgba(0,0,0,0.2)
+    height        32%
+    left          44.5%
+    opacity       0
+    position      absolute
+    top           37%
+    width         13%
+
+  .bar:nth-child(1)
+    animation-delay 0s
+    transform       rotate(0deg) translate(0, -130%)
+
+  .bar:nth-child(2)
+    animation-delay -0.9s
+    transform       rotate(36deg) translate(0, -130%)
+
+  .bar:nth-child(3)
+    animation-delay -0.8s
+    transform       rotate(72deg) translate(0, -130%)
+
+  .bar:nth-child(4)
+    animation-delay -0.7s
+    transform       rotate(108deg) translate(0, -130%)
+
+  .bar:nth-child(5)
+    animation-delay -0.6s
+    transform       rotate(144deg) translate(0, -130%)
+
+  .bar:nth-child(6)
+    animation-delay -0.5s
+    transform       rotate(180deg) translate(0, -130%)
+
+  .bar:nth-child(7)
+    animation-delay -0.4s
+    transform       rotate(216deg) translate(0, -130%)
+
+  .bar:nth-child(8)
+    animation-delay -0.3s
+    transform       rotate(252deg) translate(0, -130%)
+
+  .bar:nth-child(9)
+    animation-delay -0.2s
+    transform       rotate(288deg) translate(0, -130%)
+
+  .bar:nth-child(10)
+    animation-delay -0.1s
+    transform       rotate(324deg) translate(0, -130%)
+
+@keyframes fade
+  0%
+    opacity 1
+  100%
+    opacity 0.02
