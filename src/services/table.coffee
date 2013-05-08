@@ -49,20 +49,26 @@ angular.module("Mac").factory "tableComponents", [
       return new Cell(row, proto)
 ]
 
+angular.module("Mac").factory "dynamicColumnsFunction", ->
+  (models) ->
+    first   = models[0]
+    columns = []
+    for key, model of first
+        columns.push key
+    @set(columns)
+
 angular.module("Mac").factory "ColumnsController", [
   "tableComponents"
+  "dynamicColumnsFunction"
   (
     tableComponents
+    dynamicColumnsFunction
   ) ->
     class ColumnsController
       constructor: (@table) ->
 
-      dynamic: (models) ->
-        first = models[0]
-        columns = []
-        for key, model of first
-            columns.push key
-        @set(columns)
+      # Our overridable dynamic columns function
+      dynamic: dynamicColumnsFunction
 
       blank: ->
         # Makes a blank object with our colNames as keys
