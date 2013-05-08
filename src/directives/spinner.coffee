@@ -7,6 +7,7 @@ A directive for generating spinner
 
 @param {Integer} mac-spinner-size The size of the spinne (default 16)
 @param {Integer} mac-spinner-z-index The z-index (default inherit)
+@param {String}  mac-spinner-color Color of all the bars (default #2f3035)
 ###
 
 angular.module("Mac").directive "macSpinner", ->
@@ -29,3 +30,7 @@ angular.module("Mac").directive "macSpinner", ->
       attributes.$observe "macSpinnerZIndex", (value) ->
         if value? and value
           element.css "z-index", value
+
+      attributes.$observe "macSpinnerColor", (value) ->
+        if value? and value
+          $(".bar", element).css "background", value

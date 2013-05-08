@@ -11543,6 +11543,7 @@ A directive for generating spinner
 
 @param {Integer} mac-spinner-size The size of the spinne (default 16)
 @param {Integer} mac-spinner-z-index The z-index (default inherit)
+@param {String}  mac-spinner-color Color of all the bars (default #2f3035)
 */
 angular.module("Mac").directive("macSpinner", function() {
   return {
@@ -11565,9 +11566,14 @@ angular.module("Mac").directive("macSpinner", function() {
             });
           }
         });
-        return attributes.$observe("macSpinnerZIndex", function(value) {
+        attributes.$observe("macSpinnerZIndex", function(value) {
           if ((value != null) && value) {
             return element.css("z-index", value);
+          }
+        });
+        return attributes.$observe("macSpinnerColor", function(value) {
+          if ((value != null) && value) {
+            return $(".bar", element).css("background", value);
           }
         });
       };
