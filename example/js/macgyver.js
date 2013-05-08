@@ -11539,58 +11539,38 @@ angular.module("Mac").directive("macResizableColumn", [
 @name Spinner
 
 @description
-A directive for generating spinner using spin.js
+A directive for generating spinner
 
-@dependencies
-- spin.js
-
-@param {Integer} mac-spinner-lines The number of lines to draw (default 10)
-@param {Integer} mac-spinner-width The lines thickness (default 2)
-@param {Integer} mac-spinner-radius The radius of the inner circle (default 10)
-@param {Integer} mac-spinner-corners Corner roundness (0..1) (default 1)
-@param {Integer} mac-spinner-rotate The rotation offset (default 0)
-@param {String} mac-spinner-color rgb or #rrggbb (default "#000")
-@param {Integer} mac-spinner-speed Rounds per second (default 1)
-@param {Integer} mac-spinner-trail Afterglow percentage (default 60)
-@param {Boolean} mac-spinner-shadow Whether to render a shadow (default false)
-@param {Boolean} mac-spinner-hwaccel Whether to use hardware acceleration (default false)
-@param {String} mac-spinner-className The CSS class to assign to the spinner (default "spinner")
-@param {Integer} mac-spinner-z-index The z-index (default 2e9)
-@param {String} mac-spinner-top Top position relative to parent in px (default "auto")
-@param {String} mac-spinner-left Left position relative to parent in px (default "auto")
+@param {Integer} mac-spinner-size The size of the spinne (default 16)
+@param {Integer} mac-spinner-z-index The z-index (default inherit)
 */
-
-var __hasProp = {}.hasOwnProperty;
-
 angular.module("Mac").directive("macSpinner", function() {
   return {
-    restrict: "EA",
+    restrict: "E",
+    replace: true,
+    template: "<div class=\"mac-spinner\"></div>",
     compile: function(element, attributes) {
-      var k, key, options, spinner, value;
+      var i, _i;
 
       element.addClass("mac-spinner");
-      options = {};
-      options.lines = 10;
-      options.width = 2;
-      for (key in attributes) {
-        if (!__hasProp.call(attributes, key)) continue;
-        value = attributes[key];
-        if (key.indexOf("macSpinner") === 0 && key !== "macSpinner") {
-          k = key.slice("macSpinner".length);
-          k = k[0].toLowerCase() + k.slice(1);
-          if (k === "size") {
-            options.radius = value / 5;
-            options.length = value / 5;
-          } else {
-            if (_(+value).isNaN()) {
-              options[k] = value;
-            } else {
-              options[k] = +value;
-            }
-          }
-        }
+      for (i = _i = 0; _i <= 9; i = ++_i) {
+        element.append("<div class=\"bar\"></div>");
       }
-      return spinner = new Spinner(options).spin(element[0]);
+      return function($scope, element, attributes) {
+        attributes.$observe("macSpinnerSize", function(value) {
+          if ((value != null) && value) {
+            return element.css({
+              height: value,
+              width: value
+            });
+          }
+        });
+        return attributes.$observe("macSpinnerZIndex", function(value) {
+          if ((value != null) && value) {
+            return element.css("z-index", value);
+          }
+        });
+      };
     }
   };
 });
@@ -13510,8 +13490,27 @@ angular.module("Mac").factory("tableComponents", [
   }
 ]);
 
+angular.module("Mac").factory("dynamicColumnsFunction", function() {
+  return function(models) {
+    var columns, first, key, model;
+
+    first = models[0];
+    columns = (function() {
+      var _results;
+
+      _results = [];
+      for (key in first) {
+        model = first[key];
+        _results.push(key);
+      }
+      return _results;
+    })();
+    return this.set(columns);
+  };
+});
+
 angular.module("Mac").factory("ColumnsController", [
-  "tableComponents", function(tableComponents) {
+  "tableComponents", "dynamicColumnsFunction", function(tableComponents, dynamicColumnsFunction) {
     var ColumnsController;
 
     return ColumnsController = (function() {
@@ -13519,17 +13518,7 @@ angular.module("Mac").factory("ColumnsController", [
         this.table = table;
       }
 
-      ColumnsController.prototype.dynamic = function(models) {
-        var columns, first, key, model;
-
-        first = models[0];
-        columns = [];
-        for (key in first) {
-          model = first[key];
-          columns.push(key);
-        }
-        return this.set(columns);
-      };
+      ColumnsController.prototype.dynamic = dynamicColumnsFunction;
 
       ColumnsController.prototype.blank = function() {
         var colName, obj, _i, _len, _ref;
