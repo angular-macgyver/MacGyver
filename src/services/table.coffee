@@ -52,9 +52,7 @@ angular.module("Mac").factory "tableComponents", [
 angular.module("Mac").factory "dynamicColumnsFunction", ->
   (models) ->
     first   = models[0]
-    columns = []
-    for key, model of first
-        columns.push key
+    columns = (key for key, model of first)
     @set(columns)
 
 angular.module("Mac").factory "ColumnsController", [
