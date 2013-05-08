@@ -7,7 +7,7 @@ _      = require "underscore"
 # Path variables
 examplePath    = "example/"
 finalBuildPath = "lib/"
-componentFile  = "component.json"
+componentFile  = "bower.json"
 
 module.exports = (grunt) ->
   grunt.loadNpmTasks "grunt-contrib-coffee"
@@ -198,7 +198,7 @@ module.exports = (grunt) ->
         done()
 
   # Read all files in build folder and add to component.json
-  grunt.registerTask "update:component", "Update component.json for bower", ->
+  grunt.registerTask "update:component", "Update bower.json", ->
     fileList = wrench.readdirSyncRecursive finalBuildPath
     done     = @async()
 
@@ -213,7 +213,7 @@ module.exports = (grunt) ->
       data     = data.replace /"version": [^,]+/, "\"version\": \"#{grunt.config.get("pkg").version}\""
 
       fs.writeFile componentFile, data, "utf8", (err, data) ->
-        grunt.log.writeln "Updated component.json"
+        grunt.log.writeln "Updated bower.json"
         done()
 
   grunt.registerTask "deploy", "Build and copy to lib/", [
