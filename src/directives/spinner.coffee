@@ -5,7 +5,7 @@
 @description
 A directive for generating spinner
 
-@param {Integer} mac-spinner-size The size of the spinne (default 20)
+@param {Integer} mac-spinner-size The size of the spinne (default 16)
 @param {Integer} mac-spinner-z-index The z-index (default inherit)
 ###
 
