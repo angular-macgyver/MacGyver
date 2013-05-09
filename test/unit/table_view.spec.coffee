@@ -99,6 +99,10 @@ describe "Table Data", ->
       expect(table.sections.header.rows[0].model).toEqual blankRow
       expect(table.sections.header.rows[0].cells[0].value()).toBe null
 
+    it "doesn't cause circular reference errors when converted to JSON", ->
+      table = @scope.table
+      expect(JSON.stringify(table)).toBe '{"sections":{"body":{"rows":[{"cells":[{"value":"Paul McCartney","column":"fullName"},{"value":30,"column":"age"}]},{"cells":[{"value":"John Lennon","column":"fullName"},{"value":29,"column":"age"}]}]},"header":{"rows":[{"cells":[{"value":"Full Name","column":"fullName"},{"value":"Age","column":"age"}]}]}}}'
+
     describe "Dynamic Table", ->
       beforeEach inject ($rootScope, Table, SectionController) ->
         # Our custom header controller, we'll use this later

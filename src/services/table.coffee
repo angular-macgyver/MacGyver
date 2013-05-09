@@ -15,6 +15,7 @@ angular.module("Mac").factory "SectionController", [ ->
 angular.module("Mac").factory "Row", [ ->
   class Row
     constructor: (@section, @model, @cells = [], @cellsMap = {}) ->
+    toJSON: -> cells: @cells
 ]
 
 angular.module("Mac").factory "tableComponents", [
@@ -34,7 +35,8 @@ angular.module("Mac").factory "tableComponents", [
 
     sectionFactory: (table, sectionName, controller = SectionController) ->
       Section = (controller, @table, @name, @rows = []) ->
-        @ctrl = new controller(this)
+        @ctrl   = new controller(this)
+        @toJSON = -> rows: @rows
         return
       return new Section(controller, table, sectionName)
 
@@ -44,6 +46,9 @@ angular.module("Mac").factory "tableComponents", [
         @value = -> @row?.section?.ctrl.cellValue(@row, @colName)
         # Allow for custom functions on the controller
         @get   = (name) -> @row?.section?.ctrl[name]?(@row, @colName)
+        @toJSON = ->
+          value: @value()
+          column: @column.colName
         return
       Cell.prototype = proto
       return new Cell(row, proto)
@@ -177,4 +182,7 @@ angular.module("Mac").factory "Table", [
 
         blankRow: ->
           @columnsCtrl.blank()
+
+        toJSON: ->
+          sections: @sections
 ]
