@@ -6,7 +6,7 @@
 Modal directives and service to keep state
 ###
 
-angular.module("Mac").factory("$modal", [
+angular.module("Mac").factory("modal", [
   "$rootScope"
   ($rootScope) ->
     # Dictionary of registered modal
@@ -94,11 +94,11 @@ angular.module("Mac").factory("$modal", [
 #
 directive("macModal", [
   "$rootScope"
-  "$modal"
   "$parse"
+  "modal"
   "util"
   "keys"
-  ($rootScope, $modal, $parse, util, keys) ->
+  ($rootScope, $parse, modal, util, keys) ->
     restrict:    "E"
     templateUrl: "template/modal.html"
     replace:     true
@@ -116,13 +116,13 @@ directive("macModal", [
       elementId = element.prop("id")
 
       $scope.closeModal = ($event)->
-        $modal.hide ->
+        modal.hide ->
           $scope.bindingEvents "unbind"
 
       $scope.escapeKeyHandler = (event) ->
-        $modal.hide() if event.which is keys.ESCAPE
+        modal.hide() if event.which is keys.ESCAPE
 
-      $scope.resizeHandler =  (event) -> $modal.resize element
+      $scope.resizeHandler =  (event) -> modal.resize element
       $scope.overlayHandler = (event) -> $scope.closeModal()
 
       $scope.bindingEvents = (action = "bind") ->
@@ -139,7 +139,7 @@ directive("macModal", [
 
       registerModal = (id) ->
         if id? and id
-          $modal.register id, element,
+          modal.register id, element,
             callback: ->
               $scope.bindingEvents()
 
@@ -153,14 +153,14 @@ directive("macModal", [
 
 # mac-modal: Modal ID to trigger
 directive "macModal", [
-  "$modal"
-  ($modal) ->
+  "modal"
+  (modal) ->
     restrict: "A"
     link: ($scope, element, attrs) ->
       attrs.$observe "macModal", (value) ->
         if value? and value
           element.bind "click", ->
-            $modal.show value
+            modal.show value
       return
 ]
 
