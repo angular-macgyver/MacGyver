@@ -12,6 +12,7 @@ html
       .row
         #nav.span3
           ul.nav.nav-list.docs-sidenav(data-spy="affix", data-offset-top="0")
+            li: a(href="#modal") Modal
             li: a(href="#mac-click") Mac Click
             li: a(href="#autocomplete") Autocomplete
             li: a(href="#tag-autocomplete") Tag Autocomplete
@@ -26,6 +27,16 @@ html
             li: a(href="#pluralize-filter") Pluralize Filter
 
         #example.span9(ng-controller='ExampleController')
+
+          section#modal
+            .page-header: h1 Modal
+            h3 Example
+            .docs-example
+              mac-modal#test-modal(
+                keyboard
+              )
+                h1 Just another modal
+              button(mac-modal="test-modal") Show Modal
 
           section#mac-click
             .page-header: h1 Mac-click

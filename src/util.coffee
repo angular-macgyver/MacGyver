@@ -103,7 +103,8 @@ util.factory "util", [
     extendAttributes: (prefix, defaults, attributes) ->
       output = {}
       for own key, value of defaults
-        macKey = "#{prefix}#{@capitalize key}"
+        key         = @capitalize(key) if prefix
+        macKey      = "#{prefix}#{key}"
         output[key] =
           if attributes[macKey]?
             attributes[macKey] or true

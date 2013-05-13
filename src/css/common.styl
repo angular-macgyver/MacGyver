@@ -1,3 +1,5 @@
+@import "nib"
+
 .date-time
   width        100px
   height       26px
@@ -21,3 +23,36 @@
     input
       background #ffe2e2
       border     solid 1px #dea9a9
+
+.close
+  width         18px
+  height        18px
+  border-radius 9px
+  display       block
+  background    #bdc0c7
+  position      relative
+  opacity       1
+
+  &:after
+    content    ''
+    display    block
+    width      2px
+    height     10px
+    background #FFF
+    position   absolute
+    top        4px
+    left       8px
+    transform  rotate(45deg)
+  &:before
+    content    ''
+    display    block
+    width      2px
+    height     10px
+    background #FFF
+    position   absolute
+    top        4px
+    left       8px
+    transform  rotate(-45deg)
+
+  &:hover
+    background #828590
