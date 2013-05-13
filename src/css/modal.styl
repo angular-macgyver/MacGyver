@@ -1,0 +1,49 @@
+@import "nib"
+
+.modal-overlay
+  background-color rgba(245,246,250,0.75)
+  position         fixed
+  top              0
+  left             0
+  right            0
+  bottom           0
+  opacity          0
+  visibility       hidden
+  transition       all 0.2s ease-out
+  overflow-y       auto
+  z-index          3
+
+  &.visible
+    visibility visible
+    opacity    1.0
+
+    .modal
+      top 50%
+
+  .modal
+    position      absolute
+    top           0
+    left          50%
+    width         500px
+    margin-left   -251px
+    background    #FFF
+    border        1px solid #d1d3d8
+    box-shadow    0 4px 10px rgba(0,0,0,0.15)
+    transition    all 0.2s ease-out
+    border-radius 3px
+
+    &:after
+      content  ''
+      display  block
+      position absolute
+      bottom   -20px
+      height   20px
+      width    1px
+
+    .close.close-modal
+      position absolute
+      top      -5px
+      right    -5px
+
+    .modal-content
+      padding 20px
