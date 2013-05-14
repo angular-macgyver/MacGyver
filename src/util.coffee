@@ -84,10 +84,78 @@ util.factory "util", [
       pluralizedString  = string[0...-word.length] + pluralizedWord
       if includeCount then "#{$filter("number") count} #{pluralizedString}" else pluralizedString
 
-    capitalize:   (string) -> string[0].toUpperCase() + string[1..]
+    capitalize:   (string) -> _.string.capitalize string
     uncapitalize: (string) -> string[0].toLowerCase() + string[1..]
+    toCamelCase:  (string) -> _.string.camelize string
+    toSnakeCase:  (string) -> _.string.underscored string
+
+    convertKeysToCamelCase: (object) ->
+      result = {}
+
+      for own key, value of object
+        key         = @toCamelCase key
+        value       = @convertKeysToCamelCase value if typeof value is "object" and value?.constructor isnt Array
+        result[key] = value
+
+      result
+
+    convertKeysToSnakeCase: (object) ->
+      result = {}
+
+      for own key, value of object
+        key         = @toSnakeCase key
+        value       = @convertKeysToSnakeCase value if typeof value is "object" and value?.constructor isnt Array
+        result[key] = value
+
+      result
 
     isArray: nativeIsArray or (obj) -> toString.call(obj) is "[object Array]"
+
+    _urlRegex: /(?:(?:(http[s]{0,1}:\/\/)(?:(www|[\d\w\-]+)\.){0,1})|(www|[\d\w\-]+)\.)([\d\w\-]+)\.([\w]{2,3})(:[\d]*){0,1}(\/?[\d\w\-\?\,\'\/\\\+&amp;%\$#!\=~\.]*){0,1}/gi
+
+    validateUrl: (url) ->
+      match = @_urlRegex.exec url
+      if match?
+        match = {
+          url:        match[0]
+          protocol:   match[1] or "http://"
+          subdomain:  match[2] or match[3]
+          name:       match[4]
+          domain:     match[5]
+          port:       match[6]
+          path:       match[7] or "/"
+        }
+        # Recreate the full url
+        match["url"] = match.url
+      match
+
+    validateEmail: (email) ->
+      emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+      emailRegex.test email
+
+    # credits: http://www.netlobo.com/url_query_string_javascript.html
+    getQueryString: (url, name) ->
+      name    = name.replace(/[[]/,"\[").replace(/[]]/,"\]")
+      regexS  = "[\?&]"+name+"=([^&#]*)"
+      regex   = new RegExp regexS
+      results = regex.exec url
+      if results? then results[1] else ""
+
+    parseUrlPath: (fullPath) ->
+      urlComponents  = fullPath.split "?"
+      pathComponents = urlComponents[0].split("/")
+      path           = pathComponents[0...pathComponents.length-1].join("/")
+      verb           = _.last pathComponents
+      queries        = {}
+
+      # Check if querystring exists
+      if urlComponents.length > 1
+        queryStrings = _.last urlComponents
+        for queryString in queryStrings.split("&")
+          values = queryString.split "="
+          queries[values[0]] = if values[1]? then values[1] else ""
+
+      return {fullPath, path, pathComponents, verb, queries}
 
     ##
     ## @name
