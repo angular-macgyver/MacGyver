@@ -29,7 +29,7 @@ angular.module("Mac").factory("modal", [
 
         # Update opened modal object
         @opened = {id, element, options}
-        @resize element
+        @resize @opened
 
         options.callback?()
 
@@ -39,8 +39,11 @@ angular.module("Mac").factory("modal", [
       else
         @waiting = {id, options}
 
-    resize: (element) ->
-      return unless element?
+    resize: (modalObject) ->
+      return unless modalObject?
+
+      element = modalObject.element
+      options = modalObject.options
 
       modal  = $(".modal", element).attr "style", ""
       height = modal.outerHeight()
@@ -48,7 +51,7 @@ angular.module("Mac").factory("modal", [
         if $(window).height() > height
           marginTop: -height / 2
         else
-          top: 20
+          top: options.topOffset
       )
 
     hide: (callback) ->
@@ -110,6 +113,7 @@ directive("macModal", [
         overlayClose: false
         resize:       true
         open:         null
+        topOffset:    20
 
       opts = util.extendAttributes "", defaults, attrs
 
@@ -122,7 +126,7 @@ directive("macModal", [
       $scope.escapeKeyHandler = (event) ->
         modal.hide() if event.which is keys.ESCAPE
 
-      $scope.resizeHandler =  (event) -> modal.resize element
+      $scope.resizeHandler =  (event) -> modal.resize modal.opened
       $scope.overlayHandler = (event) -> $scope.closeModal()
 
       $scope.bindingEvents = (action = "bind") ->
