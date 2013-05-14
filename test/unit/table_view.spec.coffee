@@ -210,6 +210,10 @@ describe "Table View", ->
         scope.$apply -> scope.tableColumns.pop()
         expect(element.find("[table-section=body] [table-row] [cell-template]").length).toBe 2
 
+      it "Should adjust when rows are removed", ->
+        scope.$apply -> scope.tableData.pop()
+        expect(element.find("[table-section=body] [table-row]").length).toBe 1
+
       it "Should set mac-columns attribute on parent of initial-width directives", ->
         expect(element.find("[table-section=header] [table-row][mac-columns]").length).toBe 1
 

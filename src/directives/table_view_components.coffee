@@ -5,14 +5,16 @@
 angular.module("Mac").directive "tableSection", [ "directiveHelpers", (directiveHelpers) ->
   require:    ["^macTableV2", "tableSection"]
   scope:      true
-  controller: ["$scope", ($scope) ->
+  controller: ["$scope", "$parse", ($scope, $parse) ->
     @directive = "table-section"
 
     @cellTemplates = {}
 
     @watchModels = (modelsExp, controller) ->
-      $scope.$watch modelsExp, (models) =>
-        return unless models and models.length
+
+      $scope.$watch "#{modelsExp}.length", (modelsLength) =>
+        models = $parse(modelsExp)($scope)
+        return unless models
         @models = models
 
         if controller?
