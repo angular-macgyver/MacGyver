@@ -10,14 +10,15 @@ files = [
   JASMINE_ADAPTER,
 
   'test/vendor/jquery.min.js',
+  'vendor/js/underscore.string.js',
+  'vendor/bower/angular/angular.js',
 
   // Application Code //
-  'example/js/vendor.js',
   'src/*.coffee',
   'src/**/*.coffee',
 
   // Javascript //
-  'test/vendor/angular-mocks.js',
+  'test/vendor/angular/angular-mocks.js',
 
   // CoffeeScript //
   'test/unit/*.spec.coffee'

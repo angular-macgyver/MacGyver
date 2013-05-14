@@ -2,7 +2,6 @@
 node_modules
 
 # Bower vendor files
-test/vendor
 vendor/bower/*
 
 # Logs
