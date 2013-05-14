@@ -35,8 +35,12 @@ html
               mac-modal#test-modal(
                 keyboard
               )
-                h1 Just another modal
-              button(mac-modal="test-modal") Show Modal
+                .modal-content(ng-controller="modalController")
+                  h1 Just another modal
+              button(
+                mac-modal         = "test-modal"
+                mac-modal-content = "maGyverSeasonOne"
+              ) Show Modal
 
           section#mac-click
             .page-header: h1 Mac-click

@@ -1,5 +1,11 @@
 module = angular.module("Mac")
 
+module.controller "modalController", ["$scope", "modal", ($scope, modal) ->
+  $scope.$on "modalWasShown", (event, id) ->
+    if id is "test-modal"
+      console.log modal.opened.options.data
+]
+
 module.controller "ExampleController", ["$scope", "$timeout", "Table", "SectionController", ($scope, $timeout, Table, SectionController) ->
 
 

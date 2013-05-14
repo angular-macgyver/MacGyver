@@ -155,16 +155,19 @@ directive("macModal", [
         attrs.$observe "macModal", (id) -> registerModal id
 ]).
 
-# mac-modal: Modal ID to trigger
+# mac-modal:         Modal ID to trigger
+# mac-modal-content: Extra content/data to pass along
 directive "macModal", [
+  "$parse"
   "modal"
-  (modal) ->
+  ($parse, modal) ->
     restrict: "A"
     link: ($scope, element, attrs) ->
       attrs.$observe "macModal", (value) ->
         if value? and value
           element.bind "click", ->
-            modal.show value
+            modal.show value,
+              data: $parse(attrs.macModalContent) $scope
       return
 ]
 

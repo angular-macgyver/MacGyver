@@ -11302,14 +11302,16 @@ angular.module("Mac").factory("modal", [
     };
   }
 ]).directive("macModal", [
-  "modal", function(modal) {
+  "$parse", "modal", function($parse, modal) {
     return {
       restrict: "A",
       link: function($scope, element, attrs) {
         attrs.$observe("macModal", function(value) {
           if ((value != null) && value) {
             return element.bind("click", function() {
-              return modal.show(value);
+              return modal.show(value, {
+                data: $parse(attrs.macModalContent)($scope)
+              });
             });
           }
         });
@@ -12812,6 +12814,16 @@ angular.module("Mac").directive("macTime", [
 var module;
 
 module = angular.module("Mac");
+
+module.controller("modalController", [
+  "$scope", "modal", function($scope, modal) {
+    return $scope.$on("modalWasShown", function(event, id) {
+      if (id === "test-modal") {
+        return console.log(modal.opened.options.data);
+      }
+    });
+  }
+]);
 
 module.controller("ExampleController", [
   "$scope", "$timeout", "Table", "SectionController", function($scope, $timeout, Table, SectionController) {
