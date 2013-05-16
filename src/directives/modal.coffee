@@ -47,12 +47,16 @@ angular.module("Mac").factory("modal", [
 
       modal  = $(".modal", element).attr "style", ""
       height = modal.outerHeight()
-      modal.css(
+      width  = modal.outerWidth()
+
+      css =
         if $(window).height() > height
-          marginTop: -height / 2
+          marginTop:  -height / 2
         else
           top: options.topOffset
-      )
+      css.marginLeft = -width / 2
+
+      modal.css css
 
     hide: (callback) ->
       return unless @opened?
