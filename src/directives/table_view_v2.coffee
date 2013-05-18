@@ -12,23 +12,29 @@ angular.module("Mac").directive "macTableV2", [ "Table", (Table) ->
 
     # If we find the initial-width directive we can assume that the parent
     # should have the mac-columns directive
-    element.find("[initial-width]").parents("[table-row]").attr("mac-columns", "")
+    element.find("[initial-width]")
+      .attr("width", "{{cell.width}}%")
+      .parents("[table-row]")
+        .attr("mac-columns", "")
+
+    # Format our cell-templates
+    element.find("[cell-template]")
+      # Add a wrapper to the inside of our cells
+      .wrapInner("<div class='cell-wrapper' />")
 
     # Resizable?
     if attr.resizableColumns?
       element.find("[table-section=header]")
-        .find("[cell-template]")
-        .attr("mac-resizable", "")
+        .find("[cell-template]").find(".cell-wrapper")
         .attr("mac-resizable-column", "")
+        .attr("mac-resizable", "")
+        .attr("mac-resizable-containment", "document")
 
     # Reorderable?
     if attr.reorderableColumns?
       element.find("[table-section=header] [table-row]")
         .attr("mac-reorderable", "[cell-template]")
         .attr("mac-reorderable-columns", "")
-
-    # Give our cells widths
-    element.find("[cell-template]").attr("width", "{{cell.width}}%")
 
     # Generating the boilerplate initial-width calculations is a drag,
     # lets do that automatically looking for "auto" in initial-width
