@@ -5,7 +5,7 @@ angular.module("Mac").directive "macResizable", [
     controller: ["$scope", "$element", "$attrs", hookableDirectiveController]
 
     link: ($scope, $element, $attrs, controllers) ->
-      axis         = $attrs.macResizable or "x"
+      axis        = $attrs.macResizable or "x"
       containment = $attrs.macResizableContainment or "parent"
       $element.resizable
         axis:        axis
