@@ -1631,7 +1631,8 @@ i.mac-icons.mac-icon-time{background-position:-32px 0}
 
 table.mac-table-default thead,table.mac-table-default tbody,table.mac-table-default tfoot{white-space:nowrap;}
 table.mac-table-default thead th,table.mac-table-default tbody th,table.mac-table-default tfoot th,table.mac-table-default thead td,table.mac-table-default tbody td,table.mac-table-default tfoot td{white-space:normal}
-table.mac-table-default th,table.mac-table-default td{display:inline-block;box-sizing:border-box}
+table.mac-table-default th,table.mac-table-default td{padding:0;}
+table.mac-table-default th .cell-wrapper,table.mac-table-default td .cell-wrapper{box-sizing:border-box;padding:8px}
 
 .modal-overlay{background-color:rgba(245,246,250,0.75);position:fixed;top:0;left:0;right:0;bottom:0;opacity:0;filter:alpha(opacity=0);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";visibility:hidden;-webkit-transition:all .2s ease-out;-moz-transition:all .2s ease-out;-o-transition:all .2s ease-out;-ms-transition:all .2s ease-out;transition:all .2s ease-out;overflow-y:auto;z-index:3;}
 .modal-overlay.visible{visibility:visible;opacity:1;-ms-filter:none;filter:none;}
