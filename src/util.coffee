@@ -168,10 +168,10 @@ util.factory "util", [
     ## @param {Object} defaults Default set of attributes
     ## @param {Object} attributes User set attributes
     ##
-    extendAttributes: (prefix, defaults, attributes) ->
+    extendAttributes: (prefix = "", defaults, attributes) ->
       output = {}
       for own key, value of defaults
-        altKey      = @capitalize(key) if prefix
+        altKey      =  if prefix then @capitalize(key) else key
         macKey      = "#{prefix}#{altKey}"
         output[key] =
           if attributes[macKey]?
