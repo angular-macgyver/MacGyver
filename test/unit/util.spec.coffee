@@ -137,3 +137,24 @@ describe "Mac Util", ->
     expect(util.getQueryString url, "season").toBe "1"
     expect(util.getQueryString url, "episode").toBe "5"
     expect(util.getQueryString url, "time").toBe "12:32"
+
+  describe "extendAttributes", ->
+    defaults =
+      width:  10
+      height: 20
+
+    attrs =
+      width: 50
+
+    attrsWithPrefix =
+      macGyverWidth: 30
+
+    it "should extend default attributes", ->
+      expect(util.extendAttributes null, defaults, attrs).toEqual
+        width: 50, height: 20
+
+    it "should extend default attributes when there is a prefix", ->
+      expect(util.extendAttributes "macGyver", defaults, attrsWithPrefix).toEqual
+        width: 30, height:20
+
+
