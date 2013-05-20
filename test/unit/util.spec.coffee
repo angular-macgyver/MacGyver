@@ -140,8 +140,8 @@ describe "Mac Util", ->
 
   describe "extendAttributes", ->
     defaults =
-      width:   10
-      height:  20
+      width:  10
+      height: 20
 
     attrs =
       width: 50
