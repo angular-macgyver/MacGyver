@@ -184,7 +184,7 @@ describe "Table View", ->
       """<table mac-table-v2 columns="tableColumns">
           <thead table-section="header">
             <tr table-row ng-repeat="row in section.rows">
-              <th cell-template initial-width="auto">Test</th>
+              <th cell-template initial-width="auto">Header Cell</th>
             </tr>
           </thead>
           <tbody table-section="body" models="tableData">
@@ -192,6 +192,11 @@ describe "Table View", ->
               <th cell-template initial-width="auto">{{cell.value()}}</th>
             </tr>
           </tbody>
+          <tfoot table-section="footer">
+            <tr table-row ng-repeat="row in section.rows">
+              <td cell-template>Footer Cell</td>
+            </tr>
+          </tfoot>
         </table>"""
 
       beforeEach ->
@@ -205,6 +210,14 @@ describe "Table View", ->
 
       it "Should repeat cell-template for each column", ->
         expect(element.find("[table-section=body] [table-row] [cell-template]").length).toBe 4
+
+      it "Should auto populate a blank row for header and footer", ->
+        expect(element.find("[table-section=header] [table-row]").length).toBe 1
+        expect(element.find("[table-section=footer] [table-row]").length).toBe 1
+
+      it "Should repeat cell-template for each column in header and footer", ->
+        expect(element.find("[table-section=header] [table-row] [cell-template]").length).toBe 2
+        expect(element.find("[table-section=footer] [table-row] [cell-template]").length).toBe 2
 
       it "Should adjust when columns are removed", ->
         scope.$apply -> scope.tableColumns.pop()

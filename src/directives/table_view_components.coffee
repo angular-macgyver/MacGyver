@@ -40,8 +40,9 @@ angular.module("Mac").directive "tableSection", [ "directiveHelpers", (directive
         $scope.$watch "table", (table) ->
           return unless table
 
-          # Autogenerate a header if the section is header and there are no models
-          if not $attr.models? and sectionName is "header"
+          # Autogenerate if the section has no models (most likely a header or
+          # footer)
+          if not $attr.models?
             # We want to wait for another section to be populated before we
             # continue so we have rows to work from, we'll assume there's going
             # to be a body...
@@ -49,8 +50,8 @@ angular.module("Mac").directive "tableSection", [ "directiveHelpers", (directive
             $scope.$watch "table.section.body.rows.length", (rows) ->
               # We do this in two steps to avoid clobbering our columns when
               # the table has dynamic columns
-              table.load "header"
-              table.insert "header", table.blankRow()
+              table.load sectionName
+              table.insert sectionName, table.blankRow()
             , true
 
           # Watch for our section to be created (see below)
