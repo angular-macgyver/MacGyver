@@ -40,7 +40,8 @@ angular.module("Mac").directive "tableSection", [ "directiveHelpers", (directive
         $scope.$watch "table", (table) ->
           return unless table
 
-          # Autogenerate a header if the section is header and there are no models
+          # Autogenerate if the section has no models (most likely a header or
+          # footer)
           if not $attr.models?
             # We want to wait for another section to be populated before we
             # continue so we have rows to work from, we'll assume there's going
