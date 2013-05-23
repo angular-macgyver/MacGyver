@@ -147,11 +147,11 @@ directive("macModal", [
 
       registerModal = (id) ->
         if id? and id
-          modal.register id, element,
-            callback: ->
-              $scope.bindingEvents()
+          opts.callback = ->
+            $scope.bindingEvents()
+            $parse(opts.open) $scope if opts.open?
 
-              $parse(opts.open) $scope if opts.open?
+          modal.register id, element, opts
 
       if elementId
         registerModal elementId
