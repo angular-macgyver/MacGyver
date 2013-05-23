@@ -161,7 +161,7 @@ angular.module("Mac").factory "Table", [
         RowsController
     ) ->
       class Table
-        constructor: (columns = 'dynamic', @baseColumn = new BaseColumn()) ->
+        constructor: (columns = [], @baseColumn = new BaseColumn()) ->
           @sections       = {}
           @columns        = []
           @columnsCtrl    = new ColumnsController(this)
