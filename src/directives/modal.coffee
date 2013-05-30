@@ -39,7 +39,7 @@ angular.module("Mac").factory("modal", [
       else
         @waiting = {id, options}
 
-    resize: (modalObject) ->
+    resize: (modalObject = @opened) ->
       return unless modalObject?
 
       element = modalObject.element
