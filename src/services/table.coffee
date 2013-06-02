@@ -140,6 +140,7 @@ angular.module("Mac").factory "RowsController", [
             rows.push @make(section, model)
 
           section.rows = rows
+          @table.columnsCtrl.syncOrder()
 
         insert: (sectionName, model, index) ->
           section = @table.sections[sectionName]

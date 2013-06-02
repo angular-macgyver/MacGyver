@@ -18,10 +18,6 @@ describe "Table Data", ->
       table.load("body", models, BodySectionController)
       table.load("header", [{fullName: "Full Name", age: "Age"}])
 
-
-    it "Should do some stuff", inject (Table) ->
-      Table is Table
-
     it "makes the right number of rows", ->
       table = @scope.table
       expect(table.sections.body.rows.length).toBe 2
@@ -103,6 +99,24 @@ describe "Table Data", ->
       table = @scope.table
       expect(JSON.stringify(table)).toBe '{"sections":{"body":{"rows":[{"cells":[{"value":"Paul McCartney","column":"fullName"},{"value":30,"column":"age"}]},{"cells":[{"value":"John Lennon","column":"fullName"},{"value":29,"column":"age"}]}]},"header":{"rows":[{"cells":[{"value":"Full Name","column":"fullName"},{"value":"Age","column":"age"}]}]}}}'
 
+    it "can deal with columns being resorted", ->
+      table = @scope.table
+      table.columnsOrder.reverse()
+      table.columnsCtrl.syncOrder()
+      columns = []
+      columns.push cell.colName for cell in table.sections.body.rows[0].cells
+      expect(columns).toEqual table.columnsOrder
+
+    it "keeps the columns in the correct order when a new section is loaded", ->
+      table = @scope.table
+      table.columnsOrder.reverse()
+      table.columnsCtrl.syncOrder()
+      stones = [
+          {first_name: "Mick", last_name: "Jagger", age: 30}
+          {first_name: "Keith", last_name: "Richards", age: 29} ]
+      table.load "stones", stones
+      expect(table.sections.stones.rows[0].cells[0].colName).toBe "age"
+
     describe "Dynamic Table", ->
       beforeEach inject ($rootScope, Table, SectionController) ->
         # Our custom header controller, we'll use this later
@@ -144,6 +158,9 @@ describe "Table Data", ->
         columns = []
         columns.push cell.colName for cell in @table.sections.body.rows[0].cells
         expect(columns).toEqual @table.columnsOrder
+
+      # TODO: This doesn't work yet, see below
+      # it "keeps the columns in the correct order when a new section is loaded", ->
 
       it "updates the properties on the cells with properties on that column", ->
         #
