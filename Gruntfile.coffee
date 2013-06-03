@@ -10,15 +10,7 @@ finalBuildPath = "lib/"
 componentFile  = "bower.json"
 
 module.exports = (grunt) ->
-  grunt.loadNpmTasks "grunt-contrib-coffee"
-  grunt.loadNpmTasks "grunt-contrib-concat"
-  grunt.loadNpmTasks "grunt-contrib-stylus"
-  grunt.loadNpmTasks "grunt-contrib-jade"
-  grunt.loadNpmTasks "grunt-contrib-copy"
-  grunt.loadNpmTasks "grunt-contrib-clean"
-  grunt.loadNpmTasks "grunt-contrib-watch"
-  grunt.loadNpmTasks "grunt-contrib-uglify"
-  grunt.loadNpmTasks "grunt-karma"
+  require('matchdep').filterDev('grunt-*').forEach grunt.loadNpmTasks
 
   # Internal functions
   spawn = (options, done = ->) ->
