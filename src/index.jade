@@ -13,6 +13,7 @@ html
         #nav.span3
           ul.nav.nav-list.docs-sidenav(data-spy="affix", data-offset-top="0")
             li: a(href="#modal") Modal
+            li: a(href="#tooltip") Tooltip
             li: a(href="#mac-click") Mac Click
             li: a(href="#autocomplete") Autocomplete
             li: a(href="#tag-autocomplete") Tag Autocomplete
@@ -41,6 +42,16 @@ html
                 mac-modal         = "test-modal"
                 mac-modal-content = "maGyverSeasonOne"
               ) Show Modal
+
+          section#tooltip
+            .page-header: h1 Tooltip
+            h3 Example
+            .docs-example
+              ul.nav.nav-pills
+                li: a(href="#", mac-tooltip="Tooltip on top", mac-tooltip-trigger="click") Tooltip on top
+                li: a(href="#", mac-tooltip="Tooltip on bottom", mac-tooltip-direction="bottom") Tooltip on bottom
+                li: a(href="#", mac-tooltip="Tooltip on left", mac-tooltip-direction="left") Tooltip on left
+                li: a(href="#", mac-tooltip="Tooltip on right", mac-tooltip-direction="right") Tooltip on right
 
           section#mac-click
             .page-header: h1 Mac-click
