@@ -130,7 +130,7 @@ directive("macModal", [
       $scope.escapeKeyHandler = (event) ->
         modal.hide() if event.which is keys.ESCAPE
 
-      $scope.resizeHandler =  (event) -> modal.resize modal.opened
+      $scope.resizeHandler =  (event) -> modal.resize()
       $scope.overlayHandler = (event) -> $scope.closeModal()
 
       $scope.bindingEvents = (action = "bind") ->
