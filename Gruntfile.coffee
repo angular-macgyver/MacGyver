@@ -158,7 +158,7 @@ module.exports = (grunt) ->
     watch:
       js:
         files: ["src/**/*.coffee", "src/*.coffee"]
-        tasks: ["coffee", "concat:appJs", "clean", "copy:public", "embed:html"]
+        tasks: ["coffee", "concat:appJs", "clean", "copy:public"]
         options: interrupt: true
       css:
         files: ["src/css/*.styl"]
