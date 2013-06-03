@@ -1,4 +1,3 @@
-
 angular.module("Mac", ["Mac.Util"]);
 
 /*! jQuery UI - v1.10.1 - 2013-03-05
@@ -9608,327 +9607,6 @@ $.widget( "ui.menu", {
 
 }));
 
-//fgnass.github.com/spin.js#v1.2.8
-!function(window, document, undefined) {
-
-  /**
-   * Copyright (c) 2011 Felix Gnass [fgnass at neteye dot de]
-   * Licensed under the MIT license
-   */
-
-  var prefixes = ['webkit', 'Moz', 'ms', 'O'] /* Vendor prefixes */
-    , animations = {} /* Animation rules keyed by their name */
-    , useCssAnimations
-
-  /**
-   * Utility function to create elements. If no tag name is given,
-   * a DIV is created. Optionally properties can be passed.
-   */
-  function createEl(tag, prop) {
-    var el = document.createElement(tag || 'div')
-      , n
-
-    for(n in prop) el[n] = prop[n]
-    return el
-  }
-
-  /**
-   * Appends children and returns the parent.
-   */
-  function ins(parent /* child1, child2, ...*/) {
-    for (var i=1, n=arguments.length; i<n; i++)
-      parent.appendChild(arguments[i])
-
-    return parent
-  }
-
-  /**
-   * Insert a new stylesheet to hold the @keyframe or VML rules.
-   */
-  var sheet = function() {
-    var el = createEl('style', {type : 'text/css'})
-    ins(document.getElementsByTagName('head')[0], el)
-    return el.sheet || el.styleSheet
-  }()
-
-  /**
-   * Creates an opacity keyframe animation rule and returns its name.
-   * Since most mobile Webkits have timing issues with animation-delay,
-   * we create separate rules for each line/segment.
-   */
-  function addAnimation(alpha, trail, i, lines) {
-    var name = ['opacity', trail, ~~(alpha*100), i, lines].join('-')
-      , start = 0.01 + i/lines*100
-      , z = Math.max(1 - (1-alpha) / trail * (100-start), alpha)
-      , prefix = useCssAnimations.substring(0, useCssAnimations.indexOf('Animation')).toLowerCase()
-      , pre = prefix && '-'+prefix+'-' || ''
-
-    if (!animations[name]) {
-      sheet.insertRule(
-        '@' + pre + 'keyframes ' + name + '{' +
-        '0%{opacity:' + z + '}' +
-        start + '%{opacity:' + alpha + '}' +
-        (start+0.01) + '%{opacity:1}' +
-        (start+trail) % 100 + '%{opacity:' + alpha + '}' +
-        '100%{opacity:' + z + '}' +
-        '}', sheet.cssRules.length)
-
-      animations[name] = 1
-    }
-    return name
-  }
-
-  /**
-   * Tries various vendor prefixes and returns the first supported property.
-   **/
-  function vendor(el, prop) {
-    var s = el.style
-      , pp
-      , i
-
-    if(s[prop] !== undefined) return prop
-    prop = prop.charAt(0).toUpperCase() + prop.slice(1)
-    for(i=0; i<prefixes.length; i++) {
-      pp = prefixes[i]+prop
-      if(s[pp] !== undefined) return pp
-    }
-  }
-
-  /**
-   * Sets multiple style properties at once.
-   */
-  function css(el, prop) {
-    for (var n in prop)
-      el.style[vendor(el, n)||n] = prop[n]
-
-    return el
-  }
-
-  /**
-   * Fills in default values.
-   */
-  function merge(obj) {
-    for (var i=1; i < arguments.length; i++) {
-      var def = arguments[i]
-      for (var n in def)
-        if (obj[n] === undefined) obj[n] = def[n]
-    }
-    return obj
-  }
-
-  /**
-   * Returns the absolute page-offset of the given element.
-   */
-  function pos(el) {
-    var o = { x:el.offsetLeft, y:el.offsetTop }
-    while((el = el.offsetParent))
-      o.x+=el.offsetLeft, o.y+=el.offsetTop
-
-    return o
-  }
-
-  var defaults = {
-    lines: 12,            // The number of lines to draw
-    length: 7,            // The length of each line
-    width: 5,             // The line thickness
-    radius: 10,           // The radius of the inner circle
-    rotate: 0,            // Rotation offset
-    corners: 1,           // Roundness (0..1)
-    color: '#000',        // #rgb or #rrggbb
-    speed: 1,             // Rounds per second
-    trail: 100,           // Afterglow percentage
-    opacity: 1/4,         // Opacity of the lines
-    fps: 20,              // Frames per second when using setTimeout()
-    zIndex: 2e9,          // Use a high z-index by default
-    className: 'spinner', // CSS class to assign to the element
-    top: 'auto',          // center vertically
-    left: 'auto',         // center horizontally
-    position: 'relative'  // element position
-  }
-
-  /** The constructor */
-  function Spinner(o) {
-    if (!this.spin) return new Spinner(o)
-    this.opts = merge(o || {}, Spinner.defaults, defaults)
-  }
-
-  Spinner.defaults = {}
-
-  merge(Spinner.prototype, {
-    spin: function(target) {
-      this.stop()
-      var self = this
-        , o = self.opts
-        , el = self.el = css(createEl(0, {className: o.className}), {position: o.position, width: 0, zIndex: o.zIndex})
-        , mid = o.radius+o.length+o.width
-        , ep // element position
-        , tp // target position
-
-      if (target) {
-        target.insertBefore(el, target.firstChild||null)
-        tp = pos(target)
-        ep = pos(el)
-        css(el, {
-          left: (o.left == 'auto' ? tp.x-ep.x + (target.offsetWidth >> 1) : parseInt(o.left, 10) + mid) + 'px',
-          top: (o.top == 'auto' ? tp.y-ep.y + (target.offsetHeight >> 1) : parseInt(o.top, 10) + mid)  + 'px'
-        })
-      }
-
-      el.setAttribute('aria-role', 'progressbar')
-      self.lines(el, self.opts)
-
-      if (!useCssAnimations) {
-        // No CSS animation support, use setTimeout() instead
-        var i = 0
-          , fps = o.fps
-          , f = fps/o.speed
-          , ostep = (1-o.opacity) / (f*o.trail / 100)
-          , astep = f/o.lines
-
-        ;(function anim() {
-          i++;
-          for (var s=o.lines; s; s--) {
-            var alpha = Math.max(1-(i+s*astep)%f * ostep, o.opacity)
-            self.opacity(el, o.lines-s, alpha, o)
-          }
-          self.timeout = self.el && setTimeout(anim, ~~(1000/fps))
-        })()
-      }
-      return self
-    },
-
-    stop: function() {
-      var el = this.el
-      if (el) {
-        clearTimeout(this.timeout)
-        if (el.parentNode) el.parentNode.removeChild(el)
-        this.el = undefined
-      }
-      return this
-    },
-
-    lines: function(el, o) {
-      var i = 0
-        , seg
-
-      function fill(color, shadow) {
-        return css(createEl(), {
-          position: 'absolute',
-          width: (o.length+o.width) + 'px',
-          height: o.width + 'px',
-          background: color,
-          boxShadow: shadow,
-          transformOrigin: 'left',
-          transform: 'rotate(' + ~~(360/o.lines*i+o.rotate) + 'deg) translate(' + o.radius+'px' +',0)',
-          borderRadius: (o.corners * o.width>>1) + 'px'
-        })
-      }
-
-      for (; i < o.lines; i++) {
-        seg = css(createEl(), {
-          position: 'absolute',
-          top: 1+~(o.width/2) + 'px',
-          transform: o.hwaccel ? 'translate3d(0,0,0)' : '',
-          opacity: o.opacity,
-          animation: useCssAnimations && addAnimation(o.opacity, o.trail, i, o.lines) + ' ' + 1/o.speed + 's linear infinite'
-        })
-
-        if (o.shadow) ins(seg, css(fill('#000', '0 0 4px ' + '#000'), {top: 2+'px'}))
-
-        ins(el, ins(seg, fill(o.color, '0 0 1px rgba(0,0,0,.1)')))
-      }
-      return el
-    },
-
-    opacity: function(el, i, val) {
-      if (i < el.childNodes.length) el.childNodes[i].style.opacity = val
-    }
-
-  })
-
-  /////////////////////////////////////////////////////////////////////////
-  // VML rendering for IE
-  /////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Check and init VML support
-   */
-  ;(function() {
-
-    function vml(tag, attr) {
-      return createEl('<' + tag + ' xmlns="urn:schemas-microsoft.com:vml" class="spin-vml">', attr)
-    }
-
-    var s = css(createEl('group'), {behavior: 'url(#default#VML)'})
-
-    if (!vendor(s, 'transform') && s.adj) {
-
-      // VML support detected. Insert CSS rule ...
-      sheet.addRule('.spin-vml', 'behavior:url(#default#VML)')
-
-      Spinner.prototype.lines = function(el, o) {
-        var r = o.length+o.width
-          , s = 2*r
-
-        function grp() {
-          return css(
-            vml('group', {
-              coordsize: s + ' ' + s,
-              coordorigin: -r + ' ' + -r
-            }),
-            { width: s, height: s }
-          )
-        }
-
-        var margin = -(o.width+o.length)*2 + 'px'
-          , g = css(grp(), {position: 'absolute', top: margin, left: margin})
-          , i
-
-        function seg(i, dx, filter) {
-          ins(g,
-            ins(css(grp(), {rotation: 360 / o.lines * i + 'deg', left: ~~dx}),
-              ins(css(vml('roundrect', {arcsize: o.corners}), {
-                  width: r,
-                  height: o.width,
-                  left: o.radius,
-                  top: -o.width>>1,
-                  filter: filter
-                }),
-                vml('fill', {color: o.color, opacity: o.opacity}),
-                vml('stroke', {opacity: 0}) // transparent stroke to fix color bleeding upon opacity change
-              )
-            )
-          )
-        }
-
-        if (o.shadow)
-          for (i = 1; i <= o.lines; i++)
-            seg(i, -2, 'progid:DXImageTransform.Microsoft.Blur(pixelradius=2,makeshadow=1,shadowopacity=.3)')
-
-        for (i = 1; i <= o.lines; i++) seg(i)
-        return ins(el, g)
-      }
-
-      Spinner.prototype.opacity = function(el, i, val, o) {
-        var c = el.firstChild
-        o = o.shadow && o.lines || 0
-        if (c && i+o < c.childNodes.length) {
-          c = c.childNodes[i+o]; c = c && c.firstChild; c = c && c.firstChild
-          if (c) c.opacity = val
-        }
-      }
-    }
-    else
-      useCssAnimations = vendor(s, 'animation')
-  })()
-
-  if (typeof define == 'function' && define.amd)
-    define(function() { return Spinner })
-  else
-    window.Spinner = Spinner
-
-}(window, document);
-
 //  Underscore.string
 //  (c) 2010 Esa-Matti Suuronen <esa-matti aet suuronen dot org>
 //  Underscore.string is freely distributable under the terms of the MIT license.
@@ -10574,7 +10252,37 @@ $.widget( "ui.menu", {
   root._.string = root._.str = _s;
 }(this, String);
 
+/*
+@chalk overview
+@name Autocomplete
 
+@description
+A directive for providing suggestions while typing into the field
+
+@dependencies
+- jQuery UI autocomplete
+
+@param {String} mac-autocomplete-url Url to fetch autocomplete dropdown list data
+@param {Function} mac-autocomplete-on-select Function called when user select on an item
+       - `selected` - {Object} The item selected
+@param {Function} mac-autocomplete-on-success function called on success ajax request
+        - `data` - {Object} Data returned from the request
+        - `status` - {Number} The status code of the response
+        - `header` - {Object} Header of the response
+@param {Function} mac-autocomplete-on-error Function called on ajax request error
+        - `data` - {Object} Data returned from the request
+        - `status` - {Number} The status code of the response
+        - `header` - {Object} Header of the response
+@param {Function} mac-autocomplete-on-key-down function called on key down
+        - `event` - {Object} jQuery event
+        - `value` - {String} Value in the input text
+@param {String}  mac-autocomplete-value           The value to be sent back upon selection        (default "id")
+@param {String}  mac-autocomplete-label           The label to display to the users               (default "name")
+@param {String}  mac-autocomplete-query           The query parameter on GET command              (default "q")
+@param {Integer} mac-autocomplete-delay           Delay on fetching autocomplete data after keyup (default 800)
+@param {Boolean} mac-autocomplete-clear-on-select Clear text input on select                      (default false)
+@param {String}  mac-autocomplete-placeholder     Placeholder text of the text input              (default "")
+*/
 angular.module("Mac").directive("macAutocomplete", [
   "$http", "$parse", "$filter", function($http, $parse, $filter) {
     return {
@@ -10592,6 +10300,7 @@ angular.module("Mac").directive("macAutocomplete", [
       },
       compile: function(element, attrs) {
         var clearOnSelect, delay, events, labelKey, queryKey, valueKey;
+
         valueKey = attrs.macAutocompleteValue || "id";
         labelKey = attrs.macAutocompleteLabel || "name";
         queryKey = attrs.macAutocompleteQuery || "q";
@@ -10600,6 +10309,7 @@ angular.module("Mac").directive("macAutocomplete", [
         clearOnSelect = attrs.macAutocompleteClearOnSelect != null;
         return function($scope, element, attrs) {
           var sourceFn;
+
           if (attrs.macAutocompleteOnKeyDown) {
             element.bind("keydown", function(event) {
               return $scope.onKeyDown({
@@ -10610,6 +10320,7 @@ angular.module("Mac").directive("macAutocomplete", [
           }
           sourceFn = function(req, resp) {
             var list, options;
+
             if (attrs.macAutocompleteUrl != null) {
               options = {
                 method: "GET",
@@ -10619,6 +10330,7 @@ angular.module("Mac").directive("macAutocomplete", [
               options.params[queryKey] = req.term;
               return $http(options).success(function(data, status, headers, config) {
                 var fetchedList;
+
                 if (attrs.macAutocompleteOnSuccess != null) {
                   fetchedList = $scope.onSuccess({
                     data: data,
@@ -10651,6 +10363,7 @@ angular.module("Mac").directive("macAutocomplete", [
             select: function(event, ui) {
               $scope.$apply(function() {
                 var selected;
+
                 selected = _($scope.currentAutocomplete).find(function(item) {
                   return item[labelKey] === ui.item.label;
                 });
@@ -10677,6 +10390,7 @@ angular.module("Mac").directive("macAutocomplete", [
             $scope.currentAutocomplete = data;
             return _(data).map(function(item) {
               var label, value;
+
               label = value = labelKey != null ? item[labelKey] : item;
               return {
                 label: label,
@@ -10694,17 +10408,27 @@ angular.module("Mac").directive("macAutocomplete", [
   }
 ]);
 
+/*
+@chalk overview
+@name macBind
+@description
+macBind recurive go up parent scope to find the correct variable
 
+@param {Expression} mac-bind       Expression to evaluate
+@param {Integer}    mac-bind-depth Max parent scope depth it should go (default 2)
+*/
 angular.module("Mac").directive("macBind", [
   "$parse", function($parse) {
     return {
       link: function($scope, element, attr) {
         var checkScope, depth, fn;
+
         element.addClass('mac-binding').data('$binding', attr.ngBind);
         fn = $parse(attr.macBind);
         depth = +(attr.macBindDepth || 2);
         checkScope = function(scope, depth, $event) {
           var parent, ret;
+
           if (depth === 0) {
             return false;
           }
@@ -10729,7 +10453,40 @@ angular.module("Mac").directive("macBind", [
   }
 ]);
 
+/*
+@chalk overview
+@name Datepicker
+@description
+A directive for creating a datepicker on text input using jquery ui
 
+@dependencies
+- jQuery
+- jQuery datepicker
+
+@param {String}   mac-datepicker-id                     The id of the text input field
+@param {String}   mac-datepicker-model                  The model to store the selected date
+@param {Function} mac-datepicker-on-before-select       Function called before setting the value to the model
+  - `date` - {String} Selected date from the datepicker
+@param {String} mac-datepicker-on-before-close          Function called before closing datepicker
+  - `date` - {String} Selected date from the datepicker
+  - `instance` - {Object} Datepicker instance
+@param {String}  mac-datepicker-append-text             The text to display after each date field
+@param {Boolean} mac-datepicker-auto-size               Automatically resize the input to accommodate dates in the current dateFormat
+@param {Boolean} mac-datepicker-change-month            Whether the month should be rendered as a dropdown instead of text
+@param {Boolean} mac-datepicker-change-year             Whether the year should be rendered as a dropdown instead of text
+@param {Boolean} mac-datepicker-constrain-input-type    Constrain characters allowed by the current dateFormat
+@param {String}  mac-datepicker-current-text            Text to display for the current day link
+@param {String}  mac-datepicker-date-format             The format for parse and displayed dates
+@param {Date|Number|String} mac-datepicker-default-date Date to highligh on first opening if the field is blank
+@param {String}  mac-datepicker-duration                Control the speed at which the datepicker appears
+@param {Integer} mac-datepicker-first-day               Set the first day of the week. Sunday is 0, Monday is 1
+@param {Date|Number|String} mac-datepicker-max-date     The maximum selectable date
+@param {Date|Number|String} mac-datepicker-min-date     The minimum selectable date
+@param {Integer} mac-datepicker-number-of-months        The number of months to show at once
+@param {String}  mac-datepicker-show-on                 When the datepicker should appear
+@param {Integer} mac-datepicker-year-range              The range of years displayed in the year drop-down
+@param {Boolean} mac-datepicker-disabled                Enable or disable datepicker
+*/
 angular.module("Mac").directive("macDatepicker", [
   "util", function(util) {
     return {
@@ -10744,6 +10501,7 @@ angular.module("Mac").directive("macDatepicker", [
       templateUrl: "template/datepicker.html",
       compile: function(element, attrs) {
         var defaults, inputElement, opts;
+
         defaults = {
           id: "input-date",
           appendText: "",
@@ -10800,118 +10558,6 @@ angular.module("Mac").directive("macDatepicker", [
   }
 ]);
 
-/*
-angular.module("Mac").directive "macEditable", [
-  "$rootScope"
-  "util"
-  ($rootScope, util) ->
-    restrict: "A"
-    scope:    {
-      onHidden: "&macEditableOnHidden"
-      onInit:   "&macEditableOnInit"
-      onSave:   "&macEditableOnSave"
-      onShown:  "&macEditableOnShown"
-      success:  "&macEditableSuccess"
-      validate: "&macEditableValidate"
-      model:    "=macEditableModel"
-      display:  "=macEditableDisplay"
-      source:   "=macEditableSource"
-    }
-    link:     ($scope, element, attrs) ->
-      # default values and whitelisting
-      defaults =
-        anim:         "fast"
-        autotext:     "auto"
-        container:    "body"
-        disabled:     "false"
-        emptyclass:   "editable-empty"
-        emptytext:    "Empty"
-        mode:         "popup"
-        name:         null
-        onblur:       "cancel"
-        params:       null
-        placement:    "top"
-        saveonchange: false
-        selector:     null
-        send:         "never"
-        showbuttons:  true
-        toggle:       "click"
-        type:         "text"
-        unsavedclass: "editable-unsaved"
-        url:          null
-        title:        ""
-
-      componentsDefaults =
-        text:
-          tpl:         "<input type='text'>"
-          placeholder: null
-          clear:       true
-          inputclass:  "input-medium"
-
-        textarea:
-          tp:          "<textarea></textarea>"
-          inputclass:  "input-large"
-          placeholder: null
-          rows:        7
-
-        select:
-          tpl:         "<select></select>"
-          prepend:     false
-          sourceError: "Error when loading list"
-          sourceCache: true
-          inputclass:  "input-medium"
-
-      attrs.macEditableType = attrs.macEditableType or "text"
-
-      extraDefaults = switch attrs.macEditableType
-                        when "textarea", "select"
-                          componentsDefaults[attrs.macEditableType]
-                        else
-                          componentsDefaults["text"]
-      angular.extend defaults, extraDefaults
-
-      opts          = util.extendAttributes "macEditable", defaults, attrs
-      opts.validate = (value) ->
-        if attrs.macEditableValidate?
-          $scope.validate {value}
-      opts.success = (response, newValue) ->
-        if attrs.macEditableSuccess?
-          $scope.success {response, newValue}
-
-      if attrs.macEditableType is "select"
-        opts.source = -> $scope.source
-
-      $scope.$watch "display", (value) ->
-        element.text value or $scope.model
-
-      $scope.initialize = ->
-        opts.value   = $scope.model
-        opts.display = false
-
-        element.editable(opts)
-        .on "hidden", (event, reason) ->
-          if attrs.macEditableOnHidden?
-            $scope.onHidden {event, reason}
-        .on "init", (event, editable) ->
-          if attrs.macEditableOnInit?
-            $scope.onInit {event, editable}
-        .on "save", (event, params) ->
-          if attrs.macEditableOnSave?
-            params = $scope.onSave {event, params}
-
-          if params?.newValue?
-            $scope.$apply -> $scope.model = params.newValue
-
-        .on "shown", (event) ->
-          if attrs.macEditableOnShown?
-            $scope.onShown {event}
-
-      $scope.initialize()
-]
-*/
-
-
-
 var event, key, _fn, _fn1, _i, _j, _len, _len1, _ref, _ref1;
 
 _ref = ["Blur", "Focus", "Keydown", "Keyup", "Mouseenter", "Mouseleave"];
@@ -10922,6 +10568,7 @@ _fn = function(event) {
         restrict: "A",
         link: function(scope, element, attributes) {
           var expression;
+
           expression = $parse(attributes["mac" + event]);
           return element.on(event.toLowerCase(), function(event) {
             scope.$apply(function() {
@@ -10946,10 +10593,12 @@ angular.module("Mac").directive("macClick", [
     return {
       link: function($scope, element, attr) {
         var clickAction, depth, fn;
+
         fn = $parse(attr.macClick);
         depth = +(attr.macClickDepth || 2);
         clickAction = function(scope, depth, $event) {
           var parent, ret;
+
           if (depth === 0) {
             return false;
           }
@@ -10979,6 +10628,7 @@ angular.module("Mac").directive("macParentClick", [
     return {
       link: function($scope, element, attr) {
         var fn;
+
         fn = $parse(attr.macParentClick);
         if ($scope.$parent == null) {
           return;
@@ -11003,6 +10653,7 @@ _fn1 = function(key) {
         restrict: "A",
         link: function(scope, element, attributes) {
           var expression;
+
           expression = $parse(attributes["macKeydown" + key]);
           return element.on("keydown", function(event) {
             if (event.which === keys["" + (key.toUpperCase())]) {
@@ -11045,6 +10696,7 @@ angular.module("Mac").directive("macPauseTyping", [
       restrict: "A",
       link: function(scope, element, attributes) {
         var delay, expression, keyupTimer;
+
         expression = $parse(attributes["macPauseTyping"]);
         delay = scope.$eval(attributes["macPauseTypingDelay"]) || 800;
         keyupTimer = "";
@@ -11063,6 +10715,28 @@ angular.module("Mac").directive("macPauseTyping", [
   }
 ]);
 
+/*
+@chalk overview
+@name File upload
+@description
+Directive for proxying jQuery file upload
+
+@dependencies
+- jQuery file upload
+
+@param {String}   mac-upload-route      The route we're uploading our files
+@param {Function} mac-upload-submit     Function to call on submit
+@param {Function} mac-upload-success    Upload success callback
+@param {Function} mac-upload-error      Upload error callback
+@param {String}   mac-upload-selector   Selector to proxy clicking on file upload
+@param {String}   mac-upload-drop-zone  The selector that we can drop files onto
+@param {String}   mac-upload-enable-on  The broadcast message to catch to enable file upload
+@param {String}   mac-upload-disable-on The broadcast message to catch to disable file upload
+@param {Boolean}  mac-upload-disabled   Boolean value to disable or enable file upload
+@param {String}   mac-upload-form-data  Additional form data
+@param {String}   mac-upload-param-name Parameter name for the file
+*/
+
 var __hasProp = {}.hasOwnProperty;
 
 angular.module("Mac").directive("macUpload", [
@@ -11074,49 +10748,38 @@ angular.module("Mac").directive("macUpload", [
         macUploadSuccess: "&macUploadSuccess",
         macUploadRoute: "=macUploadRoute",
         macUploadEnableOn: "=macUploadEnableOn",
-        macUploadDisableOn: "=macUploadDisableOn"
+        macUploadDisableOn: "=macUploadDisableOn",
+        macUploadDisabled: "=macUploadDisabled",
+        macUploadFormData: "=macUploadFormData",
+        macUploadParamName: "=macUploadParamName"
       },
       link: function(scope, element, attributes) {
-        var disableOn, disabled, enableOn, parent;
+        var disableOn, enableOn, initialize, input, isInitialized, parent;
+
+        isInitialized = false;
         if (attributes.macUploadDisableOn != null) {
           disableOn = attributes.macUploadDisableOn;
         }
         if (attributes.macUploadEnableOn != null) {
           enableOn = attributes.macUploadEnableOn;
         }
-        disabled = attributes.macUploadDisabled === "true";
-        if (attributes.macUploadSelector != null) {
-          element.parents(attributes.macUploadSelector).click(function(event) {
-            return element.click();
-          });
-          element.click(function(event) {
-            $rootScope.$broadcast("clickedOnAttachment");
-            return event.stopPropagation();
-          });
-        }
-        $(document).on("drop dragover", function(event) {
-          return event.preventDefault();
-        });
-        if (disableOn != null) {
-          scope.$on(disableOn, function() {
-            return element.fileupload("disable");
-          });
-        }
-        if (enableOn != null) {
-          scope.$on(enableOn, function() {
-            return element.fileupload("enable");
-          });
-        }
         parent = element.parent();
-        return scope.$watch("macUploadRoute", function(route) {
-          var input, options;
-          if (disabled) {
+        input = parent.find("input");
+        initialize = function() {
+          var options;
+
+          if (((attributes.macUploadDisabled != null) && scope.macUploadDisabled) || !scope.route) {
             return;
           }
-          input = parent.find("input");
+          if (isInitialized) {
+            input.fileupload("destroy");
+          }
           options = {
-            url: route,
+            url: scope.route,
             replaceFileInput: true,
+            add: function(event, data) {
+              return data.submit();
+            },
             submit: function(event, response) {
               if (attributes.macUploadSubmit != null) {
                 return scope.$apply(scope.macUploadSubmit({
@@ -11127,6 +10790,7 @@ angular.module("Mac").directive("macUpload", [
             },
             error: function(response, status) {
               var args, key, responseObject, value;
+
               if (attributes.macUploadError != null) {
                 responseObject = {};
                 for (key in response) {
@@ -11155,27 +10819,82 @@ angular.module("Mac").directive("macUpload", [
             }
           };
           options.dropZone = attributes.macUploadDropZone != null ? $(attributes.macUploadDropZone) : null;
+          if (attributes.macUploadFormData != null) {
+            options.formData = scope.macUploadFormData;
+          }
+          if (attributes.macUploadParamName != null) {
+            options.paramName = scope.macUploadParamName;
+          }
           input.fileupload(options);
-          return input.fileupload({
-            add: function(event, data) {
-              return data.submit();
-            }
+          return isInitialized = true;
+        };
+        if (attributes.macUploadSelector != null) {
+          element.parents(attributes.macUploadSelector).click(function(event) {
+            return element.click();
           });
+          element.click(function(event) {
+            $rootScope.$broadcast("clickedOnAttachment");
+            return event.stopPropagation();
+          });
+        }
+        $(document).on("drop dragover", function(event) {
+          return event.preventDefault();
+        });
+        scope.$watch("macUploadDisabled", function(isDisabled) {
+          if (isDisabled == null) {
+            return;
+          }
+          if (isDisabled) {
+            input.prop("disabled", "disabled");
+          } else {
+            input.removeProp("disabled");
+          }
+          return initialize();
+        });
+        scope.$watch("macUploadFormData", function(value) {
+          if ((value != null) && isInitialized) {
+            return input.fileupload("options", {
+              formData: value
+            });
+          }
+        });
+        if (disableOn != null) {
+          scope.$on(disableOn, function() {
+            return input.fileupload("disable");
+          });
+        }
+        if (enableOn != null) {
+          scope.$on(enableOn, function() {
+            return input.fileupload("enable");
+          });
+        }
+        return scope.$watch("macUploadRoute", function(route) {
+          if (!route) {
+            return;
+          }
+          scope.route = route;
+          return initialize();
         });
       }
     };
   }
 ]);
 
-var module;
+/*
+@chalk overview
+@name mac-focus-on-event
 
-module = angular.module("Mac");
+@description
+Scroll window to the element and focus on the element
 
-module.directive("macFocusOnEvent", function() {
+@param {String} mac-focus-on-event Event to focus on element
+*/
+angular.module("Mac").directive("macFocusOnEvent", function() {
   return function(scope, element, attributes) {
     return scope.$on(attributes.macFocusOnEvent, function() {
       return setTimeout((function() {
         var x, y;
+
         x = window.scrollX;
         y = window.scrollY;
         element.focus();
@@ -11184,7 +10903,6 @@ module.directive("macFocusOnEvent", function() {
     });
   };
 });
-
 
 angular.module("Mac").factory("keys", function() {
   return {
@@ -11306,40 +11024,443 @@ angular.module("Mac").factory("keys", function() {
   };
 });
 
-var __hasProp = {}.hasOwnProperty;
+angular.module("Mac").factory("macColumnsController", function() {
+  var MacColumnsController;
 
-angular.module("Mac").directive("macSpinner", function() {
-  return {
-    restrict: "EA",
-    compile: function(element, attributes) {
-      var k, key, options, spinner, value;
-      element.addClass("mac-spinner");
-      options = {};
-      options.lines = 10;
-      options.width = 2;
-      for (key in attributes) {
-        if (!__hasProp.call(attributes, key)) continue;
-        value = attributes[key];
-        if (key.indexOf("macSpinner") === 0 && key !== "macSpinner") {
-          k = key.slice("macSpinner".length);
-          k = k[0].toLowerCase() + k.slice(1);
-          if (k === "size") {
-            options.radius = value / 5;
-            options.length = value / 5;
-          } else {
-            if (_(+value).isNaN()) {
-              options[k] = value;
-            } else {
-              options[k] = +value;
-            }
-          }
+  return MacColumnsController = (function() {
+    function MacColumnsController(scope, element, attrs) {
+      this.scope = scope;
+      this.element = element;
+      this.attrs = attrs;
+      this.trackedColumns = {};
+    }
+
+    MacColumnsController.prototype.getSiblingScopes = function(siblings) {
+      var el, li, siblingScope, _i, _len;
+
+      li = [];
+      for (_i = 0, _len = siblings.length; _i < _len; _i++) {
+        el = siblings[_i];
+        siblingScope = angular.element(el).scope();
+        if (this.trackedColumns[siblingScope.$id] != null) {
+          li.push(siblingScope);
         }
       }
-      return spinner = new Spinner(options).spin(element[0]);
+      return li;
+    };
+
+    MacColumnsController.prototype.recalculateWidths = function(event, id, newValue, oldValue) {
+      var cElement, cScope, nextSiblings, nextSiblingsWidthMap, prevSiblings, scale, siblingScope, siblingsTotalWidth, width, _i, _j, _len, _len1, _ref, _results;
+
+      if (!(!isNaN(newValue) && !isNaN(oldValue))) {
+        return;
+      }
+      _ref = this.trackedColumns[id], cScope = _ref[0], cElement = _ref[1];
+      nextSiblings = this.getSiblingScopes(cElement.nextAll());
+      scale = (oldValue - newValue) / nextSiblings.length;
+      nextSiblingsWidthMap = {};
+      siblingsTotalWidth = 0;
+      for (_i = 0, _len = nextSiblings.length; _i < _len; _i++) {
+        siblingScope = nextSiblings[_i];
+        width = +siblingScope.cell.column.width + scale;
+        if (width < 5) {
+          width = 5;
+        }
+        nextSiblingsWidthMap[siblingScope.$id] = width;
+        siblingsTotalWidth += width;
+      }
+      prevSiblings = this.getSiblingScopes(cElement.prevAll());
+      siblingsTotalWidth += prevSiblings.reduce(function(m, v) {
+        return +v.cell.column.width + m;
+      }, 0);
+      if (!((siblingsTotalWidth + newValue) <= 100)) {
+        return;
+      }
+      cScope.cell.column.width = newValue;
+      _results = [];
+      for (_j = 0, _len1 = nextSiblings.length; _j < _len1; _j++) {
+        siblingScope = nextSiblings[_j];
+        _results.push(siblingScope.cell.column.width = nextSiblingsWidthMap[siblingScope.$id]);
+      }
+      return _results;
+    };
+
+    return MacColumnsController;
+
+  })();
+});
+
+angular.module("Mac").directive("macColumns", [
+  "macColumnsController", function(macColumnsController) {
+    return {
+      require: ["^macTableV2", "^tableSection", "tableRow", "macColumns"],
+      controller: ["$scope", "$element", "$attrs", macColumnsController],
+      link: function($scope, $element, $attrs, controllers) {
+        return $scope.$on("mac-columns-" + $scope.$id + "-changed", function(event, id, newValue, oldValue) {
+          return controllers[3].recalculateWidths.apply(controllers[3], arguments);
+        });
+      }
+    };
+  }
+]);
+
+angular.module("Mac").directive("initialWidth", [
+  function() {
+    return {
+      require: ["^macTableV2", "^tableSection", "^tableRow", "^macColumns"],
+      priority: 500,
+      compile: function(element, attr) {
+        return function($scope, $element, $attrs, controllers) {
+          controllers[3].trackedColumns[$scope.$id] = [$scope, $element];
+          return $attrs.$observe("initialWidth", function(value) {
+            if ($scope.cell.column.width) {
+              return;
+            }
+            return $scope.cell.column.width = +value.replace("%", "");
+          });
+        };
+      }
+    };
+  }
+]);
+
+/*
+@chalk overview
+@name Modal
+
+@description
+Modal directives and service to keep state
+*/
+angular.module("Mac").factory("modal", [
+  "$rootScope", function($rootScope) {
+    return {
+      registered: {},
+      waiting: null,
+      opened: null,
+      show: function(id, triggerOptions) {
+        var element, options, _ref;
+
+        if (triggerOptions == null) {
+          triggerOptions = {};
+        }
+        if (this.registered[id] != null) {
+          _ref = this.registered[id], element = _ref.element, options = _ref.options;
+          element.addClass("visible");
+          angular.extend(options, triggerOptions);
+          this.opened = {
+            id: id,
+            element: element,
+            options: options
+          };
+          this.resize(this.opened);
+          if (typeof options.callback === "function") {
+            options.callback();
+          }
+          $rootScope.$broadcast("modalWasShown", id);
+          return this.clearWaiting();
+        } else {
+          return this.waiting = {
+            id: id,
+            options: options
+          };
+        }
+      },
+      resize: function(modalObject) {
+        var css, element, height, modal, options, width;
+
+        if (modalObject == null) {
+          modalObject = this.opened;
+        }
+        if (modalObject == null) {
+          return;
+        }
+        element = modalObject.element;
+        options = modalObject.options;
+        modal = $(".modal", element).attr("style", "");
+        height = modal.outerHeight();
+        width = modal.outerWidth();
+        css = $(window).height() > height ? {
+          marginTop: -height / 2
+        } : {
+          top: options.topOffset
+        };
+        css.marginLeft = -width / 2;
+        return modal.css(css);
+      },
+      hide: function(callback) {
+        var id;
+
+        if (this.opened == null) {
+          return;
+        }
+        id = this.opened.id;
+        this.opened.element.removeClass("visible");
+        this.opened = null;
+        if (typeof callback === "function") {
+          callback();
+        }
+        return $rootScope.$broadcast("modalWasHidden", id);
+      },
+      register: function(id, element, options) {
+        if (this.registered[id] != null) {
+          throw new Error("Modal " + modalId + " already registered");
+        }
+        this.registered[id] = {
+          element: element,
+          options: options
+        };
+        if ((this.waiting != null) && this.waiting.id === id) {
+          return this.show(id, this.waiting.options);
+        }
+      },
+      unregister: function(id) {
+        var _ref;
+
+        if (this.registered[id] == null) {
+          throw new Error("Modal " + id + " is not registered");
+        }
+        if (((_ref = this.opened) != null ? _ref.id : void 0) === id) {
+          this.hide();
+        }
+        this.clearWaiting(id);
+        return delete this.registered[id];
+      },
+      clearWaiting: function(id) {
+        if ((id != null) && this.waiting.id !== id) {
+          return;
+        }
+        return this.waiting = null;
+      }
+    };
+  }
+]).directive("macModal", [
+  "$rootScope", "$parse", "modal", "util", "keys", function($rootScope, $parse, modal, util, keys) {
+    return {
+      restrict: "E",
+      templateUrl: "template/modal.html",
+      replace: true,
+      transclude: true,
+      link: function($scope, element, attrs) {
+        var defaults, elementId, opts, registerModal;
+
+        defaults = {
+          keyboard: false,
+          overlayClose: false,
+          resize: true,
+          open: null,
+          topOffset: 20
+        };
+        opts = util.extendAttributes("", defaults, attrs);
+        elementId = element.prop("id");
+        $scope.closeModal = function($event) {
+          return modal.hide(function() {
+            return $scope.bindingEvents("unbind");
+          });
+        };
+        $scope.escapeKeyHandler = function(event) {
+          if (event.which === keys.ESCAPE) {
+            return modal.hide();
+          }
+        };
+        $scope.resizeHandler = function(event) {
+          return modal.resize();
+        };
+        $scope.overlayHandler = function(event) {
+          return $scope.closeModal();
+        };
+        $scope.bindingEvents = function(action) {
+          if (action == null) {
+            action = "bind";
+          }
+          if (action !== "bind" && action !== "unbind") {
+            return;
+          }
+          if (opts.keyboard) {
+            $(document)[action]("keydown", $scope.escapeKeyHandler);
+          }
+          if (opts.overlayClose) {
+            element[action]("click", overlayHandler);
+          }
+          if (opts.resize) {
+            return $(window)[action]("resize", $scope.resizeHandler);
+          }
+        };
+        registerModal = function(id) {
+          if ((id != null) && id) {
+            opts.callback = function() {
+              $scope.bindingEvents();
+              if (opts.open != null) {
+                return $parse(opts.open)($scope);
+              }
+            };
+            return modal.register(id, element, opts);
+          }
+        };
+        if (elementId) {
+          return registerModal(elementId);
+        } else {
+          return attrs.$observe("macModal", function(id) {
+            return registerModal(id);
+          });
+        }
+      }
+    };
+  }
+]).directive("macModal", [
+  "$parse", "modal", function($parse, modal) {
+    return {
+      restrict: "A",
+      link: function($scope, element, attrs) {
+        attrs.$observe("macModal", function(value) {
+          if ((value != null) && value) {
+            return element.bind("click", function() {
+              return modal.show(value, {
+                data: $parse(attrs.macModalContent)($scope)
+              });
+            });
+          }
+        });
+      }
+    };
+  }
+]);
+
+angular.module("Mac").directive("macReorderable", [
+  "hookableDirectiveController", function(hookableDirectiveController) {
+    return {
+      require: ["macReorderable"],
+      controller: ["$scope", "$element", "$attrs", hookableDirectiveController],
+      link: function($scope, $element, $attrs, controllers) {
+        var selector;
+
+        selector = $attrs.macReorderable;
+        return $element.sortable({
+          items: selector,
+          cursor: "move",
+          opacity: 0.8,
+          tolerance: "pointer",
+          update: function(event, ui) {
+            return controllers[0].fireCallbacks(event, ui, $element.find(selector));
+          }
+        });
+      }
+    };
+  }
+]);
+
+angular.module("Mac").directive("macReorderableColumns", [
+  function() {
+    return {
+      require: ["^macTableV2", "macReorderable"],
+      link: function($scope, $element, $attr, controllers) {
+        return controllers[1].registerCallback(function(event, ui, columnElements) {
+          var changedElement, columnsOrder;
+
+          columnsOrder = [];
+          changedElement = $(ui.item);
+          columnElements.each(function() {
+            return columnsOrder.push($(this).scope().cell.colName);
+          });
+          return $scope.$apply(function() {
+            controllers[0].table.columnsOrder = columnsOrder;
+            return controllers[0].table.columnsCtrl.syncOrder();
+          });
+        });
+      }
+    };
+  }
+]);
+
+angular.module("Mac").directive("macResizable", [
+  "hookableDirectiveController", function(hookableDirectiveController) {
+    return {
+      require: ["macResizable"],
+      controller: ["$scope", "$element", "$attrs", hookableDirectiveController],
+      link: function($scope, $element, $attrs, controllers) {
+        var axis, containment;
+
+        axis = $attrs.macResizable || "x";
+        containment = $attrs.macResizableContainment || "parent";
+        return $element.resizable({
+          axis: axis,
+          containment: containment,
+          handles: "e",
+          resize: function(event, ui) {
+            return controllers[0].fireCallbacks(event, ui);
+          }
+        });
+      }
+    };
+  }
+]);
+
+angular.module("Mac").directive("macResizableColumn", [
+  function() {
+    return {
+      require: ["^macColumns", "macResizable"],
+      link: function($scope, $element, $attrs, controllers) {
+        return controllers[1].registerCallback(function(event, ui) {
+          var column, percentage, width;
+
+          column = $scope.cell.column;
+          width = ui.size.width;
+          percentage = (width / controllers[0].element.width()) * 100;
+          $element.css("width", "");
+          return $scope.$apply(function() {
+            return controllers[0].recalculateWidths(null, $scope.$id, percentage, +column.width);
+          });
+        });
+      }
+    };
+  }
+]);
+
+/*
+@chalk overview
+@name Spinner
+
+@description
+A directive for generating spinner
+
+@param {Integer} mac-spinner-size The size of the spinne (default 16)
+@param {Integer} mac-spinner-z-index The z-index (default inherit)
+@param {String}  mac-spinner-color Color of all the bars (default #2f3035)
+*/
+angular.module("Mac").directive("macSpinner", function() {
+  return {
+    restrict: "E",
+    replace: true,
+    template: "<div class=\"mac-spinner\"></div>",
+    compile: function(element, attributes) {
+      var i, _i;
+
+      element.addClass("mac-spinner");
+      for (i = _i = 0; _i <= 9; i = ++_i) {
+        element.append("<div class=\"bar\"></div>");
+      }
+      return function($scope, element, attributes) {
+        attributes.$observe("macSpinnerSize", function(value) {
+          if ((value != null) && value) {
+            return element.css({
+              height: value,
+              width: value
+            });
+          }
+        });
+        attributes.$observe("macSpinnerZIndex", function(value) {
+          if ((value != null) && value) {
+            return element.css("z-index", value);
+          }
+        });
+        return attributes.$observe("macSpinnerColor", function(value) {
+          if ((value != null) && value) {
+            return $(".bar", element).css("background", value);
+          }
+        });
+      };
     }
   };
 });
-
 
 angular.module("Mac").directive("macTable", [
   "$compile", "$filter", "util", function($compile, $filter, util) {
@@ -11356,6 +11477,7 @@ angular.module("Mac").directive("macTable", [
       templateUrl: "template/table_view.html",
       compile: function(element, attrs, transclude) {
         var bodyBlock, bodyHeightBlock, bodyWrapperBlock, cellOuterHeight, customFooterRow, defaults, emptyCell, firstColumn, footerBlock, headerBlock, headerRow, opts, totalRow, transcludedBlock;
+
         defaults = {
           hasHeader: true,
           hasTotalFooter: false,
@@ -11378,7 +11500,8 @@ angular.module("Mac").directive("macTable", [
           calculateTotalLocally: false,
           fluidWidth: false,
           autoHeight: true,
-          showLoader: true
+          showLoader: true,
+          rowAutoHeight: false
         };
         transcludedBlock = $(".mac-table-transclude", element);
         headerBlock = $(".mac-table-header", element);
@@ -11392,6 +11515,9 @@ angular.module("Mac").directive("macTable", [
         customFooterRow = $(".custom-footer-row", footerBlock);
         emptyCell = $("<div>").addClass("mac-cell");
         opts = util.extendAttributes("macTable", defaults, attrs);
+        if (opts.rowAutoHeight) {
+          opts.lockFirstColumn = false;
+        }
         if (attrs.macTableHeaderHeight == null) {
           opts.headerHeight = opts.rowHeight;
         }
@@ -11408,6 +11534,7 @@ angular.module("Mac").directive("macTable", [
         cellOuterHeight += opts.borderWidth * opts.bottomBorder;
         return function($scope, element, attrs) {
           var bodyColumns, bodyTemplateCells, calculateColumnCss, calculateRowCss, createCellTemplate, createHeaderCellTemplate, createRowTemplate, getTemplateCell, reOrderingRows, render, updateDisplayRows;
+
           bodyTemplateCells = $(".table-body-template .cell", transcludedBlock);
           if (bodyTemplateCells.length === 0) {
             throw "Missing cell templates";
@@ -11453,18 +11580,21 @@ angular.module("Mac").directive("macTable", [
           Object.defineProperty($scope, "total", {
             get: function() {
               var totalKey;
+
               totalKey = opts.calculateTotalLocally ? "localTotal" : "totalData";
               return $scope[totalKey];
             }
           });
           reOrderingRows = function() {
             var data;
+
             data = $scope.data || [];
             $scope.orderedRows = opts.allowReorder ? $filter("orderBy")(data, $scope.predicate, $scope.reverse) : data;
             return updateDisplayRows();
           };
           updateDisplayRows = function(scroll) {
             var buffer, data, endIndex, index, parent, scrollTop, start;
+
             if (scroll == null) {
               scroll = false;
             }
@@ -11489,7 +11619,8 @@ angular.module("Mac").directive("macTable", [
             return start * cellOuterHeight;
           };
           calculateColumnCss = function() {
-            var bodyCell, calculatedWidth, column, numColumns, setWidth, unit, width, widthMatch, _i, _len;
+            var bodyCell, calculatedWidth, column, columnCss, numColumns, setWidth, unit, width, widthMatch, _i, _len;
+
             for (_i = 0, _len = bodyColumns.length; _i < _len; _i++) {
               column = bodyColumns[_i];
               bodyCell = getTemplateCell("body", column);
@@ -11511,17 +11642,23 @@ angular.module("Mac").directive("macTable", [
                 }
                 width = setWidth;
               }
-              $scope.columnsCss[column] = {
+              columnCss = {
                 width: width,
-                height: opts.rowHeight,
                 padding: opts.cellPadding,
                 lineHeight: "" + opts.rowHeight + "px"
               };
+              if (opts.rowAutoHeight) {
+                columnCss["min-height"] = opts.rowHeight;
+              } else {
+                columnCss.height = opts.rowHeight;
+              }
+              $scope.columnsCss[column] = columnCss;
             }
             return true;
           };
           calculateRowCss = function() {
             var calculateRowWidth, cellWidth, column, startIndex, _i, _len, _ref;
+
             calculateRowWidth = 0;
             startIndex = opts.lockFirstColumn ? 1 : 0;
             _ref = $scope.columns.slice(startIndex);
@@ -11549,6 +11686,7 @@ angular.module("Mac").directive("macTable", [
           };
           getTemplateCell = function(section, column) {
             var selected, templateSelector;
+
             if (section == null) {
               section = "";
             }
@@ -11565,6 +11703,7 @@ angular.module("Mac").directive("macTable", [
           };
           createCellTemplate = function(section, column) {
             var cell, width;
+
             if (section == null) {
               section = "";
             }
@@ -11593,6 +11732,7 @@ angular.module("Mac").directive("macTable", [
           };
           createHeaderCellTemplate = function(column, firstColumn) {
             var cell, cellClass, contextText, parentScope, sortBy, width, _ref;
+
             if (column == null) {
               column = "";
             }
@@ -11623,6 +11763,7 @@ angular.module("Mac").directive("macTable", [
           };
           createRowTemplate = function(section, isFirst) {
             var cell, column, cssClass, row, rowWidth, startIndex, width, _i, _len, _ref;
+
             if (section == null) {
               section = "";
             }
@@ -11664,6 +11805,7 @@ angular.module("Mac").directive("macTable", [
           };
           $scope.getColumnCss = function(column, section, attribute) {
             var css, key, newCss, _i, _len;
+
             if (!(column && (column != null))) {
               return {};
             }
@@ -11683,6 +11825,7 @@ angular.module("Mac").directive("macTable", [
                   return css.height;
               }
             })();
+            css.lineHeight = "" + css.height + "px";
             if (attribute != null) {
               newCss = {};
               if (typeof attribute === "string") {
@@ -11702,6 +11845,7 @@ angular.module("Mac").directive("macTable", [
           };
           $scope.getBodyBlockCss = function(section) {
             var isFirst, width;
+
             if (section == null) {
               section = "body";
             }
@@ -11731,11 +11875,11 @@ angular.module("Mac").directive("macTable", [
             }
           };
           $scope.getTableCss = function() {
-            var dataLength, elementHeight, paddings, totalRows, width, _ref;
+            var dataLength, elementHeight, paddings, width, _ref;
+
             dataLength = ((_ref = $scope.data) != null ? _ref.length : void 0) || 0;
-            totalRows = dataLength === 0 || !opts.autoHeight ? opts.numDisplayRows : Math.min(dataLength, opts.numDisplayRows);
             paddings = 2 * opts.cellPadding;
-            elementHeight = cellOuterHeight * totalRows;
+            elementHeight = bodyWrapperBlock.outerHeight();
             elementHeight += opts.hasFooter * (opts.footerHeight + paddings);
             elementHeight += opts.hasTotalFooter * (opts.totalFooterHeight + paddings);
             elementHeight += opts.hasHeader * (opts.headerHeight + paddings + opts.borderWidth);
@@ -11748,6 +11892,7 @@ angular.module("Mac").directive("macTable", [
           };
           $scope.orderBy = function(column) {
             var columnTitle;
+
             columnTitle = column.toLowerCase();
             if (opts.objectPrefix) {
               columnTitle = opts.objectPrefix + "." + columnTitle;
@@ -11762,6 +11907,7 @@ angular.module("Mac").directive("macTable", [
           $scope.calculateTotal = function() {
             return $scope.localTotal = _($scope.data).reduce(function(memo, row) {
               var key, value, _ref;
+
               if (opts.objectPrefix) {
                 row = row[opts.objectPrefix];
               }
@@ -11777,6 +11923,7 @@ angular.module("Mac").directive("macTable", [
           };
           $scope.drawHeader = function() {
             var row, width, _ref, _ref1;
+
             _ref = createRowTemplate("header"), row = _ref.row, width = _ref.width;
             headerRow.append(row).attr({
               "ng-style": "rowCss"
@@ -11798,6 +11945,7 @@ angular.module("Mac").directive("macTable", [
                 tolerance: "pointer",
                 update: function(event, ui) {
                   var newOrder;
+
                   newOrder = [];
                   $(".mac-table-header-cell", headerRow).each(function(i, e) {
                     return newOrder.push($(e).data("column"));
@@ -11822,6 +11970,7 @@ angular.module("Mac").directive("macTable", [
                   handles: "e",
                   resize: function(event, ui) {
                     var column, newWidth;
+
                     column = ui.element.data("column");
                     newWidth = ui.size.width;
                     return $scope.$apply(function() {
@@ -11835,6 +11984,7 @@ angular.module("Mac").directive("macTable", [
           };
           $scope.drawTotalFooter = function() {
             var row, width, _ref, _ref1;
+
             _ref = createRowTemplate("total-footer"), row = _ref.row, width = _ref.width;
             totalRow.append(row).attr("ng-style", "rowCss");
             if (opts.lockFirstColumn) {
@@ -11848,6 +11998,7 @@ angular.module("Mac").directive("macTable", [
           };
           $scope.drawFooter = function() {
             var footerTemplate;
+
             footerTemplate = $(".table-footer-template", transcludedBlock);
             customFooterRow.html(footerTemplate.html()).css({
               "height": opts.rowHeight,
@@ -11857,13 +12008,22 @@ angular.module("Mac").directive("macTable", [
           };
           $scope.calculateBodyDimension = function() {
             var data;
+
             data = $scope.data || [];
             bodyHeightBlock.height(data.length * cellOuterHeight);
             return setTimeout((function() {
-              var dataLength, numRows, wrapperHeight, _ref;
+              var dataLength, nFirstRows, numRows, wrapperHeight, _ref;
+
               dataLength = ((_ref = $scope.data) != null ? _ref.length : void 0) || 0;
               numRows = dataLength === 0 || !opts.autoHeight ? opts.numDisplayRows : Math.min(dataLength, opts.numDisplayRows);
-              wrapperHeight = numRows * cellOuterHeight;
+              if (opts.rowAutoHeight) {
+                nFirstRows = $(".mac-table-row", bodyBlock).slice(0, +numRows + 1 || 9e9);
+                wrapperHeight = _(nFirstRows).reduce((function(memo, el) {
+                  return memo += $(el).outerHeight();
+                }), 0);
+              } else {
+                wrapperHeight = numRows * cellOuterHeight;
+              }
               if (bodyBlock[0].scrollWidth > bodyBlock.width()) {
                 wrapperHeight += 10;
                 element.height(element.height() + 10 - 2 * opts.borderWidth);
@@ -11876,6 +12036,7 @@ angular.module("Mac").directive("macTable", [
           };
           $scope.drawBody = function() {
             var data, extraClasses, fcTableRow, origClasses, row, rowTemplate, rowTemplates, tableRow, width, _ref, _ref1;
+
             data = $scope.orderedRows || [];
             extraClasses = "";
             rowTemplates = $(".table-body-template .mac-table-row", transcludedBlock);
@@ -11911,10 +12072,12 @@ angular.module("Mac").directive("macTable", [
           };
           bodyWrapperBlock.scroll(function() {
             var $this, scrollTop;
+
             $this = $(this);
             scrollTop = $this.scrollTop();
             return $scope.$apply(function() {
               var upperBuffer;
+
               upperBuffer = updateDisplayRows(true);
               if (upperBuffer !== -1) {
                 bodyBlock.css("top", upperBuffer);
@@ -11926,17 +12089,19 @@ angular.module("Mac").directive("macTable", [
           });
           bodyBlock.scroll(function() {
             var $this, scrollLeft;
+
             $this = $(this);
             scrollLeft = $this.scrollLeft();
             if (opts.hasHeader) {
               headerBlock.scrollLeft(scrollLeft);
             }
-            if (opts.hasFooter) {
+            if (opts.hasFooter || opts.hasTotalFooter) {
               return footerBlock.scrollLeft(scrollLeft);
             }
           });
           $scope.renderTable = function() {
             var objectPrefix, _ref;
+
             objectPrefix = opts.objectPrefix ? "" + opts.objectPrefix + "." : "";
             $scope.predicate = ((_ref = $scope.columns) != null ? _ref.length : void 0) > 0 ? "" + objectPrefix + ($scope.columns[0].toLowerCase()) : "";
             $scope.orderedRows = $scope.data;
@@ -11961,6 +12126,7 @@ angular.module("Mac").directive("macTable", [
               }
               $scope.bodyBlockTimeout = setInterval((function() {
                 var leftMargin;
+
                 leftMargin = bodyBlock.css("margin-left");
                 return bodyBlock.width(element.width() - parseInt(leftMargin));
               }), 500);
@@ -11988,6 +12154,233 @@ angular.module("Mac").directive("macTable", [
   }
 ]);
 
+angular.module("Mac").directive("tableSection", [
+  "directiveHelpers", function(directiveHelpers) {
+    return {
+      require: ["^macTableV2", "tableSection"],
+      scope: true,
+      controller: [
+        "$scope", "$parse", function($scope, $parse) {
+          this.directive = "table-section";
+          this.cellTemplates = {};
+          this.watchModels = function(modelsExp, controller) {
+            var _this = this;
+
+            return $scope.$watch("" + modelsExp + ".length", function(modelsLength) {
+              var models;
+
+              models = $parse(modelsExp)($scope);
+              if (!models) {
+                return;
+              }
+              _this.models = models;
+              if (controller != null) {
+                return $scope.table.load(_this.name, models, controller);
+              } else {
+                return $scope.table.load(_this.name, models);
+              }
+            });
+          };
+          this.watchTable = function(callback) {
+            return $scope.$watch("table", callback);
+          };
+        }
+      ],
+      compile: function(element, attr, linker) {
+        return function($scope, $element, $attr, controllers) {
+          return $attr.$observe("tableSection", function(sectionName) {
+            if (!sectionName) {
+              return;
+            }
+            controllers[1].name = sectionName;
+            $scope.$watch("table", function(table) {
+              if (!table) {
+                return;
+              }
+              if ($attr.models == null) {
+                $scope.$watch("table.section.body.rows.length", function(rows) {
+                  table.load(sectionName);
+                  return table.insert(sectionName, table.blankRow());
+                }, true);
+              }
+              return $scope.$watch("table.sections." + sectionName, function(section) {
+                return $scope.section = controllers[1].section = $scope.table.sections[sectionName];
+              });
+            });
+            return $attr.$observe("models", function(modelsExp) {
+              return $scope.$watch("table", function(table) {
+                if (!table) {
+                  return;
+                }
+                if ($attr.controller != null) {
+                  return $attr.$observe("controller", function(controllerExp) {
+                    return $scope.$watch(controllerExp, function(controller) {
+                      return controllers[1].watchModels(modelsExp, controller);
+                    });
+                  });
+                } else {
+                  return controllers[1].watchModels(modelsExp);
+                }
+              });
+            });
+          });
+        };
+      }
+    };
+  }
+]);
+
+angular.module("Mac").directive("tableRow", [
+  "directiveHelpers", function(directiveHelpers) {
+    return {
+      require: ["^macTableV2", "^tableSection", "tableRow"],
+      controller: function() {
+        this.directive = "table-row";
+        this.repeatCells = function(cells, rowElement, sectionController) {
+          var afterElement, beforeElement, cellMarker, linkerFactory,
+            _this = this;
+
+          rowElement.find("[cell-template]").remove();
+          beforeElement = rowElement.find("[before-templates]:last");
+          afterElement = rowElement.find("[after-templates]:first");
+          if (beforeElement.length) {
+            cellMarker = beforeElement;
+          } else if (afterElement.length) {
+            cellMarker = angular.element("<!-- cells: " + sectionController.section.name + " -->");
+            afterElement.before(cellMarker);
+          } else {
+            cellMarker = angular.element("<!-- cells: " + sectionController.section.name + " -->");
+            rowElement.append(cellMarker);
+          }
+          linkerFactory = function(cell) {
+            var template, templateName;
+
+            templateName = cell.colName in sectionController.cellTemplates && cell.colName || "?";
+            if (template = sectionController.cellTemplates[templateName]) {
+              return template[1];
+            }
+          };
+          return directiveHelpers.repeater(cells, "cell", rowElement.scope(), cellMarker, linkerFactory);
+        };
+      },
+      compile: function(element, attr) {
+        return function($scope, $element, $attr, controllers) {
+          return $scope.$watch("row.cells", function(cells) {
+            var _ref;
+
+            if (((_ref = controllers[1].section) != null ? _ref.name : void 0) == null) {
+              return;
+            }
+            return controllers[2].repeatCells(cells, $element, controllers[1]);
+          });
+        };
+      }
+    };
+  }
+]);
+
+angular.module("Mac").directive("cellTemplate", [
+  function() {
+    return {
+      transclude: "element",
+      priority: 1000,
+      require: ["^macTableV2", "^tableSection", "^tableRow"],
+      compile: function(element, attr, linker) {
+        return function($scope, $element, $attr, controllers) {
+          var templateName;
+
+          templateName = $attr["for"] || $attr.cellTemplate || "?";
+          return controllers[1].cellTemplates[templateName] = [$element, linker, $attr];
+        };
+      }
+    };
+  }
+]);
+
+angular.module("Mac").directive("macTableV2", [
+  "Table", function(Table) {
+    return {
+      require: "macTableV2",
+      scope: true,
+      controller: [
+        "$scope", function($scope) {
+          this.directive = "mac-table";
+          this.makeTable = function(columns) {
+            return this.table = $scope.table = new Table(columns);
+          };
+        }
+      ],
+      compile: function(element, attr) {
+        var autoWidthTemplates;
+
+        element.find("[initial-width]").attr("width", "{{cell.width}}%").parents("[table-row]").attr("mac-columns", "");
+        element.find("[cell-template]").wrapInner("<div class='cell-wrapper' />");
+        if (attr.resizableColumns != null) {
+          element.find("[table-section=header]").find("[cell-template]").find(".cell-wrapper").attr("mac-resizable-column", "").attr("mac-resizable", "").attr("mac-resizable-containment", "document");
+        }
+        if (attr.reorderableColumns != null) {
+          element.find("[table-section=header] [table-row]").attr("mac-reorderable", "[cell-template]").attr("mac-reorderable-columns", "");
+        }
+        autoWidthTemplates = element.find("[initial-width=auto]");
+        if (autoWidthTemplates.length) {
+          autoWidthTemplates.each(function() {
+            var hardsetPercent, initialWidthExp, siblings;
+
+            siblings = $(this).siblings("[initial-width]");
+            hardsetPercent = 0;
+            siblings.each(function() {
+              return hardsetPercent += +$(this).attr('initial-width').replace("%", "");
+            });
+            initialWidthExp = "{{(100/(table.columns.length - " + siblings.length + ")) - (" + hardsetPercent + "/(table.columns.length - " + siblings.length + "))}}%";
+            return $(this).attr("initial-width", initialWidthExp);
+          });
+        }
+        return function($scope, $element, $attr, controller) {
+          controller.$element = $element;
+          return $attr.$observe("columns", function(columnsExp) {
+            if (columnsExp === "dynamic") {
+              return controller.makeTable("dynamic");
+            } else {
+              return $scope.$watch(columnsExp, function(columns) {
+                return controller.makeTable(columns);
+              }, true);
+            }
+          });
+        };
+      }
+    };
+  }
+]);
+
+/*
+@chalk overview
+@name Tag Autocomplete
+
+@description
+A directive for generating tag input with autocomplete support on text input
+
+@dependencies
+- jQuery UI autocomplete
+
+@param {String} mac-tag-autocomplete-url Url to fetch autocomplete dropdown list data
+@param {String} mac-tag-autocomplete-value The value to be sent back upon selection (default "id")
+@param {String} mac-tag-autocomplete-label The label to display to the users (default "name")
+@param {Boolean} mac-tag-autocomplete-full-object Push the full object into the selected array (default false)
+@param {Array} mac-tag-autocomplete-selected The list of elements selected by the user
+@param {String} mac-tag-autocomplete-query The query parameter on GET command (defualt "q")
+@param {Integer} mac-tag-autocomplete-delay Time delayed on fetching autocomplete data after keyup  (default 800)
+@param {String} mac-tag-autocomplete-placeholder Placeholder text of the text input (default "")
+@param {Boolean} mac-tag-autocomplete-disabled If autocomplete is enabled or disabled (default false)
+@param {Expression} mac-tag-autocomplete-on-enter When autocomplete is disabled, this function is called on enter, Should return either string, object or boolean. If false, item is not added
+        - `item` - {String} User input
+@param {String} mac-tag-autocomplete-events a CSV list of events to attach functions to
+@param {Expression} mac-tag-autocomplete-on- The function to be called when specified event is fired
+        - `event` - {Object} jQuery event
+        - `value` - {String} Value in the input text
+
+@param {Event} mac-tag-autocomplete-clear-input $broadcast message; clears text input when received
+*/
+
 var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 angular.module("Mac").directive("macTagAutocomplete", [
@@ -12011,6 +12404,7 @@ angular.module("Mac").directive("macTagAutocomplete", [
       },
       compile: function(element, attrs) {
         var attrsObject, delay, disabled, events, eventsList, labelKey, queryKey, selectedExp, tagLabelKey, textInput, valueKey;
+
         valueKey = attrs.macTagAutocompleteValue;
         if (valueKey == null) {
           valueKey = "id";
@@ -12026,6 +12420,7 @@ angular.module("Mac").directive("macTagAutocomplete", [
         disabled = attrs.macTagAutocompleteDisabled != null;
         eventsList = _(events.split(",")).map(function(item) {
           var attrEvent;
+
           attrEvent = _.string.capitalize(item);
           return {
             name: item,
@@ -12056,6 +12451,7 @@ angular.module("Mac").directive("macTagAutocomplete", [
           });
           $scope.$watch("disabled", function(value) {
             var event, _i, _len, _results;
+
             if (value) {
               $(".no-complete", element).on("keydown", function(event) {
                 return $scope.onKeyDown(event, $(this).val());
@@ -12070,6 +12466,7 @@ angular.module("Mac").directive("macTagAutocomplete", [
               _results.push((function(event) {
                 return $(".text-input", element).on(event.name, function($event) {
                   var expression;
+
                   expression = $parse(event.eventFn);
                   return $scope.$apply(function() {
                     return expression($scope.$parent, {
@@ -12090,6 +12487,7 @@ angular.module("Mac").directive("macTagAutocomplete", [
           });
           $scope.pushToSelected = function(item) {
             var output;
+
             output = {};
             if (labelKey) {
               output[labelKey] = item[labelKey];
@@ -12104,16 +12502,19 @@ angular.module("Mac").directive("macTagAutocomplete", [
           };
           $scope.updateSource = function() {
             var difference, selectedValues, sourceValues;
+
             sourceValues = _($scope.source || []).pluck(valueKey);
             selectedValues = _($scope.selected || []).pluck(valueKey);
             difference = _(sourceValues).difference(selectedValues);
             return $scope.autocompleteSource = _($scope.source).filter(function(item) {
               var _ref;
+
               return _ref = item[valueKey], __indexOf.call(difference, _ref) >= 0;
             });
           };
           $scope.onKeyDown = function($event, value) {
             var stroke;
+
             if (value == null) {
               value = "";
             }
@@ -12137,6 +12538,7 @@ angular.module("Mac").directive("macTagAutocomplete", [
             if (attrs.macTagAutocompleteOnKeydown != null) {
               $scope.$apply(function() {
                 var expression;
+
                 expression = $parse(attrs.macTagAutocompleteOnKeydown);
                 return expression($scope.$parent, {
                   $event: $event,
@@ -12148,9 +12550,11 @@ angular.module("Mac").directive("macTagAutocomplete", [
           };
           $scope.onSuccess = function(data) {
             var existingValues;
+
             existingValues = _($scope.selected).pluck(valueKey);
             return _(data.data).reject(function(item) {
               var _ref;
+
               return _ref = item[valueKey] || item, __indexOf.call(existingValues, _ref) >= 0;
             });
           };
@@ -12177,7 +12581,18 @@ angular.module("Mac").directive("macTagAutocomplete", [
   }
 ]);
 
+/*
+@chalk overview
+@name Tag Input
+@description
+A directive for generating tag input.
 
+@param {String} mac-tag-input-tags         The list of elements to populate the select input
+@param {String} mac-tag-input-selected     The list of elements selected by the user
+@param {String} mac-tag-input-placeholder  Placeholder text for tag input                    (default "")
+@param {String} mac-tag-input-value        The value to be sent back upon selection          (default "id")
+@param {String} mac-tag-input-label        The label to display to the users                 (default "name")
+*/
 angular.module("Mac").directive("macTagInput", [
   function() {
     return {
@@ -12191,6 +12606,7 @@ angular.module("Mac").directive("macTagInput", [
       },
       compile: function(element, attrs) {
         var textKey, valueKey;
+
         valueKey = attrs.macTagInputValue || "id";
         textKey = attrs.macTagInputLabel || "name";
         $(".tag-autocomplete", element).attr({
@@ -12205,7 +12621,18 @@ angular.module("Mac").directive("macTagInput", [
   }
 ]);
 
+/*
+@chalk overview
+@name Time
+@description
+A directive for creating a time input field
 
+@param {String} mac-time-id           ID of the text input field (default: time-input)
+@param {String} mac-time-model        Model to bind input to
+@param {String} mac-time-placeholder  Placeholder text of the text input (default --:--)
+@param {String} mac-time-disabled     Enable or disable time input
+@param {String} mac-time-default      If model is undefined, use this as the starting value (default 12:00 PM)
+*/
 angular.module("Mac").directive("macTime", [
   "util", "keys", "$filter", function(util, keys, $filter) {
     return {
@@ -12218,9 +12645,11 @@ angular.module("Mac").directive("macTime", [
       templateUrl: "template/time.html",
       compile: function(element, attrs) {
         var defaults, inputElement, opts;
+
         defaults = {
           id: "time-input",
-          placeholder: "--:--"
+          placeholder: "--:--",
+          "default": "12:00 AM"
         };
         opts = util.extendAttributes("macTime", defaults, attrs);
         inputElement = $("input", element);
@@ -12231,6 +12660,7 @@ angular.module("Mac").directive("macTime", [
         });
         return function($scope, element, attrs) {
           var highlighActions, inputDOM, inputSelectAction, timeRegex, updateInput, updateScopeTime;
+
           inputDOM = inputElement[0];
           timeRegex = /(\d+):(\d+) ([AP]M)?/;
           highlighActions = {
@@ -12250,8 +12680,14 @@ angular.module("Mac").directive("macTime", [
             }
           });
           $scope.reset = function() {
-            $scope.time = new Date();
-            return $scope.time.setHours(0, 0, 0, 0);
+            var prefix, time;
+
+            prefix = "Jan 1, 1970, ";
+            time = new Date(prefix + opts["default"]);
+            if (isNaN(time.getTime())) {
+              time = new Date(prefix + "12:00 AM");
+            }
+            return $scope.time = time;
           };
           inputSelectAction = function(index, endIndex, actions) {
             if (endIndex == null) {
@@ -12281,6 +12717,7 @@ angular.module("Mac").directive("macTime", [
           };
           updateInput = function(actions) {
             var end, start;
+
             if (actions == null) {
               actions = {};
             }
@@ -12298,6 +12735,7 @@ angular.module("Mac").directive("macTime", [
           };
           updateScopeTime = function() {
             var hours, markers, minutes, timeMatch;
+
             if (timeMatch = timeRegex.exec($scope.model)) {
               hours = +timeMatch[1];
               minutes = +timeMatch[2];
@@ -12321,6 +12759,7 @@ angular.module("Mac").directive("macTime", [
             return updateScopeTime();
           }).on("keydown", function(event) {
             var change, end, key, start;
+
             key = event.which;
             switch (key) {
               case keys.UP:
@@ -12365,6 +12804,7 @@ angular.module("Mac").directive("macTime", [
             }
           }).on("keyup", function(event) {
             var key;
+
             key = event.which;
             if ((keys.NUMPAD0 <= key && key <= keys.NUMPAD9) || (keys.ZERO <= key && key <= keys.NINE)) {
               return updateScopeTime();
@@ -12377,16 +12817,133 @@ angular.module("Mac").directive("macTime", [
   }
 ]);
 
+/*
+@chalk overview
+@name Tooltip
+
+@description
+Tooltip directive
+
+@param {String} mac-tooltip Text to show in tooltip
+@param {String} mac-tooltip-direction Direction of tooltip
+@param {String} mac-tooltip-trigger How tooltip is triggered
+@param {Boolean} mac-tooltip-inside Should the tooltip be appended inside element
+*/
+angular.module("Mac").directive("macTooltip", function() {
+  return {
+    restrict: "A",
+    link: function(scope, element, attrs) {
+      var removeTip, showTip, text, toggle, tooltip;
+
+      tooltip = null;
+      text = "";
+      showTip = function(event) {
+        var direction, elementSize, inside, offset, tip, tooltipSize;
+
+        inside = attrs.macTooltipInside != null;
+        direction = attrs.macTooltipDirection || "top";
+        tip = inside ? element : $(document.body);
+        tooltip = $("<div class=\"tooltip " + direction + "\"><div class=\"tooltip-message\">" + text + "</div></div>");
+        tip.append(tooltip);
+        offset = inside ? {
+          top: 0,
+          left: 0
+        } : element.offset();
+        elementSize = {
+          width: element.outerWidth(),
+          height: element.outerHeight()
+        };
+        tooltipSize = {
+          width: tooltip.outerWidth(),
+          height: tooltip.outerHeight()
+        };
+        switch (direction) {
+          case "bottom":
+          case "top":
+            offset.left += elementSize.width / 2.0 - tooltipSize.width / 2.0;
+            break;
+          case "left":
+          case "right":
+            offset.top += elementSize.height / 2.0 - tooltipSize.height / 2.0;
+        }
+        switch (direction) {
+          case "bottom":
+            offset.top += elementSize.height;
+            break;
+          case "top":
+            offset.top -= tooltipSize.height;
+            break;
+          case "left":
+            offset.left -= tooltipSize.width;
+            break;
+          case "right":
+            offset.left += elementSize.width;
+        }
+        offset.top = Math.max(0, offset.top);
+        offset.left = Math.max(0, offset.left);
+        return tooltip.css(offset).addClass("visible");
+      };
+      removeTip = function(event) {
+        tooltip.removeClass("visible");
+        return setTimeout(function() {
+          return tooltip.remove();
+        }, 100);
+      };
+      toggle = function(event) {
+        if (tooltip != null) {
+          return removeTip(event);
+        } else {
+          return showTip(event);
+        }
+      };
+      attrs.$observe("macTooltip", function(value) {
+        var trigger;
+
+        if ((value != null) && value) {
+          trigger = attrs.macTooltipTrigger || "hover";
+          text = value;
+          if (trigger !== "hover" && trigger !== "click") {
+            return console.error("Invalid trigger");
+          }
+          switch (trigger) {
+            case "click":
+              return element.on("click", toggle);
+            case "hover":
+              element.on("mouseenter", showTip);
+              return element.on("mouseleave click", removeTip);
+          }
+        }
+      });
+      return scope.$on("$destroy", function() {
+        if (tooltip != null) {
+          return removeTip();
+        }
+      });
+    }
+  };
+});
+
 var module;
 
 module = angular.module("Mac");
 
+module.controller("modalController", [
+  "$scope", "modal", function($scope, modal) {
+    return $scope.$on("modalWasShown", function(event, id) {
+      if (id === "test-modal") {
+        return console.log(modal.opened.options.data);
+      }
+    });
+  }
+]);
+
 module.controller("ExampleController", [
-  "$scope", function($scope) {
+  "$scope", "$timeout", "Table", "SectionController", function($scope, $timeout, Table, SectionController) {
     $scope.data = [];
     $scope.loading = true;
     setTimeout((function() {
       var i, obj, _i;
+
       for (i = _i = 1; _i <= 23; i = ++_i) {
         obj = {
           name: "Test " + i,
@@ -12414,6 +12971,156 @@ module.controller("ExampleController", [
       return alert("Loading 20 more rows");
     };
     $scope.columnOrder = ["Name", "anotherName", "d", "c", "b", "Created"];
+    $scope.maGyverSeasonOne = [
+      {
+        'No.': '1',
+        'Title': '"Pilot"',
+        'Directed by': 'Jerrold Freedman',
+        'Written by': 'Thackary Pallor',
+        'Original air date': 'September 29, 1985'
+      }, {
+        'No.': '2',
+        'Title': '"The Golden Triangle"',
+        'Directed by': 'Paul Stanley & Donald Petrie',
+        'Written by': 'Dennis R. Foley & Terry Nation',
+        'Original air date': 'October 6, 1985'
+      }, {
+        'No.': '3',
+        'Title': '"Thief of Budapest"',
+        'Directed by': 'Lee H. Katzin & John Patterson',
+        'Written by': 'Terry Nation & Stephen Downing & Joe Viola',
+        'Original air date': 'October 13, 1985'
+      }, {
+        'No.': '4',
+        'Title': '"The Gauntlet"',
+        'Directed by': 'Lee H. Katzin',
+        'Written by': 'Stephen Kandel',
+        'Original air date': 'October 20, 1985'
+      }, {
+        'No.': '5',
+        'Title': '"The Heist"',
+        'Directed by': 'Alan Smithee',
+        'Written by': 'Larry Alexander & James Schmerer',
+        'Original air date': 'November 3, 1985'
+      }, {
+        'No.': '6',
+        'Title': '"Trumbo\'s World"',
+        'Directed by': 'Donald Petrie & Lee H. Katzin',
+        'Written by': 'Stephen Kandel',
+        'Original air date': 'November 10, 1985'
+      }, {
+        'No.': '7',
+        'Title': '"Last Stand"',
+        'Directed by': 'John Florea',
+        'Written by': 'Judy Burns',
+        'Original air date': 'November 17, 1985'
+      }, {
+        'No.': '8',
+        'Title': '"Hellfire"',
+        'Directed by': 'Richard Colla',
+        'Written by': 'Story by: Douglas Brooks West',
+        'Original air date': 'November 24, 1985'
+      }, {
+        'No.': '9',
+        'Title': '"The Prodigal"',
+        'Directed by': 'Alexander Singer',
+        'Written by': 'Story by: David Abramowitz & Paul Savage',
+        'Original air date': 'December 8, 1985'
+      }, {
+        'No.': '10',
+        'Title': '"Target MacGyver"',
+        'Directed by': 'Lee H. Katzin & Ernest Pintoff',
+        'Written by': 'Story by: Mike Marvin',
+        'Original air date': 'December 22, 1985'
+      }, {
+        'No.': '11',
+        'Title': '"Nightmares"',
+        'Directed by': 'Cliff Bole',
+        'Written by': 'James Schmerer',
+        'Original air date': 'January 15, 1986'
+      }, {
+        'No.': '12',
+        'Title': '"Deathlock"',
+        'Directed by': 'Cliff Bole & Alexander Singer',
+        'Written by': 'Jerry Ludwig & Stephen Kandel',
+        'Original air date': 'January 22, 1986'
+      }, {
+        'No.': '13',
+        'Title': '"Flame\'s End"',
+        'Directed by': 'Bruce Seth Green',
+        'Written by': 'Story by: Hannah Louise Shearer',
+        'Original air date': 'January 29, 1986'
+      }, {
+        'No.': '14',
+        'Title': '"Countdown"',
+        'Directed by': 'Stan Jolley',
+        'Written by': 'Tony DiMarco & David Ketchum',
+        'Original air date': 'February 5, 1986'
+      }, {
+        'No.': '15',
+        'Title': '"The Enemy Within"',
+        'Directed by': 'Cliff Bole',
+        'Written by': 'David Abramowitz',
+        'Original air date': 'February 12, 1986'
+      }, {
+        'No.': '16',
+        'Title': '"Every Time She Smiles"',
+        'Directed by': 'Charlie Correll',
+        'Written by': 'James Schmerer',
+        'Original air date': 'February 19, 1986'
+      }, {
+        'No.': '17',
+        'Title': '"To Be a Man"',
+        'Directed by': 'Cliff Bole',
+        'Written by': 'Don Mankiewicz',
+        'Original air date': 'March 5, 1986'
+      }, {
+        'No.': '18',
+        'Title': '"Ugly Duckling"',
+        'Directed by': 'Charlie Correll',
+        'Written by': 'Larry Gross',
+        'Original air date': 'March 12, 1986'
+      }, {
+        'No.': '19',
+        'Title': '"Slow Death"',
+        'Directed by': 'Don Weis',
+        'Written by': 'Stephen Kandel',
+        'Original air date': 'April 2, 1986'
+      }, {
+        'No.': '20',
+        'Title': '"The Escape"',
+        'Directed by': 'Don Chaffey',
+        'Written by': 'Stephen Kandel',
+        'Original air date': 'April 16, 1986'
+      }, {
+        'No.': '21',
+        'Title': '"A Prisoner of Conscience"',
+        'Directed by': 'Cliff Bole',
+        'Written by': 'Stephen Kandel',
+        'Original air date': 'April 30, 1986'
+      }, {
+        'No.': '22',
+        'Title': '"The Assassin"',
+        'Directed by': 'Charlie Correll',
+        'Written by': 'James Schmerer',
+        'Original air date': 'May 7, 1986'
+      }
+    ];
+    $scope.reverse = false;
+    $scope.genPredicate = function(colName) {
+      return function(row) {
+        return row.cellsMap[colName].value();
+      };
+    };
+    $scope.genSearchPredicate = function(colName, value) {
+      return function(row) {
+        var cellValue;
+
+        cellValue = String(row.cellsMap[colName].value()).toLowerCase();
+        value = String(value).toLowerCase();
+        return cellValue.indexOf(value) !== -1;
+      };
+    };
     $scope.editableTest = "Hello";
     $scope.getDisplayText = function() {
       return $scope.editableTest;
@@ -12433,6 +13140,7 @@ module.controller("ExampleController", [
     $scope.selectedOptionValue = "1";
     $scope.convertToText = function() {
       var option, _i, _len, _ref;
+
       _ref = $scope.selectOptions;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         option = _ref[_i];
@@ -12487,7 +13195,7 @@ module.controller("ExampleController", [
       }
     ];
     $scope.uploadRoute = "/test_upload";
-    $scope.fileUploaderEndabled = true;
+    $scope.fileUploaderEnabled = true;
     $scope.fileUploadSubmit = function($event, $response) {
       return console.log("submitted");
     };
@@ -12498,7 +13206,6 @@ module.controller("ExampleController", [
     return $scope.startTime = "04:42 PM";
   }
 ]);
-
 
 angular.module("Mac").filter("boolean", function() {
   return function(boolean, trueString, falseString) {
@@ -12542,7 +13249,6 @@ angular.module("Mac").filter("false", function() {
   };
 });
 
-
 angular.module("Mac").filter("pluralize", [
   "util", function(util) {
     return function(string, count, includeCount) {
@@ -12554,16 +13260,17 @@ angular.module("Mac").filter("pluralize", [
   }
 ]);
 
-
 angular.module("Mac").filter("timestamp", [
   "util", function(util) {
     var _createTimestamp;
+
     _createTimestamp = function(count, noun) {
       noun = util.pluralize(noun, count);
       return "" + count + " " + noun + " ago";
     };
     return function(time) {
       var currentTime, days, hours, minutes, months, secondsAgo, weeks, years;
+
       time = +time;
       currentTime = Math.round(Date.now() / 1000);
       secondsAgo = currentTime - time;
@@ -12607,103 +13314,621 @@ var __slice = [].slice;
 angular.module("Mac").filter("underscoreString", function() {
   return function() {
     var fn, params, string;
+
     string = arguments[0], fn = arguments[1], params = 3 <= arguments.length ? __slice.call(arguments, 2) : [];
     params.unshift(string);
     return _.string[fn].apply(this, params);
   };
 });
 
+angular.module("Mac").factory("directiveHelpers", [
+  function() {
+    return {
+      repeater: function(iterator, keyName, $scope, $element, linkerFactory, postClone) {
+        var clonedElement, cursor, item, linkerFn, nScope, _i, _len, _results,
+          _this = this;
+
+        cursor = $element;
+        _results = [];
+        for (_i = 0, _len = iterator.length; _i < _len; _i++) {
+          item = iterator[_i];
+          nScope = $scope.$new();
+          nScope[keyName] = item;
+          if (linkerFn = linkerFactory(item)) {
+            clonedElement = linkerFn(nScope, function(clone) {
+              cursor.after(clone);
+              return cursor = clone;
+            });
+            _results.push(postClone && postClone(item, clonedElement));
+          } else {
+            _results.push(void 0);
+          }
+        }
+        return _results;
+      }
+    };
+  }
+]);
+
+var __slice = [].slice;
+
+angular.module("Mac").factory("hookableDirectiveController", [
+  function() {
+    var HookableDirectiveController;
+
+    return HookableDirectiveController = (function() {
+      function HookableDirectiveController(scope, element, attrs) {
+        this.scope = scope;
+        this.element = element;
+        this.attrs = attrs;
+        this._callbacks = [];
+      }
+
+      HookableDirectiveController.prototype.registerCallback = function(callback) {
+        return this._callbacks.push(callback);
+      };
+
+      HookableDirectiveController.prototype.fireCallbacks = function() {
+        var args;
+
+        args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+        return this._callbacks.forEach(function(callback) {
+          return callback.apply(null, args);
+        });
+      };
+
+      return HookableDirectiveController;
+
+    })();
+  }
+]);
+
+angular.module("Mac").factory("BaseColumn", [
+  function() {
+    var BaseColumn;
+
+    return BaseColumn = (function() {
+      function BaseColumn() {}
+
+      return BaseColumn;
+
+    })();
+  }
+]);
+
+angular.module("Mac").factory("SectionController", [
+  function() {
+    var SectionController;
+
+    return SectionController = (function() {
+      function SectionController(section) {
+        this.section = section;
+      }
+
+      SectionController.prototype.cellValue = function(row, colName) {
+        return this.defaultCellValue(row, colName);
+      };
+
+      SectionController.prototype.defaultCellValue = function(row, colName) {
+        return row.model[colName];
+      };
+
+      return SectionController;
+
+    })();
+  }
+]);
+
+angular.module("Mac").factory("Row", [
+  function() {
+    var Row;
+
+    return Row = (function() {
+      function Row(section, model, cells, cellsMap) {
+        this.section = section;
+        this.model = model;
+        this.cells = cells != null ? cells : [];
+        this.cellsMap = cellsMap != null ? cellsMap : {};
+      }
+
+      Row.prototype.toJSON = function() {
+        return {
+          cells: this.cells
+        };
+      };
+
+      return Row;
+
+    })();
+  }
+]);
+
+angular.module("Mac").factory("tableComponents", [
+  "SectionController", "Row", function(SectionController, Row) {
+    return {
+      rowFactory: function(section, model) {
+        return new Row(section, model);
+      },
+      columnFactory: function(colName, proto) {
+        var Column;
+
+        if (proto == null) {
+          proto = {};
+        }
+        Column = function(colName) {
+          this.colName = colName;
+        };
+        Column.prototype = proto;
+        return new Column(colName);
+      },
+      sectionFactory: function(table, sectionName, controller) {
+        var Section;
+
+        if (controller == null) {
+          controller = SectionController;
+        }
+        Section = function(controller, table, name, rows) {
+          this.table = table;
+          this.name = name;
+          this.rows = rows != null ? rows : [];
+          this.ctrl = new controller(this);
+          this.toJSON = function() {
+            return {
+              rows: this.rows
+            };
+          };
+        };
+        return new Section(controller, table, sectionName);
+      },
+      cellFactory: function(row, proto) {
+        var Cell;
+
+        if (proto == null) {
+          proto = {};
+        }
+        Cell = function(row, column) {
+          this.row = row;
+          this.column = column;
+          this.value = function() {
+            var _ref, _ref1;
+
+            return (_ref = this.row) != null ? (_ref1 = _ref.section) != null ? _ref1.ctrl.cellValue(this.row, this.colName) : void 0 : void 0;
+          };
+          this.get = function(name) {
+            var _base, _ref, _ref1;
+
+            return (_ref = this.row) != null ? (_ref1 = _ref.section) != null ? typeof (_base = _ref1.ctrl)[name] === "function" ? _base[name](this.row, this.colName) : void 0 : void 0 : void 0;
+          };
+          this.toJSON = function() {
+            return {
+              value: this.value(),
+              column: this.column.colName
+            };
+          };
+        };
+        Cell.prototype = proto;
+        return new Cell(row, proto);
+      }
+    };
+  }
+]);
+
+angular.module("Mac").factory("dynamicColumnsFunction", function() {
+  return function(models) {
+    var columns, first, key, model;
+
+    first = models[0];
+    columns = (function() {
+      var _results;
+
+      _results = [];
+      for (key in first) {
+        model = first[key];
+        _results.push(key);
+      }
+      return _results;
+    })();
+    return this.set(columns);
+  };
+});
+
+angular.module("Mac").factory("ColumnsController", [
+  "tableComponents", "dynamicColumnsFunction", function(tableComponents, dynamicColumnsFunction) {
+    var ColumnsController;
+
+    return ColumnsController = (function() {
+      function ColumnsController(table) {
+        this.table = table;
+      }
+
+      ColumnsController.prototype.dynamic = dynamicColumnsFunction;
+
+      ColumnsController.prototype.blank = function() {
+        var colName, obj, _i, _len, _ref;
+
+        obj = {};
+        _ref = this.table.columnsOrder;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          colName = _ref[_i];
+          obj[colName] = null;
+        }
+        return obj;
+      };
+
+      ColumnsController.prototype.reset = function() {
+        this.table.columnsOrder = [];
+        this.table.columns = [];
+        return this.table.columnsMap = {};
+      };
+
+      ColumnsController.prototype.set = function(columns) {
+        var colName, column, _i, _len, _results;
+
+        this.reset();
+        this.table.columnsOrder = columns;
+        _results = [];
+        for (_i = 0, _len = columns.length; _i < _len; _i++) {
+          colName = columns[_i];
+          column = tableComponents.columnFactory(colName, this.table.baseColumn);
+          this.table.columnsMap[colName] = column;
+          _results.push(this.table.columns.push(column));
+        }
+        return _results;
+      };
+
+      ColumnsController.prototype.syncOrder = function() {
+        var cells, colName, columns, row, section, sectionName, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3;
+
+        _ref = this.table.sections;
+        for (sectionName in _ref) {
+          section = _ref[sectionName];
+          _ref1 = section.rows;
+          for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+            row = _ref1[_i];
+            cells = [];
+            _ref2 = this.table.columnsOrder;
+            for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
+              colName = _ref2[_j];
+              cells.push(row.cellsMap[colName]);
+            }
+            row.cells = cells;
+          }
+        }
+        columns = [];
+        _ref3 = this.table.columnsOrder;
+        for (_k = 0, _len2 = _ref3.length; _k < _len2; _k++) {
+          colName = _ref3[_k];
+          columns.push(this.table.columnsMap[colName]);
+        }
+        return this.table.columns = columns;
+      };
+
+      return ColumnsController;
+
+    })();
+  }
+]);
+
+angular.module("Mac").factory("RowsController", [
+  "tableComponents", function(tableComponents) {
+    var RowsController;
+
+    return RowsController = (function() {
+      function RowsController(table) {
+        this.table = table;
+      }
+
+      RowsController.prototype.make = function(section, model) {
+        var cell, colName, column, row, _ref;
+
+        row = tableComponents.rowFactory(section, model);
+        _ref = this.table.columnsMap;
+        for (colName in _ref) {
+          column = _ref[colName];
+          cell = tableComponents.cellFactory(row, column);
+          row.cellsMap[colName] = cell;
+          row.cells.push(cell);
+        }
+        return row;
+      };
+
+      RowsController.prototype.set = function(sectionName, models, sectionController) {
+        var model, rows, section, _i, _len;
+
+        this.table.sections[sectionName] = section = tableComponents.sectionFactory(this.table, sectionName, sectionController);
+        if ((models != null ? models.length : void 0) == null) {
+          return;
+        }
+        if (this.table.dynamicColumns) {
+          this.table.columnsCtrl.dynamic(models);
+        }
+        rows = [];
+        for (_i = 0, _len = models.length; _i < _len; _i++) {
+          model = models[_i];
+          rows.push(this.make(section, model));
+        }
+        section.rows = rows;
+        return this.table.columnsCtrl.syncOrder();
+      };
+
+      RowsController.prototype.insert = function(sectionName, model, index) {
+        var row, section;
+
+        section = this.table.sections[sectionName];
+        row = this.make(section, model);
+        return section.rows.splice(index, 0, row);
+      };
+
+      RowsController.prototype.remove = function(sectionName, index) {
+        var section;
+
+        section = this.table.sections[sectionName];
+        return section.rows.splice(index, 1);
+      };
+
+      return RowsController;
+
+    })();
+  }
+]);
+
+angular.module("Mac").factory("Table", [
+  "BaseColumn", "ColumnsController", "RowsController", function(BaseColumn, ColumnsController, RowsController) {
+    var Table;
+
+    return Table = (function() {
+      function Table(columns, baseColumn) {
+        if (columns == null) {
+          columns = [];
+        }
+        this.baseColumn = baseColumn != null ? baseColumn : new BaseColumn();
+        this.sections = {};
+        this.columns = [];
+        this.columnsCtrl = new ColumnsController(this);
+        this.rowsCtrl = new RowsController(this);
+        this.dynamicColumns = columns === 'dynamic';
+        if (!this.dynamicColumns) {
+          this.columnsCtrl.set(columns);
+        }
+        return;
+      }
+
+      Table.prototype.load = function(sectionName, models, sectionController) {
+        return this.rowsCtrl.set(sectionName, models, sectionController);
+      };
+
+      Table.prototype.insert = function(sectionName, model, index) {
+        if (index == null) {
+          index = 0;
+        }
+        return this.rowsCtrl.insert(sectionName, model, index);
+      };
+
+      Table.prototype.remove = function(sectionName, index) {
+        if (index == null) {
+          index = 0;
+        }
+        return this.rowsCtrl.remove(sectionName, index);
+      };
+
+      Table.prototype.blankRow = function() {
+        return this.columnsCtrl.blank();
+      };
+
+      Table.prototype.toJSON = function() {
+        return {
+          sections: this.sections
+        };
+      };
+
+      return Table;
+
+    })();
+  }
+]);
+
 var util,
   __hasProp = {}.hasOwnProperty;
 
 util = angular.module("Mac.Util", []);
 
-util.factory("util", function() {
-  var ArrayProto, FuncProto, ObjProto, nativeIsArray, toString;
-  ArrayProto = Array.prototype;
-  ObjProto = Object.prototype;
-  FuncProto = Function.prototype;
-  toString = ObjProto.toString;
-  nativeIsArray = Array.isArray;
-  return {
-    _inflectionConstants: {
-      uncountables: ["sheep", "fish", "moose", "series", "species", "money", "rice", "information", "info", "equipment", "min"],
-      irregulars: {
-        child: "children",
-        man: "men",
-        woman: "women",
-        person: "people",
-        ox: "oxen",
-        goose: "geese"
+util.factory("util", [
+  "$filter", function($filter) {
+    var ArrayProto, FuncProto, ObjProto, nativeIsArray, toString;
+
+    ArrayProto = Array.prototype;
+    ObjProto = Object.prototype;
+    FuncProto = Function.prototype;
+    toString = ObjProto.toString;
+    nativeIsArray = Array.isArray;
+    return {
+      _inflectionConstants: {
+        uncountables: ["sheep", "fish", "moose", "series", "species", "money", "rice", "information", "info", "equipment", "min"],
+        irregulars: {
+          child: "children",
+          man: "men",
+          woman: "women",
+          person: "people",
+          ox: "oxen",
+          goose: "geese"
+        },
+        pluralizers: [[/(quiz)$/i, "$1zes"], [/([m|l])ouse$/i, "$1ice"], [/(matr|vert|ind)(ix|ex)$/i, "$1ices"], [/(x|ch|ss|sh)$/i, "$1es"], [/([^aeiouy]|qu)y$/i, "$1ies"], [/(?:([^f])fe|([lr])f)$/i, "$1$2ves"], [/sis$/i, "ses"], [/([ti])um$/i, "$1a"], [/(buffal|tomat)o$/i, "$1oes"], [/(bu)s$/i, "$1ses"], [/(alias|status)$/i, "$1es"], [/(octop|vir)us$/i, "$1i"], [/(ax|test)is$/i, "$1es"], [/x$/i, "xes"], [/s$/i, "s"], [/$/, "s"]]
       },
-      pluralizers: [[/(quiz)$/i, "$1zes"], [/([m|l])ouse$/i, "$1ice"], [/(matr|vert|ind)(ix|ex)$/i, "$1ices"], [/(x|ch|ss|sh)$/i, "$1es"], [/([^aeiouy]|qu)y$/i, "$1ies"], [/(?:([^f])fe|([lr])f)$/i, "$1$2ves"], [/sis$/i, "ses"], [/([ti])um$/i, "$1a"], [/(buffal|tomat)o$/i, "$1oes"], [/(bu)s$/i, "$1ses"], [/(alias|status)$/i, "$1es"], [/(octop|vir)us$/i, "$1i"], [/(ax|test)is$/i, "$1es"], [/x$/i, "xes"], [/s$/i, "s"], [/$/, "s"]]
-    },
-    pluralize: function(string, count, includeCount) {
-      var irregulars, isUppercase, lowercaseWord, pluralizedString, pluralizedWord, pluralizer, pluralizers, uncountables, word, _i, _len, _ref;
-      if (count == null) {
-        count = 2;
-      }
-      if (includeCount == null) {
-        includeCount = false;
-      }
-      if (!((string != null ? string.trim().length : void 0) > 0)) {
-        return string;
-      }
-      _ref = this._inflectionConstants, pluralizers = _ref.pluralizers, uncountables = _ref.uncountables, irregulars = _ref.irregulars;
-      word = string.split(/\s/).pop();
-      isUppercase = word.toUpperCase() === word;
-      lowercaseWord = word.toLowerCase();
-      pluralizedWord = count === 1 || uncountables.indexOf(lowercaseWord) >= 0 ? word : null;
-      if (pluralizedWord == null) {
-        if (irregulars[lowercaseWord] != null) {
-          pluralizedWord = irregulars[lowercaseWord];
+      pluralize: function(string, count, includeCount) {
+        var irregulars, isUppercase, lowercaseWord, pluralizedString, pluralizedWord, pluralizer, pluralizers, uncountables, word, _i, _len, _ref;
+
+        if (includeCount == null) {
+          includeCount = false;
         }
-      }
-      if (pluralizedWord == null) {
-        for (_i = 0, _len = pluralizers.length; _i < _len; _i++) {
-          pluralizer = pluralizers[_i];
-          if (!(pluralizer[0].test(lowercaseWord))) {
-            continue;
+        if (!((string != null ? string.trim().length : void 0) > 0)) {
+          return string;
+        }
+        if (includeCount && isNaN(+count)) {
+          return "";
+        }
+        if (count == null) {
+          count = 2;
+        }
+        _ref = this._inflectionConstants, pluralizers = _ref.pluralizers, uncountables = _ref.uncountables, irregulars = _ref.irregulars;
+        word = string.split(/\s/).pop();
+        isUppercase = word.toUpperCase() === word;
+        lowercaseWord = word.toLowerCase();
+        pluralizedWord = count === 1 || uncountables.indexOf(lowercaseWord) >= 0 ? word : null;
+        if (pluralizedWord == null) {
+          if (irregulars[lowercaseWord] != null) {
+            pluralizedWord = irregulars[lowercaseWord];
           }
-          pluralizedWord = word.replace(pluralizer[0], pluralizer[1]);
-          break;
         }
-      }
-      pluralizedWord || (pluralizedWord = word);
-      if (isUppercase) {
-        pluralizedWord = pluralizedWord.toUpperCase();
-      }
-      pluralizedString = string.slice(0, -word.length) + pluralizedWord;
-      if (includeCount) {
-        return "" + count + " " + pluralizedString;
-      } else {
-        return pluralizedString;
-      }
-    },
-    capitalize: function(string) {
-      return string[0].toUpperCase() + string.slice(1);
-    },
-    uncapitalize: function(string) {
-      return string[0].toLowerCase() + string.slice(1);
-    },
-    isArray: nativeIsArray || function(obj) {
-      return toString.call(obj) === "[object Array]";
-    },
-    extendAttributes: function(prefix, defaults, attributes) {
-      var key, macKey, output, value, _ref, _ref1;
-      output = {};
-      for (key in defaults) {
-        if (!__hasProp.call(defaults, key)) continue;
-        value = defaults[key];
-        macKey = "" + prefix + (this.capitalize(key));
-        output[key] = attributes[macKey] != null ? attributes[macKey] || true : value;
-        if ((_ref = output[key]) === "true" || _ref === "false") {
-          output[key] = output[key] === "true";
-        } else if (((_ref1 = output[key]) != null ? _ref1.length : void 0) > 0 && !isNaN(+output[key])) {
-          output[key] = +output[key];
+        if (pluralizedWord == null) {
+          for (_i = 0, _len = pluralizers.length; _i < _len; _i++) {
+            pluralizer = pluralizers[_i];
+            if (!(pluralizer[0].test(lowercaseWord))) {
+              continue;
+            }
+            pluralizedWord = word.replace(pluralizer[0], pluralizer[1]);
+            break;
+          }
         }
+        pluralizedWord || (pluralizedWord = word);
+        if (isUppercase) {
+          pluralizedWord = pluralizedWord.toUpperCase();
+        }
+        pluralizedString = string.slice(0, -word.length) + pluralizedWord;
+        if (includeCount) {
+          return "" + ($filter("number")(count)) + " " + pluralizedString;
+        } else {
+          return pluralizedString;
+        }
+      },
+      capitalize: function(string) {
+        return _.string.capitalize(string);
+      },
+      uncapitalize: function(string) {
+        return string[0].toLowerCase() + string.slice(1);
+      },
+      toCamelCase: function(string) {
+        return _.string.camelize(string);
+      },
+      toSnakeCase: function(string) {
+        return _.string.underscored(string);
+      },
+      convertKeysToCamelCase: function(object) {
+        var key, result, value;
+
+        result = {};
+        for (key in object) {
+          if (!__hasProp.call(object, key)) continue;
+          value = object[key];
+          key = this.toCamelCase(key);
+          if (typeof value === "object" && (value != null ? value.constructor : void 0) !== Array) {
+            value = this.convertKeysToCamelCase(value);
+          }
+          result[key] = value;
+        }
+        return result;
+      },
+      convertKeysToSnakeCase: function(object) {
+        var key, result, value;
+
+        result = {};
+        for (key in object) {
+          if (!__hasProp.call(object, key)) continue;
+          value = object[key];
+          key = this.toSnakeCase(key);
+          if (typeof value === "object" && (value != null ? value.constructor : void 0) !== Array) {
+            value = this.convertKeysToSnakeCase(value);
+          }
+          result[key] = value;
+        }
+        return result;
+      },
+      isArray: nativeIsArray || function(obj) {
+        return toString.call(obj) === "[object Array]";
+      },
+      _urlRegex: /(?:(?:(http[s]{0,1}:\/\/)(?:(www|[\d\w\-]+)\.){0,1})|(www|[\d\w\-]+)\.)([\d\w\-]+)\.([A-Za-z]{2,6})(:[\d]*){0,1}(\/?[\d\w\-\?\,\'\/\\\+&amp;%\$#!\=~\.]*){0,1}/gi,
+      validateUrl: function(url) {
+        var match;
+
+        match = this._urlRegex.exec(url);
+        if (match != null) {
+          match = {
+            url: match[0],
+            protocol: match[1] || "http://",
+            subdomain: match[2] || match[3],
+            name: match[4],
+            domain: match[5],
+            port: match[6],
+            path: match[7] || "/"
+          };
+          match["url"] = match.url;
+        }
+        return match;
+      },
+      validateEmail: function(email) {
+        var emailRegex;
+
+        emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+        return emailRegex.test(email);
+      },
+      getQueryString: function(url, name) {
+        var regex, regexS, results;
+
+        name = name.replace(/[[]/, "\[").replace(/[]]/, "\]");
+        regexS = "[\?&]" + name + "=([^&#]*)";
+        regex = new RegExp(regexS);
+        results = regex.exec(url);
+        if (results != null) {
+          return results[1];
+        } else {
+          return "";
+        }
+      },
+      parseUrlPath: function(fullPath) {
+        var path, pathComponents, queries, queryString, queryStrings, urlComponents, values, verb, _i, _len, _ref;
+
+        urlComponents = fullPath.split("?");
+        pathComponents = urlComponents[0].split("/");
+        path = pathComponents.slice(0, pathComponents.length - 1).join("/");
+        verb = _.last(pathComponents);
+        queries = {};
+        if (urlComponents.length > 1) {
+          queryStrings = _.last(urlComponents);
+          _ref = queryStrings.split("&");
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            queryString = _ref[_i];
+            values = queryString.split("=");
+            queries[values[0]] = values[1] != null ? values[1] : "";
+          }
+        }
+        return {
+          fullPath: fullPath,
+          path: path,
+          pathComponents: pathComponents,
+          verb: verb,
+          queries: queries
+        };
+      },
+      extendAttributes: function(prefix, defaults, attributes) {
+        var altKey, key, macKey, output, value, _ref, _ref1;
+
+        if (prefix == null) {
+          prefix = "";
+        }
+        output = {};
+        for (key in defaults) {
+          if (!__hasProp.call(defaults, key)) continue;
+          value = defaults[key];
+          altKey = prefix ? this.capitalize(key) : key;
+          macKey = "" + prefix + altKey;
+          output[key] = attributes[macKey] != null ? attributes[macKey] || true : value;
+          if ((_ref = output[key]) === "true" || _ref === "false") {
+            output[key] = output[key] === "true";
+          } else if (((_ref1 = output[key]) != null ? _ref1.length : void 0) > 0 && !isNaN(+output[key])) {
+            output[key] = +output[key];
+          }
+        }
+        return output;
       }
-      return output;
-    }
-  };
-});
+    };
+  }
+]);
