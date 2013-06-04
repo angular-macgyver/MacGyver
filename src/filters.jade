@@ -1,0 +1,27 @@
+extends layout
+
+block append content
+  .row.content
+    #nav.span3
+      ul.nav.nav-list.docs-sidenav(data-spy="affix", data-offset-top="0")
+        li: a(href="#underscore-string") Underscore String Filter
+        li: a(href="#pluralize-filter") Pluralize Filter
+
+    #example.span9(ng-controller='ExampleController')
+      section#underscore-string
+        .page-header: h1 Underscore String
+        h2 Example
+        .docs-example
+          p {{ "this_Is_aTestFor_Underscore_string" | underscoreString: "humanize" }}
+          p {{ "Truncating: lorem ipsum dolor sit amet, consectetur adipiscing elit." | underscoreString: "truncate": 42 }}
+          p {{ "Pruning: lorem ipsum dolor sit amet, consectetur adipiscing elit." | underscoreString: "prune": 42: "... (show more)" }}
+
+      section#pluralize-filter
+        .page-header: h1 Pluralize
+        h2 Example
+        .docs-example
+          dl.dl-horizontal
+            dt Single
+            dd {{"person" | pluralize:1}}
+            dt Multiple
+            dd {{"person" | pluralize:1500}}
