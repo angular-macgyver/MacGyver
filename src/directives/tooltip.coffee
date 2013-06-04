@@ -17,6 +17,7 @@ angular.module("Mac").directive "macTooltip", ->
   link: (scope, element, attrs) ->
     tooltip = null
     text    = ""
+    enabled = false
 
     showTip = (event) ->
       inside    = attrs.macTooltipInside?
@@ -67,17 +68,21 @@ angular.module("Mac").directive "macTooltip", ->
 
     attrs.$observe "macTooltip", (value) ->
       if value? and value
-        trigger = attrs.macTooltipTrigger or "hover"
-        text    = value
-        unless trigger in ["hover", "click"]
-          return console.error "Invalid trigger"
+        text = value
 
-        switch trigger
-          when "click"
-            element.on "click", toggle
-          when "hover"
-            element.on "mouseenter", showTip
-            element.on "mouseleave click", removeTip
+        unless enabled
+          trigger = attrs.macTooltipTrigger or "hover"
+          unless trigger in ["hover", "click"]
+            return console.error "Invalid trigger"
+
+          switch trigger
+            when "click"
+              element.on "click", toggle
+            when "hover"
+              element.on "mouseenter", showTip
+              element.on "mouseleave click", removeTip
+
+          enabled = true
 
     scope.$on "$destroy", ->
       removeTip() if tooltip?
