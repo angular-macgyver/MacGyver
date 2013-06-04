@@ -157,4 +157,8 @@ module.controller "ExampleController", ["$scope", "$timeout", "Table", "SectionC
   $scope.startDate = "01/01/2013"
   $scope.startTime = "04:42 PM"
 
+  # timestamp filter
+  $scope.fiveMinAgo   = Math.round(Date.now()/1000) - 5 * 60
+  $scope.oneDayAgo    = Math.round(Date.now()/1000) - 24 * 60 * 60
+  $scope.threeDaysAgo = Math.round(Date.now()/1000) - 72 * 60 * 60
 ]
