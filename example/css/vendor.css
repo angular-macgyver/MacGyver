@@ -9,7 +9,15 @@ section:not(:first-child){padding-top:30px}
 .docs-sidenav lifirst-child a{border-radius:6px 6px 0 0}
 .docs-sidenav lilast-child a{border-radius:0 0 6px 6px}
 .docs-sidenav .active a{position:relative;z-index:2;padding:9px 15px;border:0;text-shadow:0 1px 0 rgba(0,0,0,0.15);box-shadow:inset 1px 0 0 rgba(0,0,0,0.1),inset -1px 0 0 rgba(0,0,0,0.1)}
-.com  color #93a1a1,.lit  color #195f91,.pun,.opn,.clo  color #93a1a1,.fun  color #dc322f,.str,.atv  color #D14,.kwd,.prettyprint .tag  color #1e347b,.typ,.atn,.dec,.var  color teal,.pln  color #48484c,.prettyprint{padding:8px;background-color:#f7f7f9;border:1px solid #e1e1e8}
-&.linenums{box-shadow:inset 40px 0 0 #fbfbfc,inset 41px 0 0 #ececf0}
+.com{color:#93a1a1}
+.lit{color:#195f91}
+.pun,.opn,.clo{color:#93a1a1}
+.fun{color:#dc322f}
+.str,.atv{color:#d14}
+.kwd,.prettyprint .tag{color:#1e347b}
+.typ,.atn,.dec,.var{color:#008080}
+.pln{color:#48484c}
+.prettyprint{padding:8px;background-color:#f7f7f9;border:1px solid #e1e1e8}
+.prettyprint.linenums{box-shadow:inset 40px 0 0 #fbfbfc,inset 41px 0 0 #ececf0}
 ol.linenums{margin:0 0 0 33px;}
 ol.linenums li{padding-left:12px;color:#bebec5;line-height:20px;text-shadow:0 1px 0 #fff}
