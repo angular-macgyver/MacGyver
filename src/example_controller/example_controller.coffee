@@ -162,3 +162,5 @@ module.controller "ExampleController", ["$scope", "$timeout", "Table", "SectionC
   $scope.oneDayAgo    = Math.round(Date.now()/1000) - 24 * 60 * 60
   $scope.threeDaysAgo = Math.round(Date.now()/1000) - 72 * 60 * 60
 ]
+
+window.prettyPrint && prettyPrint()

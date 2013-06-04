@@ -16,6 +16,8 @@ block append content
           p {{ "this_Is_aTestFor_Underscore_string" | underscoreString: "humanize" }}
           p {{ "Truncating: lorem ipsum dolor sit amet, consectetur adipiscing elit." | underscoreString: "truncate": 42 }}
           p {{ "Pruning: lorem ipsum dolor sit amet, consectetur adipiscing elit." | underscoreString: "prune": 42: "... (show more)" }}
+        pre.prettyprint.linenums(ng-non-bindable)
+          | <p>{{ "this_Is_aTestFor_Underscore_string" | underscoreString: "humanize" }}</p>
 
       section#pluralize-filter
         .page-header: h1 Pluralize
@@ -26,6 +28,8 @@ block append content
             dd {{"person" | pluralize:1}}
             dt Multiple
             dd {{"person" | pluralize:1500}}
+        pre.prettyprint.linenums(ng-non-bindable)
+          | {{"person" | pluralize:1500}}
 
       section#timestamp-filter
         .page-header: h1 Timestsamp
@@ -38,3 +42,5 @@ block append content
             dd {{ oneDayAgo | timestamp }}
             dt Now - 3 days
             dd {{ threeDaysAgo | timestamp }}
+        pre.prettyprint.linenums(ng-non-bindable)
+          | {{ fiveMinAgo | timestamp }}

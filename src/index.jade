@@ -31,6 +31,13 @@ block append content
             mac-modal         = "test-modal"
             mac-modal-content = "maGyverSeasonOne"
           ) Show Modal
+        pre.prettyprint.linenums(ng-non-bindable)
+          | <mac-modal id="test-modal" keyboard="keyboard">
+          |   <div ng-controller="modalController" class="modal-content">
+          |     <h1>Just another modal</h1>
+          |   </div>
+          | </mac-modal>
+          | <button mac-modal="test-modal" mac-modal-content="maGyverSeasonOne" class="btn">Show Modal</button>
 
       section#tooltip
         .page-header: h1 Tooltip
@@ -41,12 +48,16 @@ block append content
             li: a(href="#", mac-tooltip="Tooltip on bottom", mac-tooltip-direction="bottom") Tooltip on bottom
             li: a(href="#", mac-tooltip="Tooltip on left", mac-tooltip-direction="left") Tooltip on left
             li: a(href="#", mac-tooltip="Tooltip on right", mac-tooltip-direction="right") Tooltip on right
+        pre.prettyprint.linenums(ng-non-bindable)
+          | <a href="#" mac-tooltip="Tooltip on bottom" mac-tooltip-direction="bottom">Tooltip on bottom</a>
 
       section#mac-click
         .page-header: h1 Mac-click
         h3 Example
         .docs-example
           .btn(mac-click="what()") Button
+        pre.prettyprint.linenums(ng-non-bindable)
+          | <div mac-click="action()" class="btn">Click</div>
 
       section#autocomplete
         .page-header: h1 Autocomplete
@@ -58,6 +69,13 @@ block append content
             mac-autocomplete-on-success  = "onSuccess(data)"
             mac-autocomplete-placeholder = "'Autocomplete'"
           )
+        pre.prettyprint.linenums(ng-non-bindable)
+          | <mac-autocomplete
+          |   mac-autocomplete-url="autocompleteUrl"
+          |   mac-autocomplete-query="q"
+          |   mac-autocomplete-on-success="onSuccess(data)"
+          |   mac-autocomplete-placeholder="'Autocomplete'">
+          | </mac-autocomplete>
 
       section#tag-autocomplete
         .page-header: h1 Tag Autocomplete
@@ -71,6 +89,13 @@ block append content
             mac-tag-autocomplete-label       = "name"
             mac-tag-autocomplete-placeholder = "tagAutocompletePlaceholder"
           )
+        pre.prettyprint.linenums(ng-non-bindable)
+          | <mac-autocomplete
+          |   mac-autocomplete-url="autocompleteUrl"
+          |   mac-autocomplete-query="q"
+          |   mac-autocomplete-on-success="onSuccess(data)"
+          |   mac-autocomplete-placeholder="'Autocomplete'">
+          | </mac-autocomplete>
 
         h2 Example with autocomplete disabled
         .docs-example
@@ -81,6 +106,14 @@ block append content
             mac-tag-autocomplete-label       = ""
             mac-tag-autocomplete-disabled
           )
+        pre.prettyprint.linenums(ng-non-bindable)
+          | <mac-tag-autocomplete
+          |   mac-tag-autocomplete-selected="tagAutocompleteDisabledSelected"
+          |   mac-tag-autocomplete-placeholder="tagAutocompletePlaceholder"
+          |   mac-tag-autocomplete-value=""
+          |   mac-tag-autocomplete-label=""
+          |   mac-tag-autocomplete-disabled="mac-tag-autocomplete-disabled">
+          | </mac-tag-autocomplete>
 
         h2 Example with custom actions on events
         .docs-example
@@ -95,6 +128,18 @@ block append content
             mac-tag-autocomplete-on-keyup    = "tagAutocompleteOnKeyup()"
             mac-tag-autocomplete-disabled
           )
+        pre.prettyprint.linenums(ng-non-bindable)
+          | <mac-tag-autocomplete
+          |   mac-tag-autocomplete-selected="tagAutocompleteEvents"
+          |   mac-tag-autocomplete-placeholder="tagAutocompletePlaceholder"
+          |   mac-tag-autocomplete-value="key"
+          |   mac-tag-autocomplete-label="key"
+          |   mac-tag-autocomplete-on-enter="tagAutocompleteOnSelected(item)"
+          |   mac-tag-autocomplete-events="blur,keyup"
+          |   mac-tag-autocomplete-on-blur="tagAutocompleteOnBlur($event, item)"
+          |   mac-tag-autocomplete-on-keyup="tagAutocompleteOnKeyup()"
+          |   mac-tag-autocomplete-disabled="mac-tag-autocomplete-disabled">
+          | </mac-tag-autocomplete>
 
         button(ng-click="tagAutocompleteClearText()") Clear Text Input
 
@@ -106,6 +151,8 @@ block append content
             mac-datepicker-id    = "input-start-date"
             mac-datepicker-model = "startDate"
           )
+        pre.prettyprint.linenums(ng-non-bindable)
+          | <mac-datepicker mac-datepicker-id="input-start-date" mac-datepicker-model="startDate"></mac-datepicker>
 
       section#time-input
         .page-header: h1 Time input
@@ -116,6 +163,12 @@ block append content
             mac-time-model   = "myStartTime"
             mac-time-default = "11:59 PM"
           )
+        pre.prettyprint.linenums(ng-non-bindable)
+          | <mac-time
+          |   mac-time-id="input-start-time"
+          |   mac-time-model="myStartTime"
+          |   mac-time-default="11:59 PM">
+          | </mac-time>
 
       section#tag-input
         .page-header: h1 Tag Input
@@ -129,17 +182,30 @@ block append content
             mac-tag-input-value       = "id"
             mac-tag-input-label       = "name"
           )
+        pre.prettyprint.linenums(ng-non-bindable)
+          | <mac-tag-input
+          |   mac-tag-input-tags="extraTagInputs"
+          |   mac-tag-input-placeholder="Select all target countries"
+          |   mac-tag-input-selected="selected"
+          |   mac-tag-input-value="id"
+          |   mac-tag-input-label="name">
+          | </mac-tag-input>
+
       section#spinner
         .page-header: h1 Spinner
         h2 Example
         .docs-example
           mac-spinner
+        pre.prettyprint.linenums(ng-non-bindable)
+          | <mac-spinner></mac-spinner>
 
       section#blur
         .page-header: h1 Blur
         h2 Example
         .docs-example
           input(type="text", mac-model-blur="onTextBlur()")
+        pre.prettyprint.linenums(ng-non-bindable)
+          | <input type="text" mac-model-blur="onTextBlur()"/>
 
       section#file-upload
         .page-header: h1 File Upload
@@ -160,3 +226,14 @@ block append content
                 mac-upload-drop-zone  = ".example-hit-area"
                 mac-upload-disabled   = "!fileUploaderEnabled"
               )
+        pre.prettyprint.linenums(ng-non-bindable)
+          | <input type="file"
+          |   name="files[]"
+          |   multiple="multiple"
+          |   mac-upload="mac-upload"
+          |   mac-upload-route="uploadRoute"
+          |   mac-upload-success="fileUploadSuccess($data, $status)"
+          |   mac-upload-error="fileUploadError($response, $data, $status)"
+          |   mac-upload-submit="fileUploadSubmit($event, $response)"
+          |   mac-upload-drop-zone=".example-hit-area"
+          |   mac-upload-disabled="!fileUploaderEnabled"/>
