@@ -93,7 +93,11 @@ module.exports = (grunt) ->
         options:
           use: [require "nib"]
         files:
-          "tmp/app.css":    ["src/css/*.styl"]
+          "tmp/app.css": ["src/css/*.styl"]
+      vendor:
+        options:
+          use: [require "nib"]
+        files:
           "tmp/vendor.css": "vendor/vendor.styl"
 
     #
@@ -155,6 +159,10 @@ module.exports = (grunt) ->
       css:
         files: ["src/css/*.styl"]
         tasks: ["stylus", "concat:appCss", "clean"]
+        options: interrupt: true
+      vendorCss:
+        files: ["vendor/vendor.styl"]
+        tasks: ["stylus:vendor", "concat:vendorCss", "clean"]
         options: interrupt: true
       jade:
         files: ["src/**/*.jade"]
