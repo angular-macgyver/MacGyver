@@ -1,15 +1,21 @@
-angular.module("Mac").factory "BaseColumn", [ ->
-  class BaseColumn
+angular.module("Mac").factory "TableViewBaseColumn", [ ->
+  class TableViewBaseColumn
 ]
 
-angular.module("Mac").factory "SectionController", [ ->
-  class SectionController
+angular.module("Mac").factory "TableViewSectionController", [ ->
+  class TableViewSectionController
     constructor: (@section) ->
     # Value should probably be overridden by the user
     cellValue: (row, colName) -> @defaultCellValue(row, colName)
     # Since accessing a models key is useful
     # we keep this as a separate method
     defaultCellValue: (row, colName) -> row.model[colName]
+]
+
+# For legacy support only
+angular.module("Mac").factory "SectionController", [
+  "TableViewSectionController"
+  (TableViewSectionController) -> TableViewSectionController
 ]
 
 angular.module("Mac").factory "Row", [ ->
@@ -19,10 +25,10 @@ angular.module("Mac").factory "Row", [ ->
 ]
 
 angular.module("Mac").factory "tableComponents", [
-  "SectionController"
+  "TableViewSectionController"
   "Row"
   (
-    SectionController
+    TableViewSectionController
     Row
   ) ->
     rowFactory: (section, model) ->
@@ -33,7 +39,7 @@ angular.module("Mac").factory "tableComponents", [
       Column.prototype = proto
       return new Column(colName)
 
-    sectionFactory: (table, sectionName, controller = SectionController) ->
+    sectionFactory: (table, sectionName, controller = TableViewSectionController) ->
       Section = (controller, @table, @name, @rows = []) ->
         @ctrl   = new controller(this)
         @toJSON = -> rows: @rows
@@ -153,16 +159,21 @@ angular.module("Mac").factory "RowsController", [
 ]
 
 angular.module("Mac").factory "Table", [
-    "BaseColumn"
+    "TableViewBaseColumn"
     "ColumnsController"
     "RowsController"
     (
-        BaseColumn
+        TableViewBaseColumn
         ColumnsController
         RowsController
     ) ->
+      # Helper functions
+      convertObjectModelsToArray = (models) ->
+        if models and not angular.isArray models then [models] else models
+
+      # The Table class
       class Table
-        constructor: (columns = [], @baseColumn = new BaseColumn()) ->
+        constructor: (columns = [], @baseColumn = new TableViewBaseColumn()) ->
           @sections       = {}
           @columns        = []
           @columnsCtrl    = new ColumnsController(this)
@@ -173,6 +184,7 @@ angular.module("Mac").factory "Table", [
           return
 
         load: (sectionName, models, sectionController) ->
+          models = convertObjectModelsToArray models
           @rowsCtrl.set(sectionName, models, sectionController)
 
         insert: (sectionName, model, index = 0) ->

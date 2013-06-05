@@ -10,6 +10,9 @@ angular.module("Mac").directive "macTableV2", [ "Table", (Table) ->
     # Bootstrap our template
     # Reduces the amount of setup on the users end when creating a new table
 
+    # Cache our selectors
+    headerSectionElement = element.find("[table-section=header]")
+
     # If we find the initial-width directive we can assume that the parent
     # should have the mac-columns directive
     element.find("[initial-width]")
@@ -24,7 +27,7 @@ angular.module("Mac").directive "macTableV2", [ "Table", (Table) ->
 
     # Resizable?
     if attr.resizableColumns?
-      element.find("[table-section=header]")
+      headerSectionElement
         .find("[cell-template]").find(".cell-wrapper")
         .attr("mac-resizable-column", "")
         .attr("mac-resizable", "")
@@ -32,22 +35,28 @@ angular.module("Mac").directive "macTableV2", [ "Table", (Table) ->
 
     # Reorderable?
     if attr.reorderableColumns?
-      element.find("[table-section=header] [table-row]")
+      headerSectionElement
+        .find("[table-row]")
         .attr("mac-reorderable", "[cell-template]")
         .attr("mac-reorderable-columns", "")
 
+    # Generate our boilerplate ng-repeat on rows if there isn't on set already
+    element.find("[table-row]")
+      .not("[table-row][ng-repeat]")
+      .attr("ng-repeat", "row in section.rows")
+
     # Generating the boilerplate initial-width calculations is a drag,
     # lets do that automatically looking for "auto" in initial-width
-    autoWidthTemplates = element.find("[initial-width=auto]")
+    autoWidthTemplates = headerSectionElement.find("[initial-width=auto]")
     if autoWidthTemplates.length
-      autoWidthTemplates.each ->
-        siblings       = $(this).siblings("[initial-width]")
-        hardsetPercent = 0
-        siblings.each ->
-          hardsetPercent += +$(this).attr('initial-width').replace "%", ""
-        initialWidthExp =
-          "{{(100/(table.columns.length - #{siblings.length})) - (#{hardsetPercent}/(table.columns.length - #{siblings.length}))}}%"
-        $(this).attr "initial-width",  initialWidthExp
+      siblingTemplates = headerSectionElement.find("[initial-width]").not("[initial-width = auto]")
+      remainingPercent = 100
+      siblingTemplates.each ->
+        remainingPercent -= +$(this).attr('initial-width').replace "%", ""
+      initialWidthExp =
+        "{{#{remainingPercent} / (table.columns.length - #{siblingTemplates.length})}}%"
+      # Set each auto width template with our expression
+      autoWidthTemplates.attr "initial-width",  initialWidthExp
 
     ($scope, $element, $attr, controller) ->
       controller.$element = $element
