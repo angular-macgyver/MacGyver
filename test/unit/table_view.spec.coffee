@@ -2,8 +2,8 @@ describe "Table Data", ->
   beforeEach module "Mac"
 
   describe "Normal Table Data", ->
-    beforeEach inject ($rootScope, Table, SectionController) ->
-      class BodySectionController extends SectionController
+    beforeEach inject ($rootScope, Table, TableViewSectionController) ->
+      class BodySectionController extends TableViewSectionController
         cellValue: (row, colName) ->
             switch colName
                 when "fullName" then "#{row.model.first_name} #{row.model.last_name}"
@@ -70,9 +70,9 @@ describe "Table Data", ->
       expect(table.sections.body.rows.length).toBe 3
       expect(table.sections.body.rows[1].cells[0].value()).toBe "Ringo Star"
 
-    it "can total a column", inject (SectionController) ->
+    it "can total a column", inject (TableViewSectionController) ->
       table = @scope.table
-      class FooterController extends SectionController
+      class FooterController extends TableViewSectionController
         cellValue: (row, colName) ->
           if colName is "age"
             total = 0
@@ -117,10 +117,16 @@ describe "Table Data", ->
       table.load "stones", stones
       expect(table.sections.stones.rows[0].cells[0].colName).toBe "age"
 
+    it "doesn't need to wrap a single model in an array to load it into a section", ->
+      table    = @scope.table
+      oneStone = {first_name: "Mick", last_name: "Jagger", age: 30}
+      table.load "stones", oneStone
+      expect(table.sections.stones.rows.length).toBe 1
+
     describe "Dynamic Table", ->
-      beforeEach inject ($rootScope, Table, SectionController) ->
+      beforeEach inject ($rootScope, Table, TableViewSectionController) ->
         # Our custom header controller, we'll use this later
-        class HeaderController extends SectionController
+        class HeaderController extends TableViewSectionController
             cellValue: (row, colName) -> colName.replace(/_/g,' ')
 
          models = [
@@ -191,8 +197,8 @@ describe "Table View", ->
       $compile = _$compile_
       scope = $rootScope.$new()
       models = [
-          {first_name: "Paul", last_name: "McCartney"}
-          {first_name: "John", last_name: "Lennon"} ]
+          {first_name: "Paul", last_name: "McCartney", band: "Beatles", born: "18 June 1942"}
+          {first_name: "John", last_name: "Lennon", band: "Beatles", born: "9 October 1940"} ]
       columns = ["first_name", "last_name"]
 
     describe "Table Structure", ->
@@ -200,17 +206,17 @@ describe "Table View", ->
       template =
       """<table mac-table-v2 columns="tableColumns">
           <thead table-section="header">
-            <tr table-row ng-repeat="row in section.rows">
+            <tr table-row>
               <th cell-template initial-width="auto">Header Cell</th>
             </tr>
           </thead>
           <tbody table-section="body" models="tableData">
-            <tr table-row ng-repeat="row in section.rows">
-              <th cell-template initial-width="auto">{{cell.value()}}</th>
+            <tr table-row>
+              <td cell-template>{{cell.value()}}</td>
             </tr>
           </tbody>
           <tfoot table-section="footer">
-            <tr table-row ng-repeat="row in section.rows">
+            <tr table-row>
               <td cell-template>Footer Cell</td>
             </tr>
           </tfoot>
@@ -247,12 +253,52 @@ describe "Table View", ->
       it "Should set mac-columns attribute on parent of initial-width directives", ->
         expect(element.find("[table-section=header] [table-row][mac-columns]").length).toBe 1
 
-      it "Should set a width attribute on every cell-template", ->
-        # Counts header (1*2) + body (2*2)
-        expect(element.find("[cell-template][width]").length).toBe 6
+      it "Should set a width attribute on every header cell-template", ->
+        # Counts header (1*2)
+        expect(element.find("[cell-template][width]").length).toBe 2
 
       it "Should set the width automatically", ->
         expect(element.find("[cell-template]").first().attr("width")).toBe "50%"
+
+      describe "Column Auto Widths", ->
+        firstNameElement = null
+        lastNameElement  = null
+        bandElement      = null
+        bornElement      = null
+
+        beforeEach ->
+          autoWidthsTemplate =
+          """<table mac-table-v2 columns="tableColumns">
+              <thead table-section="header">
+                <tr table-row>
+                  <th cell-template initial-width="auto">{{cell.value()}}</th>
+                  <th cell-template="band" initial-width="auto">{{cell.value()}}</th>
+                  <th cell-template="born" initial-width="10%">born on {{cell.value()}}</th>
+                </tr>
+              </thead>
+              <tbody table-section="body" models="tableData">
+                <tr table-row>
+                  <td cell-template>{{cell.value()}}</th>
+                </tr>
+              </tbody>
+            </table>"""
+          element = $compile(autoWidthsTemplate)(scope)
+          scope.$apply ->
+            scope.tableData    = models
+            scope.tableColumns = ["first_name", "last_name", "band", "born"]
+
+          [firstNameElement, lastNameElement, bandElement, bornElement] =
+            element.find("[table-section=header] [cell-template]")
+
+        it "Should set firstNameElement and lastNameElement to be 30%", ->
+          expect($(firstNameElement).attr("width")).toBe "30%"
+          expect($(lastNameElement).attr("width")).toBe "30%"
+
+        it "Should set bandElement to be 30%", ->
+          expect($(bandElement).attr("width")).toBe "30%"
+
+        it "Should set bornElement to be 10%", ->
+          expect($(bornElement).attr("width")).toBe "10%"
 
       describe "macColumns behaviour", ->
         # We are collecting all this information to pass as arguments to our mac-columns event listener
@@ -281,3 +327,4 @@ describe "Table View", ->
             scope.$broadcast "mac-columns-#{macColumnsId}-changed", columnId, 100, 50
 
           expect(element.find("[table-section=header] [table-row] [cell-template]").last().attr("width")).toBe "50%"
+
