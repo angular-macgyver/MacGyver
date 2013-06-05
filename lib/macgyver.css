@@ -1621,6 +1621,7 @@ div.wijmo-wijmenu .wijmo-wijmenu-child .wijmo-wijmenu-text
 .close:after{content:'';display:block;width:2px;height:10px;background:#fff;position:absolute;top:4px;left:8px;-webkit-transform:rotate(45deg);-moz-transform:rotate(45deg);-o-transform:rotate(45deg);-ms-transform:rotate(45deg);transform:rotate(45deg)}
 .close:before{content:'';display:block;width:2px;height:10px;background:#fff;position:absolute;top:4px;left:8px;-webkit-transform:rotate(-45deg);-moz-transform:rotate(-45deg);-o-transform:rotate(-45deg);-ms-transform:rotate(-45deg);transform:rotate(-45deg)}
 .close:hover{background:#828590}
+.hide{display:none}
 
 .mac-upload{position:relative;height:21px;line-height:21px;width:65px;overflow:hidden;font-weight:bold;}
 .mac-upload input{position:absolute;top:0;left:0;opacity:0;cursor:pointer;padding:0 0 100px 200px}

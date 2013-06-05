@@ -22,7 +22,10 @@ angular.module("Mac").factory("modal", [
       if @registered[id]?
         {element, options} = @registered[id]
 
-        element.addClass "visible"
+        element.removeClass "hide"
+        setTimeout ->
+          element.addClass "visible"
+        , 0
 
         # Extend options from trigger with modal options
         angular.extend options, triggerOptions
@@ -64,6 +67,10 @@ angular.module("Mac").factory("modal", [
       id = @opened.id
 
       @opened.element.removeClass "visible"
+      opened = @opened.element
+      setTimeout ->
+        opened.addClass "hide"
+      , 250
       @opened = null
       callback?()
 
