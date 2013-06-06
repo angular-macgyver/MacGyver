@@ -1,3 +1,9 @@
 .date-time
   i.mac-icons.mac-icon-time
-  input(type="text", placeholder="--:--", maxlength="8")
+  input(
+    type        = "text"
+    placeholder = "--:--"
+    maxlength   = "8"
+    ng-model    = "model"
+    ng-disabled = "disabled"
+  )

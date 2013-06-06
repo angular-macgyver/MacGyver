@@ -34,10 +34,7 @@ angular.module("Mac").directive "macTime", [
       opts = util.extendAttributes "macTime", defaults, attrs
 
       inputElement = $("input", element)
-      inputElement.attr
-        "placeholder": opts.placeholder
-        "ng-model":    "model"
-        "ng-disabled": "disabled"
+      inputElement.attr "placeholder", opts.placeholder
 
       ($scope, element, attrs) ->
         inputDOM        = inputElement[0]
@@ -51,7 +48,6 @@ angular.module("Mac").directive "macTime", [
           updateScopeTime() if value?
 
         $scope.reset = ->
-          # TODO: Have this be looser with formatting (only accepts XX:XX XX)
           prefix = "Jan 1, 1970, "
           time   = new Date (prefix + opts.default)
 
