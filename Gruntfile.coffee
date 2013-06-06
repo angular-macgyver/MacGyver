@@ -170,11 +170,19 @@ module.exports = (grunt) ->
         tasks: ["jade", "embedtemplate:docs"]
         options: interrupt: true
 
+    #
+    # karma section
+    # Testing framework
+    #
     karma:
       unit:
         configFile: "test/karma.conf.js"
         autoWatch: true
 
+    #
+    # chalkboard section
+    # Generating documentation from source code
+    #
     chalkboard:
       docs:
         options:
@@ -188,6 +196,11 @@ module.exports = (grunt) ->
           ext:     ".md"
         ]
 
+    #
+    # embed template section
+    # Embed template into directives and also component documents into
+    # main documentation
+    #
     embedtemplate:
       src:
         options:
