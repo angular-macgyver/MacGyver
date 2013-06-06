@@ -19,7 +19,7 @@ block append content
     #example.span9(ng-controller='ExampleController')
 
       section#modal
-        .page-header: h1 Modal
+        @@include("docs/html/directives/modal.html")
         h3 Example
         .docs-example
           mac-modal#test-modal(
@@ -40,8 +40,8 @@ block append content
           | <button mac-modal="test-modal" mac-modal-content="maGyverSeasonOne" class="btn">Show Modal</button>
 
       section#tooltip
-        .page-header: h1 Tooltip
-        h3 Example
+        @@include("docs/html/directives/tooltip.html")
+        h2 Example
         .docs-example
           ul.nav.nav-pills
             li: a(href="#", mac-tooltip="Tooltip on top") Tooltip on top
@@ -60,7 +60,7 @@ block append content
           | <div mac-click="action()" class="btn">Click</div>
 
       section#autocomplete
-        .page-header: h1 Autocomplete
+        @@include("docs/html/directives/autocomplete.html")
         h2 Example
         .docs-example
           mac-autocomplete(
@@ -78,7 +78,7 @@ block append content
           | </mac-autocomplete>
 
       section#tag-autocomplete
-        .page-header: h1 Tag Autocomplete
+        @@include("docs/html/directives/tag_autocomplete.html")
         h2 Example
         .docs-example
           mac-tag-autocomplete(
@@ -144,7 +144,7 @@ block append content
         button(ng-click="tagAutocompleteClearText()") Clear Text Input
 
       section#datepicker
-        .page-header: h1 Datepicker
+        @@include("docs/html/directives/datepicker.html")
         h2 Example
         .docs-example
           mac-datepicker(
@@ -155,7 +155,7 @@ block append content
           | <mac-datepicker mac-datepicker-id="input-start-date" mac-datepicker-model="startDate"></mac-datepicker>
 
       section#time-input
-        .page-header: h1 Time input
+        @@include("docs/html/directives/time.html")
         h2 Example
         .docs-example
           mac-time(
@@ -171,7 +171,7 @@ block append content
           | </mac-time>
 
       section#tag-input
-        .page-header: h1 Tag Input
+        @@include("docs/html/directives/tag_input.html")
         p Proxy directive to mac tag autocomplete
         h2 Example
         .docs-example
@@ -192,7 +192,7 @@ block append content
           | </mac-tag-input>
 
       section#spinner
-        .page-header: h1 Spinner
+        @@include("docs/html/directives/spinner.html")
         h2 Example
         .docs-example
           mac-spinner
@@ -208,7 +208,7 @@ block append content
           | <input type="text" mac-model-blur="onTextBlur()"/>
 
       section#file-upload
-        .page-header: h1 File Upload
+        @@include("docs/html/directives/file_upload.html")
         h2 Example
         .docs-example.example-hit-area
           form(action="...", method="post", enctype="multipart/form-data", name="upload-example")

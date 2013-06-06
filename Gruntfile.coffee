@@ -14,7 +14,8 @@ module.exports = (grunt) ->
 
   # Internal functions
   spawn = (options, done = ->) ->
-    options.opts ?= stdio: "inherit"
+    options.grunt ?= true
+    options.opts  ?= stdio: "inherit"
     grunt.util.spawn options, done
 
   grunt.initConfig
@@ -166,7 +167,7 @@ module.exports = (grunt) ->
         options: interrupt: true
       jade:
         files: ["src/**/*.jade"]
-        tasks: ["jade"]
+        tasks: ["jade", "embedtemplate:docs"]
         options: interrupt: true
 
     karma:
@@ -174,28 +175,102 @@ module.exports = (grunt) ->
         configFile: "test/karma.conf.js"
         autoWatch: true
 
+    chalkboard:
+      docs:
+        options:
+          header: true
+        files: [
+          expand:  true
+          flatten: false
+          cwd:     "src"
+          src:     ["**/*.coffee"]
+          dest:    "docs/"
+          ext:     ".md"
+        ]
+
+    embedtemplate:
+      src:
+        options:
+          pattern: /templateUrl: "([^"]+)"/g
+          replace: (match) ->
+            filePath     = path.join "example/", match[1]
+            compiledHtml = grunt.file.read filePath
+            compiledHtml = compiledHtml.replace /"/g, "\\\""
+            "template: \"#{compiledHtml}\""
+        files:
+          "example/js/macgyver.js": ["example/js/macgyver.js"]
+      docs:
+        options:
+          pattern: /@@include\("([^"]+)"\)/g
+          replace: (match) -> grunt.file.read match[1]
+        files: [
+          expand:  true
+          flatten: false
+          cwd:     "example"
+          src:     "*.html"
+          dest:    "example/"
+        ]
+
+    marked:
+      docs:
+        files:[
+          expand:  true
+          flatten: false
+          cwd:     "docs"
+          src:     "**/*.md"
+          dest:    "docs/html"
+          ext:     ".html"
+        ]
+
   # Replace templateUrl with actual html
-  grunt.registerTask "embed:html", "Replace templateUrl with actual html", ->
-    fromFile         = path.join finalBuildPath, "macgyver.js"
-    writeFile        = path.join finalBuildPath, "macgyver.js"
-    templateUrlRegex = /templateUrl: "([^"]+)"/g
-    done             = @async()
+  grunt.registerMultiTask "embedtemplate", "Replace templateUrl with actual html", ->
+    options = @options
+      separator: ""
+      replace:   ""
+      pattern:   null
 
-    fs.readFile fromFile, "utf8", (err, data) ->
-      throw err if err?
+    parse = (code) ->
+      templateUrlRegex = options.pattern
+      updatedCode      = code
 
-      updatedCode = data
+      while match = templateUrlRegex.exec code
+        if _(options.replace).isFunction()
+          replacement = options.replace match
+        else
+          replacement = options.replace
 
-      while match = templateUrlRegex.exec data
-        toReplace    = match[0]
-        filePath     = path.join examplePath, match[1]
-        compiledHtml = fs.readFileSync filePath, "utf8"
-        compiledHtml = compiledHtml.replace /"/g, "\\\""
-        updatedCode  = updatedCode.replace toReplace, "template: \"#{compiledHtml}\""
+        updatedCode = updatedCode.replace match[0], replacement
 
-      fs.writeFile writeFile, updatedCode, "utf8", (err, data) ->
-        grunt.log.writeln "Embeded html successfully"
-        done()
+      return updatedCode
+
+    @files.forEach (file) ->
+      src = file.src.filter (filepath) ->
+        unless (exists = grunt.file.exists(filepath))
+          grunt.log.warn "Source file '#{filepath}' not found"
+        return exists
+      .map (filepath) ->
+        parse grunt.file.read(filepath)
+      .join grunt.util.normalizelf(options.separator)
+
+      grunt.file.write file.dest, src
+      grunt.log.writeln("Embeded template into '#{file.dest}' successfully")
+
+  grunt.registerMultiTask "marked", "Convert markdown to html", ->
+    options = @options
+      separator: grunt.util.linefeed
+
+    @files.forEach (file) ->
+      src = file.src.filter (filepath) ->
+        unless (exists = grunt.file.exists(filepath))
+          grunt.log.warn "Source file '#{filepath}' not found"
+        return exists
+      .map (filepath) ->
+        marked = require "marked"
+        marked grunt.file.read(filepath)
+      .join grunt.util.normalizelf(options.separator)
+
+      grunt.file.write file.dest, src
+      grunt.log.writeln("Converted '#{file.dest}'")
 
   # Read all files in build folder and add to component.json
   grunt.registerTask "update:component", "Update bower.json", ->
@@ -223,7 +298,10 @@ module.exports = (grunt) ->
       "concat"
       "clean"
       "copy"
-      "embed:html"
+      "embedtemplate:src"
+      "chalkboard"
+      "marked"
+      "embedtemplate:docs"
       "update:component"
       "uglify"
     ]
@@ -237,21 +315,17 @@ module.exports = (grunt) ->
     "concat:vendorCss"
     "concat:appCss"
     "clean"
+    "chalkboard"
+    "marked"
+    "embedtemplate:docs"
   ]
 
   grunt.registerTask "run", "Watch src and run test server", ->
     @async()
 
-    grunt.util.spawn
-      grunt: true
-      args: ["compile"]
-    , ->
-      spawn
-        grunt: true
-        args: ["watch"]
-      spawn
-        grunt: true
-        args: ["server"]
+    spawn args: ["compile"], ->
+      spawn args: ["watch"]
+      spawn args: ["server"]
 
   grunt.registerTask "server", "Run test server", ->
     @async()
