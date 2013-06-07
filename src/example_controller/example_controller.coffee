@@ -164,3 +164,7 @@ module.controller "ExampleController", ["$scope", "$timeout", "Table", "SectionC
 ]
 
 window.prettyPrint && prettyPrint()
+
+#Disable certain links in docs
+$('section [href^=#]').click (e) ->
+  e.preventDefault()

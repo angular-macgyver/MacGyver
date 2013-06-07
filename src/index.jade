@@ -3,21 +3,46 @@ extends layout
 block append content
   .row.content
     #nav.span3
-      ul.nav.nav-list.docs-sidenav(data-spy="affix", data-offset-top="0")
-        li: a(href="#modal") Modal
-        li: a(href="#tooltip") Tooltip
-        li: a(href="#mac-click") Mac Click
-        li: a(href="#autocomplete") Autocomplete
-        li: a(href="#tag-autocomplete") Tag Autocomplete
-        li: a(href="#datepicker") Date Picker
-        li: a(href="#time-input") Time Input
-        li: a(href='#tag-input') Tag Input
-        li: a(href='#spinner') Spinner
-        li: a(href="#blur") Blur
-        li: a(href="#file-upload") File Upload
+      ul.nav.nav-list.docs-sidenav(
+        data-spy           = "affix"
+        data-offset-top    = "0"
+        data-offset-bottom = "100"
+      )
+        li: a(href="#modal")
+          i.icon-chevron-right
+          | Modal
+        li: a(href="#tooltip")
+          i.icon-chevron-right
+          | Tooltip
+        li: a(href="#mac-click")
+          i.icon-chevron-right
+          | Mac Click
+        li: a(href="#autocomplete")
+          i.icon-chevron-right
+          | Autocomplete
+        li: a(href="#tag-autocomplete")
+          i.icon-chevron-right
+          | Tag Autocomplete
+        li: a(href="#datepicker")
+          i.icon-chevron-right
+          | Date Picker
+        li: a(href="#time-input")
+          i.icon-chevron-right
+          | Time Input
+        li: a(href='#tag-input')
+          i.icon-chevron-right
+          | Tag Input
+        li: a(href='#spinner')
+          i.icon-chevron-right
+          | Spinner
+        li: a(href="#blur")
+          i.icon-chevron-right
+          | Blur
+        li: a(href="#file-upload")
+          i.icon-chevron-right
+          | File Upload
 
     #example.span9(ng-controller='ExampleController')
-
       section#modal
         @@include("docs/html/directives/modal.html")
         h3 Example
@@ -41,7 +66,7 @@ block append content
 
       section#tooltip
         @@include("docs/html/directives/tooltip.html")
-        h2 Example
+        h3 Example
         .docs-example
           ul.nav.nav-pills
             li: a(href="#", mac-tooltip="Tooltip on top") Tooltip on top
@@ -61,7 +86,7 @@ block append content
 
       section#autocomplete
         @@include("docs/html/directives/autocomplete.html")
-        h2 Example
+        h3 Example
         .docs-example
           mac-autocomplete(
             mac-autocomplete-url         = "autocompleteUrl"
@@ -79,7 +104,7 @@ block append content
 
       section#tag-autocomplete
         @@include("docs/html/directives/tag_autocomplete.html")
-        h2 Example
+        h3 Example
         .docs-example
           mac-tag-autocomplete(
             mac-tag-autocomplete-url         = "autocompleteUrl"
@@ -97,7 +122,7 @@ block append content
           |   mac-autocomplete-placeholder="'Autocomplete'">
           | </mac-autocomplete>
 
-        h2 Example with autocomplete disabled
+        h3 Example with autocomplete disabled
         .docs-example
           mac-tag-autocomplete(
             mac-tag-autocomplete-selected    = "tagAutocompleteDisabledSelected"
@@ -115,7 +140,7 @@ block append content
           |   mac-tag-autocomplete-disabled="mac-tag-autocomplete-disabled">
           | </mac-tag-autocomplete>
 
-        h2 Example with custom actions on events
+        h3 Example with custom actions on events
         .docs-example
           mac-tag-autocomplete(
             mac-tag-autocomplete-selected    = "tagAutocompleteEvents"
@@ -145,7 +170,7 @@ block append content
 
       section#datepicker
         @@include("docs/html/directives/datepicker.html")
-        h2 Example
+        h3 Example
         .docs-example
           mac-datepicker(
             mac-datepicker-id    = "input-start-date"
@@ -156,7 +181,7 @@ block append content
 
       section#time-input
         @@include("docs/html/directives/time.html")
-        h2 Example
+        h3 Example
         .docs-example
           mac-time(
             mac-time-id      = "input-start-time"
@@ -173,7 +198,7 @@ block append content
       section#tag-input
         @@include("docs/html/directives/tag_input.html")
         p Proxy directive to mac tag autocomplete
-        h2 Example
+        h3 Example
         .docs-example
           mac-tag-input(
             mac-tag-input-tags        = "extraTagInputs"
@@ -193,7 +218,7 @@ block append content
 
       section#spinner
         @@include("docs/html/directives/spinner.html")
-        h2 Example
+        h3 Example
         .docs-example
           mac-spinner
         pre.prettyprint.linenums(ng-non-bindable)
@@ -201,7 +226,7 @@ block append content
 
       section#blur
         .page-header: h1 Blur
-        h2 Example
+        h3 Example
         .docs-example
           input(type="text", mac-model-blur="onTextBlur()")
         pre.prettyprint.linenums(ng-non-bindable)
@@ -209,7 +234,7 @@ block append content
 
       section#file-upload
         @@include("docs/html/directives/file_upload.html")
-        h2 Example
+        h3 Example
         .docs-example.example-hit-area
           form(action="...", method="post", enctype="multipart/form-data", name="upload-example")
             span.mac-upload.btn.fileinput-button

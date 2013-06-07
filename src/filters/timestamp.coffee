@@ -1,7 +1,14 @@
-## Timestamp filter
-## Takes in a unix timestamp and turns it into a human-readable relative time string, like "5
-## minutes ago" or "just now".
-##
+###
+@chalk overview
+@name Timestamp filter
+
+@description
+Takes in a unix timestamp and turns it into a human-readable relative time string, like "5
+minutes ago" or "just now".
+
+@param {Unix timestamp} time The time to format
+@returns {String} Formatted string
+###
 
 angular.module("Mac").filter "timestamp", ["util", (util) ->
   _createTimestamp = (count, noun) ->

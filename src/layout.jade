@@ -7,15 +7,16 @@ html
       link(href='css/vendor.css', rel='stylesheet')
       link(href='css/MacGyver.css', rel='stylesheet')
 
-  body(ng-app="Mac", data-spy="scroll", data-target="#nav", data-offset="90")
+  body(ng-app="Mac", data-spy="scroll", data-target="#nav", data-offset="54")
+    #top-nav
+      .container
+        .row
+          .offset3.span6
+            ul.nav.nav-pills
+              li: a(href="index.html") Directives
+              li: a(href="tableview.html") Table View
+              li: a(href="filters.html") Filters
     .container
-      #top-nav.row
-        .offset4.span4
-          ul.nav.nav-pills
-            li: a(href="index.html") Directives
-            li: a(href="tableview.html") Table View
-            li: a(href="filters.html") Filters
-
       block content
 
     script(src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js", type='text/javascript')
