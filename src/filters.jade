@@ -4,9 +4,15 @@ block append content
   .row.content
     #nav.span3
       ul.nav.nav-list.docs-sidenav(data-spy="affix", data-offset-top="0")
-        li: a(href="#underscore-string") Underscore String Filter
-        li: a(href="#pluralize-filter") Pluralize Filter
-        li: a(href="#timestamp-filter") Timestamp Filter
+        li: a(href="#underscore-string")
+          i.icon-chevron-right
+          | Underscore String Filter
+        li: a(href="#pluralize-filter")
+          i.icon-chevron-right
+          | Pluralize Filter
+        li: a(href="#timestamp-filter")
+          i.icon-chevron-right
+          | Timestamp Filter
 
     #example.span9(ng-controller='ExampleController')
       section#underscore-string

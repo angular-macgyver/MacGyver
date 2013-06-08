@@ -21,34 +21,6 @@ for event in ["Blur", "Focus", "Keydown", "Keyup", "Mouseenter", "Mouseleave"]
 
 #
 # @type directive
-# @name macClick
-# @description
-# macClick recurive go up parent scope to call function
-#
-# @attributes
-# - mac-click:       expression to evaluate upon click
-# - mac-click-depth: Max parent scope depth it should go (default 2)
-#
-angular.module("Mac").directive "macClick", ["$parse", ($parse) ->
-  link: ($scope, element, attr) ->
-    fn    = $parse attr.macClick
-    depth = +(attr.macClickDepth or 2)
-
-    clickAction = (scope, depth, $event) ->
-      return false if depth is 0
-      ret    = fn scope, {$event, $scope}
-      parent = scope.$parent
-      if not ret and parent?
-        return clickAction parent, depth - 1, $event
-      else
-        return true
-
-    element.bind "click", (event) ->
-      $scope.$apply -> clickAction $scope, depth, event
-]
-
-#
-# @type directive
 # @name macParentClick
 # @description
 # macParentClick allows you to specify custom behavior on parent scope
