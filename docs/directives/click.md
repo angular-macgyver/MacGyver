@@ -1,7 +1,9 @@
 
 macClick
 ===
-macClick recurive go up parent scope to call function  
+macClick recurive go up parent scope to call function. This is more of a hack and  
+should only be used when absolutely needed.  
+This directive will be depcreated in the very near future.  
   
 ### Parameters
 **mac-click**  
