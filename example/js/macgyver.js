@@ -11126,10 +11126,34 @@ angular.module("Mac").directive("initialWidth", [
 
 /*
 @chalk overview
-@name Modal
+@name Modal Service
 
 @description
-Modal directives and service to keep state
+There are multiple components used by modal.
+- A modal service is used to keep state of modal opened in the applications.
+- A modal element directive to define the modal dialog box
+- A modal attribute directive as a modal trigger
+
+@param {Function} show Show a modal based on the modal id
+- {String} id The id of the modal to open
+- {Object} triggerOptions Additional options to open modal
+
+@param {Function} resize Update the position and also the size of the modal
+- {Modal Object} modalObject The modal to reposition and resize (default opened modal)
+
+@param {Function} hide Hide currently opened modal
+- {Function} callback Callback after modal has been hidden
+
+@param {Function} register Registering modal with the service
+- {String} id ID of the modal
+- {DOM element} element The modal element
+- {Object} options Additional options for the modal
+
+@param {Function} unregister Remove modal from modal service
+- {String} id ID of the modal to unregister
+
+@param {Function} clearWaiting Remove certain modal id from waiting list
+- {String} id ID of the modal
 */
 angular.module("Mac").factory("modal", [
   "$rootScope", function($rootScope) {
@@ -11145,7 +11169,10 @@ angular.module("Mac").factory("modal", [
         }
         if (this.registered[id] != null) {
           _ref = this.registered[id], element = _ref.element, options = _ref.options;
-          element.addClass("visible");
+          element.removeClass("hide");
+          setTimeout(function() {
+            return element.addClass("visible");
+          }, 0);
           angular.extend(options, triggerOptions);
           this.opened = {
             id: id,
@@ -11188,13 +11215,17 @@ angular.module("Mac").factory("modal", [
         return modal.css(css);
       },
       hide: function(callback) {
-        var id;
+        var id, opened;
 
         if (this.opened == null) {
           return;
         }
         id = this.opened.id;
         this.opened.element.removeClass("visible");
+        opened = this.opened.element;
+        setTimeout(function() {
+          return opened.addClass("hide");
+        }, 250);
         this.opened = null;
         if (typeof callback === "function") {
           callback();
@@ -12311,29 +12342,27 @@ angular.module("Mac").directive("macTableV2", [
         }
       ],
       compile: function(element, attr) {
-        var autoWidthTemplates;
+        var autoWidthTemplates, headerSectionElement, initialWidthExp, remainingPercent, siblingTemplates;
 
+        headerSectionElement = element.find("[table-section=header]");
         element.find("[initial-width]").attr("width", "{{cell.width}}%").parents("[table-row]").attr("mac-columns", "");
         element.find("[cell-template]").wrapInner("<div class='cell-wrapper' />");
         if (attr.resizableColumns != null) {
-          element.find("[table-section=header]").find("[cell-template]").find(".cell-wrapper").attr("mac-resizable-column", "").attr("mac-resizable", "").attr("mac-resizable-containment", "document");
+          headerSectionElement.find("[cell-template]").find(".cell-wrapper").attr("mac-resizable-column", "").attr("mac-resizable", "").attr("mac-resizable-containment", "document");
         }
         if (attr.reorderableColumns != null) {
-          element.find("[table-section=header] [table-row]").attr("mac-reorderable", "[cell-template]").attr("mac-reorderable-columns", "");
+          headerSectionElement.find("[table-row]").attr("mac-reorderable", "[cell-template]").attr("mac-reorderable-columns", "");
         }
-        autoWidthTemplates = element.find("[initial-width=auto]");
+        element.find("[table-row]").not("[table-row][ng-repeat]").attr("ng-repeat", "row in section.rows");
+        autoWidthTemplates = headerSectionElement.find("[initial-width=auto]");
         if (autoWidthTemplates.length) {
-          autoWidthTemplates.each(function() {
-            var hardsetPercent, initialWidthExp, siblings;
-
-            siblings = $(this).siblings("[initial-width]");
-            hardsetPercent = 0;
-            siblings.each(function() {
-              return hardsetPercent += +$(this).attr('initial-width').replace("%", "");
-            });
-            initialWidthExp = "{{(100/(table.columns.length - " + siblings.length + ")) - (" + hardsetPercent + "/(table.columns.length - " + siblings.length + "))}}%";
-            return $(this).attr("initial-width", initialWidthExp);
+          siblingTemplates = headerSectionElement.find("[initial-width]").not("[initial-width = auto]");
+          remainingPercent = 100;
+          siblingTemplates.each(function() {
+            return remainingPercent -= +$(this).attr('initial-width').replace("%", "");
           });
+          initialWidthExp = "{{" + remainingPercent + " / (table.columns.length - " + siblingTemplates.length + ")}}%";
+          autoWidthTemplates.attr("initial-width", initialWidthExp);
         }
         return function($scope, $element, $attr, controller) {
           controller.$element = $element;
@@ -12653,11 +12682,7 @@ angular.module("Mac").directive("macTime", [
         };
         opts = util.extendAttributes("macTime", defaults, attrs);
         inputElement = $("input", element);
-        inputElement.attr({
-          "placeholder": opts.placeholder,
-          "ng-model": "model",
-          "ng-disabled": "disabled"
-        });
+        inputElement.attr("placeholder", opts.placeholder);
         return function($scope, element, attrs) {
           var highlighActions, inputDOM, inputSelectAction, timeRegex, updateInput, updateScopeTime;
 
@@ -12833,10 +12858,11 @@ angular.module("Mac").directive("macTooltip", function() {
   return {
     restrict: "A",
     link: function(scope, element, attrs) {
-      var removeTip, showTip, text, toggle, tooltip;
+      var enabled, removeTip, showTip, text, toggle, tooltip;
 
       tooltip = null;
       text = "";
+      enabled = false;
       showTip = function(event) {
         var direction, elementSize, inside, offset, tip, tooltipSize;
 
@@ -12900,17 +12926,21 @@ angular.module("Mac").directive("macTooltip", function() {
         var trigger;
 
         if ((value != null) && value) {
-          trigger = attrs.macTooltipTrigger || "hover";
           text = value;
-          if (trigger !== "hover" && trigger !== "click") {
-            return console.error("Invalid trigger");
-          }
-          switch (trigger) {
-            case "click":
-              return element.on("click", toggle);
-            case "hover":
-              element.on("mouseenter", showTip);
-              return element.on("mouseleave click", removeTip);
+          if (!enabled) {
+            trigger = attrs.macTooltipTrigger || "hover";
+            if (trigger !== "hover" && trigger !== "click") {
+              return console.error("Invalid trigger");
+            }
+            switch (trigger) {
+              case "click":
+                element.on("click", toggle);
+                break;
+              case "hover":
+                element.on("mouseenter", showTip);
+                element.on("mouseleave click", removeTip);
+            }
+            return enabled = true;
           }
         }
       });
@@ -13212,6 +13242,10 @@ module.controller("ExampleController", [
 
 window.prettyPrint && prettyPrint();
 
+$('section [href^=#]').click(function(e) {
+  return e.preventDefault();
+});
+
 angular.module("Mac").filter("boolean", function() {
   return function(boolean, trueString, falseString) {
     if (trueString == null) {
@@ -13254,6 +13288,17 @@ angular.module("Mac").filter("false", function() {
   };
 });
 
+/*
+@chalk overview
+@name Pluralize
+@description
+Pluralizes the given string. It's a simple proxy to the pluralize function on util.
+
+@param {String} string Noun to pluralize
+@param {Integer} count The numer of objects
+@param {Boolean} includeCount To include the number in formatted string
+@returns {String} Formatted plural
+*/
 angular.module("Mac").filter("pluralize", [
   "util", function(util) {
     return function(string, count, includeCount) {
@@ -13265,6 +13310,17 @@ angular.module("Mac").filter("pluralize", [
   }
 ]);
 
+/*
+@chalk overview
+@name Timestamp filter
+
+@description
+Takes in a unix timestamp and turns it into a human-readable relative time string, like "5
+minutes ago" or "just now".
+
+@param {Unix timestamp} time The time to format
+@returns {String} Formatted string
+*/
 angular.module("Mac").filter("timestamp", [
   "util", function(util) {
     var _createTimestamp;
@@ -13313,6 +13369,19 @@ angular.module("Mac").filter("timestamp", [
     };
   }
 ]);
+
+/*
+@chalk overview
+@name Underscore string
+
+@description
+Proxy filter for calling underscore string function
+
+@param {String} string String to filter
+@param {String} fn Underscore function to call
+@param {Parameters} params Extra parameters to pass to Underscore string
+@returns {String} Formatted string
+*/
 
 var __slice = [].slice;
 
@@ -13388,39 +13457,45 @@ angular.module("Mac").factory("hookableDirectiveController", [
   }
 ]);
 
-angular.module("Mac").factory("BaseColumn", [
+angular.module("Mac").factory("TableViewBaseColumn", [
   function() {
-    var BaseColumn;
+    var TableViewBaseColumn;
 
-    return BaseColumn = (function() {
-      function BaseColumn() {}
+    return TableViewBaseColumn = (function() {
+      function TableViewBaseColumn() {}
 
-      return BaseColumn;
+      return TableViewBaseColumn;
+
+    })();
+  }
+]);
+
+angular.module("Mac").factory("TableViewSectionController", [
+  function() {
+    var TableViewSectionController;
+
+    return TableViewSectionController = (function() {
+      function TableViewSectionController(section) {
+        this.section = section;
+      }
+
+      TableViewSectionController.prototype.cellValue = function(row, colName) {
+        return this.defaultCellValue(row, colName);
+      };
+
+      TableViewSectionController.prototype.defaultCellValue = function(row, colName) {
+        return row.model[colName];
+      };
+
+      return TableViewSectionController;
 
     })();
   }
 ]);
 
 angular.module("Mac").factory("SectionController", [
-  function() {
-    var SectionController;
-
-    return SectionController = (function() {
-      function SectionController(section) {
-        this.section = section;
-      }
-
-      SectionController.prototype.cellValue = function(row, colName) {
-        return this.defaultCellValue(row, colName);
-      };
-
-      SectionController.prototype.defaultCellValue = function(row, colName) {
-        return row.model[colName];
-      };
-
-      return SectionController;
-
-    })();
+  "TableViewSectionController", function(TableViewSectionController) {
+    return TableViewSectionController;
   }
 ]);
 
@@ -13449,7 +13524,7 @@ angular.module("Mac").factory("Row", [
 ]);
 
 angular.module("Mac").factory("tableComponents", [
-  "SectionController", "Row", function(SectionController, Row) {
+  "TableViewSectionController", "Row", function(TableViewSectionController, Row) {
     return {
       rowFactory: function(section, model) {
         return new Row(section, model);
@@ -13470,7 +13545,7 @@ angular.module("Mac").factory("tableComponents", [
         var Section;
 
         if (controller == null) {
-          controller = SectionController;
+          controller = TableViewSectionController;
         }
         Section = function(controller, table, name, rows) {
           this.table = table;
@@ -13678,15 +13753,22 @@ angular.module("Mac").factory("RowsController", [
 ]);
 
 angular.module("Mac").factory("Table", [
-  "BaseColumn", "ColumnsController", "RowsController", function(BaseColumn, ColumnsController, RowsController) {
-    var Table;
+  "TableViewBaseColumn", "ColumnsController", "RowsController", function(TableViewBaseColumn, ColumnsController, RowsController) {
+    var Table, convertObjectModelsToArray;
 
+    convertObjectModelsToArray = function(models) {
+      if (models && !angular.isArray(models)) {
+        return [models];
+      } else {
+        return models;
+      }
+    };
     return Table = (function() {
       function Table(columns, baseColumn) {
         if (columns == null) {
           columns = [];
         }
-        this.baseColumn = baseColumn != null ? baseColumn : new BaseColumn();
+        this.baseColumn = baseColumn != null ? baseColumn : new TableViewBaseColumn();
         this.sections = {};
         this.columns = [];
         this.columnsCtrl = new ColumnsController(this);
@@ -13699,6 +13781,7 @@ angular.module("Mac").factory("Table", [
       }
 
       Table.prototype.load = function(sectionName, models, sectionController) {
+        models = convertObjectModelsToArray(models);
         return this.rowsCtrl.set(sectionName, models, sectionController);
       };
 
