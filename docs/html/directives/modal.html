@@ -1,2 +1,22 @@
-<h1>Modal</h1>
-<p>Modal directives and service to keep state  </p>
+<h1>Modal Service</h1>
+<p>There are multiple components used by modal.<br>- A modal service is used to keep state of modal opened in the applications.<br>- A modal element directive to define the modal dialog box<br>- A modal attribute directive as a modal trigger  </p>
+<h3>Parameters</h3>
+<p><strong>show</strong><br>Type: <code>Function</code><br>Show a modal based on the modal id<br>- {String} id The id of the modal to open<br>- {Object} triggerOptions Additional options to open modal  </p>
+<p><strong>resize</strong><br>Type: <code>Function</code><br>Update the position and also the size of the modal<br>- {Modal Object} modalObject The modal to reposition and resize (default opened modal)  </p>
+<p><strong>hide</strong><br>Type: <code>Function</code><br>Hide currently opened modal<br>- {Function} callback Callback after modal has been hidden  </p>
+<p><strong>register</strong><br>Type: <code>Function</code><br>Registering modal with the service<br>- {String} id ID of the modal<br>- {DOM element} element The modal element<br>- {Object} options Additional options for the modal  </p>
+<p><strong>unregister</strong><br>Type: <code>Function</code><br>Remove modal from modal service<br>- {String} id ID of the modal to unregister  </p>
+<p><strong>clearWaiting</strong><br>Type: <code>Function</code><br>Remove certain modal id from waiting list<br>- {String} id ID of the modal  </p>
+<h2>mac-modal (element)</h2>
+<p>Element directive to define the modal dialog. Modal content is transcluded into a<br>modal template  </p>
+<h3>Parameters</h3>
+<p><strong>keyboard</strong><br>Type: <code>Boolean</code><br>Allow closing modal with keyboard (default false)  </p>
+<p><strong>overlay-close</strong><br>Type: <code>Boolean</code><br>Allow closing modal when clicking on overlay (default false)  </p>
+<p><strong>resize</strong><br>Type: <code>Boolean</code><br>Allow modal to resize on window resize event (default true)  </p>
+<p><strong>open</strong><br>Type: <code>Function</code><br>Callback when the modal is opened  </p>
+<p><strong>topOffset</strong><br>Type: <code>Integer</code><br>Top offset when the modal is larger than window height (default 20)  </p>
+<h2>mac-modal (attribute)</h2>
+<p>Modal attribute directive to trigger modal dialog  </p>
+<h3>Parameters</h3>
+<p><strong>mac-modal</strong><br>Type: <code>String</code><br>Modal ID to trigger  </p>
+<p><strong>mac-modal-content</strong><br>Type: <code>Object</code><br>Extra content/data to pass along  </p>
