@@ -185,8 +185,6 @@ module.exports = (grunt) ->
     #
     chalkboard:
       docs:
-        options:
-          header: true
         files: [
           expand:  true
           flatten: false
