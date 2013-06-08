@@ -209,7 +209,7 @@ module.exports = (grunt) ->
             compiledHtml = compiledHtml.replace /"/g, "\\\""
             "template: \"#{compiledHtml}\""
         files:
-          "example/js/macgyver.js": ["example/js/macgyver.js"]
+          "lib/macgyver.js": ["lib/macgyver.js"]
       docs:
         options:
           pattern: /@@include\("([^"]+)"\)/g

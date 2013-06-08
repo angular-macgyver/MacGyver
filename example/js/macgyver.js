@@ -11126,10 +11126,34 @@ angular.module("Mac").directive("initialWidth", [
 
 /*
 @chalk overview
-@name Modal
+@name Modal Service
 
 @description
-Modal directives and service to keep state
+There are multiple components used by modal.
+- A modal service is used to keep state of modal opened in the applications.
+- A modal element directive to define the modal dialog box
+- A modal attribute directive as a modal trigger
+
+@param {Function} show Show a modal based on the modal id
+- {String} id The id of the modal to open
+- {Object} triggerOptions Additional options to open modal
+
+@param {Function} resize Update the position and also the size of the modal
+- {Modal Object} modalObject The modal to reposition and resize (default opened modal)
+
+@param {Function} hide Hide currently opened modal
+- {Function} callback Callback after modal has been hidden
+
+@param {Function} register Registering modal with the service
+- {String} id ID of the modal
+- {DOM element} element The modal element
+- {Object} options Additional options for the modal
+
+@param {Function} unregister Remove modal from modal service
+- {String} id ID of the modal to unregister
+
+@param {Function} clearWaiting Remove certain modal id from waiting list
+- {String} id ID of the modal
 */
 angular.module("Mac").factory("modal", [
   "$rootScope", function($rootScope) {
@@ -12658,11 +12682,7 @@ angular.module("Mac").directive("macTime", [
         };
         opts = util.extendAttributes("macTime", defaults, attrs);
         inputElement = $("input", element);
-        inputElement.attr({
-          "placeholder": opts.placeholder,
-          "ng-model": "model",
-          "ng-disabled": "disabled"
-        });
+        inputElement.attr("placeholder", opts.placeholder);
         return function($scope, element, attrs) {
           var highlighActions, inputDOM, inputSelectAction, timeRegex, updateInput, updateScopeTime;
 
@@ -13222,6 +13242,10 @@ module.controller("ExampleController", [
 
 window.prettyPrint && prettyPrint();
 
+$('section [href^=#]').click(function(e) {
+  return e.preventDefault();
+});
+
 angular.module("Mac").filter("boolean", function() {
   return function(boolean, trueString, falseString) {
     if (trueString == null) {
@@ -13264,6 +13288,17 @@ angular.module("Mac").filter("false", function() {
   };
 });
 
+/*
+@chalk overview
+@name Pluralize
+@description
+Pluralizes the given string. It's a simple proxy to the pluralize function on util.
+
+@param {String} string Noun to pluralize
+@param {Integer} count The numer of objects
+@param {Boolean} includeCount To include the number in formatted string
+@returns {String} Formatted plural
+*/
 angular.module("Mac").filter("pluralize", [
   "util", function(util) {
     return function(string, count, includeCount) {
@@ -13275,6 +13310,17 @@ angular.module("Mac").filter("pluralize", [
   }
 ]);
 
+/*
+@chalk overview
+@name Timestamp filter
+
+@description
+Takes in a unix timestamp and turns it into a human-readable relative time string, like "5
+minutes ago" or "just now".
+
+@param {Unix timestamp} time The time to format
+@returns {String} Formatted string
+*/
 angular.module("Mac").filter("timestamp", [
   "util", function(util) {
     var _createTimestamp;
@@ -13323,6 +13369,19 @@ angular.module("Mac").filter("timestamp", [
     };
   }
 ]);
+
+/*
+@chalk overview
+@name Underscore string
+
+@description
+Proxy filter for calling underscore string function
+
+@param {String} string String to filter
+@param {String} fn Underscore function to call
+@param {Parameters} params Extra parameters to pass to Underscore string
+@returns {String} Formatted string
+*/
 
 var __slice = [].slice;
 
