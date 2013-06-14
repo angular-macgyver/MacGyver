@@ -188,7 +188,7 @@ angular.module("Mac").factory "Table", [
 
           # Check if we're working with an existing section, if so we want to
           # intelligently insert / remove only what we need to
-          if @sections[sectionName]? and @sections[sectionName].rows.length
+          if @sections[sectionName]?.rows.length
             tableModels  = []
             toBeRemoved  = []
             toBeInserted = []
@@ -202,15 +202,14 @@ angular.module("Mac").factory "Table", [
 
             @remove.apply this, args for args in toBeRemoved
 
-            for model, index in models
-              if model not in tableModels
+            for model, index in models when model not in tableModels
                 toBeInserted.push [sectionName, model, index]
 
             @insert.apply this, args for args in toBeInserted
 
           # New or empty section, load using set which will also create a section
           else
-            @rowsCtrl.set(sectionName, models, sectionController)
+            @rowsCtrl.set sectionName, models, sectionController
 
         insert: (sectionName, model, index = 0) ->
           @rowsCtrl.insert sectionName, model, index
