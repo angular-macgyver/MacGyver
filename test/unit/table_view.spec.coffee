@@ -2,6 +2,8 @@ describe "Table Data", ->
   beforeEach module "Mac"
 
   describe "Normal Table Data", ->
+    models = null
+
     beforeEach inject ($rootScope, Table, TableViewSectionController) ->
       class BodySectionController extends TableViewSectionController
         cellValue: (row, colName) ->
@@ -122,6 +124,26 @@ describe "Table Data", ->
       oneStone = {first_name: "Mick", last_name: "Jagger", age: 30}
       table.load "stones", oneStone
       expect(table.sections.stones.rows.length).toBe 1
+
+    describe "Performance", ->
+      it "doesn't remake section or rows if we're appending during a load", ->
+        table        = @scope.table
+        section      = table.sections.body
+        secondRow    = table.sections.body.rows[1]
+        copyOfModels = models.slice 1, 2
+
+        copyOfModels.push {first_name: "Mick", last_name: "Jagger", age: 30}
+        table.load "body", copyOfModels
+
+        # Check that our section hasn't been clobbered
+        expect(table.sections.body).toBe section
+
+        # Check that the second row we had before is the first row now
+        expect(table.sections.body.rows[0]).toBe secondRow
+
+        # Check that the order of the models is the same as in our copyOfModels
+        for model, index in copyOfModels
+          expect(table.sections.body.rows[index].model).toBe model
 
     describe "Dynamic Table", ->
       beforeEach inject ($rootScope, Table, TableViewSectionController) ->
