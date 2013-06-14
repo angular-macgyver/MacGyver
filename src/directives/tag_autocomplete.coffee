@@ -87,6 +87,9 @@ angular.module("Mac").directive "macTagAutocomplete", [
         # Put disabled inside template scope:
         $scope.disabled = disabled
 
+        # Variable for input element
+        $scope.textInput = ""
+
         # Clicking on the element will focus on input
         element.click ->
           $(".text-input", element).focus()
@@ -145,23 +148,20 @@ angular.module("Mac").directive "macTagAutocomplete", [
           $scope.autocompleteSource = _($scope.source).filter (item) ->
             item[valueKey] in difference
 
-        $scope.onKeyDown = ($event, value = "") ->
+        $scope.onKeyDown = ($event) ->
           stroke = $event.which or $event.keyCode
           switch stroke
             when keys.BACKSPACE
-              if value.length is 0
-                $scope.$apply -> $scope.selected.pop()
+              if $scope.textInput.length is 0
+                $scope.selected.pop()
             when keys.ENTER
               # Used when autocomplete is not needed
-              if value.length > 0 and $scope.disabled
-                $scope.$apply ->
-                  $scope.textInput = ""
-                  $scope.onSelect value
+              if $scope.textInput.length > 0 and $scope.disabled
+                $scope.onSelect $scope.textInput
 
           if attrs.macTagAutocompleteOnKeydown?
-            $scope.$apply ->
-              expression = $parse attrs.macTagAutocompleteOnKeydown
-              expression $scope.$parent, {$event, item: value}
+            expression = $parse attrs.macTagAutocompleteOnKeydown
+            expression $scope.$parent, {$event, item: value}
 
           return true
 
@@ -174,11 +174,12 @@ angular.module("Mac").directive "macTagAutocomplete", [
         $scope.onSelect = (item) ->
           item = $scope.autocompleteOnEnter {item} if attrs.macTagAutocompleteOnEnter?
           $scope.pushToSelected item if item
+          $scope.textInput = ""
 
         $scope.reset = ->
           $scope.textInput = ""
           $scope.updateSource()
 
         $scope.$on "mac-tag-autocomplete-clear-input", ->
-          $(".text-input", element).val ""
+          $scope.textInput = ""
 ]

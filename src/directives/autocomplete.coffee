@@ -8,6 +8,8 @@ A directive for providing suggestions while typing into the field
 @dependencies
 - jQuery UI autocomplete
 
+@param {String} ng-model Assignable angular expression to data-bind to
+@param {String} mac-placeholder Placeholder text
 @param {String} mac-autocomplete-url Url to fetch autocomplete dropdown list data
 @param {Function} mac-autocomplete-on-select Function called when user select on an item
        - `selected` - {Object} The item selected
@@ -19,15 +21,9 @@ A directive for providing suggestions while typing into the field
         - `data` - {Object} Data returned from the request
         - `status` - {Number} The status code of the response
         - `header` - {Object} Header of the response
-@param {Function} mac-autocomplete-on-key-down function called on key down
-        - `event` - {Object} jQuery event
-        - `value` - {String} Value in the input text
-@param {String}  mac-autocomplete-value           The value to be sent back upon selection        (default "id")
-@param {String}  mac-autocomplete-label           The label to display to the users               (default "name")
-@param {String}  mac-autocomplete-query           The query parameter on GET command              (default "q")
-@param {Integer} mac-autocomplete-delay           Delay on fetching autocomplete data after keyup (default 800)
-@param {Boolean} mac-autocomplete-clear-on-select Clear text input on select                      (default false)
-@param {String}  mac-autocomplete-placeholder     Placeholder text of the text input              (default "")
+@param {String}  mac-autocomplete-label The label to display to the users               (default "name")
+@param {String}  mac-autocomplete-query The query parameter on GET command              (default "q")
+@param {Integer} mac-autocomplete-delay Delay on fetching autocomplete data after keyup (default 800)
 ###
 
 angular.module("Mac").directive "macAutocomplete", [
@@ -38,107 +34,95 @@ angular.module("Mac").directive "macAutocomplete", [
     restrict:    "E"
     templateUrl: "template/autocomplete.html"
     replace:     true
-    scope:
-      autocompleteUrl: "=macAutocompleteUrl"
-      onSelect:        "&macAutocompleteOnSelect"
-      onSuccess:       "&macAutocompleteOnSuccess"
-      onError:         "&macAutocompleteOnError"
-      onKeyDown:       "&macAutocompleteOnKeyDown"
-      placeholder:     "=macAutocompletePlaceholder"
-      source:          "=macAutocompleteSource"
+    require:     "?ngModel"
 
-    compile: (element, attrs) ->
-      valueKey      = attrs.macAutocompleteValue       or "id"
+    link: ($scope, element, attrs) ->
       labelKey      = attrs.macAutocompleteLabel       or "name"
       queryKey      = attrs.macAutocompleteQuery       or "q"
       delay         = +attrs.macAutocompleteDelay      or 800
-      events        = attrs.macAutocompleteEvents      or ""
       clearOnSelect = attrs.macAutocompleteClearOnSelect?
 
-      ($scope, element, attrs) ->
-        if attrs.macAutocompleteOnKeyDown
-          element.bind "keydown", (event) ->
-            $scope.onKeyDown {event, value: $(this).val()}
+      autocompleteUrl     = $parse(attrs.macAutocompleteUrl) $scope
+      onSelect            = $parse attrs.macAutocompleteOnSelect
+      onSuccess           = $parse attrs.macAutocompleteOnSuccess
+      onError             = $parse attrs.macAutocompleteOnError
+      source              = $parse(attrs.macAutocompleteSource) $scope
+      currentAutocomplete = []
 
-        #
-        # @function
-        # @name sourceFn
-        # @description
-        # Used by jQuery UI autocomplete to populate options
-        # The list of objects will be populated through the response function
-        # @param {Request Object} req Request object from jQuery UI
-        # @param {Response function} resp Response callback function for jQuery UI
-        #
-        sourceFn = (req, resp) ->
-          if attrs.macAutocompleteUrl?
-            options =
-              method: "GET"
-              url:    $scope.autocompleteUrl
-              params: {}
-            options.params[queryKey] = req.term
+      #
+      # @function
+      # @name reset
+      # @description
+      # Resetting autocomplete
+      #
+      reset = ->
+        currentAutocomplete = []
 
-            $http(options)
-              .success (data, status, headers, config) ->
-                  if attrs.macAutocompleteOnSuccess?
-                    fetchedList = $scope.onSuccess {data, status, headers}
+      #
+      # @function
+      # @name updateList
+      # @description
+      # Convert given data to the format used by autocomplete
+      # @param {Array} data Raw data
+      #
+      updateList = (data = []) ->
+        # store the current data for revert lookup
+        currentAutocomplete = data
 
-                  fetchedList ?= data.data
+        # convert tags to jquery ui autocomplete format
+        _(data).map (item) ->
+          label = value = if labelKey? then item[labelKey] else item
+          return {label, value}
 
-                  resp $scope.updateList fetchedList
-              .error (data, status, headers, config) ->
-                if attrs.macAutocompleteOnError?
-                  $scope.onError {data, status, headers}
-          else
-            list = $scope.updateList($scope.source or [])
-            resp $filter("filter") list, req.term
+      #
+      # @function
+      # @name sourceFn
+      # @description
+      # Used by jQuery UI autocomplete to populate options
+      # The list of objects will be populated through the response function
+      # @param {Request Object} req Request object from jQuery UI
+      # @param {Response function} resp Response callback function for jQuery UI
+      #
+      sourceFn = (req, resp) ->
+        if autocompleteUrl
+          options =
+            method: "GET"
+            url:    autocompleteUrl
+            params: {}
+          options.params[queryKey] = req.term
 
-        element.autocomplete
-          delay:     delay
-          autoFocus: true
-          source:    sourceFn
+          $http(options)
+            .success (data, status, headers, config) ->
+                if onSuccess?
+                  fetchedList = onSuccess {data, status, headers}
 
-          select: (event, ui) ->
-            $scope.$apply ->
-              selected = _($scope.currentAutocomplete).find (item) -> item[labelKey] is ui.item.label
-              $scope.onSelect {selected} if attrs.macAutocompleteOnSelect?
+                fetchedList ?= data.data
 
-            if clearOnSelect
-              setTimeout (->
-                element.val ""
-              ), 0
+                resp updateList fetchedList
+            .error (data, status, headers, config) ->
+              if onError?
+                onError {data, status, headers}
+        else
+          list = updateList(source or [])
+          resp $filter("filter") list, req.term
 
-        #
-        # @event
-        # @name resetAutocomplete
-        # @description
-        # Event to reset autocomplete
-        #
-        $scope.$on "resetAutocomplete", -> $scope.reset()
+      element.autocomplete
+        delay:     delay
+        autoFocus: true
+        source:    sourceFn
 
-        #
-        # @function
-        # @name $scope.updateList
-        # @description
-        # Convert given data to the format used by autocomplete
-        # @param {Array} data Raw data
-        #
-        $scope.updateList = (data = []) ->
-          # store the current data for revert lookup
-          $scope.currentAutocomplete = data
+        select: (event, ui) ->
+          $scope.$apply ->
+            selected = _(currentAutocomplete).find (item) -> item[labelKey] is ui.item.label
+            onSelect $scope, {selected} if onSelect?
 
-          # convert tags to jquery ui autocomplete format
-          _(data).map (item) ->
-            label = value = if labelKey? then item[labelKey] else item
-            return {label, value}
+      #
+      # @event
+      # @name resetAutocomplete
+      # @description
+      # Event to reset autocomplete
+      #
+      $scope.$on "resetAutocomplete", -> reset()
 
-        #
-        # @function
-        # @name $scope.reset
-        # @description
-        # Resetting autocomplete
-        #
-        $scope.reset = ->
-          $scope.currentAutocomplete = []
-
-        $scope.reset()
+      reset()
 ]

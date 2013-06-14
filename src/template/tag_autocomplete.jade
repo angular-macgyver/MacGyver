@@ -6,14 +6,14 @@
     li.tag.input-tag(ng-switch="disabled")
       span(ng-switch-when="true")
         input.text-input.no-complete(
-          type        = "text"
-          placeholder = "{{placeholder}}"
+          type            = "text"
+          mac-placeholder = "placeholder"
         )
       span(ng-switch-when="false")
         mac-autocomplete.text-input.mac-autocomplete(
-          mac-autocomplete-on-select   = "onSelect(selected)"
-          mac-autocomplete-on-success  = "onSuccess(data)"
-          mac-autocomplete-on-key-down = "onKeyDown(event, value)"
-          mac-autocomplete-placeholder = "placeholder"
-          mac-autocomplete-clear-on-select
+          ng-model                    = "textInput"
+          mac-autocomplete-on-select  = "onSelect(selected)"
+          mac-autocomplete-on-success = "onSuccess(data)"
+          mac-placeholder             = "placeholder"
+          mac-keydown                 = "onKeyDown($event)"
         )

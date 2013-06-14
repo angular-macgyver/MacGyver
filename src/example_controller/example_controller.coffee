@@ -109,6 +109,8 @@ module.controller "ExampleController", ["$scope", "$timeout", "Table", "SectionC
   # Used in autocomplete to transform data
   $scope.onSuccess = (data) -> data.data
 
+  $scope.autocompleteQuery = ""
+
   # Url to remotely fetch content
   $scope.autocompleteUrl = "data.json"
 

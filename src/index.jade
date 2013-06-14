@@ -89,10 +89,11 @@ block append content
         h3 Example
         .docs-example
           mac-autocomplete(
-            mac-autocomplete-url         = "autocompleteUrl"
-            mac-autocomplete-query       = "q"
-            mac-autocomplete-on-success  = "onSuccess(data)"
-            mac-autocomplete-placeholder = "'Autocomplete'"
+            mac-autocomplete-url        = "autocompleteUrl"
+            mac-autocomplete-query      = "q"
+            mac-autocomplete-on-success = "onSuccess(data)"
+            mac-placeholder             = "'Autocomplete'"
+            ng-model                    = "autocompleteQuery"
           )
         pre.prettyprint.linenums(ng-non-bindable)
           | <mac-autocomplete
