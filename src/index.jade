@@ -41,6 +41,9 @@ block append content
         li: a(href="#file-upload")
           i.icon-chevron-right
           | File Upload
+        li: a(href="#placeholder")
+          i.icon-chevron-right
+          | Placeholder
 
     #example.span9(ng-controller='ExampleController')
       section#modal
@@ -263,3 +266,11 @@ block append content
           |   mac-upload-submit="fileUploadSubmit($event, $response)"
           |   mac-upload-drop-zone=".example-hit-area"
           |   mac-upload-disabled="!fileUploaderEnabled"/>
+
+      section#placeholder
+        @@include("docs/html/directives/placeholder.html")
+        h3 Example
+        .docs-example
+          input(type="text", mac-placeholder="tagAutocompletePlaceholder")
+        pre.prettyprint.linenums(ng-non-bindable)
+          | <input type="text" mac-placeholder="placeholderVariable">
