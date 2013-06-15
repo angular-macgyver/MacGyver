@@ -50,3 +50,8 @@ block append content
             dd {{ threeDaysAgo | timestamp }}
         pre.prettyprint.linenums(ng-non-bindable)
           | {{ fiveMinAgo | timestamp }}
+
+block append scripts
+  script
+    $("#top-nav li").removeClass("active");
+    $("#filters-nav").addClass("active");

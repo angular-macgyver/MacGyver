@@ -118,3 +118,8 @@ block append content
           |     <div column="b" class="cell">{{ total.b | currency}}</div>
           |   </div>
           | </div>
+
+block append scripts
+  script
+    $("#top-nav li").removeClass("active");
+    $("#tableview-nav").addClass("active");

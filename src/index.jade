@@ -263,3 +263,8 @@ block append content
           input(type="text", mac-placeholder="tagAutocompletePlaceholder")
         pre.prettyprint.linenums(ng-non-bindable)
           | <input type="text" mac-placeholder="placeholderVariable">
+
+block append scripts
+  script
+    $("#top-nav li").removeClass("active");
+    $("#directives-nav").addClass("active");
