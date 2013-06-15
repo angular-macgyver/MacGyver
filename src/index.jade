@@ -35,9 +35,6 @@ block append content
         li: a(href='#spinner')
           i.icon-chevron-right
           | Spinner
-        li: a(href="#blur")
-          i.icon-chevron-right
-          | Blur
         li: a(href="#file-upload")
           i.icon-chevron-right
           | File Upload
@@ -227,14 +224,6 @@ block append content
           mac-spinner
         pre.prettyprint.linenums(ng-non-bindable)
           | <mac-spinner></mac-spinner>
-
-      section#blur
-        .page-header: h1 Blur
-        h3 Example
-        .docs-example
-          input(type="text", mac-model-blur="onTextBlur()")
-        pre.prettyprint.linenums(ng-non-bindable)
-          | <input type="text" mac-model-blur="onTextBlur()"/>
 
       section#file-upload
         @@include("docs/html/directives/file_upload.html")

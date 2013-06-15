@@ -1,0 +1,18 @@
+extends layout
+
+block append content
+  .row.content
+    #nav.span3
+      ul.nav.nav-list.docs-sidenav(data-spy="affix", data-offset-top="0")
+        li: a(href="#blur")
+          i.icon-chevron-right
+          | Blur
+
+    #example.span9(ng-controller='ExampleController')
+      section#blur
+        .page-header: h1 Blur
+        h3 Example
+        .docs-example
+          input(type="text", mac-blur="onTextBlur()")
+        pre.prettyprint.linenums(ng-non-bindable)
+          | <input type="text" mac-blur="onTextBlur()"/>
