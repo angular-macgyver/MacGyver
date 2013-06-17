@@ -1,9 +1,9 @@
-angular.module("Mac").factory "TableViewBaseColumn", [ ->
-  class TableViewBaseColumn
+angular.module("Mac").factory "TableBaseColumn", [ ->
+  class TableBaseColumn
 ]
 
-angular.module("Mac").factory "TableViewSectionController", [ ->
-  class TableViewSectionController
+angular.module("Mac").factory "TableSectionController", [ ->
+  class TableSectionController
     constructor: (@section) ->
     # Value should probably be overridden by the user
     cellValue: (row, colName) -> @defaultCellValue(row, colName)
@@ -14,8 +14,8 @@ angular.module("Mac").factory "TableViewSectionController", [ ->
 
 # For legacy support only
 angular.module("Mac").factory "SectionController", [
-  "TableViewSectionController"
-  (TableViewSectionController) -> TableViewSectionController
+  "TableSectionController"
+  (TableSectionController) -> TableSectionController
 ]
 
 angular.module("Mac").factory "TableRow", [ ->
@@ -39,11 +39,11 @@ angular.module("Mac").factory "TableSection", [ ->
 ]
 
 angular.module("Mac").factory "tableComponents", [
-  "TableViewSectionController"
+  "TableSectionController"
   "TableRow"
   "TableSection"
   (
-    TableViewSectionController
+    TableSectionController
     TableRow
     TableSection
   ) ->
@@ -55,7 +55,7 @@ angular.module("Mac").factory "tableComponents", [
       Column.prototype = proto
       return new Column(colName)
 
-    sectionFactory: (table, sectionName, controller = TableViewSectionController) ->
+    sectionFactory: (table, sectionName, controller = TableSectionController) ->
       return new TableSection(controller, table, sectionName)
 
     cellFactory: (row, proto = {}) ->
@@ -78,7 +78,7 @@ angular.module("Mac").factory "dynamicColumnsFunction", ->
     columns = (key for key, model of first)
     @set(columns)
 
-angular.module("Mac").factory "ColumnsController", [
+angular.module("Mac").factory "TableColumnsController", [
   "tableComponents"
   "dynamicColumnsFunction"
   (
@@ -126,7 +126,7 @@ angular.module("Mac").factory "ColumnsController", [
         @table.columns = columns
 ]
 
-angular.module("Mac").factory "RowsController", [
+angular.module("Mac").factory "TableRowsController", [
     "tableComponents"
     (
         tableComponents
@@ -171,13 +171,13 @@ angular.module("Mac").factory "RowsController", [
 ]
 
 angular.module("Mac").factory "Table", [
-    "TableViewBaseColumn"
-    "ColumnsController"
-    "RowsController"
+    "TableBaseColumn"
+    "TableColumnsController"
+    "TableRowsController"
     (
-        TableViewBaseColumn
-        ColumnsController
-        RowsController
+        TableBaseColumn
+        TableColumnsController
+        TableRowsController
     ) ->
       # Helper functions
       convertObjectModelsToArray = (models) ->
@@ -185,11 +185,11 @@ angular.module("Mac").factory "Table", [
 
       # The Table class
       class Table
-        constructor: (columns = [], @baseColumn = new TableViewBaseColumn()) ->
+        constructor: (columns = [], @baseColumn = new TableBaseColumn()) ->
           @sections       = {}
           @columns        = []
-          @columnsCtrl    = new ColumnsController(this)
-          @rowsCtrl       = new RowsController(this)
+          @columnsCtrl    = new TableColumnsController(this)
+          @rowsCtrl       = new TableRowsController(this)
           @dynamicColumns = columns is 'dynamic'
           if not @dynamicColumns
             @columnsCtrl.set(columns)

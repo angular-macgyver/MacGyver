@@ -4,8 +4,8 @@ describe "Table Data", ->
   describe "Normal Table Data", ->
     models = null
 
-    beforeEach inject ($rootScope, Table, TableViewSectionController) ->
-      class BodySectionController extends TableViewSectionController
+    beforeEach inject ($rootScope, Table, TableSectionController) ->
+      class BodySectionController extends TableSectionController
         cellValue: (row, colName) ->
             switch colName
                 when "fullName" then "#{row.model.first_name} #{row.model.last_name}"
@@ -36,9 +36,9 @@ describe "Table Data", ->
       table = @scope.table
       expect(table.sections.body.rows[0].cells[0].value()).toBe "Paul McCartney"
 
-    it "can use a different section controller later", inject (TableViewSectionController) ->
+    it "can use a different section controller later", inject (TableSectionController) ->
       table = @scope.table
-      class NewBodyController extends TableViewSectionController
+      class NewBodyController extends TableSectionController
         cellValue: (row, colName) ->
           "Overridden@!"
 
@@ -83,9 +83,9 @@ describe "Table Data", ->
       expect(table.sections.body.rows.length).toBe 3
       expect(table.sections.body.rows[1].cells[0].value()).toBe "Ringo Star"
 
-    it "can total a column", inject (TableViewSectionController) ->
+    it "can total a column", inject (TableSectionController) ->
       table = @scope.table
-      class FooterController extends TableViewSectionController
+      class FooterController extends TableSectionController
         cellValue: (row, colName) ->
           if colName is "age"
             total = 0
@@ -160,9 +160,9 @@ describe "Table Data", ->
         expect(table.sections.body.rows[0].cells[0].value()).toBe "John Lennon"
 
     describe "Dynamic Table", ->
-      beforeEach inject ($rootScope, Table, TableViewSectionController) ->
+      beforeEach inject ($rootScope, Table, TableSectionController) ->
         # Our custom header controller, we'll use this later
-        class HeaderController extends TableViewSectionController
+        class HeaderController extends TableSectionController
           cellValue: (row, colName) -> colName.replace(/_/g,' ')
 
          models = [
@@ -298,7 +298,7 @@ describe "Table View", ->
 
       describe "Section Controllers", ->
 
-        beforeEach inject (TableViewSectionController) ->
+        beforeEach inject (TableSectionController) ->
           sectionControllersColumns = ["full_name", "age"]
 
           sectionControllersTemplate =
@@ -320,7 +320,7 @@ describe "Table View", ->
               </tfoot>
             </table>"""
 
-          class SectionTestBodySectionController extends TableViewSectionController
+          class SectionTestBodySectionController extends TableSectionController
             name: "SectionTestBodySectionController"
             cellValue: (row, colName) ->
                 switch colName
