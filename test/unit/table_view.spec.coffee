@@ -36,6 +36,17 @@ describe "Table Data", ->
       table = @scope.table
       expect(table.sections.body.rows[0].cells[0].value()).toBe "Paul McCartney"
 
+    it "can use a different section controller later", inject (TableViewSectionController) ->
+      table = @scope.table
+      class NewBodyController extends TableViewSectionController
+        cellValue: (row, colName) ->
+          "Overridden@!"
+
+      @scope.$apply ->
+        table.load "body", [{first_name: "Peter", last_name: "Townsend"}], NewBodyController
+
+      expect(table.sections.body.rows[0].cells[0].value()).toBe "Overridden@!"
+
     it "sets table on section", ->
       table = @scope.table
       # Section has table
@@ -145,15 +156,18 @@ describe "Table Data", ->
         for model, index in copyOfModels
           expect(table.sections.body.rows[index].model).toBe model
 
+        # Section Controller is preserved
+        expect(table.sections.body.rows[0].cells[0].value()).toBe "John Lennon"
+
     describe "Dynamic Table", ->
       beforeEach inject ($rootScope, Table, TableViewSectionController) ->
         # Our custom header controller, we'll use this later
         class HeaderController extends TableViewSectionController
-            cellValue: (row, colName) -> colName.replace(/_/g,' ')
+          cellValue: (row, colName) -> colName.replace(/_/g,' ')
 
          models = [
-            {first_name: "Paul", last_name: "McCartney", age: 30, date_of_birth: '6/18/1942'}
-            {first_name: "John", last_name: "Lennon", age: 29, date_of_birth: '10/09/1940'} ]
+          {first_name: "Paul", last_name: "McCartney", age: 30, date_of_birth: '6/18/1942'}
+          {first_name: "John", last_name: "Lennon", age: 29, date_of_birth: '10/09/1940'} ]
         @table = table = new Table('dynamic')
         table.load("header", null, HeaderController)
         table.load("body", models)
@@ -281,6 +295,46 @@ describe "Table View", ->
 
       it "Should set the width automatically", ->
         expect(element.find("[cell-template]").first().attr("width")).toBe "50%"
+
+      describe "Section Controllers", ->
+
+        beforeEach inject (TableViewSectionController) ->
+          sectionControllersColumns = ["full_name", "age"]
+
+          sectionControllersTemplate =
+          """<table mac-table-v2 columns="tableColumns">
+              <thead table-section="header">
+                <tr table-row>
+                  <th cell-template initial-width="auto">Header Cell</th>
+                </tr>
+              </thead>
+              <tbody table-section="body" models="tableData" controller="tableBodySectionController">
+                <tr table-row>
+                  <td cell-template>{{cell.value()}}</td>
+                </tr>
+              </tbody>
+              <tfoot table-section="footer">
+                <tr table-row>
+                  <td cell-template>Footer Cell</td>
+                </tr>
+              </tfoot>
+            </table>"""
+
+          class SectionTestBodySectionController extends TableViewSectionController
+            name: "SectionTestBodySectionController"
+            cellValue: (row, colName) ->
+                switch colName
+                  when "full_name" then "#{row.model.first_name} #{row.model.last_name}"
+                  when "age" then row.model.age
+
+          element = $compile(sectionControllersTemplate)(scope)
+
+          scope.$apply ->
+            scope.tableBodySectionController = SectionTestBodySectionController
+            scope.tableColumns               = sectionControllersColumns
+
+        it "Should use the values in the section controller", ->
+          expect(element.find("[table-section=body] [table-row]:first [cell-template]:first").text()).toBe "Paul McCartney"
 
       describe "Column Auto Widths", ->
         firstNameElement = null

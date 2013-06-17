@@ -21,15 +21,31 @@ angular.module("Mac").factory "SectionController", [
 angular.module("Mac").factory "Row", [ ->
   class Row
     constructor: (@section, @model, @cells = [], @cellsMap = {}) ->
-    toJSON: -> cells: @cells
+
+    toJSON: ->
+      cells: @cells
+]
+
+angular.module("Mac").factory "Section", [ ->
+  class Section
+    constructor: (controller, @table, @name, @rows = []) ->
+      @setController controller
+
+    setController: (controller) ->
+      @ctrl = new controller(this)
+
+    toJSON: ->
+      rows: @rows
 ]
 
 angular.module("Mac").factory "tableComponents", [
   "TableViewSectionController"
   "Row"
+  "Section"
   (
     TableViewSectionController
     Row
+    Section
   ) ->
     rowFactory: (section, model) ->
       return new Row(section, model)
@@ -40,10 +56,6 @@ angular.module("Mac").factory "tableComponents", [
       return new Column(colName)
 
     sectionFactory: (table, sectionName, controller = TableViewSectionController) ->
-      Section = (controller, @table, @name, @rows = []) ->
-        @ctrl   = new controller(this)
-        @toJSON = -> rows: @rows
-        return
       return new Section(controller, table, sectionName)
 
     cellFactory: (row, proto = {}) ->
@@ -206,6 +218,10 @@ angular.module("Mac").factory "Table", [
                 toBeInserted.push [sectionName, model, index]
 
             @insert.apply this, args for args in toBeInserted
+
+            # If we're passed a section controller, set it for this section
+            if sectionController
+              @sections[sectionName].setController sectionController
 
           # New or empty section, load using set which will also create a section
           else
