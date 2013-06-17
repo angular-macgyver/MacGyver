@@ -10262,6 +10262,8 @@ A directive for providing suggestions while typing into the field
 @dependencies
 - jQuery UI autocomplete
 
+@param {String} ng-model Assignable angular expression to data-bind to
+@param {String} mac-placeholder Placeholder text
 @param {String} mac-autocomplete-url Url to fetch autocomplete dropdown list data
 @param {Function} mac-autocomplete-on-select Function called when user select on an item
        - `selected` - {Object} The item selected
@@ -10273,15 +10275,9 @@ A directive for providing suggestions while typing into the field
         - `data` - {Object} Data returned from the request
         - `status` - {Number} The status code of the response
         - `header` - {Object} Header of the response
-@param {Function} mac-autocomplete-on-key-down function called on key down
-        - `event` - {Object} jQuery event
-        - `value` - {String} Value in the input text
-@param {String}  mac-autocomplete-value           The value to be sent back upon selection        (default "id")
-@param {String}  mac-autocomplete-label           The label to display to the users               (default "name")
-@param {String}  mac-autocomplete-query           The query parameter on GET command              (default "q")
-@param {Integer} mac-autocomplete-delay           Delay on fetching autocomplete data after keyup (default 800)
-@param {Boolean} mac-autocomplete-clear-on-select Clear text input on select                      (default false)
-@param {String}  mac-autocomplete-placeholder     Placeholder text of the text input              (default "")
+@param {String}  mac-autocomplete-label The label to display to the users               (default "name")
+@param {String}  mac-autocomplete-query The query parameter on GET command              (default "q")
+@param {Integer} mac-autocomplete-delay Delay on fetching autocomplete data after keyup (default 800)
 */
 
 angular.module("Mac").directive("macAutocomplete", [
@@ -10290,114 +10286,94 @@ angular.module("Mac").directive("macAutocomplete", [
       restrict: "E",
       templateUrl: "template/autocomplete.html",
       replace: true,
-      scope: {
-        autocompleteUrl: "=macAutocompleteUrl",
-        onSelect: "&macAutocompleteOnSelect",
-        onSuccess: "&macAutocompleteOnSuccess",
-        onError: "&macAutocompleteOnError",
-        onKeyDown: "&macAutocompleteOnKeyDown",
-        placeholder: "=macAutocompletePlaceholder",
-        source: "=macAutocompleteSource"
-      },
-      compile: function(element, attrs) {
-        var clearOnSelect, delay, events, labelKey, queryKey, valueKey;
-        valueKey = attrs.macAutocompleteValue || "id";
+      require: "?ngModel",
+      link: function($scope, element, attrs) {
+        var autocompleteUrl, clearOnSelect, currentAutocomplete, delay, labelKey, onError, onSelect, onSuccess, queryKey, reset, source, sourceFn, updateList;
         labelKey = attrs.macAutocompleteLabel || "name";
         queryKey = attrs.macAutocompleteQuery || "q";
         delay = +attrs.macAutocompleteDelay || 800;
-        events = attrs.macAutocompleteEvents || "";
         clearOnSelect = attrs.macAutocompleteClearOnSelect != null;
-        return function($scope, element, attrs) {
-          var sourceFn;
-          if (attrs.macAutocompleteOnKeyDown) {
-            element.bind("keydown", function(event) {
-              return $scope.onKeyDown({
-                event: event,
-                value: $(this).val()
+        autocompleteUrl = $parse(attrs.macAutocompleteUrl)($scope);
+        onSelect = $parse(attrs.macAutocompleteOnSelect);
+        onSuccess = $parse(attrs.macAutocompleteOnSuccess);
+        onError = $parse(attrs.macAutocompleteOnError);
+        source = $parse(attrs.macAutocompleteSource)($scope);
+        currentAutocomplete = [];
+        reset = function() {
+          return currentAutocomplete = [];
+        };
+        updateList = function(data) {
+          if (data == null) {
+            data = [];
+          }
+          currentAutocomplete = data;
+          return _(data).map(function(item) {
+            var label, value;
+            label = value = labelKey != null ? item[labelKey] : item;
+            return {
+              label: label,
+              value: value
+            };
+          });
+        };
+        sourceFn = function(req, resp) {
+          var list, options;
+          if (autocompleteUrl) {
+            options = {
+              method: "GET",
+              url: autocompleteUrl,
+              params: {}
+            };
+            options.params[queryKey] = req.term;
+            return $http(options).success(function(data, status, headers, config) {
+              var fetchedList;
+              if (onSuccess != null) {
+                fetchedList = onSuccess({
+                  data: data,
+                  status: status,
+                  headers: headers
+                });
+              }
+              if (fetchedList == null) {
+                fetchedList = data.data;
+              }
+              return resp(updateList(fetchedList));
+            }).error(function(data, status, headers, config) {
+              if (onError != null) {
+                return onError({
+                  data: data,
+                  status: status,
+                  headers: headers
+                });
+              }
+            });
+          } else {
+            list = updateList(source || []);
+            return resp($filter("filter")(list, req.term));
+          }
+        };
+        element.autocomplete({
+          delay: delay,
+          autoFocus: true,
+          source: sourceFn,
+          select: function(event, ui) {
+            return $scope.$apply(function() {
+              var selected;
+              selected = _(currentAutocomplete).find(function(item) {
+                return item[labelKey] === ui.item.label;
               });
+              if (onSelect != null) {
+                return onSelect($scope, {
+                  selected: selected
+                });
+              }
             });
           }
-          sourceFn = function(req, resp) {
-            var list, options;
-            if (attrs.macAutocompleteUrl != null) {
-              options = {
-                method: "GET",
-                url: $scope.autocompleteUrl,
-                params: {}
-              };
-              options.params[queryKey] = req.term;
-              return $http(options).success(function(data, status, headers, config) {
-                var fetchedList;
-                if (attrs.macAutocompleteOnSuccess != null) {
-                  fetchedList = $scope.onSuccess({
-                    data: data,
-                    status: status,
-                    headers: headers
-                  });
-                }
-                if (fetchedList == null) {
-                  fetchedList = data.data;
-                }
-                return resp($scope.updateList(fetchedList));
-              }).error(function(data, status, headers, config) {
-                if (attrs.macAutocompleteOnError != null) {
-                  return $scope.onError({
-                    data: data,
-                    status: status,
-                    headers: headers
-                  });
-                }
-              });
-            } else {
-              list = $scope.updateList($scope.source || []);
-              return resp($filter("filter")(list, req.term));
-            }
-          };
-          element.autocomplete({
-            delay: delay,
-            autoFocus: true,
-            source: sourceFn,
-            select: function(event, ui) {
-              $scope.$apply(function() {
-                var selected;
-                selected = _($scope.currentAutocomplete).find(function(item) {
-                  return item[labelKey] === ui.item.label;
-                });
-                if (attrs.macAutocompleteOnSelect != null) {
-                  return $scope.onSelect({
-                    selected: selected
-                  });
-                }
-              });
-              if (clearOnSelect) {
-                return setTimeout((function() {
-                  return element.val("");
-                }), 0);
-              }
-            }
-          });
-          $scope.$on("resetAutocomplete", function() {
-            return $scope.reset();
-          });
-          $scope.updateList = function(data) {
-            if (data == null) {
-              data = [];
-            }
-            $scope.currentAutocomplete = data;
-            return _(data).map(function(item) {
-              var label, value;
-              label = value = labelKey != null ? item[labelKey] : item;
-              return {
-                label: label,
-                value: value
-              };
-            });
-          };
-          $scope.reset = function() {
-            return $scope.currentAutocomplete = [];
-          };
-          return $scope.reset();
-        };
+        });
+        $scope.$on("resetAutocomplete", function() {
+          return reset();
+        });
+        return reset();
       }
     };
   }
@@ -10613,27 +10589,6 @@ for (_i = 0, _len = _ref.length; _i < _len; _i++) {
   event = _ref[_i];
   _fn(event);
 }
-
-angular.module("Mac").directive("macParentClick", [
-  "$parse", function($parse) {
-    return {
-      link: function($scope, element, attr) {
-        var fn;
-        fn = $parse(attr.macParentClick);
-        if ($scope.$parent == null) {
-          return;
-        }
-        return element.bind("click", function(event) {
-          return $scope.$apply(function() {
-            return fn($scope.$parent, {
-              $event: event
-            });
-          });
-        });
-      }
-    };
-  }
-]);
 
 _ref1 = ["Enter", "Escape", "Space", "Left", "Up", "Right", "Down"];
 _fn1 = function(key) {
@@ -11333,6 +11288,27 @@ angular.module("Mac").factory("modal", [
     };
   }
 ]);
+
+/*
+@chalk overview
+@name Placeholder
+
+@description
+Dynamically fill out the placeholder text of input
+
+@param {String} mac-placeholder Variable that contains the placeholder text
+*/
+
+angular.module("Mac").directive("macPlaceholder", function() {
+  return {
+    restrict: "A",
+    link: function($scope, element, attrs) {
+      return $scope.$watch(attrs.macPlaceholder, function(value) {
+        return element.attr("placeholder", value);
+      });
+    }
+  };
+});
 
 angular.module("Mac").directive("macReorderable", [
   "hookableDirectiveController", function(hookableDirectiveController) {
@@ -12284,7 +12260,7 @@ angular.module("Mac").directive("macTableV2", [
         var autoWidthTemplates, headerSectionElement, initialWidthExp, remainingPercent, siblingTemplates;
         headerSectionElement = element.find("[table-section=header]");
         element.find("[initial-width]").attr("width", "{{cell.width}}%").parents("[table-row]").attr("mac-columns", "");
-        element.find("[cell-template]").wrapInner("<div class='cell-wrapper' />");
+        element.find("[cell-template]").wrapInner("<div class='cell-wrapper' />").attr("data-column-name", "{{cell.colName}}");
         if (attr.resizableColumns != null) {
           headerSectionElement.find("[cell-template]").find(".cell-wrapper").attr("mac-resizable-column", "").attr("mac-resizable", "").attr("mac-resizable-containment", "document");
         }
@@ -12411,6 +12387,7 @@ angular.module("Mac").directive("macTagAutocomplete", [
         textInput.attr(attrsObject);
         return function($scope, element, attrs) {
           $scope.disabled = disabled;
+          $scope.textInput = "";
           element.click(function() {
             return $(".text-input", element).focus();
           });
@@ -12472,36 +12449,25 @@ angular.module("Mac").directive("macTagAutocomplete", [
               return _ref = item[valueKey], __indexOf.call(difference, _ref) >= 0;
             });
           };
-          $scope.onKeyDown = function($event, value) {
-            var stroke;
-            if (value == null) {
-              value = "";
-            }
+          $scope.onKeyDown = function($event) {
+            var expression, stroke;
             stroke = $event.which || $event.keyCode;
             switch (stroke) {
               case keys.BACKSPACE:
-                if (value.length === 0) {
-                  $scope.$apply(function() {
-                    return $scope.selected.pop();
-                  });
+                if ($scope.textInput.length === 0) {
+                  $scope.selected.pop();
                 }
                 break;
               case keys.ENTER:
-                if (value.length > 0 && $scope.disabled) {
-                  $scope.$apply(function() {
-                    $scope.textInput = "";
-                    return $scope.onSelect(value);
-                  });
+                if ($scope.textInput.length > 0 && $scope.disabled) {
+                  $scope.onSelect($scope.textInput);
                 }
             }
             if (attrs.macTagAutocompleteOnKeydown != null) {
-              $scope.$apply(function() {
-                var expression;
-                expression = $parse(attrs.macTagAutocompleteOnKeydown);
-                return expression($scope.$parent, {
-                  $event: $event,
-                  item: value
-                });
+              expression = $parse(attrs.macTagAutocompleteOnKeydown);
+              expression($scope.$parent, {
+                $event: $event,
+                item: value
               });
             }
             return true;
@@ -12521,15 +12487,16 @@ angular.module("Mac").directive("macTagAutocomplete", [
               });
             }
             if (item) {
-              return $scope.pushToSelected(item);
+              $scope.pushToSelected(item);
             }
+            return $scope.textInput = "";
           };
           $scope.reset = function() {
             $scope.textInput = "";
             return $scope.updateSource();
           };
           return $scope.$on("mac-tag-autocomplete-clear-input", function() {
-            return $(".text-input", element).val("");
+            return $scope.textInput = "";
           });
         };
       }
@@ -13098,6 +13065,7 @@ module.controller("ExampleController", [
     $scope.onSuccess = function(data) {
       return data.data;
     };
+    $scope.autocompleteQuery = "";
     $scope.autocompleteUrl = "data.json";
     $scope.tagAutocompleteSelected = [];
     $scope.tagAutocompleteDisabledSelected = [];
@@ -13371,74 +13339,101 @@ angular.module("Mac").factory("hookableDirectiveController", [
 
 var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-angular.module("Mac").factory("TableViewBaseColumn", [
+angular.module("Mac").factory("TableBaseColumn", [
   function() {
-    var TableViewBaseColumn;
-    return TableViewBaseColumn = (function() {
-      function TableViewBaseColumn() {}
+    var TableBaseColumn;
+    return TableBaseColumn = (function() {
+      function TableBaseColumn() {}
 
-      return TableViewBaseColumn;
+      return TableBaseColumn;
 
     })();
   }
 ]);
 
-angular.module("Mac").factory("TableViewSectionController", [
+angular.module("Mac").factory("TableSectionController", [
   function() {
-    var TableViewSectionController;
-    return TableViewSectionController = (function() {
-      function TableViewSectionController(section) {
+    var TableSectionController;
+    return TableSectionController = (function() {
+      function TableSectionController(section) {
         this.section = section;
       }
 
-      TableViewSectionController.prototype.cellValue = function(row, colName) {
+      TableSectionController.prototype.cellValue = function(row, colName) {
         return this.defaultCellValue(row, colName);
       };
 
-      TableViewSectionController.prototype.defaultCellValue = function(row, colName) {
+      TableSectionController.prototype.defaultCellValue = function(row, colName) {
         return row.model[colName];
       };
 
-      return TableViewSectionController;
+      return TableSectionController;
 
     })();
   }
 ]);
 
 angular.module("Mac").factory("SectionController", [
-  "TableViewSectionController", function(TableViewSectionController) {
-    return TableViewSectionController;
+  "TableSectionController", function(TableSectionController) {
+    return TableSectionController;
   }
 ]);
 
-angular.module("Mac").factory("Row", [
+angular.module("Mac").factory("TableRow", [
   function() {
-    var Row;
-    return Row = (function() {
-      function Row(section, model, cells, cellsMap) {
+    var TableRow;
+    return TableRow = (function() {
+      function TableRow(section, model, cells, cellsMap) {
         this.section = section;
         this.model = model;
         this.cells = cells != null ? cells : [];
         this.cellsMap = cellsMap != null ? cellsMap : {};
       }
 
-      Row.prototype.toJSON = function() {
+      TableRow.prototype.toJSON = function() {
         return {
           cells: this.cells
         };
       };
 
-      return Row;
+      return TableRow;
+
+    })();
+  }
+]);
+
+angular.module("Mac").factory("TableSection", [
+  function() {
+    var TableSection;
+    return TableSection = (function() {
+      function TableSection(controller, table, name, rows) {
+        this.table = table;
+        this.name = name;
+        this.rows = rows != null ? rows : [];
+        this.setController(controller);
+      }
+
+      TableSection.prototype.setController = function(controller) {
+        return this.ctrl = new controller(this);
+      };
+
+      TableSection.prototype.toJSON = function() {
+        return {
+          rows: this.rows
+        };
+      };
+
+      return TableSection;
 
     })();
   }
 ]);
 
 angular.module("Mac").factory("tableComponents", [
-  "TableViewSectionController", "Row", function(TableViewSectionController, Row) {
+  "TableSectionController", "TableRow", "TableSection", function(TableSectionController, TableRow, TableSection) {
     return {
       rowFactory: function(section, model) {
-        return new Row(section, model);
+        return new TableRow(section, model);
       },
       columnFactory: function(colName, proto) {
         var Column;
@@ -13452,22 +13447,10 @@ angular.module("Mac").factory("tableComponents", [
         return new Column(colName);
       },
       sectionFactory: function(table, sectionName, controller) {
-        var Section;
         if (controller == null) {
-          controller = TableViewSectionController;
+          controller = TableSectionController;
         }
-        Section = function(controller, table, name, rows) {
-          this.table = table;
-          this.name = name;
-          this.rows = rows != null ? rows : [];
-          this.ctrl = new controller(this);
-          this.toJSON = function() {
-            return {
-              rows: this.rows
-            };
-          };
-        };
-        return new Section(controller, table, sectionName);
+        return new TableSection(controller, table, sectionName);
       },
       cellFactory: function(row, proto) {
         var Cell;
@@ -13516,7 +13499,7 @@ angular.module("Mac").factory("dynamicColumnsFunction", function() {
   };
 });
 
-angular.module("Mac").factory("ColumnsController", [
+angular.module("Mac").factory("TableColumnsController", [
   "tableComponents", "dynamicColumnsFunction", function(tableComponents, dynamicColumnsFunction) {
     var ColumnsController;
     return ColumnsController = (function() {
@@ -13589,7 +13572,7 @@ angular.module("Mac").factory("ColumnsController", [
   }
 ]);
 
-angular.module("Mac").factory("RowsController", [
+angular.module("Mac").factory("TableRowsController", [
   "tableComponents", function(tableComponents) {
     var RowsController;
     return RowsController = (function() {
@@ -13648,7 +13631,7 @@ angular.module("Mac").factory("RowsController", [
 ]);
 
 angular.module("Mac").factory("Table", [
-  "TableViewBaseColumn", "ColumnsController", "RowsController", function(TableViewBaseColumn, ColumnsController, RowsController) {
+  "TableBaseColumn", "TableColumnsController", "TableRowsController", function(TableBaseColumn, TableColumnsController, TableRowsController) {
     var Table, convertObjectModelsToArray;
     convertObjectModelsToArray = function(models) {
       if (models && !angular.isArray(models)) {
@@ -13662,11 +13645,11 @@ angular.module("Mac").factory("Table", [
         if (columns == null) {
           columns = [];
         }
-        this.baseColumn = baseColumn != null ? baseColumn : new TableViewBaseColumn();
+        this.baseColumn = baseColumn != null ? baseColumn : new TableBaseColumn();
         this.sections = {};
         this.columns = [];
-        this.columnsCtrl = new ColumnsController(this);
-        this.rowsCtrl = new RowsController(this);
+        this.columnsCtrl = new TableColumnsController(this);
+        this.rowsCtrl = new TableRowsController(this);
         this.dynamicColumns = columns === 'dynamic';
         if (!this.dynamicColumns) {
           this.columnsCtrl.set(columns);
@@ -13675,7 +13658,7 @@ angular.module("Mac").factory("Table", [
       }
 
       Table.prototype.load = function(sectionName, models, sectionController) {
-        var args, index, model, row, tableModels, toBeInserted, toBeRemoved, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _results;
+        var args, index, model, row, tableModels, toBeInserted, toBeRemoved, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2;
         models = convertObjectModelsToArray(models);
         if ((_ref = this.sections[sectionName]) != null ? _ref.rows.length : void 0) {
           tableModels = [];
@@ -13700,12 +13683,13 @@ angular.module("Mac").factory("Table", [
               toBeInserted.push([sectionName, model, index]);
             }
           }
-          _results = [];
           for (_l = 0, _len3 = toBeInserted.length; _l < _len3; _l++) {
             args = toBeInserted[_l];
-            _results.push(this.insert.apply(this, args));
+            this.insert.apply(this, args);
           }
-          return _results;
+          if (sectionController) {
+            return this.sections[sectionName].setController(sectionController);
+          }
         } else {
           return this.rowsCtrl.set(sectionName, models, sectionController);
         }
@@ -13855,7 +13839,7 @@ util.factory("util", [
       isArray: nativeIsArray || function(obj) {
         return toString.call(obj) === "[object Array]";
       },
-      _urlRegex: /(?:(?:(http[s]{0,1}:\/\/)(?:(www|[\d\w\-]+)\.){0,1})|(www|[\d\w\-]+)\.)([\d\w\-]+)\.([A-Za-z]{2,6})(:[\d]*){0,1}(\/?[\d\w\-\?\,\'\/\\\+&amp;%\$#!\=~\.]*){0,1}/gi,
+      _urlRegex: /(?:(?:(http[s]{0,1}:\/\/)(?:(www|[\d\w\-]+)\.){0,1})|(www|[\d\w\-]+)\.)([\d\w\-]+)\.([A-Za-z]{2,6})(:[\d]*){0,1}(\/?[\d\w\-\?\,\'\/\\\+&amp;%\$#!\=~\.]*){0,1}/i,
       validateUrl: function(url) {
         var match;
         match = this._urlRegex.exec(url);
