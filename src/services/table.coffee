@@ -212,6 +212,9 @@ angular.module("Mac").factory "Table", [
               else
                 tableModels.push row.model
 
+            # We do this in reverse order to avoid changing the positions of the
+            # items as we remove them
+            toBeRemoved.reverse()
             @remove.apply this, args for args in toBeRemoved
 
             for model, index in models when model not in tableModels

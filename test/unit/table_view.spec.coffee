@@ -159,6 +159,11 @@ describe "Table Data", ->
         # Section Controller is preserved
         expect(table.sections.body.rows[0].cells[0].value()).toBe "John Lennon"
 
+      it "can replace completely different models", ->
+        table = @scope.table
+        table.load "body", [{first_name: "Mick", last_name: "Jagger", age: 30}]
+        expect(table.sections.body.rows.length).toBe 1
+
     describe "Dynamic Table", ->
       beforeEach inject ($rootScope, Table, TableSectionController) ->
         # Our custom header controller, we'll use this later
