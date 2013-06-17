@@ -24,6 +24,7 @@ angular.module("Mac").directive "macTableV2", [ "Table", (Table) ->
     element.find("[cell-template]")
       # Add a wrapper to the inside of our cells
       .wrapInner("<div class='cell-wrapper' />")
+      .attr("data-column-name", "{{cell.colName}}")
 
     # Resizable?
     if attr.resizableColumns?

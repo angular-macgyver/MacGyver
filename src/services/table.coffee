@@ -1,9 +1,9 @@
-angular.module("Mac").factory "TableViewBaseColumn", [ ->
-  class TableViewBaseColumn
+angular.module("Mac").factory "TableBaseColumn", [ ->
+  class TableBaseColumn
 ]
 
-angular.module("Mac").factory "TableViewSectionController", [ ->
-  class TableViewSectionController
+angular.module("Mac").factory "TableSectionController", [ ->
+  class TableSectionController
     constructor: (@section) ->
     # Value should probably be overridden by the user
     cellValue: (row, colName) -> @defaultCellValue(row, colName)
@@ -14,37 +14,49 @@ angular.module("Mac").factory "TableViewSectionController", [ ->
 
 # For legacy support only
 angular.module("Mac").factory "SectionController", [
-  "TableViewSectionController"
-  (TableViewSectionController) -> TableViewSectionController
+  "TableSectionController"
+  (TableSectionController) -> TableSectionController
 ]
 
-angular.module("Mac").factory "Row", [ ->
-  class Row
+angular.module("Mac").factory "TableRow", [ ->
+  class TableRow
     constructor: (@section, @model, @cells = [], @cellsMap = {}) ->
-    toJSON: -> cells: @cells
+
+    toJSON: ->
+      cells: @cells
+]
+
+angular.module("Mac").factory "TableSection", [ ->
+  class TableSection
+    constructor: (controller, @table, @name, @rows = []) ->
+      @setController controller
+
+    setController: (controller) ->
+      @ctrl = new controller(this)
+
+    toJSON: ->
+      rows: @rows
 ]
 
 angular.module("Mac").factory "tableComponents", [
-  "TableViewSectionController"
-  "Row"
+  "TableSectionController"
+  "TableRow"
+  "TableSection"
   (
-    TableViewSectionController
-    Row
+    TableSectionController
+    TableRow
+    TableSection
   ) ->
     rowFactory: (section, model) ->
-      return new Row(section, model)
+      return new TableRow(section, model)
 
     columnFactory: (colName, proto = {}) ->
       Column           = (@colName) ->
       Column.prototype = proto
       return new Column(colName)
 
-    sectionFactory: (table, sectionName, controller = TableViewSectionController) ->
-      Section = (controller, @table, @name, @rows = []) ->
-        @ctrl   = new controller(this)
-        @toJSON = -> rows: @rows
-        return
-      return new Section(controller, table, sectionName)
+    sectionFactory: (table, sectionName, controller = TableSectionController) ->
+      return new TableSection(controller, table, sectionName)
 
     cellFactory: (row, proto = {}) ->
       Cell = (@row, @column) ->
@@ -66,7 +78,7 @@ angular.module("Mac").factory "dynamicColumnsFunction", ->
     columns = (key for key, model of first)
     @set(columns)
 
-angular.module("Mac").factory "ColumnsController", [
+angular.module("Mac").factory "TableColumnsController", [
   "tableComponents"
   "dynamicColumnsFunction"
   (
@@ -114,7 +126,7 @@ angular.module("Mac").factory "ColumnsController", [
         @table.columns = columns
 ]
 
-angular.module("Mac").factory "RowsController", [
+angular.module("Mac").factory "TableRowsController", [
     "tableComponents"
     (
         tableComponents
@@ -159,13 +171,13 @@ angular.module("Mac").factory "RowsController", [
 ]
 
 angular.module("Mac").factory "Table", [
-    "TableViewBaseColumn"
-    "ColumnsController"
-    "RowsController"
+    "TableBaseColumn"
+    "TableColumnsController"
+    "TableRowsController"
     (
-        TableViewBaseColumn
-        ColumnsController
-        RowsController
+        TableBaseColumn
+        TableColumnsController
+        TableRowsController
     ) ->
       # Helper functions
       convertObjectModelsToArray = (models) ->
@@ -173,11 +185,11 @@ angular.module("Mac").factory "Table", [
 
       # The Table class
       class Table
-        constructor: (columns = [], @baseColumn = new TableViewBaseColumn()) ->
+        constructor: (columns = [], @baseColumn = new TableBaseColumn()) ->
           @sections       = {}
           @columns        = []
-          @columnsCtrl    = new ColumnsController(this)
-          @rowsCtrl       = new RowsController(this)
+          @columnsCtrl    = new TableColumnsController(this)
+          @rowsCtrl       = new TableRowsController(this)
           @dynamicColumns = columns is 'dynamic'
           if not @dynamicColumns
             @columnsCtrl.set(columns)
@@ -206,6 +218,10 @@ angular.module("Mac").factory "Table", [
                 toBeInserted.push [sectionName, model, index]
 
             @insert.apply this, args for args in toBeInserted
+
+            # If we're passed a section controller, set it for this section
+            if sectionController
+              @sections[sectionName].setController sectionController
 
           # New or empty section, load using set which will also create a section
           else
