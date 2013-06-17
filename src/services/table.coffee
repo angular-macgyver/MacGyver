@@ -18,16 +18,16 @@ angular.module("Mac").factory "SectionController", [
   (TableViewSectionController) -> TableViewSectionController
 ]
 
-angular.module("Mac").factory "Row", [ ->
-  class Row
+angular.module("Mac").factory "TableRow", [ ->
+  class TableRow
     constructor: (@section, @model, @cells = [], @cellsMap = {}) ->
 
     toJSON: ->
       cells: @cells
 ]
 
-angular.module("Mac").factory "Section", [ ->
-  class Section
+angular.module("Mac").factory "TableSection", [ ->
+  class TableSection
     constructor: (controller, @table, @name, @rows = []) ->
       @setController controller
 
@@ -40,15 +40,15 @@ angular.module("Mac").factory "Section", [ ->
 
 angular.module("Mac").factory "tableComponents", [
   "TableViewSectionController"
-  "Row"
-  "Section"
+  "TableRow"
+  "TableSection"
   (
     TableViewSectionController
-    Row
-    Section
+    TableRow
+    TableSection
   ) ->
     rowFactory: (section, model) ->
-      return new Row(section, model)
+      return new TableRow(section, model)
 
     columnFactory: (colName, proto = {}) ->
       Column           = (@colName) ->
@@ -56,7 +56,7 @@ angular.module("Mac").factory "tableComponents", [
       return new Column(colName)
 
     sectionFactory: (table, sectionName, controller = TableViewSectionController) ->
-      return new Section(controller, table, sectionName)
+      return new TableSection(controller, table, sectionName)
 
     cellFactory: (row, proto = {}) ->
       Cell = (@row, @column) ->
