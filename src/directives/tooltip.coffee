@@ -5,10 +5,10 @@
 @description
 Tooltip directive
 
-@param {String} mac-tooltip Text to show in tooltip
-@param {String} mac-tooltip-direction Direction of tooltip
-@param {String} mac-tooltip-trigger How tooltip is triggered
-@param {Boolean} mac-tooltip-inside Should the tooltip be appended inside element
+@param {String}  mac-tooltip Text to show in tooltip
+@param {String}  direction   Direction of tooltip
+@param {String}  trigger     How tooltip is triggered
+@param {Boolean} inside      Should the tooltip be appended inside element
 ###
 
 angular.module("Mac").directive "macTooltip", ->
@@ -20,8 +20,8 @@ angular.module("Mac").directive "macTooltip", ->
     enabled = false
 
     showTip = (event) ->
-      inside    = attrs.macTooltipInside?
-      direction = attrs.macTooltipDirection or "top"
+      inside    = attrs.inside?
+      direction = attrs.direction or "top"
       tip       = if inside then element else $(document.body)
       tooltip   = $("""<div class="tooltip #{direction}"><div class="tooltip-message">#{text}</div></div>""")
       tip.append tooltip
@@ -71,7 +71,7 @@ angular.module("Mac").directive "macTooltip", ->
         text = value
 
         unless enabled
-          trigger = attrs.macTooltipTrigger or "hover"
+          trigger = attrs.trigger or "hover"
           unless trigger in ["hover", "click"]
             return console.error "Invalid trigger"
 
