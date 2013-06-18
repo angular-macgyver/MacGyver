@@ -10293,7 +10293,7 @@ angular.module("Mac").directive("macAutocomplete", [
         queryKey = attrs.macAutocompleteQuery || "q";
         delay = +attrs.macAutocompleteDelay || 800;
         clearOnSelect = attrs.macAutocompleteClearOnSelect != null;
-        autocompleteUrl = $parse(attrs.macAutocompleteUrl)($scope);
+        autocompleteUrl = $parse(attrs.macAutocompleteUrl);
         onSelect = $parse(attrs.macAutocompleteOnSelect);
         onSuccess = $parse(attrs.macAutocompleteOnSuccess);
         onError = $parse(attrs.macAutocompleteOnError);
@@ -10317,11 +10317,12 @@ angular.module("Mac").directive("macAutocomplete", [
           });
         };
         sourceFn = function(req, resp) {
-          var list, options;
-          if (autocompleteUrl) {
+          var list, options, url;
+          url = autocompleteUrl($scope);
+          if (url) {
             options = {
               method: "GET",
-              url: autocompleteUrl,
+              url: url,
               params: {}
             };
             options.params[queryKey] = req.term;
@@ -10374,83 +10375,6 @@ angular.module("Mac").directive("macAutocomplete", [
           return reset();
         });
         return reset();
-      }
-    };
-  }
-]);
-
-/*
-@chalk overview
-@name macBind
-@description
-macBind recurive go up parent scope to find the correct variable
-
-@param {Expression} mac-bind       Expression to evaluate
-@param {Integer}    mac-bind-depth Max parent scope depth it should go (default 2)
-*/
-
-angular.module("Mac").directive("macBind", [
-  "$parse", function($parse) {
-    return {
-      link: function($scope, element, attr) {
-        var checkScope, depth, fn;
-        element.addClass('mac-binding').data('$binding', attr.ngBind);
-        fn = $parse(attr.macBind);
-        depth = +(attr.macBindDepth || 2);
-        checkScope = function(scope, depth, $event) {
-          var parent, ret;
-          if (depth === 0) {
-            return false;
-          }
-          ret = fn(scope, {
-            $scope: $scope
-          });
-          parent = scope.$parent;
-          if (!ret && (parent != null)) {
-            return checkScope(parent, depth - 1, $event);
-          } else {
-            if (ret) {
-              scope.$watch(attr.macBind, function(value) {
-                return element.text(value || "");
-              });
-            }
-            return true;
-          }
-        };
-        return checkScope($scope, depth);
-      }
-    };
-  }
-]);
-
-angular.module("Mac").directive("macClick", [
-  "$parse", function($parse) {
-    return {
-      link: function($scope, element, attr) {
-        var clickAction, depth, fn;
-        fn = $parse(attr.macClick);
-        depth = +(attr.macClickDepth || 2);
-        clickAction = function(scope, depth, $event) {
-          var parent, ret;
-          if (depth === 0) {
-            return false;
-          }
-          ret = fn(scope, {
-            $event: $event,
-            $scope: $scope
-          });
-          parent = scope.$parent;
-          if (!ret && (parent != null)) {
-            return clickAction(parent, depth - 1, $event);
-          } else {
-            return true;
-          }
-        };
-        return element.bind("click", function(event) {
-          return $scope.$apply(function() {
-            return clickAction($scope, depth, event);
-          });
-        });
       }
     };
   }
@@ -11061,144 +10985,7 @@ angular.module("Mac").directive("initialWidth", [
   }
 ]);
 
-/*
-@chalk overview
-@name Modal Service
-
-@description
-There are multiple components used by modal.
-- A modal service is used to keep state of modal opened in the applications.
-- A modal element directive to define the modal dialog box
-- A modal attribute directive as a modal trigger
-
-@param {Function} show Show a modal based on the modal id
-- {String} id The id of the modal to open
-- {Object} triggerOptions Additional options to open modal
-
-@param {Function} resize Update the position and also the size of the modal
-- {Modal Object} modalObject The modal to reposition and resize (default opened modal)
-
-@param {Function} hide Hide currently opened modal
-- {Function} callback Callback after modal has been hidden
-
-@param {Function} register Registering modal with the service
-- {String} id ID of the modal
-- {DOM element} element The modal element
-- {Object} options Additional options for the modal
-
-@param {Function} unregister Remove modal from modal service
-- {String} id ID of the modal to unregister
-
-@param {Function} clearWaiting Remove certain modal id from waiting list
-- {String} id ID of the modal
-*/
-
-angular.module("Mac").factory("modal", [
-  "$rootScope", function($rootScope) {
-    return {
-      registered: {},
-      waiting: null,
-      opened: null,
-      show: function(id, triggerOptions) {
-        var element, options, _ref;
-        if (triggerOptions == null) {
-          triggerOptions = {};
-        }
-        if (this.registered[id] != null) {
-          _ref = this.registered[id], element = _ref.element, options = _ref.options;
-          element.removeClass("hide");
-          setTimeout(function() {
-            return element.addClass("visible");
-          }, 0);
-          angular.extend(options, triggerOptions);
-          this.opened = {
-            id: id,
-            element: element,
-            options: options
-          };
-          this.resize(this.opened);
-          if (typeof options.callback === "function") {
-            options.callback();
-          }
-          $rootScope.$broadcast("modalWasShown", id);
-          return this.clearWaiting();
-        } else {
-          return this.waiting = {
-            id: id,
-            options: options
-          };
-        }
-      },
-      resize: function(modalObject) {
-        var css, element, height, modal, options, width;
-        if (modalObject == null) {
-          modalObject = this.opened;
-        }
-        if (modalObject == null) {
-          return;
-        }
-        element = modalObject.element;
-        options = modalObject.options;
-        modal = $(".modal", element).attr("style", "");
-        height = modal.outerHeight();
-        width = modal.outerWidth();
-        css = $(window).height() > height ? {
-          marginTop: -height / 2
-        } : {
-          top: options.topOffset
-        };
-        css.marginLeft = -width / 2;
-        return modal.css(css);
-      },
-      hide: function(callback) {
-        var id, opened;
-        if (this.opened == null) {
-          return;
-        }
-        id = this.opened.id;
-        this.opened.element.removeClass("visible");
-        opened = this.opened.element;
-        setTimeout(function() {
-          return opened.addClass("hide");
-        }, 250);
-        this.opened = null;
-        if (typeof callback === "function") {
-          callback();
-        }
-        return $rootScope.$broadcast("modalWasHidden", id);
-      },
-      register: function(id, element, options) {
-        if (this.registered[id] != null) {
-          throw new Error("Modal " + modalId + " already registered");
-        }
-        this.registered[id] = {
-          element: element,
-          options: options
-        };
-        if ((this.waiting != null) && this.waiting.id === id) {
-          return this.show(id, this.waiting.options);
-        }
-      },
-      unregister: function(id) {
-        var _ref;
-        if (this.registered[id] == null) {
-          throw new Error("Modal " + id + " is not registered");
-        }
-        if (((_ref = this.opened) != null ? _ref.id : void 0) === id) {
-          this.hide();
-        }
-        this.clearWaiting(id);
-        return delete this.registered[id];
-      },
-      clearWaiting: function(id) {
-        if ((id != null) && this.waiting.id !== id) {
-          return;
-        }
-        return this.waiting = null;
-      }
-    };
-  }
-]).directive("macModal", [
+angular.module("Mac").directive("macModal", [
   "$rootScope", "$parse", "modal", "util", "keys", function($rootScope, $parse, modal, util, keys) {
     return {
       restrict: "E",
@@ -12737,10 +12524,10 @@ angular.module("Mac").directive("macTime", [
 @description
 Tooltip directive
 
-@param {String} mac-tooltip Text to show in tooltip
-@param {String} mac-tooltip-direction Direction of tooltip
-@param {String} mac-tooltip-trigger How tooltip is triggered
-@param {Boolean} mac-tooltip-inside Should the tooltip be appended inside element
+@param {String}  mac-tooltip Text to show in tooltip
+@param {String}  direction   Direction of tooltip
+@param {String}  trigger     How tooltip is triggered
+@param {Boolean} inside      Should the tooltip be appended inside element
 */
 
 angular.module("Mac").directive("macTooltip", function() {
@@ -12753,8 +12540,8 @@ angular.module("Mac").directive("macTooltip", function() {
       enabled = false;
       showTip = function(event) {
         var direction, elementSize, inside, offset, tip, tooltipSize;
-        inside = attrs.macTooltipInside != null;
-        direction = attrs.macTooltipDirection || "top";
+        inside = attrs.inside != null;
+        direction = attrs.direction || "top";
         tip = inside ? element : $(document.body);
         tooltip = $("<div class=\"tooltip " + direction + "\"><div class=\"tooltip-message\">" + text + "</div></div>");
         tip.append(tooltip);
@@ -12814,7 +12601,7 @@ angular.module("Mac").directive("macTooltip", function() {
         if ((value != null) && value) {
           text = value;
           if (!enabled) {
-            trigger = attrs.macTooltipTrigger || "hover";
+            trigger = attrs.trigger || "hover";
             if (trigger !== "hover" && trigger !== "click") {
               return console.error("Invalid trigger");
             }
@@ -13337,6 +13124,145 @@ angular.module("Mac").factory("hookableDirectiveController", [
   }
 ]);
 
+/*
+@chalk overview
+@name Modal Service
+
+@description
+There are multiple components used by modal.
+- A modal service is used to keep state of modal opened in the applications.
+- A modal element directive to define the modal dialog box
+- A modal attribute directive as a modal trigger
+
+@param {Function} show Show a modal based on the modal id
+- {String} id The id of the modal to open
+- {Object} triggerOptions Additional options to open modal
+
+@param {Function} resize Update the position and also the size of the modal
+- {Modal Object} modalObject The modal to reposition and resize (default opened modal)
+
+@param {Function} hide Hide currently opened modal
+- {Function} callback Callback after modal has been hidden
+
+@param {Function} register Registering modal with the service
+- {String} id ID of the modal
+- {DOM element} element The modal element
+- {Object} options Additional options for the modal
+
+@param {Function} unregister Remove modal from modal service
+- {String} id ID of the modal to unregister
+
+@param {Function} clearWaiting Remove certain modal id from waiting list
+- {String} id ID of the modal
+*/
+
+angular.module("Mac").factory("modal", [
+  "$rootScope", function($rootScope) {
+    return {
+      registered: {},
+      waiting: null,
+      opened: null,
+      show: function(id, triggerOptions) {
+        var element, options, _ref;
+        if (triggerOptions == null) {
+          triggerOptions = {};
+        }
+        if (this.registered[id] != null) {
+          _ref = this.registered[id], element = _ref.element, options = _ref.options;
+          element.removeClass("hide");
+          setTimeout(function() {
+            return element.addClass("visible");
+          }, 0);
+          angular.extend(options, triggerOptions);
+          this.opened = {
+            id: id,
+            element: element,
+            options: options
+          };
+          this.resize(this.opened);
+          if (typeof options.callback === "function") {
+            options.callback();
+          }
+          $rootScope.$broadcast("modalWasShown", id);
+          return this.clearWaiting();
+        } else {
+          return this.waiting = {
+            id: id,
+            options: options
+          };
+        }
+      },
+      resize: function(modalObject) {
+        var css, element, height, modal, options, width;
+        if (modalObject == null) {
+          modalObject = this.opened;
+        }
+        if (modalObject == null) {
+          return;
+        }
+        element = modalObject.element;
+        options = modalObject.options;
+        modal = $(".modal", element).attr("style", "");
+        height = modal.outerHeight();
+        width = modal.outerWidth();
+        css = $(window).height() > height ? {
+          marginTop: -height / 2
+        } : {
+          top: options.topOffset
+        };
+        css.marginLeft = -width / 2;
+        return modal.css(css);
+      },
+      hide: function(callback) {
+        var id, opened;
+        if (this.opened == null) {
+          return;
+        }
+        id = this.opened.id;
+        this.opened.element.removeClass("visible");
+        opened = this.opened.element;
+        setTimeout(function() {
+          return opened.addClass("hide");
+        }, 250);
+        this.opened = null;
+        if (typeof callback === "function") {
+          callback();
+        }
+        return $rootScope.$broadcast("modalWasHidden", id);
+      },
+      register: function(id, element, options) {
+        if (this.registered[id] != null) {
+          throw new Error("Modal " + modalId + " already registered");
+        }
+        this.registered[id] = {
+          element: element,
+          options: options
+        };
+        if ((this.waiting != null) && this.waiting.id === id) {
+          return this.show(id, this.waiting.options);
+        }
+      },
+      unregister: function(id) {
+        var _ref;
+        if (this.registered[id] == null) {
+          throw new Error("Modal " + id + " is not registered");
+        }
+        if (((_ref = this.opened) != null ? _ref.id : void 0) === id) {
+          this.hide();
+        }
+        this.clearWaiting(id);
+        return delete this.registered[id];
+      },
+      clearWaiting: function(id) {
+        if ((id != null) && this.waiting.id !== id) {
+          return;
+        }
+        return this.waiting = null;
+      }
+    };
+  }
+]);
+
 var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 angular.module("Mac").factory("TableBaseColumn", [
@@ -13370,12 +13296,6 @@ angular.module("Mac").factory("TableSectionController", [
       return TableSectionController;
 
     })();
-  }
-]);
-
-angular.module("Mac").factory("SectionController", [
-  "TableSectionController", function(TableSectionController) {
-    return TableSectionController;
   }
 ]);
 

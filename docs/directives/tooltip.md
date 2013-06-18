@@ -8,15 +8,15 @@ Tooltip directive
 Type: `String`  
 Text to show in tooltip  
   
-**mac-tooltip-direction**  
+**direction**  
 Type: `String`  
 Direction of tooltip  
   
-**mac-tooltip-trigger**  
+**trigger**  
 Type: `String`  
 How tooltip is triggered  
   
-**mac-tooltip-inside**  
+**inside**  
 Type: `Boolean`  
 Should the tooltip be appended inside element  
   
