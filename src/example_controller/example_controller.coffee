@@ -6,7 +6,7 @@ module.controller "modalController", ["$scope", "modal", ($scope, modal) ->
       console.log modal.opened.options.data
 ]
 
-module.controller "ExampleController", ["$scope", "$timeout", "Table", "SectionController", ($scope, $timeout, Table, SectionController) ->
+module.controller "ExampleController", ["$scope", "$timeout", "Table", ($scope, $timeout, Table) ->
 
 
   # Table view section
