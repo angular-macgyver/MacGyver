@@ -42,7 +42,7 @@ angular.module("Mac").directive "macAutocomplete", [
       delay         = +attrs.macAutocompleteDelay      or 800
       clearOnSelect = attrs.macAutocompleteClearOnSelect?
 
-      autocompleteUrl     = $parse(attrs.macAutocompleteUrl) $scope
+      autocompleteUrl     = $parse attrs.macAutocompleteUrl
       onSelect            = $parse attrs.macAutocompleteOnSelect
       onSuccess           = $parse attrs.macAutocompleteOnSuccess
       onError             = $parse attrs.macAutocompleteOnError
@@ -84,10 +84,12 @@ angular.module("Mac").directive "macAutocomplete", [
       # @param {Response function} resp Response callback function for jQuery UI
       #
       sourceFn = (req, resp) ->
-        if autocompleteUrl
+        url = autocompleteUrl $scope
+
+        if url
           options =
             method: "GET"
-            url:    autocompleteUrl
+            url:    url
             params: {}
           options.params[queryKey] = req.term
 
