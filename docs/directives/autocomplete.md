@@ -19,6 +19,10 @@ Placeholder text
 Type: `String`  
 Url to fetch autocomplete dropdown list data  
   
+**mac-autocomplete-disabled**  
+Type: `Boolean`  
+Boolean value if autocomplete should be disabled  
+  
 **mac-autocomplete-on-select**  
 Type: `Function`  
 Function called when user select on an item  
