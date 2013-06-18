@@ -3,17 +3,12 @@
     li.tag.label(ng-repeat="tag in selected")
       .tag-close(ng-click="selected.splice($index, 1)") &times;
       span.tag-label
-    li.tag.input-tag(ng-switch="disabled")
-      span(ng-switch-when="true")
-        input.text-input.no-complete(
-          type            = "text"
-          mac-placeholder = "placeholder"
-        )
-      span(ng-switch-when="false")
-        mac-autocomplete.text-input.mac-autocomplete(
-          ng-model                    = "textInput"
-          mac-autocomplete-on-select  = "onSelect(selected)"
-          mac-autocomplete-on-success = "onSuccess(data)"
-          mac-placeholder             = "placeholder"
-          mac-keydown                 = "onKeyDown($event)"
-        )
+    li.tag.input-tag
+      mac-autocomplete.text-input.mac-autocomplete(
+        ng-model                    = "textInput"
+        mac-autocomplete-disabled   = "disabled"
+        mac-autocomplete-on-select  = "onSelect(selected)"
+        mac-autocomplete-on-success = "onSuccess(data)"
+        mac-placeholder             = "placeholder"
+        mac-keydown                 = "onKeyDown($event)"
+      )

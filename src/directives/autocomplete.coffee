@@ -11,6 +11,7 @@ A directive for providing suggestions while typing into the field
 @param {String} ng-model Assignable angular expression to data-bind to
 @param {String} mac-placeholder Placeholder text
 @param {String} mac-autocomplete-url Url to fetch autocomplete dropdown list data
+@param {Boolean} mac-autocomplete-disabled Boolean value if autocomplete should be disabled
 @param {Function} mac-autocomplete-on-select Function called when user select on an item
        - `selected` - {Object} The item selected
 @param {Function} mac-autocomplete-on-success function called on success ajax request
@@ -40,7 +41,6 @@ angular.module("Mac").directive "macAutocomplete", [
       labelKey      = attrs.macAutocompleteLabel       or "name"
       queryKey      = attrs.macAutocompleteQuery       or "q"
       delay         = +attrs.macAutocompleteDelay      or 800
-      clearOnSelect = attrs.macAutocompleteClearOnSelect?
 
       autocompleteUrl     = $parse attrs.macAutocompleteUrl
       onSelect            = $parse attrs.macAutocompleteOnSelect
@@ -48,6 +48,13 @@ angular.module("Mac").directive "macAutocomplete", [
       onError             = $parse attrs.macAutocompleteOnError
       source              = $parse(attrs.macAutocompleteSource) $scope
       currentAutocomplete = []
+
+      # TODO
+      if attrs.ngModel?
+        $scope.$watch attrs.ngModel, (value) ->
+          setTimeout ->
+            element.val value
+          , 0
 
       #
       # @function
@@ -117,6 +124,11 @@ angular.module("Mac").directive "macAutocomplete", [
           $scope.$apply ->
             selected = _(currentAutocomplete).find (item) -> item[labelKey] is ui.item.label
             onSelect $scope, {selected} if onSelect?
+
+      if attrs.macAutocompleteDisabled?
+        $scope.$watch attrs.macAutocompleteDisabled, (value) ->
+          action = if value then "disable" else "enable"
+          element.autocomplete action
 
       #
       # @event

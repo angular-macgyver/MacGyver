@@ -101,12 +101,6 @@ angular.module("Mac").directive "macTagAutocomplete", [
         # Rebind events after ng-switch
         #
         $scope.$watch "disabled", (value) ->
-          if value
-            # Enable keydown event on disabled
-            $(".no-complete", element)
-              .on "keydown", (event) ->
-                $scope.onKeyDown event, $(this).val()
-
           # Loop through the list of events user specified
           for event in eventsList
             continue unless event.eventFn and event.name isnt "keydown"
@@ -119,9 +113,6 @@ angular.module("Mac").directive "macTagAutocomplete", [
 
         $scope.$watch "selected.length", (length) ->
           $scope.updateSource()
-
-        $scope.$watch "textInput", (value) ->
-          $(".no-complete", element).val value
 
         #
         # @function
