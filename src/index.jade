@@ -93,6 +93,18 @@ block append content
           |   mac-autocomplete-placeholder="'Autocomplete'">
           | </mac-autocomplete>
 
+        h3 Example with autocomplete using source
+        .docs-example
+          mac-autocomplete(
+            mac-autocomplete-source = "['hello', 'world']"
+            ng-model                = "autocompleteSourceQuery"
+          )
+        pre.prettyprint.linenums(ng-non-bindable)
+          | <mac-autocomplete
+          |   mac-autocomplete-source="['hello', 'world']"
+          |   mac-autocomplete-placeholder="'Autocomplete'">
+          | </mac-autocomplete>
+
       section#tag-autocomplete
         @@include("docs/html/directives/tag_autocomplete.html")
         h3 Example
