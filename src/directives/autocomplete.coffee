@@ -46,7 +46,7 @@ angular.module("Mac").directive "macAutocomplete", [
       onSelect            = $parse attrs.macAutocompleteOnSelect
       onSuccess           = $parse attrs.macAutocompleteOnSuccess
       onError             = $parse attrs.macAutocompleteOnError
-      source              = $parse(attrs.macAutocompleteSource) $scope
+      source              = $parse attrs.macAutocompleteSource
       currentAutocomplete = []
 
       # TODO
@@ -78,7 +78,7 @@ angular.module("Mac").directive "macAutocomplete", [
 
         # convert tags to jquery ui autocomplete format
         _(data).map (item) ->
-          label = value = if labelKey? then item[labelKey] else item
+          label = value = if item[labelKey]? then item[labelKey] else item
           return {label, value}
 
       #
@@ -112,7 +112,7 @@ angular.module("Mac").directive "macAutocomplete", [
               if onError?
                 onError {data, status, headers}
         else
-          list = updateList(source or [])
+          list = updateList(source($scope) or [])
           resp $filter("filter") list, req.term
 
       element.autocomplete
