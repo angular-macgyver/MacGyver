@@ -157,6 +157,7 @@ module.controller "ExampleController", ["$scope", "$timeout", "Table", ($scope, 
     console.log "success"
 
   $scope.startDate = "01/01/2013"
+  $scope.minDate   = "07/01/2012"
   $scope.startTime = "04:42 PM"
 
   # timestamp filter
