@@ -118,16 +118,16 @@
 <p><strong>mac-datepicker-constrain-input-type</strong><br>Type: <code>Boolean</code><br>Constrain characters allowed by the current dateFormat  </p>
 <p><strong>mac-datepicker-current-text</strong><br>Type: <code>String</code><br>Text to display for the current day link  </p>
 <p><strong>mac-datepicker-date-format</strong><br>Type: <code>String</code><br>The format for parse and displayed dates  </p>
-<p><strong>mac-datepicker-default-date</strong><br>Type: <code>Date|Number|String</code><br>Date to highligh on first opening if the field is blank  </p>
+<p><strong>mac-datepicker-default-date</strong><br>Type: <code>Expression</code><br>Date to highligh on first opening if the field is blank {Date|Number|String}  </p>
 <p><strong>mac-datepicker-duration</strong><br>Type: <code>String</code><br>Control the speed at which the datepicker appears  </p>
 <p><strong>mac-datepicker-first-day</strong><br>Type: <code>Integer</code><br>Set the first day of the week. Sunday is 0, Monday is 1  </p>
-<p><strong>mac-datepicker-max-date</strong><br>Type: <code>Date|Number|String</code><br>The maximum selectable date  </p>
-<p><strong>mac-datepicker-min-date</strong><br>Type: <code>Date|Number|String</code><br>The minimum selectable date  </p>
+<p><strong>mac-datepicker-max-date</strong><br>Type: <code>Expression</code><br>The maximum selectable date {Date|Number|String}  </p>
+<p><strong>mac-datepicker-min-date</strong><br>Type: <code>Expression</code><br>The minimum selectable date {Date|Number|String}  </p>
 <p><strong>mac-datepicker-number-of-months</strong><br>Type: <code>Integer</code><br>The number of months to show at once  </p>
 <p><strong>mac-datepicker-show-on</strong><br>Type: <code>String</code><br>When the datepicker should appear  </p>
 <p><strong>mac-datepicker-year-range</strong><br>Type: <code>Integer</code><br>The range of years displayed in the year drop-down  </p>
 <p><strong>mac-datepicker-disabled</strong><br>Type: <code>Boolean</code><br>Enable or disable datepicker  </p>
-<h3>Example</h3><div class="docs-example"><mac-datepicker mac-datepicker-id="input-start-date" mac-datepicker-model="startDate"></mac-datepicker></div><pre ng-non-bindable class="prettyprint linenums">&lt;mac-datepicker mac-datepicker-id=&quot;input-start-date&quot; mac-datepicker-model=&quot;startDate&quot;&gt;&lt;/mac-datepicker&gt;</pre></section><section id="time-input"><h1>Time</h1>
+<h3>Example</h3><div class="docs-example"><mac-datepicker mac-datepicker-id="input-start-date" mac-datepicker-model="startDate" mac-datepicker-min-date="minDate"></mac-datepicker></div><pre ng-non-bindable class="prettyprint linenums">&lt;mac-datepicker mac-datepicker-id=&quot;input-start-date&quot; mac-datepicker-model=&quot;startDate&quot;&gt;&lt;/mac-datepicker&gt;</pre></section><section id="time-input"><h1>Time</h1>
 <p>A directive for creating a time input field  </p>
 <h3>Parameters</h3>
 <p><strong>mac-time-id</strong><br>Type: <code>String</code><br>ID of the text input field (default: time-input)  </p>
@@ -166,27 +166,35 @@
 <li>jQuery file upload  </li>
 </ul>
 <h3>Parameters</h3>
-<p><strong>mac-upload-route</strong><br>Type: <code>String</code><br>The route we&#39;re uploading our files  </p>
+<p><strong>mac-upload-route</strong><br>Type: <code>String</code><br>File upload route  </p>
 <p><strong>mac-upload-submit</strong><br>Type: <code>Function</code><br>Function to call on submit  </p>
 <p><strong>mac-upload-success</strong><br>Type: <code>Function</code><br>Upload success callback  </p>
 <p><strong>mac-upload-error</strong><br>Type: <code>Function</code><br>Upload error callback  </p>
-<p><strong>mac-upload-selector</strong><br>Type: <code>String</code><br>Selector to proxy clicking on file upload  </p>
+<p><strong>mac-upload-previews</strong><br>Type: <code>Expression</code><br>List of uploaded files {Array}  </p>
+<p><strong>mac-upload-progress</strong><br>Type: <code>Function</code><br>Upload progress callback  </p>
 <p><strong>mac-upload-drop-zone</strong><br>Type: <code>String</code><br>The selector that we can drop files onto  </p>
-<p><strong>mac-upload-enable-on</strong><br>Type: <code>String</code><br>The broadcast message to catch to enable file upload  </p>
-<p><strong>mac-upload-disable-on</strong><br>Type: <code>String</code><br>The broadcast message to catch to disable file upload  </p>
-<p><strong>mac-upload-disabled</strong><br>Type: <code>Boolean</code><br>Boolean value to disable or enable file upload  </p>
-<p><strong>mac-upload-form-data</strong><br>Type: <code>String</code><br>Additional form data  </p>
-<p><strong>mac-upload-param-name</strong><br>Type: <code>String</code><br>Parameter name for the file  </p>
-<h3>Example</h3><div class="docs-example example-hit-area"><form action="..." method="post" enctype="multipart/form-data" name="upload-example"><span class="mac-upload btn fileinput-button"><span>Upload</span><input type="file" name="files[]" multiple mac-upload mac-upload-route="uploadRoute" mac-upload-success="fileUploadSuccess($data, $status)" mac-upload-error="fileUploadError($response, $data, $status)" mac-upload-submit="fileUploadSubmit($event, $response)" mac-upload-drop-zone=".example-hit-area" mac-upload-disabled="!fileUploaderEnabled"></span></form></div><pre ng-non-bindable class="prettyprint linenums">&lt;input type=&quot;file&quot;
+<p><strong>mac-upload-form-data</strong><br>Type: <code>Expression</code><br>Additional form data {Array|Object|Function|FormData}  </p>
+<h3>Example</h3><div class="docs-example example-hit-area"><form action="..." method="post" enctype="multipart/form-data" name="upload-example"><span class="mac-upload btn fileinput-button"><span>Upload</span><input type="file" name="files[]" multiple mac-upload ng-disabled="!fileUploaderEnabled" mac-upload-route="uploadRoute" mac-upload-success="fileUploadSuccess($data, $status)" mac-upload-error="fileUploadError($response, $data, $status)" mac-upload-submit="fileUploadSubmit($event, $data)" mac-upload-drop-zone=".example-hit-area" mac-upload-previews="uploadPreviews" mac-upload-progress></span></form><ul><li ng-repeat="preview in uploadPreviews"><img ng-src="{{previewImage(preview)}}"><span>{{preview.fileName}}</span><div class="progress"><div ng-style="{{previewProgress(preview)}}" class="bar"></div></div></li></ul></div><pre ng-non-bindable class="prettyprint linenums">&lt;input type=&quot;file&quot;
   name=&quot;files[]&quot;
+  ng-disabled=&quot;!fileUploaderEnabled&quot;
   multiple=&quot;multiple&quot;
   mac-upload=&quot;mac-upload&quot;
   mac-upload-route=&quot;uploadRoute&quot;
   mac-upload-success=&quot;fileUploadSuccess($data, $status)&quot;
   mac-upload-error=&quot;fileUploadError($response, $data, $status)&quot;
-  mac-upload-submit=&quot;fileUploadSubmit($event, $response)&quot;
+  mac-upload-submit=&quot;fileUploadSubmit($event, $data)&quot;
   mac-upload-drop-zone=&quot;.example-hit-area&quot;
-  mac-upload-disabled=&quot;!fileUploaderEnabled&quot;/&gt;</pre></section><section id="placeholder"><h1>Placeholder</h1>
+  mac-upload-previews=&quot;uploadPreviews&quot;
+  mac-upload-progress/&gt;
+&lt;ul&gt;
+  &lt;li ng-repeat=&quot;preview in uploadPreviews&quot;&gt;
+    &lt;img ng-src=&quot;{{previewImage(preview)}}&quot;/&gt;
+    &lt;span&gt;{{preview.fileName}}&lt;/span&gt;
+    &lt;div class=&quot;progress&quot;&gt;
+      &lt;div ng-style=&quot;{{previewProgress(preview)}}&quot; class=&quot;bar&quot;&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;</pre></section><section id="placeholder"><h1>Placeholder</h1>
 <p>Dynamically fill out the placeholder text of input  </p>
 <h3>Parameters</h3>
 <p><strong>mac-placeholder</strong><br>Type: <code>String</code><br>Variable that contains the placeholder text  </p>

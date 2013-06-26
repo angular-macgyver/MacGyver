@@ -56,8 +56,8 @@ Type: `String`
 The format for parse and displayed dates  
   
 **mac-datepicker-default-date**  
-Type: `Date|Number|String`  
-Date to highligh on first opening if the field is blank  
+Type: `Expression`  
+Date to highligh on first opening if the field is blank {Date|Number|String}  
   
 **mac-datepicker-duration**  
 Type: `String`  
@@ -68,12 +68,12 @@ Type: `Integer`
 Set the first day of the week. Sunday is 0, Monday is 1  
   
 **mac-datepicker-max-date**  
-Type: `Date|Number|String`  
-The maximum selectable date  
+Type: `Expression`  
+The maximum selectable date {Date|Number|String}  
   
 **mac-datepicker-min-date**  
-Type: `Date|Number|String`  
-The minimum selectable date  
+Type: `Expression`  
+The minimum selectable date {Date|Number|String}  
   
 **mac-datepicker-number-of-months**  
 Type: `Integer`  

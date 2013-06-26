@@ -9,7 +9,7 @@ Directive for proxying jQuery file upload
 ### Parameters
 **mac-upload-route**  
 Type: `String`  
-The route we're uploading our files  
+File upload route  
   
 **mac-upload-submit**  
 Type: `Function`  
@@ -23,32 +23,20 @@ Upload success callback
 Type: `Function`  
 Upload error callback  
   
-**mac-upload-selector**  
-Type: `String`  
-Selector to proxy clicking on file upload  
+**mac-upload-previews**  
+Type: `Expression`  
+List of uploaded files {Array}  
+  
+**mac-upload-progress**  
+Type: `Function`  
+Upload progress callback  
   
 **mac-upload-drop-zone**  
 Type: `String`  
 The selector that we can drop files onto  
   
-**mac-upload-enable-on**  
-Type: `String`  
-The broadcast message to catch to enable file upload  
-  
-**mac-upload-disable-on**  
-Type: `String`  
-The broadcast message to catch to disable file upload  
-  
-**mac-upload-disabled**  
-Type: `Boolean`  
-Boolean value to disable or enable file upload  
-  
 **mac-upload-form-data**  
-Type: `String`  
-Additional form data  
-  
-**mac-upload-param-name**  
-Type: `String`  
-Parameter name for the file  
+Type: `Expression`  
+Additional form data {Array|Object|Function|FormData}  
   
 
