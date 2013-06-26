@@ -7,107 +7,169 @@ Directive for proxying jQuery file upload
 @dependencies
 - jQuery file upload
 
-@param {String}   mac-upload-route      The route we're uploading our files
-@param {Function} mac-upload-submit     Function to call on submit
-@param {Function} mac-upload-success    Upload success callback
-@param {Function} mac-upload-error      Upload error callback
-@param {String}   mac-upload-selector   Selector to proxy clicking on file upload
-@param {String}   mac-upload-drop-zone  The selector that we can drop files onto
-@param {String}   mac-upload-enable-on  The broadcast message to catch to enable file upload
-@param {String}   mac-upload-disable-on The broadcast message to catch to disable file upload
-@param {Boolean}  mac-upload-disabled   Boolean value to disable or enable file upload
-@param {String}   mac-upload-form-data  Additional form data
-@param {String}   mac-upload-param-name Parameter name for the file
+@param {String}     mac-upload-route      File upload route
+@param {Function}   mac-upload-submit     Function to call on submit
+@param {Function}   mac-upload-success    Upload success callback
+@param {Function}   mac-upload-error      Upload error callback
+@param {Expression} mac-upload-previews   List of uploaded files {Array}
+@param {Function}   mac-upload-progress   Upload progress callback
+@param {String}     mac-upload-drop-zone  The selector that we can drop files onto
+@param {Expression} mac-upload-form-data  Additional form data {Array|Object|Function|FormData}
 ###
 
-angular.module("Mac").directive "macUpload", [ ->
-  scope:
-    macUploadSubmit:    "&macUploadSubmit"
-    macUploadError:     "&macUploadError"
-    macUploadSuccess:   "&macUploadSuccess"
-    macUploadRoute:     "=macUploadRoute"
-    macUploadEnableOn:  "=macUploadEnableOn"
-    macUploadDisableOn: "=macUploadDisableOn"
-    macUploadDisabled:  "=macUploadDisabled"
-    macUploadFormData:  "=macUploadFormData"
-    macUploadParamName: "=macUploadParamName"
+angular.module("Mac").
+directive("macUpload", ["$rootScope", "$parse", ($rootScope, $parse) ->
+  require:    ["macUpload", "?macUploadPreviews"]
+  controller: ["$scope", ->]
+  link:       ($scope, element, attrs, ctrls) ->
+    uploadCtrl  = ctrls[0]
+    previewCtrl = ctrls[1]
 
-  link: (scope, element, attributes) ->
-    isInitialized = false
-    disableOn     = attributes.macUploadDisableOn if attributes.macUploadDisableOn?
-    enableOn      = attributes.macUploadEnableOn  if attributes.macUploadEnableOn?
-    parent        = element.parent()
-    input         = parent.find "input"
+    setOptions = (option, value) ->
+      element.fileupload("option", option, value) if value?
 
-    initialize = ->
-      return if (attributes.macUploadDisabled? and scope.macUploadDisabled) or not scope.route
+    applyCallback = (action, $event, $data) ->
+      callbackFn = $parse attrs["macUpload#{action}"]
+      if callbackFn?
+        $scope.$apply ->
+          $status        = $data.jqXHR?.status
+          args           = {$event, $data, $status}
+          args.$response = $data.result.data if action is "Success"
+          callbackFn $scope, args
 
-      input.fileupload "destroy" if isInitialized
-      options =
-        url:              scope.route
-        replaceFileInput: true
+    options =
+      url:    $parse(attrs.macUploadRoute)($scope) or ""
+      submit: ($event, $data) ->
+        submitEvent = -> applyCallback "Submit", $event, $data
 
-        add: (event, data) ->
-          data.submit()
+        # Handle previews.
+        if previewCtrl?
+          previewCtrl.add $data.files, submitEvent
+        else
+          submitEvent()
 
-        submit: (event, response) ->
-          if attributes.macUploadSubmit?
-            scope.$apply scope.macUploadSubmit $event: event, $response: response
+      fail:     ($event, $data) -> applyCallback "Error", $event, $data
+      done:     ($event, $data) -> applyCallback "Success", $event, $data
+      progress: ($event, $data) ->
+        previewCtrl?.updateProgress? $data
+        applyCallback "Progress", $event, $data
 
-        error: (response, status) ->
-          if attributes.macUploadError?
-            responseObject = {}
-            for own key, value of response
-              unless typeof value is "function"
-                responseObject[key] = value
+    if attrs.macUploadDropZone?
+      $(document).on "drop dragover", (event) -> event.preventDefault()
 
-            args =
-              $response: responseObject
-              $data:     response.data
-              $status:   status
+      # Add and remove droppable class
+      dragoverTimeout = null
+      dropZone        = element.parents attrs.macUploadDropZone
 
-            scope.$apply scope.macUploadError args
+      $(document).bind "dragover", (event) ->
+        clearTimeout(dragoverTimeout) if dragoverTimeout?
 
-        success: (response, status) ->
-          if attributes.macUploadSuccess?
-            scope.$apply scope.macUploadSuccess $response: response, $data: response.data, $status: status
+        node   = $(event.target).parents attrs.macUploadDropZone
+        method = if node.length then "addClass" else "removeClass"
+        dropZone[method] "droppable"
 
-      options.dropZone  = if attributes.macUploadDropZone? then $(attributes.macUploadDropZone) else null
-      options.formData  = scope.macUploadFormData if attributes.macUploadFormData?
-      options.paramName = scope.macUploadParamName if attributes.macUploadParamName?
+        dragoverTimeout = setTimeout ->
+          clearTimeout(dragoverTimeout) if dragoverTimeout?
+          dropZone.removeClass "droppable"
+        , 250
 
-      input.fileupload options
-      isInitialized = true
+    options.dropZone = dropZone
 
-    if attributes.macUploadSelector?
-      # Clicks on the usually hidden upload file input field via another selector
-      element.parents(attributes.macUploadSelector).click (event) -> element.click()
+    element.fileupload(options).
+    on([
+      'fileuploadadd',
+      'fileuploadsubmit',
+      'fileuploadsend',
+      'fileuploaddone',
+      'fileuploadfail',
+      'fileuploadalways',
+      'fileuploadprogress',
+      'fileuploadprogressall',
+      'fileuploadstart',
+      'fileuploadstop',
+      'fileuploadchange',
+      'fileuploadpaste',
+      'fileuploaddrop',
+      'fileuploaddragover',
+      'fileuploadchunksend',
+      'fileuploadchunkdone',
+      'fileuploadchunkfail',
+      'fileuploadchunkalways',
+      'fileuploadprocessstart',
+      'fileuploadprocess',
+      'fileuploadprocessdone',
+      'fileuploadprocessfail',
+      'fileuploadprocessalways',
+      'fileuploadprocessstop'
+    ].join(' '), (event, data) ->
+      $scope.$emit event.type, data
+    )
 
-      # Stops the child element from going into an infinite click loop
-      element.click (event) ->
-        $rootScope.$broadcast "clickedOnAttachment"
-        event.stopPropagation()
+    $scope.$watch attrs.macUploadRoute,     (route) -> setOptions "url", route
+    $scope.$watch attrs.macUploadFormData,  (value) -> setOptions "formData", value
+]).
 
-    # Disable the browser's default drag and drop behavior so we can have our own.
-    $(document).on "drop dragover", (event) -> event.preventDefault()
+directive("macUploadPreviews", ["$rootScope", ($rootScope) ->
+  restrict:   "A"
+  require:    ["macUploadPreviews", "macUpload"]
+  controller: ["$scope", "$attrs", "$parse", ($scope, $attrs, $parse) ->
+    @previews = (value) ->
+      previewsGet = $parse $attrs.macUploadPreviews
+      previewsSet = previewsGet.assign
 
-    scope.$watch "macUploadDisabled", (isDisabled) ->
-      return unless isDisabled?
-      if isDisabled
-        input.prop("disabled", "disabled")
+      if value?
+        previewsSet $scope, value
       else
-        input.removeProp "disabled"
-      initialize()
+        previewsGet $scope
 
-    scope.$watch "macUploadFormData", (value) ->
-      if value? and isInitialized
-        input.fileupload "options", formData: value
+    @getByFilename = (filename) ->
+      previews = @previews() or []
+      for i in [previews.length - 1..0] by -1
+        preview = previews[i]
+        return preview if preview.fileName is filename
 
-    scope.$on(disableOn, -> input.fileupload "disable") if disableOn?
-    scope.$on(enableOn,  -> input.fileupload "enable")  if enableOn?
+    @add = (files = [], callback) ->
+      for file in files
+        reader = new FileReader
 
-    scope.$watch "macUploadRoute", (route) ->
-      return unless route
-      scope.route = route
-      initialize()
+        pushToPreviews = (event, state) ->
+          previews = @previews()
+          if previews?
+            newFile =
+              fileName: file.name
+              type:     file.type
+              data:     event.target.result
+            previews.push newFile
+            @previews previews
+
+          callback? newFile
+
+        reader.onload  = (event) => pushToPreviews.apply this, [event, "load"]
+        reader.onerror = (event) => pushToPreviews.apply this, [event, "error"]
+
+        reader.readAsDataURL file
+
+    return
   ]
+  link: ($scope, element, attrs, ctrls) ->
+    previewCtrl = ctrls[0]
+]).
+
+directive("macUploadProgress", [->
+  restrict:   "A"
+  require:    ["macUploadProgress", "macUploadPreviews"]
+  controller: ["$scope", ($scope) ->
+    updateProgress = (data) ->
+      preview           = @getByFilename data.files[0].name
+      preview?.progress = parseInt(data.loaded / data.total * 100, 10)
+
+    # Extending preview controller with progress
+    @updatePreviewCtrl = (ctrl) ->
+      ctrl.updateProgress = updateProgress
+  ]
+  link: ($scope, element, attrs, ctrls) ->
+    progressCtrl = ctrls[0]
+    previewsCtrl = ctrls[1]
+
+    progressCtrl?.updatePreviewCtrl previewsCtrl
+])
