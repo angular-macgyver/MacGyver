@@ -240,24 +240,44 @@ block append content
                 name                 = "files[]"
                 multiple
                 mac-upload
-                mac-upload-route      = "uploadRoute"
-                mac-upload-success    = "fileUploadSuccess($data, $status)"
-                mac-upload-error      = "fileUploadError($response, $data, $status)"
-                mac-upload-submit     = "fileUploadSubmit($event, $response)"
-                mac-upload-drop-zone  = ".example-hit-area"
-                mac-upload-disabled   = "!fileUploaderEnabled"
+                ng-disabled          = "!fileUploaderEnabled"
+                mac-upload-route     = "uploadRoute"
+                mac-upload-success   = "fileUploadSuccess($data, $status)"
+                mac-upload-error     = "fileUploadError($response, $data, $status)"
+                mac-upload-submit    = "fileUploadSubmit($event, $data)"
+                mac-upload-drop-zone = ".example-hit-area"
+                mac-upload-previews  = "uploadPreviews"
+                mac-upload-progress
               )
+          ul
+            li(ng-repeat="preview in uploadPreviews")
+              img(ng-src="{{previewImage(preview)}}")
+              span {{preview.fileName}}
+              .progress
+                .bar(ng-style='{{previewProgress(preview)}}')
+
         pre.prettyprint.linenums(ng-non-bindable)
           | <input type="file"
           |   name="files[]"
+          |   ng-disabled="!fileUploaderEnabled"
           |   multiple="multiple"
           |   mac-upload="mac-upload"
           |   mac-upload-route="uploadRoute"
           |   mac-upload-success="fileUploadSuccess($data, $status)"
           |   mac-upload-error="fileUploadError($response, $data, $status)"
-          |   mac-upload-submit="fileUploadSubmit($event, $response)"
+          |   mac-upload-submit="fileUploadSubmit($event, $data)"
           |   mac-upload-drop-zone=".example-hit-area"
-          |   mac-upload-disabled="!fileUploaderEnabled"/>
+          |   mac-upload-previews="uploadPreviews"
+          |   mac-upload-progress/>
+          | <ul>
+          |   <li ng-repeat="preview in uploadPreviews">
+          |     <img ng-src="{{previewImage(preview)}}"/>
+          |     <span>{{preview.fileName}}</span>
+          |     <div class="progress">
+          |       <div ng-style="{{previewProgress(preview)}}" class="bar"></div>
+          |     </div>
+          |   </li>
+          | </ul>
 
       section#placeholder
         @@include("docs/html/directives/placeholder.html")
