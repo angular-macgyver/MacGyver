@@ -12,7 +12,7 @@ exports.startServer = (port, publicPath, callback) ->
   server.post "/test_upload", (req, res) ->
     newPaths = []
     for file in req.files.files
-      data = fs.readFileSync file.path
+      data    = fs.readFileSync file.path
       newPath = __dirname + "/example/uploads/#{file.name}"
       fs.writeFileSync newPath, data
       console.log newPath

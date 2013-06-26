@@ -4,6 +4,9 @@ node_modules
 # Bower vendor files
 vendor/bower/*
 
+# Example upload files
+example/uploads
+
 # Logs
 test-results.xml
 
