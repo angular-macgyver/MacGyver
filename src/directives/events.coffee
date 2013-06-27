@@ -31,25 +31,28 @@ for key in ["Enter", "Escape", "Space", "Left", "Up", "Right", "Down"]
             scope.$apply -> expression scope, $event: event
     ]
 
-angular.module("Mac").directive "macModelBlur", ["$parse", ($parse) ->
-  restrict: "A"
-  link: (scope, element, attributes, controller) ->
-    element.on "blur", (event) ->
-      scope.$apply $parse(attributes.macModelBlur)(scope, $event: event)
-]
+angular.module("Mac").
+  directive("macPauseTyping", ["$parse", ($parse) ->
+    # Fires when the user stops typing for more than (delay) milliseconds
+    # To change the delay, add a mac-pause-typing-delay="500" attribute to the element
+    restrict: "A"
+    link: (scope, element, attributes) ->
+      expression = $parse attributes["macPauseTyping"]
+      delay      = scope.$eval(attributes["macPauseTypingDelay"]) or 800
+      keyupTimer = ""
+      element.on "keyup", (event) ->
+        clearTimeout keyupTimer
+        keyupTimer = setTimeout( (->
+          scope.$apply ->
+            expression(scope, {$event: event})
+        ), delay)
+  ]).
 
-angular.module("Mac").directive "macPauseTyping", ["$parse", ($parse) ->
-  # Fires when the user stops typing for more than (delay) milliseconds
-  # To change the delay, add a mac-pause-typing-delay="500" attribute to the element
-  restrict: "A"
-  link: (scope, element, attributes) ->
-    expression = $parse attributes["macPauseTyping"]
-    delay      = scope.$eval(attributes["macPauseTypingDelay"]) or 800
-    keyupTimer = ""
-    element.on "keyup", (event) ->
-      clearTimeout keyupTimer
-      keyupTimer = setTimeout( (->
-        scope.$apply ->
-          expression(scope, {$event: event})
-      ), delay)
-]
+  directive("macWindowResize", ["$parse", "$window", ($parse, $window) ->
+    restrict: "A"
+    link: ($scope, element, attrs) ->
+      callbackFn = $parse attrs.macWindowResize
+      $($window).bind "resize", ($event) ->
+        $scope.$apply -> callbackFn $scope, {$event}
+        return true
+  ])
