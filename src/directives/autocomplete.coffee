@@ -37,10 +37,10 @@ angular.module("Mac").directive "macAutocomplete", [
     replace:     true
     require:     "?ngModel"
 
-    link: ($scope, element, attrs) ->
-      labelKey      = attrs.macAutocompleteLabel       or "name"
-      queryKey      = attrs.macAutocompleteQuery       or "q"
-      delay         = +attrs.macAutocompleteDelay      or 800
+    link: ($scope, element, attrs, ctrl) ->
+      labelKey = attrs.macAutocompleteLabel  or "name"
+      queryKey = attrs.macAutocompleteQuery  or "q"
+      delay    = +attrs.macAutocompleteDelay or 800
 
       autocompleteUrl     = $parse attrs.macAutocompleteUrl
       onSelect            = $parse attrs.macAutocompleteOnSelect
@@ -49,11 +49,12 @@ angular.module("Mac").directive "macAutocomplete", [
       source              = $parse attrs.macAutocompleteSource
       currentAutocomplete = []
 
-      # TODO
-      if attrs.ngModel?
+      # HACK: setTimeout is added to make sure value wont' change afterwards
+      if ctrl?
         $scope.$watch attrs.ngModel, (value) ->
           setTimeout ->
-            element.val value
+            ctrl.$setViewValue value
+            ctrl.$render()
           , 0
 
       #
@@ -62,8 +63,7 @@ angular.module("Mac").directive "macAutocomplete", [
       # @description
       # Resetting autocomplete
       #
-      reset = ->
-        currentAutocomplete = []
+      reset = -> currentAutocomplete = []
 
       #
       # @function
@@ -102,15 +102,12 @@ angular.module("Mac").directive "macAutocomplete", [
 
           $http(options)
             .success (data, status, headers, config) ->
-                if onSuccess?
-                  fetchedList = onSuccess {data, status, headers}
-
+                fetchedList  = onSuccess?({data, status, headers})
                 fetchedList ?= data.data
 
                 resp updateList fetchedList
             .error (data, status, headers, config) ->
-              if onError?
-                onError {data, status, headers}
+              onError? {data, status, headers}
         else
           list = updateList(source($scope) or [])
           resp $filter("filter") list, req.term
@@ -137,6 +134,4 @@ angular.module("Mac").directive "macAutocomplete", [
       # Event to reset autocomplete
       #
       $scope.$on "resetAutocomplete", -> reset()
-
-      reset()
 ]
