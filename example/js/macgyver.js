@@ -10287,7 +10287,7 @@ angular.module("Mac").directive("macAutocomplete", [
       templateUrl: "template/autocomplete.html",
       replace: true,
       require: "?ngModel",
-      link: function($scope, element, attrs) {
+      link: function($scope, element, attrs, ctrl) {
         var autocompleteUrl, currentAutocomplete, delay, labelKey, onError, onSelect, onSuccess, queryKey, reset, source, sourceFn, updateList;
 
         labelKey = attrs.macAutocompleteLabel || "name";
@@ -10299,10 +10299,11 @@ angular.module("Mac").directive("macAutocomplete", [
         onError = $parse(attrs.macAutocompleteOnError);
         source = $parse(attrs.macAutocompleteSource);
         currentAutocomplete = [];
-        if (attrs.ngModel != null) {
+        if (ctrl != null) {
           $scope.$watch(attrs.ngModel, function(value) {
             return setTimeout(function() {
-              return element.val(value);
+              ctrl.$setViewValue(value);
+              return ctrl.$render();
             }, 0);
           });
         }
@@ -10338,25 +10339,21 @@ angular.module("Mac").directive("macAutocomplete", [
             return $http(options).success(function(data, status, headers, config) {
               var fetchedList;
 
-              if (onSuccess != null) {
-                fetchedList = onSuccess({
-                  data: data,
-                  status: status,
-                  headers: headers
-                });
-              }
+              fetchedList = typeof onSuccess === "function" ? onSuccess({
+                data: data,
+                status: status,
+                headers: headers
+              }) : void 0;
               if (fetchedList == null) {
                 fetchedList = data.data;
               }
               return resp(updateList(fetchedList));
             }).error(function(data, status, headers, config) {
-              if (onError != null) {
-                return onError({
-                  data: data,
-                  status: status,
-                  headers: headers
-                });
-              }
+              return typeof onError === "function" ? onError({
+                data: data,
+                status: status,
+                headers: headers
+              }) : void 0;
             });
           } else {
             list = updateList(source($scope) || []);
@@ -10390,10 +10387,9 @@ angular.module("Mac").directive("macAutocomplete", [
             return element.autocomplete(action);
           });
         }
-        $scope.$on("resetAutocomplete", function() {
+        return $scope.$on("resetAutocomplete", function() {
           return reset();
         });
-        return reset();
       }
     };
   }
@@ -10583,21 +10579,6 @@ for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
   _fn1(key);
 }
 
-angular.module("Mac").directive("macModelBlur", [
-  "$parse", function($parse) {
-    return {
-      restrict: "A",
-      link: function(scope, element, attributes, controller) {
-        return element.on("blur", function(event) {
-          return scope.$apply($parse(attributes.macModelBlur)(scope, {
-            $event: event
-          }));
-        });
-      }
-    };
-  }
-]);
-
 angular.module("Mac").directive("macPauseTyping", [
   "$parse", function($parse) {
     return {
@@ -10617,6 +10598,25 @@ angular.module("Mac").directive("macPauseTyping", [
               });
             });
           }), delay);
+        });
+      }
+    };
+  }
+]).directive("macWindowResize", [
+  "$parse", "$window", function($parse, $window) {
+    return {
+      restrict: "A",
+      link: function($scope, element, attrs) {
+        var callbackFn;
+
+        callbackFn = $parse(attrs.macWindowResize);
+        return $($window).bind("resize", function($event) {
+          $scope.$apply(function() {
+            return callbackFn($scope, {
+              $event: $event
+            });
+          });
+          return true;
         });
       }
     };
@@ -11099,7 +11099,7 @@ angular.module("Mac").directive("macModal", [
       replace: true,
       transclude: true,
       link: function($scope, element, attrs) {
-        var defaults, elementId, opts, registerModal;
+        var bindingEvents, defaults, elementId, escapeKeyHandler, opts, registerModal, resizeHandler;
 
         defaults = {
           keyboard: false,
@@ -11108,25 +11108,17 @@ angular.module("Mac").directive("macModal", [
           open: null,
           topOffset: 20
         };
-        opts = util.extendAttributes("", defaults, attrs);
-        elementId = element.prop("id");
-        $scope.closeModal = function($event) {
-          return modal.hide(function() {
-            return $scope.bindingEvents("unbind");
-          });
-        };
-        $scope.escapeKeyHandler = function(event) {
+        opts = util.extendAttributes("macModal", defaults, attrs);
+        elementId = attrs.id;
+        escapeKeyHandler = function(event) {
           if (event.which === keys.ESCAPE) {
             return modal.hide();
           }
         };
-        $scope.resizeHandler = function(event) {
+        resizeHandler = function(event) {
           return modal.resize();
         };
-        $scope.overlayHandler = function(event) {
-          return $scope.closeModal();
-        };
-        $scope.bindingEvents = function(action) {
+        bindingEvents = function(action) {
           if (action == null) {
             action = "bind";
           }
@@ -11134,25 +11126,32 @@ angular.module("Mac").directive("macModal", [
             return;
           }
           if (opts.keyboard) {
-            $(document)[action]("keydown", $scope.escapeKeyHandler);
-          }
-          if (opts.overlayClose) {
-            element[action]("click", overlayHandler);
+            $(document)[action]("keydown", escapeKeyHandler);
           }
           if (opts.resize) {
-            return $(window)[action]("resize", $scope.resizeHandler);
+            return $(window)[action]("resize", resizeHandler);
           }
         };
         registerModal = function(id) {
           if ((id != null) && id) {
             opts.callback = function() {
-              $scope.bindingEvents();
+              bindingEvents();
               if (opts.open != null) {
                 return $parse(opts.open)($scope);
               }
             };
             return modal.register(id, element, opts);
           }
+        };
+        $scope.closeOverlay = function($event) {
+          if (opts.overlayClose && $($event.target).is(".modal-overlay")) {
+            return $scope.closeModal();
+          }
+        };
+        $scope.closeModal = function($event) {
+          return modal.hide(function() {
+            return bindingEvents("unbind");
+          });
         };
         if (elementId) {
           return registerModal(elementId);
@@ -13999,6 +13998,9 @@ util.factory("util", [
       getQueryString: function(url, name) {
         var regex, regexS, results;
 
+        if (name == null) {
+          name = "";
+        }
         name = name.replace(/[[]/, "\[").replace(/[]]/, "\]");
         regexS = "[\?&]" + name + "=([^&#]*)";
         regex = new RegExp(regexS);

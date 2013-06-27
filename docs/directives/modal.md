@@ -5,23 +5,23 @@ Element directive to define the modal dialog. Modal content is transcluded into 
 modal template  
   
 ### Parameters
-**keyboard**  
+**mac-modal-keyboard**  
 Type: `Boolean`  
 Allow closing modal with keyboard (default false)  
   
-**overlay-close**  
+**mac-modal-overlay-close**  
 Type: `Boolean`  
 Allow closing modal when clicking on overlay (default false)  
   
-**resize**  
+**mac-modal-resize**  
 Type: `Boolean`  
 Allow modal to resize on window resize event (default true)  
   
-**open**  
+**mac-modal-open**  
 Type: `Function`  
 Callback when the modal is opened  
   
-**topOffset**  
+**mac-modal-topOffset**  
 Type: `Integer`  
 Top offset when the modal is larger than window height (default 20)  
   
