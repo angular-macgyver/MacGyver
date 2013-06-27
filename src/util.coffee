@@ -134,7 +134,7 @@ util.factory "util", [
       emailRegex.test email
 
     # credits: http://www.netlobo.com/url_query_string_javascript.html
-    getQueryString: (url, name) ->
+    getQueryString: (url, name = "") ->
       name    = name.replace(/[[]/,"\[").replace(/[]]/,"\]")
       regexS  = "[\?&]"+name+"=([^&#]*)"
       regex   = new RegExp regexS
