@@ -46,7 +46,7 @@ block append content
         h3 Example
         .docs-example
           mac-modal#test-modal(
-            keyboard
+            mac-modal-keyboard
           )
             .modal-content(ng-controller="modalController")
               h1 Just another modal
@@ -55,7 +55,7 @@ block append content
             mac-modal-content = "maGyverSeasonOne"
           ) Show Modal
         pre.prettyprint.linenums(ng-non-bindable)
-          | <mac-modal id="test-modal" keyboard="keyboard">
+          | <mac-modal id="test-modal" mac-modal-keyboard>
           |   <div ng-controller="modalController" class="modal-content">
           |     <h1>Just another modal</h1>
           |   </div>

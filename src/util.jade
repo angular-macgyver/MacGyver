@@ -1,0 +1,133 @@
+extends layout
+
+block append content
+  .row.content
+    #nav.span3
+      ul.nav.nav-list.docs-sidenav(data-spy="affix", data-offset-top="0")
+        li: a(href="#pluralize")
+          i.icon-chevron-right
+          | Pluralize
+        li: a(href="#capitalize")
+          i.icon-chevron-right
+          | Capitalize
+        li: a(href="#uncapitalize")
+          i.icon-chevron-right
+          | Uncapitalize
+        li: a(href="#toCamelCase")
+          i.icon-chevron-right
+          | toCamelCase
+        li: a(href="#toSnakeCase")
+          i.icon-chevron-right
+          | toSnakeCase
+        li: a(href="#convertKeysToCamelCase")
+          i.icon-chevron-right
+          | convertKeysToCamelCase
+        li: a(href="#convertKeysToSnakeCase")
+          i.icon-chevron-right
+          | convertKeysToSnakeCase
+        li: a(href="#validateUrl")
+          i.icon-chevron-right
+          | validateUrl
+        li: a(href="#validateEmail")
+          i.icon-chevron-right
+          | validateEmail
+        li: a(href="#getQueryString")
+          i.icon-chevron-right
+          | getQueryString
+        li: a(href="#parseUrlPath")
+          i.icon-chevron-right
+          | parseUrlPath
+
+
+    #example.span9
+      section#pluralize
+        h3 pluralize
+        pre.prettyprint(ng-non-bindable)
+          | util.pluralize("apple", 5)
+          | => "apples"
+          | util.pluralize("apple", 10, true)
+          | => "10 apples"
+
+      section#capitalize
+        h3 capitalize
+        p Converts first leter of the string to uppercase (Underscore string proxy)
+        pre.prettyprint(ng-non-bindable)
+          | util.capitalize("lowercase")
+          | => "Lowercase"
+
+      section#uncapitalize
+        h3 uncapitalize
+        pre.prettyprint(ng-non-bindable)
+          | util.uncapitalize("UPPERCASE")
+          | => "uPPERCASE"
+
+      section#toCamelCase
+        h3 toCamelCase
+        pre.prettyprint(ng-non-bindable)
+          | util.toCamelCase("a-string-with-dashes")
+          | => "aStringWithDashes"
+
+      section#toSnakeCase
+        h3 toSnakeCase
+        pre.prettyprint(ng-non-bindable)
+          | util.toSnakeCase("just another string")
+          | => "just_another_string"
+
+      section#convertKeysToCamelCase
+        h3 convertKeysToCamelCase
+        p Convert all the keys in an object to camel case
+        pre.prettyprint(ng-non-bindable)
+          | util.toSnakeCase({'hello-world': 'test'})
+          | => {'helloWorld': 'test'}
+
+      section#convertKeysToSnakeCase
+        h3 convertKeysToSnakeCase
+        p Convert all the keys in an object to snake case
+        pre.prettyprint(ng-non-bindable)
+          | util.toSnakeCase({'helloWorld': 'test'})
+          | => {'hello_world': 'test'}
+
+      section#validateUrl
+        h3 validateUrl
+        p Parse url and break it into different components
+        pre.prettyprint(ng-non-bindable)
+          | util.validateUrl("http://www.example.com/macgyver/episodes")
+          | => {domain: "com"
+          |     name: "example"
+          |     path: "/macgyver/episodes"
+          |     port: undefined
+          |     protocol: "http://"
+          |     subdomain: "www"
+          |     url: "http://www.example.com/macgyver/episodes"}
+
+      section#validateEmail
+        h3 validateEmail
+        pre.prettyprint(ng-non-bindable)
+          | util.validateEmail("user@example.com")
+          | => true
+
+      section#getQueryString
+        h3 getQueryString
+        pre.prettyprint(ng-non-bindable)
+          | util.getQueryString("http://www.example.com/macgyver?season=1&episode=3&time=12:23", "episode")
+          | => 3
+
+      section#parseUrlPath
+        h3 parseUrlPath
+        pre.prettyprint(ng-non-bindable)
+          | util.parseUrlPath("http://www.example.com/macgyver?season=1&episode=3&time=12:23")
+          | => {fullPath: "http://www.example.com/macgyver?season=1&episode=3&time=12:23",
+          |     path: "http://www.example.com",
+          |     pathComponents: [
+          |       "http:",
+          |       "",
+          |       "www.example.com",
+          |       "macgyver"
+          |     ],
+          |     verb: "macgyver",
+          |     queries: {
+          |       season: "1",
+          |       episode: "3",
+          |       time: "12:23"
+          |     }
+          |   }
