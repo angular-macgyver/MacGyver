@@ -10790,7 +10790,7 @@ angular.module("Mac").directive("macUpload", [
                   newFile = {
                     fileName: file.name,
                     type: file.type,
-                    data: event.target.result
+                    fileData: event.target.result
                   };
                   previews.push(newFile);
                   this.previews(previews);
@@ -13058,7 +13058,7 @@ module.controller("ExampleController", [
     $scope.uploadPreviews = [];
     $scope.previewImage = function(preview) {
       if (/image./.test(preview.type)) {
-        return preview.data;
+        return preview.fileData;
       } else {
         return "/img/file_icon.png";
       }

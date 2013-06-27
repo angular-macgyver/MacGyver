@@ -151,7 +151,7 @@ module.controller "ExampleController", ["$scope", "$timeout", "Table", ($scope, 
   $scope.fileUploaderEnabled = true
   $scope.uploadPreviews      = []
   $scope.previewImage        = (preview) ->
-    if /image./.test(preview.type)  then preview.data else "/img/file_icon.png"
+    if /image./.test(preview.type)  then preview.fileData else "/img/file_icon.png"
   $scope.previewProgress = (preview) ->
     return width: "#{preview.progress}%"
 

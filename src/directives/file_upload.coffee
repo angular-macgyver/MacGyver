@@ -138,7 +138,7 @@ directive("macUploadPreviews", ["$rootScope", ($rootScope) ->
             newFile =
               fileName: file.name
               type:     file.type
-              data:     event.target.result
+              fileData: event.target.result
             previews.push newFile
             @previews previews
 
