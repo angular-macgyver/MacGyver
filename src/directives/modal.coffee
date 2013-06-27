@@ -5,11 +5,11 @@
 # Element directive to define the modal dialog. Modal content is transcluded into a
 # modal template
 #
-# @param {Boolean}  keyboard      Allow closing modal with keyboard (default false)
-# @param {Boolean}  overlay-close Allow closing modal when clicking on overlay (default false)
-# @param {Boolean}  resize        Allow modal to resize on window resize event (default true)
-# @param {Function} open          Callback when the modal is opened
-# @param {Integer}  topOffset     Top offset when the modal is larger than window height (default 20)
+# @param {Boolean}  mac-modal-keyboard      Allow closing modal with keyboard (default false)
+# @param {Boolean}  mac-modal-overlay-close Allow closing modal when clicking on overlay (default false)
+# @param {Boolean}  mac-modal-resize        Allow modal to resize on window resize event (default true)
+# @param {Function} mac-modal-open          Callback when the modal is opened
+# @param {Integer}  mac-modal-topOffset     Top offset when the modal is larger than window height (default 20)
 #
 angular.module("Mac").directive("macModal", [
   "$rootScope"
@@ -31,39 +31,38 @@ angular.module("Mac").directive("macModal", [
         open:         null
         topOffset:    20
 
-      opts = util.extendAttributes "", defaults, attrs
+      opts = util.extendAttributes "macModal", defaults, attrs
 
-      elementId = element.prop("id")
+      elementId = attrs.id
 
-      $scope.closeModal = ($event)->
-        modal.hide ->
-          $scope.bindingEvents "unbind"
-
-      $scope.escapeKeyHandler = (event) ->
+      escapeKeyHandler = (event) ->
         modal.hide() if event.which is keys.ESCAPE
 
-      $scope.resizeHandler =  (event) -> modal.resize()
-      $scope.overlayHandler = (event) -> $scope.closeModal()
+      resizeHandler = (event) -> modal.resize()
 
-      $scope.bindingEvents = (action = "bind") ->
+      bindingEvents = (action = "bind") ->
         return unless action in ["bind", "unbind"]
 
         if opts.keyboard
-          $(document)[action] "keydown", $scope.escapeKeyHandler
-
-        if opts.overlayClose
-          element[action] "click", overlayHandler
+          $(document)[action] "keydown", escapeKeyHandler
 
         if opts.resize
-          $(window)[action] "resize", $scope.resizeHandler
+          $(window)[action] "resize", resizeHandler
 
       registerModal = (id) ->
         if id? and id
           opts.callback = ->
-            $scope.bindingEvents()
+            bindingEvents()
             $parse(opts.open) $scope if opts.open?
 
           modal.register id, element, opts
+
+      $scope.closeOverlay = ($event) ->
+        if opts.overlayClose and $($event.target).is(".modal-overlay")
+          $scope.closeModal()
+
+      $scope.closeModal = ($event)->
+        modal.hide -> bindingEvents "unbind"
 
       if elementId
         registerModal elementId
