@@ -10262,7 +10262,10 @@ A directive for providing suggestions while typing into the field
 @dependencies
 - jQuery UI autocomplete
 
+@param {String} ng-model Assignable angular expression to data-bind to
+@param {String} mac-placeholder Placeholder text
 @param {String} mac-autocomplete-url Url to fetch autocomplete dropdown list data
+@param {Boolean} mac-autocomplete-disabled Boolean value if autocomplete should be disabled
 @param {Function} mac-autocomplete-on-select Function called when user select on an item
        - `selected` - {Object} The item selected
 @param {Function} mac-autocomplete-on-success function called on success ajax request
@@ -10273,15 +10276,9 @@ A directive for providing suggestions while typing into the field
         - `data` - {Object} Data returned from the request
         - `status` - {Number} The status code of the response
         - `header` - {Object} Header of the response
-@param {Function} mac-autocomplete-on-key-down function called on key down
-        - `event` - {Object} jQuery event
-        - `value` - {String} Value in the input text
-@param {String}  mac-autocomplete-value           The value to be sent back upon selection        (default "id")
-@param {String}  mac-autocomplete-label           The label to display to the users               (default "name")
-@param {String}  mac-autocomplete-query           The query parameter on GET command              (default "q")
-@param {Integer} mac-autocomplete-delay           Delay on fetching autocomplete data after keyup (default 800)
-@param {Boolean} mac-autocomplete-clear-on-select Clear text input on select                      (default false)
-@param {String}  mac-autocomplete-placeholder     Placeholder text of the text input              (default "")
+@param {String}  mac-autocomplete-label The label to display to the users               (default "name")
+@param {String}  mac-autocomplete-query The query parameter on GET command              (default "q")
+@param {Integer} mac-autocomplete-delay Delay on fetching autocomplete data after keyup (default 800)
 */
 angular.module("Mac").directive("macAutocomplete", [
   "$http", "$parse", "$filter", function($http, $parse, $filter) {
@@ -10289,199 +10286,109 @@ angular.module("Mac").directive("macAutocomplete", [
       restrict: "E",
       templateUrl: "template/autocomplete.html",
       replace: true,
-      scope: {
-        autocompleteUrl: "=macAutocompleteUrl",
-        onSelect: "&macAutocompleteOnSelect",
-        onSuccess: "&macAutocompleteOnSuccess",
-        onError: "&macAutocompleteOnError",
-        onKeyDown: "&macAutocompleteOnKeyDown",
-        placeholder: "=macAutocompletePlaceholder",
-        source: "=macAutocompleteSource"
-      },
-      compile: function(element, attrs) {
-        var clearOnSelect, delay, events, labelKey, queryKey, valueKey;
+      require: "?ngModel",
+      link: function($scope, element, attrs, ctrl) {
+        var autocompleteUrl, currentAutocomplete, delay, labelKey, onError, onSelect, onSuccess, queryKey, reset, source, sourceFn, updateList;
 
-        valueKey = attrs.macAutocompleteValue || "id";
         labelKey = attrs.macAutocompleteLabel || "name";
         queryKey = attrs.macAutocompleteQuery || "q";
         delay = +attrs.macAutocompleteDelay || 800;
-        events = attrs.macAutocompleteEvents || "";
-        clearOnSelect = attrs.macAutocompleteClearOnSelect != null;
-        return function($scope, element, attrs) {
-          var sourceFn;
-
-          if (attrs.macAutocompleteOnKeyDown) {
-            element.bind("keydown", function(event) {
-              return $scope.onKeyDown({
-                event: event,
-                value: $(this).val()
-              });
-            });
+        autocompleteUrl = $parse(attrs.macAutocompleteUrl);
+        onSelect = $parse(attrs.macAutocompleteOnSelect);
+        onSuccess = $parse(attrs.macAutocompleteOnSuccess);
+        onError = $parse(attrs.macAutocompleteOnError);
+        source = $parse(attrs.macAutocompleteSource);
+        currentAutocomplete = [];
+        if (ctrl != null) {
+          $scope.$watch(attrs.ngModel, function(value) {
+            return setTimeout(function() {
+              ctrl.$setViewValue(value);
+              return ctrl.$render();
+            }, 0);
+          });
+        }
+        reset = function() {
+          return currentAutocomplete = [];
+        };
+        updateList = function(data) {
+          if (data == null) {
+            data = [];
           }
-          sourceFn = function(req, resp) {
-            var list, options;
+          currentAutocomplete = data;
+          return _(data).map(function(item) {
+            var label, value;
 
-            if (attrs.macAutocompleteUrl != null) {
-              options = {
-                method: "GET",
-                url: $scope.autocompleteUrl,
-                params: {}
-              };
-              options.params[queryKey] = req.term;
-              return $http(options).success(function(data, status, headers, config) {
-                var fetchedList;
+            label = value = item[labelKey] != null ? item[labelKey] : item;
+            return {
+              label: label,
+              value: value
+            };
+          });
+        };
+        sourceFn = function(req, resp) {
+          var list, options, url;
 
-                if (attrs.macAutocompleteOnSuccess != null) {
-                  fetchedList = $scope.onSuccess({
-                    data: data,
-                    status: status,
-                    headers: headers
-                  });
-                }
-                if (fetchedList == null) {
-                  fetchedList = data.data;
-                }
-                return resp($scope.updateList(fetchedList));
-              }).error(function(data, status, headers, config) {
-                if (attrs.macAutocompleteOnError != null) {
-                  return $scope.onError({
-                    data: data,
-                    status: status,
-                    headers: headers
-                  });
-                }
-              });
-            } else {
-              list = $scope.updateList($scope.source || []);
-              return resp($filter("filter")(list, req.term));
-            }
-          };
-          element.autocomplete({
-            delay: delay,
-            autoFocus: true,
-            source: sourceFn,
-            select: function(event, ui) {
-              $scope.$apply(function() {
-                var selected;
+          url = autocompleteUrl($scope);
+          if (url) {
+            options = {
+              method: "GET",
+              url: url,
+              params: {}
+            };
+            options.params[queryKey] = req.term;
+            return $http(options).success(function(data, status, headers, config) {
+              var fetchedList;
 
-                selected = _($scope.currentAutocomplete).find(function(item) {
-                  return item[labelKey] === ui.item.label;
-                });
-                if (attrs.macAutocompleteOnSelect != null) {
-                  return $scope.onSelect({
-                    selected: selected
-                  });
-                }
-              });
-              if (clearOnSelect) {
-                return setTimeout((function() {
-                  return element.val("");
-                }), 0);
+              fetchedList = typeof onSuccess === "function" ? onSuccess({
+                data: data,
+                status: status,
+                headers: headers
+              }) : void 0;
+              if (fetchedList == null) {
+                fetchedList = data.data;
               }
-            }
-          });
-          $scope.$on("resetAutocomplete", function() {
-            return $scope.reset();
-          });
-          $scope.updateList = function(data) {
-            if (data == null) {
-              data = [];
-            }
-            $scope.currentAutocomplete = data;
-            return _(data).map(function(item) {
-              var label, value;
-
-              label = value = labelKey != null ? item[labelKey] : item;
-              return {
-                label: label,
-                value: value
-              };
+              return resp(updateList(fetchedList));
+            }).error(function(data, status, headers, config) {
+              return typeof onError === "function" ? onError({
+                data: data,
+                status: status,
+                headers: headers
+              }) : void 0;
             });
-          };
-          $scope.reset = function() {
-            return $scope.currentAutocomplete = [];
-          };
-          return $scope.reset();
-        };
-      }
-    };
-  }
-]);
-
-/*
-@chalk overview
-@name macBind
-@description
-macBind recurive go up parent scope to find the correct variable
-
-@param {Expression} mac-bind       Expression to evaluate
-@param {Integer}    mac-bind-depth Max parent scope depth it should go (default 2)
-*/
-angular.module("Mac").directive("macBind", [
-  "$parse", function($parse) {
-    return {
-      link: function($scope, element, attr) {
-        var checkScope, depth, fn;
-
-        element.addClass('mac-binding').data('$binding', attr.ngBind);
-        fn = $parse(attr.macBind);
-        depth = +(attr.macBindDepth || 2);
-        checkScope = function(scope, depth, $event) {
-          var parent, ret;
-
-          if (depth === 0) {
-            return false;
-          }
-          ret = fn(scope, {
-            $scope: $scope
-          });
-          parent = scope.$parent;
-          if (!ret && (parent != null)) {
-            return checkScope(parent, depth - 1, $event);
           } else {
-            if (ret) {
-              scope.$watch(attr.macBind, function(value) {
-                return element.text(value || "");
+            list = updateList(source($scope) || []);
+            return resp($filter("filter")(list, req.term));
+          }
+        };
+        element.autocomplete({
+          delay: delay,
+          autoFocus: true,
+          source: sourceFn,
+          select: function(event, ui) {
+            return $scope.$apply(function() {
+              var selected;
+
+              selected = _(currentAutocomplete).find(function(item) {
+                return item[labelKey] === ui.item.label;
               });
-            }
-            return true;
+              if (onSelect != null) {
+                return onSelect($scope, {
+                  selected: selected
+                });
+              }
+            });
           }
-        };
-        return checkScope($scope, depth);
-      }
-    };
-  }
-]);
+        });
+        if (attrs.macAutocompleteDisabled != null) {
+          $scope.$watch(attrs.macAutocompleteDisabled, function(value) {
+            var action;
 
-angular.module("Mac").directive("macClick", [
-  "$parse", function($parse) {
-    return {
-      link: function($scope, element, attr) {
-        var clickAction, depth, fn;
-
-        fn = $parse(attr.macClick);
-        depth = +(attr.macClickDepth || 2);
-        clickAction = function(scope, depth, $event) {
-          var parent, ret;
-
-          if (depth === 0) {
-            return false;
-          }
-          ret = fn(scope, {
-            $event: $event,
-            $scope: $scope
+            action = value ? "disable" : "enable";
+            return element.autocomplete(action);
           });
-          parent = scope.$parent;
-          if (!ret && (parent != null)) {
-            return clickAction(parent, depth - 1, $event);
-          } else {
-            return true;
-          }
-        };
-        return element.bind("click", function(event) {
-          return $scope.$apply(function() {
-            return clickAction($scope, depth, event);
-          });
+        }
+        return $scope.$on("resetAutocomplete", function() {
+          return reset();
         });
       }
     };
@@ -10498,44 +10405,38 @@ A directive for creating a datepicker on text input using jquery ui
 - jQuery
 - jQuery datepicker
 
-@param {String}   mac-datepicker-id                     The id of the text input field
-@param {String}   mac-datepicker-model                  The model to store the selected date
-@param {Function} mac-datepicker-on-before-select       Function called before setting the value to the model
+@param {String}     mac-datepicker-id               The id of the text input field
+@param {String}     mac-datepicker-model            The model to store the selected date
+@param {Function}   mac-datepicker-on-before-select Function called before setting the value to the model
   - `date` - {String} Selected date from the datepicker
-@param {String} mac-datepicker-on-before-close          Function called before closing datepicker
+@param {String}     mac-datepicker-on-before-close Function called before closing datepicker
   - `date` - {String} Selected date from the datepicker
   - `instance` - {Object} Datepicker instance
-@param {String}  mac-datepicker-append-text             The text to display after each date field
-@param {Boolean} mac-datepicker-auto-size               Automatically resize the input to accommodate dates in the current dateFormat
-@param {Boolean} mac-datepicker-change-month            Whether the month should be rendered as a dropdown instead of text
-@param {Boolean} mac-datepicker-change-year             Whether the year should be rendered as a dropdown instead of text
-@param {Boolean} mac-datepicker-constrain-input-type    Constrain characters allowed by the current dateFormat
-@param {String}  mac-datepicker-current-text            Text to display for the current day link
-@param {String}  mac-datepicker-date-format             The format for parse and displayed dates
-@param {Date|Number|String} mac-datepicker-default-date Date to highligh on first opening if the field is blank
-@param {String}  mac-datepicker-duration                Control the speed at which the datepicker appears
-@param {Integer} mac-datepicker-first-day               Set the first day of the week. Sunday is 0, Monday is 1
-@param {Date|Number|String} mac-datepicker-max-date     The maximum selectable date
-@param {Date|Number|String} mac-datepicker-min-date     The minimum selectable date
-@param {Integer} mac-datepicker-number-of-months        The number of months to show at once
-@param {String}  mac-datepicker-show-on                 When the datepicker should appear
-@param {Integer} mac-datepicker-year-range              The range of years displayed in the year drop-down
-@param {Boolean} mac-datepicker-disabled                Enable or disable datepicker
+@param {String}     mac-datepicker-append-text          The text to display after each date field
+@param {Boolean}    mac-datepicker-auto-size            Automatically resize the input to accommodate dates in the current dateFormat
+@param {Boolean}    mac-datepicker-change-month         Whether the month should be rendered as a dropdown instead of text
+@param {Boolean}    mac-datepicker-change-year          Whether the year should be rendered as a dropdown instead of text
+@param {Boolean}    mac-datepicker-constrain-input-type Constrain characters allowed by the current dateFormat
+@param {String}     mac-datepicker-current-text         Text to display for the current day link
+@param {String}     mac-datepicker-date-format          The format for parse and displayed dates
+@param {Expression} mac-datepicker-default-date         Date to highligh on first opening if the field is blank {Date|Number|String}
+@param {String}     mac-datepicker-duration             Control the speed at which the datepicker appears
+@param {Integer}    mac-datepicker-first-day            Set the first day of the week. Sunday is 0, Monday is 1
+@param {Expression} mac-datepicker-max-date             The maximum selectable date {Date|Number|String}
+@param {Expression} mac-datepicker-min-date             The minimum selectable date {Date|Number|String}
+@param {Integer}    mac-datepicker-number-of-months     The number of months to show at once
+@param {String}     mac-datepicker-show-on              When the datepicker should appear
+@param {Integer}    mac-datepicker-year-range           The range of years displayed in the year drop-down
+@param {Boolean}    mac-datepicker-disabled             Enable or disable datepicker
 */
 angular.module("Mac").directive("macDatepicker", [
-  "util", function(util) {
+  "$parse", "util", function($parse, util) {
     return {
       restrict: "E",
-      scope: {
-        model: "=macDatepickerModel",
-        disabled: "=macDatepickerDisabled",
-        onBeforeSelect: "&macDatepickerOnBeforeSelect",
-        onBeforeClose: "&macDatepickerOnBeforeClose"
-      },
       replace: true,
       templateUrl: "template/datepicker.html",
       compile: function(element, attrs) {
-        var defaults, inputElement, opts;
+        var defaults, inputAttrs, inputElement, opts;
 
         defaults = {
           id: "input-date",
@@ -10556,37 +10457,62 @@ angular.module("Mac").directive("macDatepicker", [
           yearRange: "c-10:c+10"
         };
         opts = util.extendAttributes("macDatepicker", defaults, attrs);
-        inputElement = $("input", element).attr({
-          "mac-id": opts.id,
-          "ng-disabled": "disabled"
-        });
+        inputAttrs = {
+          "mac-id": opts.id
+        };
+        inputAttrs["ng-disabled"] = attrs.macDatepickerDisabled || "";
+        inputElement = $("input", element).attr(inputAttrs);
         return function($scope, element, attrs) {
-          $scope.$watch("model", function(value) {
-            if (value != null) {
-              return inputElement.datepicker("setDate", value);
+          var initialized, model, onBeforeClose, onBeforeSelect, setOptions;
+
+          onBeforeSelect = $parse(attrs.macDatepickerOnBeforeSelect);
+          onBeforeClose = $parse(attrs.macDatepickerOnBeforeClose);
+          model = $parse(attrs.macDatepickerModel);
+          initialized = false;
+          setOptions = function(name, value) {
+            if (!(initialized && (value != null))) {
+              return;
             }
+            return inputElement.datepicker("option", name, value);
+          };
+          $scope.$watch(attrs.macDatepickerModel, function(value) {
+            if (initialized && (value != null)) {
+              return setTimeout(function() {
+                return inputElement.datepicker("setDate", value);
+              }, 0);
+            }
+          });
+          $scope.$watch(attrs.macDatepickerDefaultDate, function(value) {
+            return setOptions("defaultDate", value);
+          });
+          $scope.$watch(attrs.macDatepickerMaxDate, function(value) {
+            return setOptions("maxDate", value);
+          });
+          $scope.$watch(attrs.macDatepickerMinDate, function(value) {
+            return setOptions("minDate", value);
           });
           opts.onSelect = function(date, instance) {
             return $scope.$apply(function() {
-              if (attrs.macDatepickerOnBeforeSelect != null) {
-                date = $scope.onBeforeSelect({
-                  data: data
-                });
-              }
-              return $scope.model = date;
+              var _base;
+
+              date = (typeof (_base = onBeforeSelect($scope)) === "function" ? _base({
+                date: date
+              }) : void 0) || date;
+              return model.assign($scope, date);
             });
           };
           opts.onClose = function(date, instance) {
             return $scope.$apply(function() {
-              if (attrs.macDatepickerOnBeforeClose != null) {
-                return $scope.onBeforeClose({
-                  date: date,
-                  instance: instance
-                });
-              }
+              var _base;
+
+              return typeof (_base = onBeforeClose($scope)) === "function" ? _base({
+                date: date,
+                instance: instance
+              }) : void 0;
             });
           };
-          return inputElement.datepicker(opts);
+          inputElement.datepicker(opts);
+          return initialized = true;
         };
       }
     };
@@ -10623,28 +10549,6 @@ for (_i = 0, _len = _ref.length; _i < _len; _i++) {
   _fn(event);
 }
 
-angular.module("Mac").directive("macParentClick", [
-  "$parse", function($parse) {
-    return {
-      link: function($scope, element, attr) {
-        var fn;
-
-        fn = $parse(attr.macParentClick);
-        if ($scope.$parent == null) {
-          return;
-        }
-        return element.bind("click", function(event) {
-          return $scope.$apply(function() {
-            return fn($scope.$parent, {
-              $event: event
-            });
-          });
-        });
-      }
-    };
-  }
-]);
-
 _ref1 = ["Enter", "Escape", "Space", "Left", "Up", "Right", "Down"];
 _fn1 = function(key) {
   return angular.module("Mac").directive("macKeydown" + key, [
@@ -10675,21 +10579,6 @@ for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
   _fn1(key);
 }
 
-angular.module("Mac").directive("macModelBlur", [
-  "$parse", function($parse) {
-    return {
-      restrict: "A",
-      link: function(scope, element, attributes, controller) {
-        return element.on("blur", function(event) {
-          return scope.$apply($parse(attributes.macModelBlur)(scope, {
-            $event: event
-          }));
-        });
-      }
-    };
-  }
-]);
-
 angular.module("Mac").directive("macPauseTyping", [
   "$parse", function($parse) {
     return {
@@ -10713,6 +10602,25 @@ angular.module("Mac").directive("macPauseTyping", [
       }
     };
   }
+]).directive("macWindowResize", [
+  "$parse", "$window", function($parse, $window) {
+    return {
+      restrict: "A",
+      link: function($scope, element, attrs) {
+        var callbackFn;
+
+        callbackFn = $parse(attrs.macWindowResize);
+        return $($window).bind("resize", function($event) {
+          $scope.$apply(function() {
+            return callbackFn($scope, {
+              $event: $event
+            });
+          });
+          return true;
+        });
+      }
+    };
+  }
 ]);
 
 /*
@@ -10724,157 +10632,216 @@ Directive for proxying jQuery file upload
 @dependencies
 - jQuery file upload
 
-@param {String}   mac-upload-route      The route we're uploading our files
-@param {Function} mac-upload-submit     Function to call on submit
-@param {Function} mac-upload-success    Upload success callback
-@param {Function} mac-upload-error      Upload error callback
-@param {String}   mac-upload-selector   Selector to proxy clicking on file upload
-@param {String}   mac-upload-drop-zone  The selector that we can drop files onto
-@param {String}   mac-upload-enable-on  The broadcast message to catch to enable file upload
-@param {String}   mac-upload-disable-on The broadcast message to catch to disable file upload
-@param {Boolean}  mac-upload-disabled   Boolean value to disable or enable file upload
-@param {String}   mac-upload-form-data  Additional form data
-@param {String}   mac-upload-param-name Parameter name for the file
+@param {String}     mac-upload-route      File upload route
+@param {Function}   mac-upload-submit     Function to call on submit
+@param {Function}   mac-upload-success    Upload success callback
+@param {Function}   mac-upload-error      Upload error callback
+@param {Expression} mac-upload-previews   List of uploaded files {Array}
+@param {Function}   mac-upload-progress   Upload progress callback
+@param {String}     mac-upload-drop-zone  The selector that we can drop files onto
+@param {Expression} mac-upload-form-data  Additional form data {Array|Object|Function|FormData}
 */
-
-var __hasProp = {}.hasOwnProperty;
-
 angular.module("Mac").directive("macUpload", [
-  function() {
+  "$rootScope", "$parse", function($rootScope, $parse) {
     return {
-      scope: {
-        macUploadSubmit: "&macUploadSubmit",
-        macUploadError: "&macUploadError",
-        macUploadSuccess: "&macUploadSuccess",
-        macUploadRoute: "=macUploadRoute",
-        macUploadEnableOn: "=macUploadEnableOn",
-        macUploadDisableOn: "=macUploadDisableOn",
-        macUploadDisabled: "=macUploadDisabled",
-        macUploadFormData: "=macUploadFormData",
-        macUploadParamName: "=macUploadParamName"
-      },
-      link: function(scope, element, attributes) {
-        var disableOn, enableOn, initialize, input, isInitialized, parent;
+      require: ["macUpload", "?macUploadPreviews"],
+      controller: ["$scope", function() {}],
+      link: function($scope, element, attrs, ctrls) {
+        var applyCallback, dragoverTimeout, dropZone, options, previewCtrl, setOptions, uploadCtrl;
 
-        isInitialized = false;
-        if (attributes.macUploadDisableOn != null) {
-          disableOn = attributes.macUploadDisableOn;
-        }
-        if (attributes.macUploadEnableOn != null) {
-          enableOn = attributes.macUploadEnableOn;
-        }
-        parent = element.parent();
-        input = parent.find("input");
-        initialize = function() {
-          var options;
-
-          if (((attributes.macUploadDisabled != null) && scope.macUploadDisabled) || !scope.route) {
-            return;
+        uploadCtrl = ctrls[0];
+        previewCtrl = ctrls[1];
+        setOptions = function(option, value) {
+          if (value != null) {
+            return element.fileupload("option", option, value);
           }
-          if (isInitialized) {
-            input.fileupload("destroy");
-          }
-          options = {
-            url: scope.route,
-            replaceFileInput: true,
-            add: function(event, data) {
-              return data.submit();
-            },
-            submit: function(event, response) {
-              if (attributes.macUploadSubmit != null) {
-                return scope.$apply(scope.macUploadSubmit({
-                  $event: event,
-                  $response: response
-                }));
-              }
-            },
-            error: function(response, status) {
-              var args, key, responseObject, value;
+        };
+        applyCallback = function(action, $event, $data) {
+          var callbackFn;
 
-              if (attributes.macUploadError != null) {
-                responseObject = {};
-                for (key in response) {
-                  if (!__hasProp.call(response, key)) continue;
-                  value = response[key];
-                  if (typeof value !== "function") {
-                    responseObject[key] = value;
-                  }
-                }
-                args = {
-                  $response: responseObject,
-                  $data: response.data,
-                  $status: status
-                };
-                return scope.$apply(scope.macUploadError(args));
+          callbackFn = $parse(attrs["macUpload" + action]);
+          if (callbackFn != null) {
+            return $scope.$apply(function() {
+              var $status, args, _ref;
+
+              $status = (_ref = $data.jqXHR) != null ? _ref.status : void 0;
+              args = {
+                $event: $event,
+                $data: $data,
+                $status: $status
+              };
+              if (action === "Success") {
+                args.$response = $data.result.data;
               }
-            },
-            success: function(response, status) {
-              if (attributes.macUploadSuccess != null) {
-                return scope.$apply(scope.macUploadSuccess({
-                  $response: response,
-                  $data: response.data,
-                  $status: status
-                }));
+              return callbackFn($scope, args);
+            });
+          }
+        };
+        options = {
+          url: $parse(attrs.macUploadRoute)($scope) || "",
+          submit: function($event, $data) {
+            var submitEvent;
+
+            submitEvent = function() {
+              return applyCallback("Submit", $event, $data);
+            };
+            if (previewCtrl != null) {
+              return previewCtrl.add($data.files, submitEvent);
+            } else {
+              return submitEvent();
+            }
+          },
+          fail: function($event, $data) {
+            return applyCallback("Error", $event, $data);
+          },
+          done: function($event, $data) {
+            return applyCallback("Success", $event, $data);
+          },
+          progress: function($event, $data) {
+            if (previewCtrl != null) {
+              if (typeof previewCtrl.updateProgress === "function") {
+                previewCtrl.updateProgress($data);
+              }
+            }
+            return applyCallback("Progress", $event, $data);
+          }
+        };
+        if (attrs.macUploadDropZone != null) {
+          $(document).on("drop dragover", function(event) {
+            return event.preventDefault();
+          });
+          dragoverTimeout = null;
+          dropZone = element.parents(attrs.macUploadDropZone);
+          $(document).bind("dragover", function(event) {
+            var method, node;
+
+            if (dragoverTimeout != null) {
+              clearTimeout(dragoverTimeout);
+            }
+            node = $(event.target).parents(attrs.macUploadDropZone);
+            method = node.length ? "addClass" : "removeClass";
+            dropZone[method]("droppable");
+            return dragoverTimeout = setTimeout(function() {
+              if (dragoverTimeout != null) {
+                clearTimeout(dragoverTimeout);
+              }
+              return dropZone.removeClass("droppable");
+            }, 250);
+          });
+        }
+        options.dropZone = dropZone;
+        element.fileupload(options).on(['fileuploadadd', 'fileuploadsubmit', 'fileuploadsend', 'fileuploaddone', 'fileuploadfail', 'fileuploadalways', 'fileuploadprogress', 'fileuploadprogressall', 'fileuploadstart', 'fileuploadstop', 'fileuploadchange', 'fileuploadpaste', 'fileuploaddrop', 'fileuploaddragover', 'fileuploadchunksend', 'fileuploadchunkdone', 'fileuploadchunkfail', 'fileuploadchunkalways', 'fileuploadprocessstart', 'fileuploadprocess', 'fileuploadprocessdone', 'fileuploadprocessfail', 'fileuploadprocessalways', 'fileuploadprocessstop'].join(' '), function(event, data) {
+          return $scope.$emit(event.type, data);
+        });
+        $scope.$watch(attrs.macUploadRoute, function(route) {
+          return setOptions("url", route);
+        });
+        return $scope.$watch(attrs.macUploadFormData, function(value) {
+          return setOptions("formData", value);
+        });
+      }
+    };
+  }
+]).directive("macUploadPreviews", [
+  "$rootScope", function($rootScope) {
+    return {
+      restrict: "A",
+      require: ["macUploadPreviews", "macUpload"],
+      controller: [
+        "$scope", "$attrs", "$parse", function($scope, $attrs, $parse) {
+          this.previews = function(value) {
+            var previewsGet, previewsSet;
+
+            previewsGet = $parse($attrs.macUploadPreviews);
+            previewsSet = previewsGet.assign;
+            if (value != null) {
+              return previewsSet($scope, value);
+            } else {
+              return previewsGet($scope);
+            }
+          };
+          this.getByFilename = function(filename) {
+            var i, preview, previews, _i, _ref;
+
+            previews = this.previews() || [];
+            for (i = _i = _ref = previews.length - 1; _i >= 0; i = _i += -1) {
+              preview = previews[i];
+              if (preview.fileName === filename) {
+                return preview;
               }
             }
           };
-          options.dropZone = attributes.macUploadDropZone != null ? $(attributes.macUploadDropZone) : null;
-          if (attributes.macUploadFormData != null) {
-            options.formData = scope.macUploadFormData;
-          }
-          if (attributes.macUploadParamName != null) {
-            options.paramName = scope.macUploadParamName;
-          }
-          input.fileupload(options);
-          return isInitialized = true;
-        };
-        if (attributes.macUploadSelector != null) {
-          element.parents(attributes.macUploadSelector).click(function(event) {
-            return element.click();
-          });
-          element.click(function(event) {
-            $rootScope.$broadcast("clickedOnAttachment");
-            return event.stopPropagation();
-          });
+          this.add = function(files, callback) {
+            var file, pushToPreviews, reader, _i, _len, _results,
+              _this = this;
+
+            if (files == null) {
+              files = [];
+            }
+            _results = [];
+            for (_i = 0, _len = files.length; _i < _len; _i++) {
+              file = files[_i];
+              reader = new FileReader;
+              pushToPreviews = function(event, state) {
+                var newFile, previews;
+
+                previews = this.previews();
+                if (previews != null) {
+                  newFile = {
+                    fileName: file.name,
+                    type: file.type,
+                    data: event.target.result
+                  };
+                  previews.push(newFile);
+                  this.previews(previews);
+                }
+                return typeof callback === "function" ? callback(newFile) : void 0;
+              };
+              reader.onload = function(event) {
+                return pushToPreviews.apply(_this, [event, "load"]);
+              };
+              reader.onerror = function(event) {
+                return pushToPreviews.apply(_this, [event, "error"]);
+              };
+              _results.push(reader.readAsDataURL(file));
+            }
+            return _results;
+          };
         }
-        $(document).on("drop dragover", function(event) {
-          return event.preventDefault();
-        });
-        scope.$watch("macUploadDisabled", function(isDisabled) {
-          if (isDisabled == null) {
-            return;
-          }
-          if (isDisabled) {
-            input.prop("disabled", "disabled");
-          } else {
-            input.removeProp("disabled");
-          }
-          return initialize();
-        });
-        scope.$watch("macUploadFormData", function(value) {
-          if ((value != null) && isInitialized) {
-            return input.fileupload("options", {
-              formData: value
-            });
-          }
-        });
-        if (disableOn != null) {
-          scope.$on(disableOn, function() {
-            return input.fileupload("disable");
-          });
+      ],
+      link: function($scope, element, attrs, ctrls) {
+        var previewCtrl;
+
+        return previewCtrl = ctrls[0];
+      }
+    };
+  }
+]).directive("macUploadProgress", [
+  function() {
+    return {
+      restrict: "A",
+      require: ["macUploadProgress", "macUploadPreviews"],
+      controller: [
+        "$scope", function($scope) {
+          var updateProgress;
+
+          updateProgress = function(data) {
+            var preview;
+
+            preview = this.getByFilename(data.files[0].name);
+            return preview != null ? preview.progress = parseInt(data.loaded / data.total * 100, 10) : void 0;
+          };
+          return this.updatePreviewCtrl = function(ctrl) {
+            return ctrl.updateProgress = updateProgress;
+          };
         }
-        if (enableOn != null) {
-          scope.$on(enableOn, function() {
-            return input.fileupload("enable");
-          });
-        }
-        return scope.$watch("macUploadRoute", function(route) {
-          if (!route) {
-            return;
-          }
-          scope.route = route;
-          return initialize();
-        });
+      ],
+      link: function($scope, element, attrs, ctrls) {
+        var previewsCtrl, progressCtrl;
+
+        progressCtrl = ctrls[0];
+        previewsCtrl = ctrls[1];
+        return progressCtrl != null ? progressCtrl.updatePreviewCtrl(previewsCtrl) : void 0;
       }
     };
   }
@@ -11124,147 +11091,7 @@ angular.module("Mac").directive("initialWidth", [
   }
 ]);
 
-/*
-@chalk overview
-@name Modal Service
-
-@description
-There are multiple components used by modal.
-- A modal service is used to keep state of modal opened in the applications.
-- A modal element directive to define the modal dialog box
-- A modal attribute directive as a modal trigger
-
-@param {Function} show Show a modal based on the modal id
-- {String} id The id of the modal to open
-- {Object} triggerOptions Additional options to open modal
-
-@param {Function} resize Update the position and also the size of the modal
-- {Modal Object} modalObject The modal to reposition and resize (default opened modal)
-
-@param {Function} hide Hide currently opened modal
-- {Function} callback Callback after modal has been hidden
-
-@param {Function} register Registering modal with the service
-- {String} id ID of the modal
-- {DOM element} element The modal element
-- {Object} options Additional options for the modal
-
-@param {Function} unregister Remove modal from modal service
-- {String} id ID of the modal to unregister
-
-@param {Function} clearWaiting Remove certain modal id from waiting list
-- {String} id ID of the modal
-*/
-angular.module("Mac").factory("modal", [
-  "$rootScope", function($rootScope) {
-    return {
-      registered: {},
-      waiting: null,
-      opened: null,
-      show: function(id, triggerOptions) {
-        var element, options, _ref;
-
-        if (triggerOptions == null) {
-          triggerOptions = {};
-        }
-        if (this.registered[id] != null) {
-          _ref = this.registered[id], element = _ref.element, options = _ref.options;
-          element.removeClass("hide");
-          setTimeout(function() {
-            return element.addClass("visible");
-          }, 0);
-          angular.extend(options, triggerOptions);
-          this.opened = {
-            id: id,
-            element: element,
-            options: options
-          };
-          this.resize(this.opened);
-          if (typeof options.callback === "function") {
-            options.callback();
-          }
-          $rootScope.$broadcast("modalWasShown", id);
-          return this.clearWaiting();
-        } else {
-          return this.waiting = {
-            id: id,
-            options: options
-          };
-        }
-      },
-      resize: function(modalObject) {
-        var css, element, height, modal, options, width;
-
-        if (modalObject == null) {
-          modalObject = this.opened;
-        }
-        if (modalObject == null) {
-          return;
-        }
-        element = modalObject.element;
-        options = modalObject.options;
-        modal = $(".modal", element).attr("style", "");
-        height = modal.outerHeight();
-        width = modal.outerWidth();
-        css = $(window).height() > height ? {
-          marginTop: -height / 2
-        } : {
-          top: options.topOffset
-        };
-        css.marginLeft = -width / 2;
-        return modal.css(css);
-      },
-      hide: function(callback) {
-        var id, opened;
-
-        if (this.opened == null) {
-          return;
-        }
-        id = this.opened.id;
-        this.opened.element.removeClass("visible");
-        opened = this.opened.element;
-        setTimeout(function() {
-          return opened.addClass("hide");
-        }, 250);
-        this.opened = null;
-        if (typeof callback === "function") {
-          callback();
-        }
-        return $rootScope.$broadcast("modalWasHidden", id);
-      },
-      register: function(id, element, options) {
-        if (this.registered[id] != null) {
-          throw new Error("Modal " + modalId + " already registered");
-        }
-        this.registered[id] = {
-          element: element,
-          options: options
-        };
-        if ((this.waiting != null) && this.waiting.id === id) {
-          return this.show(id, this.waiting.options);
-        }
-      },
-      unregister: function(id) {
-        var _ref;
-
-        if (this.registered[id] == null) {
-          throw new Error("Modal " + id + " is not registered");
-        }
-        if (((_ref = this.opened) != null ? _ref.id : void 0) === id) {
-          this.hide();
-        }
-        this.clearWaiting(id);
-        return delete this.registered[id];
-      },
-      clearWaiting: function(id) {
-        if ((id != null) && this.waiting.id !== id) {
-          return;
-        }
-        return this.waiting = null;
-      }
-    };
-  }
-]).directive("macModal", [
+angular.module("Mac").directive("macModal", [
   "$rootScope", "$parse", "modal", "util", "keys", function($rootScope, $parse, modal, util, keys) {
     return {
       restrict: "E",
@@ -11272,7 +11099,7 @@ angular.module("Mac").factory("modal", [
       replace: true,
       transclude: true,
       link: function($scope, element, attrs) {
-        var defaults, elementId, opts, registerModal;
+        var bindingEvents, defaults, elementId, escapeKeyHandler, opts, registerModal, resizeHandler;
 
         defaults = {
           keyboard: false,
@@ -11281,25 +11108,17 @@ angular.module("Mac").factory("modal", [
           open: null,
           topOffset: 20
         };
-        opts = util.extendAttributes("", defaults, attrs);
-        elementId = element.prop("id");
-        $scope.closeModal = function($event) {
-          return modal.hide(function() {
-            return $scope.bindingEvents("unbind");
-          });
-        };
-        $scope.escapeKeyHandler = function(event) {
+        opts = util.extendAttributes("macModal", defaults, attrs);
+        elementId = attrs.id;
+        escapeKeyHandler = function(event) {
           if (event.which === keys.ESCAPE) {
             return modal.hide();
           }
         };
-        $scope.resizeHandler = function(event) {
+        resizeHandler = function(event) {
           return modal.resize();
         };
-        $scope.overlayHandler = function(event) {
-          return $scope.closeModal();
-        };
-        $scope.bindingEvents = function(action) {
+        bindingEvents = function(action) {
           if (action == null) {
             action = "bind";
           }
@@ -11307,25 +11126,32 @@ angular.module("Mac").factory("modal", [
             return;
           }
           if (opts.keyboard) {
-            $(document)[action]("keydown", $scope.escapeKeyHandler);
-          }
-          if (opts.overlayClose) {
-            element[action]("click", overlayHandler);
+            $(document)[action]("keydown", escapeKeyHandler);
           }
           if (opts.resize) {
-            return $(window)[action]("resize", $scope.resizeHandler);
+            return $(window)[action]("resize", resizeHandler);
           }
         };
         registerModal = function(id) {
           if ((id != null) && id) {
             opts.callback = function() {
-              $scope.bindingEvents();
+              bindingEvents();
               if (opts.open != null) {
                 return $parse(opts.open)($scope);
               }
             };
             return modal.register(id, element, opts);
           }
+        };
+        $scope.closeOverlay = function($event) {
+          if (opts.overlayClose && $($event.target).is(".modal-overlay")) {
+            return $scope.closeModal();
+          }
+        };
+        $scope.closeModal = function($event) {
+          return modal.hide(function() {
+            return bindingEvents("unbind");
+          });
         };
         if (elementId) {
           return registerModal(elementId);
@@ -11355,6 +11181,26 @@ angular.module("Mac").factory("modal", [
     };
   }
 ]);
+
+/*
+@chalk overview
+@name Placeholder
+
+@description
+Dynamically fill out the placeholder text of input
+
+@param {String} mac-placeholder Variable that contains the placeholder text
+*/
+angular.module("Mac").directive("macPlaceholder", function() {
+  return {
+    restrict: "A",
+    link: function($scope, element, attrs) {
+      return $scope.$watch(attrs.macPlaceholder, function(value) {
+        return element.attr("placeholder", value);
+      });
+    }
+  };
+});
 
 angular.module("Mac").directive("macReorderable", [
   "hookableDirectiveController", function(hookableDirectiveController) {
@@ -12346,7 +12192,7 @@ angular.module("Mac").directive("macTableV2", [
 
         headerSectionElement = element.find("[table-section=header]");
         element.find("[initial-width]").attr("width", "{{cell.width}}%").parents("[table-row]").attr("mac-columns", "");
-        element.find("[cell-template]").wrapInner("<div class='cell-wrapper' />");
+        element.find("[cell-template]").wrapInner("<div class='cell-wrapper' />").attr("data-column-name", "{{cell.colName}}");
         if (attr.resizableColumns != null) {
           headerSectionElement.find("[cell-template]").find(".cell-wrapper").attr("mac-resizable-column", "").attr("mac-resizable", "").attr("mac-resizable-containment", "document");
         }
@@ -12475,17 +12321,13 @@ angular.module("Mac").directive("macTagAutocomplete", [
         textInput.attr(attrsObject);
         return function($scope, element, attrs) {
           $scope.disabled = disabled;
+          $scope.textInput = "";
           element.click(function() {
             return $(".text-input", element).focus();
           });
           $scope.$watch("disabled", function(value) {
             var event, _i, _len, _results;
 
-            if (value) {
-              $(".no-complete", element).on("keydown", function(event) {
-                return $scope.onKeyDown(event, $(this).val());
-              });
-            }
             _results = [];
             for (_i = 0, _len = eventsList.length; _i < _len; _i++) {
               event = eventsList[_i];
@@ -12510,9 +12352,6 @@ angular.module("Mac").directive("macTagAutocomplete", [
           });
           $scope.$watch("selected.length", function(length) {
             return $scope.updateSource();
-          });
-          $scope.$watch("textInput", function(value) {
-            return $(".no-complete", element).val(value);
           });
           $scope.pushToSelected = function(item) {
             var output;
@@ -12541,38 +12380,26 @@ angular.module("Mac").directive("macTagAutocomplete", [
               return _ref = item[valueKey], __indexOf.call(difference, _ref) >= 0;
             });
           };
-          $scope.onKeyDown = function($event, value) {
-            var stroke;
+          $scope.onKeyDown = function($event) {
+            var expression, stroke;
 
-            if (value == null) {
-              value = "";
-            }
             stroke = $event.which || $event.keyCode;
             switch (stroke) {
               case keys.BACKSPACE:
-                if (value.length === 0) {
-                  $scope.$apply(function() {
-                    return $scope.selected.pop();
-                  });
+                if ($scope.textInput.length === 0) {
+                  $scope.selected.pop();
                 }
                 break;
               case keys.ENTER:
-                if (value.length > 0 && $scope.disabled) {
-                  $scope.$apply(function() {
-                    $scope.textInput = "";
-                    return $scope.onSelect(value);
-                  });
+                if ($scope.textInput.length > 0 && $scope.disabled) {
+                  $scope.onSelect($scope.textInput);
                 }
             }
             if (attrs.macTagAutocompleteOnKeydown != null) {
-              $scope.$apply(function() {
-                var expression;
-
-                expression = $parse(attrs.macTagAutocompleteOnKeydown);
-                return expression($scope.$parent, {
-                  $event: $event,
-                  item: value
-                });
+              expression = $parse(attrs.macTagAutocompleteOnKeydown);
+              expression($scope.$parent, {
+                $event: $event,
+                item: value
               });
             }
             return true;
@@ -12594,15 +12421,16 @@ angular.module("Mac").directive("macTagAutocomplete", [
               });
             }
             if (item) {
-              return $scope.pushToSelected(item);
+              $scope.pushToSelected(item);
             }
+            return $scope.textInput = "";
           };
           $scope.reset = function() {
             $scope.textInput = "";
             return $scope.updateSource();
           };
           return $scope.$on("mac-tag-autocomplete-clear-input", function() {
-            return $(".text-input", element).val("");
+            return $scope.textInput = "";
           });
         };
       }
@@ -12849,10 +12677,10 @@ angular.module("Mac").directive("macTime", [
 @description
 Tooltip directive
 
-@param {String} mac-tooltip Text to show in tooltip
-@param {String} mac-tooltip-direction Direction of tooltip
-@param {String} mac-tooltip-trigger How tooltip is triggered
-@param {Boolean} mac-tooltip-inside Should the tooltip be appended inside element
+@param {String}  mac-tooltip Text to show in tooltip
+@param {String}  direction   Direction of tooltip
+@param {String}  trigger     How tooltip is triggered
+@param {Boolean} inside      Should the tooltip be appended inside element
 */
 angular.module("Mac").directive("macTooltip", function() {
   return {
@@ -12866,8 +12694,8 @@ angular.module("Mac").directive("macTooltip", function() {
       showTip = function(event) {
         var direction, elementSize, inside, offset, tip, tooltipSize;
 
-        inside = attrs.macTooltipInside != null;
-        direction = attrs.macTooltipDirection || "top";
+        inside = attrs.inside != null;
+        direction = attrs.direction || "top";
         tip = inside ? element : $(document.body);
         tooltip = $("<div class=\"tooltip " + direction + "\"><div class=\"tooltip-message\">" + text + "</div></div>");
         tip.append(tooltip);
@@ -12928,7 +12756,7 @@ angular.module("Mac").directive("macTooltip", function() {
         if ((value != null) && value) {
           text = value;
           if (!enabled) {
-            trigger = attrs.macTooltipTrigger || "hover";
+            trigger = attrs.trigger || "hover";
             if (trigger !== "hover" && trigger !== "click") {
               return console.error("Invalid trigger");
             }
@@ -12968,7 +12796,7 @@ module.controller("modalController", [
 ]);
 
 module.controller("ExampleController", [
-  "$scope", "$timeout", "Table", "SectionController", function($scope, $timeout, Table, SectionController) {
+  "$scope", "$timeout", "Table", function($scope, $timeout, Table) {
     $scope.data = [];
     $scope.loading = true;
     setTimeout((function() {
@@ -13182,6 +13010,7 @@ module.controller("ExampleController", [
     $scope.onSuccess = function(data) {
       return data.data;
     };
+    $scope.autocompleteQuery = "";
     $scope.autocompleteUrl = "data.json";
     $scope.tagAutocompleteSelected = [];
     $scope.tagAutocompleteDisabledSelected = [];
@@ -13226,13 +13055,27 @@ module.controller("ExampleController", [
     ];
     $scope.uploadRoute = "/test_upload";
     $scope.fileUploaderEnabled = true;
-    $scope.fileUploadSubmit = function($event, $response) {
+    $scope.uploadPreviews = [];
+    $scope.previewImage = function(preview) {
+      if (/image./.test(preview.type)) {
+        return preview.data;
+      } else {
+        return "/img/file_icon.png";
+      }
+    };
+    $scope.previewProgress = function(preview) {
+      return {
+        width: "" + preview.progress + "%"
+      };
+    };
+    $scope.fileUploadSubmit = function($event, $data) {
       return console.log("submitted");
     };
     $scope.fileUploadSuccess = function($data, $status) {
       return console.log("success");
     };
     $scope.startDate = "01/01/2013";
+    $scope.minDate = "07/01/2012";
     $scope.startTime = "04:42 PM";
     $scope.fiveMinAgo = Math.round(Date.now() / 1000) - 5 * 60;
     $scope.oneDayAgo = Math.round(Date.now() / 1000) - 24 * 60 * 60;
@@ -13457,77 +13300,249 @@ angular.module("Mac").factory("hookableDirectiveController", [
   }
 ]);
 
-angular.module("Mac").factory("TableViewBaseColumn", [
+/*
+@chalk overview
+@name Modal Service
+
+@description
+There are multiple components used by modal.
+- A modal service is used to keep state of modal opened in the applications.
+- A modal element directive to define the modal dialog box
+- A modal attribute directive as a modal trigger
+
+@param {Function} show Show a modal based on the modal id
+- {String} id The id of the modal to open
+- {Object} triggerOptions Additional options to open modal
+
+@param {Function} resize Update the position and also the size of the modal
+- {Modal Object} modalObject The modal to reposition and resize (default opened modal)
+
+@param {Function} hide Hide currently opened modal
+- {Function} callback Callback after modal has been hidden
+
+@param {Function} register Registering modal with the service
+- {String} id ID of the modal
+- {DOM element} element The modal element
+- {Object} options Additional options for the modal
+
+@param {Function} unregister Remove modal from modal service
+- {String} id ID of the modal to unregister
+
+@param {Function} clearWaiting Remove certain modal id from waiting list
+- {String} id ID of the modal
+*/
+angular.module("Mac").factory("modal", [
+  "$rootScope", function($rootScope) {
+    return {
+      registered: {},
+      waiting: null,
+      opened: null,
+      show: function(id, triggerOptions) {
+        var element, options, _ref;
+
+        if (triggerOptions == null) {
+          triggerOptions = {};
+        }
+        if (this.registered[id] != null) {
+          _ref = this.registered[id], element = _ref.element, options = _ref.options;
+          element.removeClass("hide");
+          setTimeout(function() {
+            return element.addClass("visible");
+          }, 0);
+          angular.extend(options, triggerOptions);
+          this.opened = {
+            id: id,
+            element: element,
+            options: options
+          };
+          this.resize(this.opened);
+          if (typeof options.callback === "function") {
+            options.callback();
+          }
+          $rootScope.$broadcast("modalWasShown", id);
+          return this.clearWaiting();
+        } else {
+          return this.waiting = {
+            id: id,
+            options: options
+          };
+        }
+      },
+      resize: function(modalObject) {
+        var css, element, height, modal, options, width;
+
+        if (modalObject == null) {
+          modalObject = this.opened;
+        }
+        if (modalObject == null) {
+          return;
+        }
+        element = modalObject.element;
+        options = modalObject.options;
+        modal = $(".modal", element).attr("style", "");
+        height = modal.outerHeight();
+        width = modal.outerWidth();
+        css = $(window).height() > height ? {
+          marginTop: -height / 2
+        } : {
+          top: options.topOffset
+        };
+        css.marginLeft = -width / 2;
+        return modal.css(css);
+      },
+      hide: function(callback) {
+        var id, opened;
+
+        if (this.opened == null) {
+          return;
+        }
+        id = this.opened.id;
+        this.opened.element.removeClass("visible");
+        opened = this.opened.element;
+        setTimeout(function() {
+          return opened.addClass("hide");
+        }, 250);
+        this.opened = null;
+        if (typeof callback === "function") {
+          callback();
+        }
+        return $rootScope.$broadcast("modalWasHidden", id);
+      },
+      register: function(id, element, options) {
+        if (this.registered[id] != null) {
+          throw new Error("Modal " + modalId + " already registered");
+        }
+        this.registered[id] = {
+          element: element,
+          options: options
+        };
+        if ((this.waiting != null) && this.waiting.id === id) {
+          return this.show(id, this.waiting.options);
+        }
+      },
+      unregister: function(id) {
+        var _ref;
+
+        if (this.registered[id] == null) {
+          throw new Error("Modal " + id + " is not registered");
+        }
+        if (((_ref = this.opened) != null ? _ref.id : void 0) === id) {
+          this.hide();
+        }
+        this.clearWaiting(id);
+        return delete this.registered[id];
+      },
+      clearWaiting: function(id) {
+        if ((id != null) && this.waiting.id !== id) {
+          return;
+        }
+        return this.waiting = null;
+      }
+    };
+  }
+]);
+
+var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+
+angular.module("Mac").factory("TableBaseColumn", [
   function() {
-    var TableViewBaseColumn;
+    var TableBaseColumn;
 
-    return TableViewBaseColumn = (function() {
-      function TableViewBaseColumn() {}
+    return TableBaseColumn = (function() {
+      function TableBaseColumn() {}
 
-      return TableViewBaseColumn;
+      return TableBaseColumn;
 
     })();
   }
 ]);
 
-angular.module("Mac").factory("TableViewSectionController", [
+angular.module("Mac").factory("TableSectionController", [
   function() {
-    var TableViewSectionController;
+    var TableSectionController;
 
-    return TableViewSectionController = (function() {
-      function TableViewSectionController(section) {
+    return TableSectionController = (function() {
+      function TableSectionController(section) {
         this.section = section;
       }
 
-      TableViewSectionController.prototype.cellValue = function(row, colName) {
+      TableSectionController.prototype.cellValue = function(row, colName) {
         return this.defaultCellValue(row, colName);
       };
 
-      TableViewSectionController.prototype.defaultCellValue = function(row, colName) {
+      TableSectionController.prototype.defaultCellValue = function(row, colName) {
         return row.model[colName];
       };
 
-      return TableViewSectionController;
+      return TableSectionController;
 
     })();
   }
 ]);
 
 angular.module("Mac").factory("SectionController", [
-  "TableViewSectionController", function(TableViewSectionController) {
-    return TableViewSectionController;
+  "TableSectionController", function(TableSectionController) {
+    return TableSectionController;
   }
 ]);
 
-angular.module("Mac").factory("Row", [
+angular.module("Mac").factory("TableRow", [
   function() {
-    var Row;
+    var TableRow;
 
-    return Row = (function() {
-      function Row(section, model, cells, cellsMap) {
+    return TableRow = (function() {
+      function TableRow(section, model, cells, cellsMap) {
         this.section = section;
         this.model = model;
         this.cells = cells != null ? cells : [];
         this.cellsMap = cellsMap != null ? cellsMap : {};
       }
 
-      Row.prototype.toJSON = function() {
+      TableRow.prototype.toJSON = function() {
         return {
           cells: this.cells
         };
       };
 
-      return Row;
+      return TableRow;
+
+    })();
+  }
+]);
+
+angular.module("Mac").factory("TableSection", [
+  function() {
+    var TableSection;
+
+    return TableSection = (function() {
+      function TableSection(controller, table, name, rows) {
+        this.table = table;
+        this.name = name;
+        this.rows = rows != null ? rows : [];
+        this.setController(controller);
+      }
+
+      TableSection.prototype.setController = function(controller) {
+        return this.ctrl = new controller(this);
+      };
+
+      TableSection.prototype.toJSON = function() {
+        return {
+          rows: this.rows
+        };
+      };
+
+      return TableSection;
 
     })();
   }
 ]);
 
 angular.module("Mac").factory("tableComponents", [
-  "TableViewSectionController", "Row", function(TableViewSectionController, Row) {
+  "TableSectionController", "TableRow", "TableSection", function(TableSectionController, TableRow, TableSection) {
     return {
       rowFactory: function(section, model) {
-        return new Row(section, model);
+        return new TableRow(section, model);
       },
       columnFactory: function(colName, proto) {
         var Column;
@@ -13542,23 +13557,10 @@ angular.module("Mac").factory("tableComponents", [
         return new Column(colName);
       },
       sectionFactory: function(table, sectionName, controller) {
-        var Section;
-
         if (controller == null) {
-          controller = TableViewSectionController;
+          controller = TableSectionController;
         }
-        Section = function(controller, table, name, rows) {
-          this.table = table;
-          this.name = name;
-          this.rows = rows != null ? rows : [];
-          this.ctrl = new controller(this);
-          this.toJSON = function() {
-            return {
-              rows: this.rows
-            };
-          };
-        };
-        return new Section(controller, table, sectionName);
+        return new TableSection(controller, table, sectionName);
       },
       cellFactory: function(row, proto) {
         var Cell;
@@ -13612,7 +13614,7 @@ angular.module("Mac").factory("dynamicColumnsFunction", function() {
   };
 });
 
-angular.module("Mac").factory("ColumnsController", [
+angular.module("Mac").factory("TableColumnsController", [
   "tableComponents", "dynamicColumnsFunction", function(tableComponents, dynamicColumnsFunction) {
     var ColumnsController;
 
@@ -13689,7 +13691,7 @@ angular.module("Mac").factory("ColumnsController", [
   }
 ]);
 
-angular.module("Mac").factory("RowsController", [
+angular.module("Mac").factory("TableRowsController", [
   "tableComponents", function(tableComponents) {
     var RowsController;
 
@@ -13753,7 +13755,7 @@ angular.module("Mac").factory("RowsController", [
 ]);
 
 angular.module("Mac").factory("Table", [
-  "TableViewBaseColumn", "ColumnsController", "RowsController", function(TableViewBaseColumn, ColumnsController, RowsController) {
+  "TableBaseColumn", "TableColumnsController", "TableRowsController", function(TableBaseColumn, TableColumnsController, TableRowsController) {
     var Table, convertObjectModelsToArray;
 
     convertObjectModelsToArray = function(models) {
@@ -13768,11 +13770,11 @@ angular.module("Mac").factory("Table", [
         if (columns == null) {
           columns = [];
         }
-        this.baseColumn = baseColumn != null ? baseColumn : new TableViewBaseColumn();
+        this.baseColumn = baseColumn != null ? baseColumn : new TableBaseColumn();
         this.sections = {};
         this.columns = [];
-        this.columnsCtrl = new ColumnsController(this);
-        this.rowsCtrl = new RowsController(this);
+        this.columnsCtrl = new TableColumnsController(this);
+        this.rowsCtrl = new TableRowsController(this);
         this.dynamicColumns = columns === 'dynamic';
         if (!this.dynamicColumns) {
           this.columnsCtrl.set(columns);
@@ -13781,8 +13783,43 @@ angular.module("Mac").factory("Table", [
       }
 
       Table.prototype.load = function(sectionName, models, sectionController) {
+        var args, index, model, row, tableModels, toBeInserted, toBeRemoved, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2;
+
         models = convertObjectModelsToArray(models);
-        return this.rowsCtrl.set(sectionName, models, sectionController);
+        if ((_ref = this.sections[sectionName]) != null ? _ref.rows.length : void 0) {
+          tableModels = [];
+          toBeRemoved = [];
+          toBeInserted = [];
+          _ref1 = this.sections[sectionName].rows;
+          for (index = _i = 0, _len = _ref1.length; _i < _len; index = ++_i) {
+            row = _ref1[index];
+            if (_ref2 = row.model, __indexOf.call(models, _ref2) < 0) {
+              toBeRemoved.push([sectionName, index]);
+            } else {
+              tableModels.push(row.model);
+            }
+          }
+          toBeRemoved.reverse();
+          for (_j = 0, _len1 = toBeRemoved.length; _j < _len1; _j++) {
+            args = toBeRemoved[_j];
+            this.remove.apply(this, args);
+          }
+          for (index = _k = 0, _len2 = models.length; _k < _len2; index = ++_k) {
+            model = models[index];
+            if (__indexOf.call(tableModels, model) < 0) {
+              toBeInserted.push([sectionName, model, index]);
+            }
+          }
+          for (_l = 0, _len3 = toBeInserted.length; _l < _len3; _l++) {
+            args = toBeInserted[_l];
+            this.insert.apply(this, args);
+          }
+          if (sectionController) {
+            return this.sections[sectionName].setController(sectionController);
+          }
+        } else {
+          return this.rowsCtrl.set(sectionName, models, sectionController);
+        }
       };
 
       Table.prototype.insert = function(sectionName, model, index) {
@@ -13933,7 +13970,7 @@ util.factory("util", [
       isArray: nativeIsArray || function(obj) {
         return toString.call(obj) === "[object Array]";
       },
-      _urlRegex: /(?:(?:(http[s]{0,1}:\/\/)(?:(www|[\d\w\-]+)\.){0,1})|(www|[\d\w\-]+)\.)([\d\w\-]+)\.([A-Za-z]{2,6})(:[\d]*){0,1}(\/?[\d\w\-\?\,\'\/\\\+&amp;%\$#!\=~\.]*){0,1}/gi,
+      _urlRegex: /(?:(?:(http[s]{0,1}:\/\/)(?:(www|[\d\w\-]+)\.){0,1})|(www|[\d\w\-]+)\.)([\d\w\-]+)\.([A-Za-z]{2,6})(:[\d]*){0,1}(\/?[\d\w\-\?\,\'\/\\\+&amp;%\$#!\=~\.]*){0,1}/i,
       validateUrl: function(url) {
         var match;
 
@@ -13961,6 +13998,9 @@ util.factory("util", [
       getQueryString: function(url, name) {
         var regex, regexS, results;
 
+        if (name == null) {
+          name = "";
+        }
         name = name.replace(/[[]/, "\[").replace(/[]]/, "\]");
         regexS = "[\?&]" + name + "=([^&#]*)";
         regex = new RegExp(regexS);
