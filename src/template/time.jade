@@ -1,9 +1,13 @@
 .date-time
   i.mac-icons.mac-icon-time
   input(
-    type        = "text"
-    placeholder = "--:--"
-    maxlength   = "8"
-    ng-model    = "model"
-    ng-disabled = "disabled"
+    type            = "text"
+    mac-placeholder = "placeholder"
+    maxlength       = "8"
+    ng-model        = "model"
+    ng-disabled     = "disabled"
+    ng-click        = "updateInput()"
+    mac-blur        = "updateScopeTime()"
+    mac-keydown     = "keydownEvent($event)"
+    mac-keyup       = "keyupEvent($event)"
   )
