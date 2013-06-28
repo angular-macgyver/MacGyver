@@ -13,4 +13,4 @@ angular.module("Mac").directive "macPlaceholder", ->
 
   link: ($scope, element, attrs) ->
     $scope.$watch attrs.macPlaceholder, (value) ->
-      element.attr "placeholder", value
+      attrs.$set "placeholder", value
