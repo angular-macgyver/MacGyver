@@ -30,9 +30,9 @@
 <p>Tooltip directive  </p>
 <h3>Parameters</h3>
 <p><strong>mac-tooltip</strong><br>Type: <code>String</code><br>Text to show in tooltip  </p>
-<p><strong>direction</strong><br>Type: <code>String</code><br>Direction of tooltip  </p>
-<p><strong>trigger</strong><br>Type: <code>String</code><br>How tooltip is triggered  </p>
-<p><strong>inside</strong><br>Type: <code>Boolean</code><br>Should the tooltip be appended inside element  </p>
+<p><strong>mac-tooltip-direction</strong><br>Type: <code>String</code><br>Direction of tooltip (default &#39;top&#39;)  </p>
+<p><strong>mac-tooltip-trigger</strong><br>Type: <code>String</code><br>How tooltip is triggered (default &#39;hover&#39;)  </p>
+<p><strong>mac-tooltip-inside</strong><br>Type: <code>Boolean</code><br>Should the tooltip be appended inside element (default false)  </p>
 <h3>Example</h3><div class="docs-example"><ul class="nav nav-pills"><li><a href="#" mac-tooltip="Tooltip on top">Tooltip on top</a></li><li><a href="#" mac-tooltip="Tooltip on bottom" mac-tooltip-direction="bottom">Tooltip on bottom</a></li><li><a href="#" mac-tooltip="Tooltip on left" mac-tooltip-direction="left">Tooltip on left</a></li><li><a href="#" mac-tooltip="Tooltip on right" mac-tooltip-direction="right">Tooltip on right</a></li></ul></div><pre ng-non-bindable class="prettyprint linenums">&lt;a href=&quot;#&quot; mac-tooltip=&quot;Tooltip on bottom&quot; mac-tooltip-direction=&quot;bottom&quot;&gt;Tooltip on bottom&lt;/a&gt;</pre></section><section id="autocomplete"><h1>Autocomplete</h1>
 <p>A directive for providing suggestions while typing into the field  </p>
 <h3>Dependencies</h3>
@@ -130,7 +130,6 @@
 <h3>Example</h3><div class="docs-example"><mac-datepicker mac-datepicker-id="input-start-date" mac-datepicker-model="startDate" mac-datepicker-min-date="minDate"></mac-datepicker></div><pre ng-non-bindable class="prettyprint linenums">&lt;mac-datepicker mac-datepicker-id=&quot;input-start-date&quot; mac-datepicker-model=&quot;startDate&quot;&gt;&lt;/mac-datepicker&gt;</pre></section><section id="time-input"><h1>Time</h1>
 <p>A directive for creating a time input field  </p>
 <h3>Parameters</h3>
-<p><strong>mac-time-id</strong><br>Type: <code>String</code><br>ID of the text input field (default: time-input)  </p>
 <p><strong>mac-time-model</strong><br>Type: <code>String</code><br>Model to bind input to  </p>
 <p><strong>mac-time-placeholder</strong><br>Type: <code>String</code><br>Placeholder text of the text input (default --:--)  </p>
 <p><strong>mac-time-disabled</strong><br>Type: <code>String</code><br>Enable or disable time input  </p>
