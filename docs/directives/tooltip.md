@@ -8,16 +8,16 @@ Tooltip directive
 Type: `String`  
 Text to show in tooltip  
   
-**direction**  
+**mac-tooltip-direction**  
 Type: `String`  
-Direction of tooltip  
+Direction of tooltip (default 'top')  
   
-**trigger**  
+**mac-tooltip-trigger**  
 Type: `String`  
-How tooltip is triggered  
+How tooltip is triggered (default 'hover')  
   
-**inside**  
+**mac-tooltip-inside**  
 Type: `Boolean`  
-Should the tooltip be appended inside element  
+Should the tooltip be appended inside element (default false)  
   
 

@@ -11196,7 +11196,7 @@ angular.module("Mac").directive("macPlaceholder", function() {
     restrict: "A",
     link: function($scope, element, attrs) {
       return $scope.$watch(attrs.macPlaceholder, function(value) {
-        return element.attr("placeholder", value);
+        return attrs.$set("placeholder", value);
       });
     }
   };
@@ -12484,14 +12484,13 @@ angular.module("Mac").directive("macTagInput", [
 @description
 A directive for creating a time input field
 
-@param {String} mac-time-id           ID of the text input field (default: time-input)
 @param {String} mac-time-model        Model to bind input to
 @param {String} mac-time-placeholder  Placeholder text of the text input (default --:--)
 @param {String} mac-time-disabled     Enable or disable time input
 @param {String} mac-time-default      If model is undefined, use this as the starting value (default 12:00 PM)
 */
 angular.module("Mac").directive("macTime", [
-  "util", "keys", "$filter", function(util, keys, $filter) {
+  "$filter", "util", "keys", function($filter, util, keys) {
     return {
       restrict: "E",
       scope: {
@@ -12501,20 +12500,18 @@ angular.module("Mac").directive("macTime", [
       replace: true,
       templateUrl: "template/time.html",
       compile: function(element, attrs) {
-        var defaults, inputElement, opts;
+        var defaults, opts;
 
         defaults = {
-          id: "time-input",
           placeholder: "--:--",
           "default": "12:00 AM"
         };
         opts = util.extendAttributes("macTime", defaults, attrs);
-        inputElement = $("input", element);
-        inputElement.attr("placeholder", opts.placeholder);
         return function($scope, element, attrs) {
-          var highlighActions, inputDOM, inputSelectAction, timeRegex, updateInput, updateScopeTime;
+          var highlighActions, inputDOM, inputSelectAction, prefix, time, timeRegex;
 
-          inputDOM = inputElement[0];
+          $scope.placeholder = opts.placeholder;
+          inputDOM = $("input", element)[0];
           timeRegex = /(\d+):(\d+) ([AP]M)?/;
           highlighActions = {
             hours: function() {
@@ -12527,21 +12524,17 @@ angular.module("Mac").directive("macTime", [
               return inputDOM.setSelectionRange(6, 8);
             }
           };
+          prefix = "Jan 1, 1970, ";
+          time = new Date(prefix + opts["default"]);
+          if (isNaN(time.getTime())) {
+            time = new Date(prefix + "12:00 AM");
+          }
+          $scope.time = time;
           $scope.$watch("model", function(value) {
             if (value != null) {
-              return updateScopeTime();
+              return $scope.updateScopeTime();
             }
           });
-          $scope.reset = function() {
-            var prefix, time;
-
-            prefix = "Jan 1, 1970, ";
-            time = new Date(prefix + opts["default"]);
-            if (isNaN(time.getTime())) {
-              time = new Date(prefix + "12:00 AM");
-            }
-            return $scope.time = time;
-          };
           inputSelectAction = function(index, endIndex, actions) {
             if (endIndex == null) {
               endIndex = index;
@@ -12568,7 +12561,7 @@ angular.module("Mac").directive("macTime", [
             }
             return typeof actions.all === "function" ? actions.all() : void 0;
           };
-          updateInput = function(actions) {
+          $scope.updateInput = function(actions) {
             var end, start;
 
             if (actions == null) {
@@ -12579,14 +12572,12 @@ angular.module("Mac").directive("macTime", [
             if (actions !== {}) {
               inputSelectAction(start, end, actions);
             }
-            return $scope.$apply(function() {
-              $scope.model = $filter("date")($scope.time.getTime(), "hh:mm a");
-              return setTimeout((function() {
-                return inputSelectAction(start, end, highlighActions);
-              }), 0);
-            });
+            $scope.model = $filter("date")($scope.time.getTime(), "hh:mm a");
+            return setTimeout((function() {
+              return inputSelectAction(start, end, highlighActions);
+            }), 0);
           };
-          updateScopeTime = function() {
+          $scope.updateScopeTime = function() {
             var hours, markers, minutes, timeMatch;
 
             if (timeMatch = timeRegex.exec($scope.model)) {
@@ -12602,15 +12593,11 @@ angular.module("Mac").directive("macTime", [
                 }
                 return $scope.time.setHours(hours, minutes);
               } else {
-                return updateInput();
+                return $scope.updateInput();
               }
             }
           };
-          inputElement.on("click", function(event) {
-            return updateInput();
-          }).on("blur", function(event) {
-            return updateScopeTime();
-          }).on("keydown", function(event) {
+          $scope.keydownEvent = function(event) {
             var change, end, key, start;
 
             key = event.which;
@@ -12619,7 +12606,7 @@ angular.module("Mac").directive("macTime", [
               case keys.DOWN:
                 event.preventDefault();
                 change = key === keys.UP ? 1 : -1;
-                return updateInput({
+                return $scope.updateInput({
                   hours: function() {
                     return $scope.time.setHours($scope.time.getHours() + change);
                   },
@@ -12653,17 +12640,17 @@ angular.module("Mac").directive("macTime", [
                   }
                 });
                 inputDOM.setSelectionRange(start, end);
-                return updateInput();
+                return $scope.updateInput();
             }
-          }).on("keyup", function(event) {
+          };
+          return $scope.keyupEvent = function(event) {
             var key;
 
             key = event.which;
             if ((keys.NUMPAD0 <= key && key <= keys.NUMPAD9) || (keys.ZERO <= key && key <= keys.NINE)) {
-              return updateScopeTime();
+              return $scope.updateScopeTime();
             }
-          });
-          return $scope.reset();
+          };
         };
       }
     };
@@ -12677,109 +12664,114 @@ angular.module("Mac").directive("macTime", [
 @description
 Tooltip directive
 
-@param {String}  mac-tooltip Text to show in tooltip
-@param {String}  direction   Direction of tooltip
-@param {String}  trigger     How tooltip is triggered
-@param {Boolean} inside      Should the tooltip be appended inside element
+@param {String}  mac-tooltip           Text to show in tooltip
+@param {String}  mac-tooltip-direction Direction of tooltip (default 'top')
+@param {String}  mac-tooltip-trigger   How tooltip is triggered (default 'hover')
+@param {Boolean} mac-tooltip-inside    Should the tooltip be appended inside element (default false)
 */
-angular.module("Mac").directive("macTooltip", function() {
-  return {
-    restrict: "A",
-    link: function(scope, element, attrs) {
-      var enabled, removeTip, showTip, text, toggle, tooltip;
+angular.module("Mac").directive("macTooltip", [
+  "util", function(util) {
+    return {
+      restrict: "A",
+      link: function(scope, element, attrs) {
+        var defaults, enabled, opts, removeTip, showTip, text, toggle, tooltip;
 
-      tooltip = null;
-      text = "";
-      enabled = false;
-      showTip = function(event) {
-        var direction, elementSize, inside, offset, tip, tooltipSize;
-
-        inside = attrs.inside != null;
-        direction = attrs.direction || "top";
-        tip = inside ? element : $(document.body);
-        tooltip = $("<div class=\"tooltip " + direction + "\"><div class=\"tooltip-message\">" + text + "</div></div>");
-        tip.append(tooltip);
-        offset = inside ? {
-          top: 0,
-          left: 0
-        } : element.offset();
-        elementSize = {
-          width: element.outerWidth(),
-          height: element.outerHeight()
+        tooltip = null;
+        text = "";
+        enabled = false;
+        defaults = {
+          direction: "top",
+          trigger: "hover",
+          inside: false
         };
-        tooltipSize = {
-          width: tooltip.outerWidth(),
-          height: tooltip.outerHeight()
-        };
-        switch (direction) {
-          case "bottom":
-          case "top":
-            offset.left += elementSize.width / 2.0 - tooltipSize.width / 2.0;
-            break;
-          case "left":
-          case "right":
-            offset.top += elementSize.height / 2.0 - tooltipSize.height / 2.0;
-        }
-        switch (direction) {
-          case "bottom":
-            offset.top += elementSize.height;
-            break;
-          case "top":
-            offset.top -= tooltipSize.height;
-            break;
-          case "left":
-            offset.left -= tooltipSize.width;
-            break;
-          case "right":
-            offset.left += elementSize.width;
-        }
-        offset.top = Math.max(0, offset.top);
-        offset.left = Math.max(0, offset.left);
-        return tooltip.css(offset).addClass("visible");
-      };
-      removeTip = function(event) {
-        tooltip.removeClass("visible");
-        return setTimeout(function() {
-          return tooltip.remove();
-        }, 100);
-      };
-      toggle = function(event) {
-        if (tooltip != null) {
-          return removeTip(event);
-        } else {
-          return showTip(event);
-        }
-      };
-      attrs.$observe("macTooltip", function(value) {
-        var trigger;
+        opts = util.extendAttributes("macTooltip", defaults, attrs);
+        showTip = function(event) {
+          var elementSize, offset, tip, tooltipSize;
 
-        if ((value != null) && value) {
-          text = value;
-          if (!enabled) {
-            trigger = attrs.trigger || "hover";
-            if (trigger !== "hover" && trigger !== "click") {
-              return console.error("Invalid trigger");
-            }
-            switch (trigger) {
-              case "click":
-                element.on("click", toggle);
-                break;
-              case "hover":
-                element.on("mouseenter", showTip);
-                element.on("mouseleave click", removeTip);
-            }
-            return enabled = true;
+          tip = opts.inside ? element : $(document.body);
+          tooltip = $("<div class=\"tooltip " + opts.direction + "\"><div class=\"tooltip-message\">" + text + "</div></div>");
+          tip.append(tooltip);
+          offset = opts.inside ? {
+            top: 0,
+            left: 0
+          } : element.offset();
+          elementSize = {
+            width: element.outerWidth(),
+            height: element.outerHeight()
+          };
+          tooltipSize = {
+            width: tooltip.outerWidth(),
+            height: tooltip.outerHeight()
+          };
+          switch (opts.direction) {
+            case "bottom":
+            case "top":
+              offset.left += elementSize.width / 2.0 - tooltipSize.width / 2.0;
+              break;
+            case "left":
+            case "right":
+              offset.top += elementSize.height / 2.0 - tooltipSize.height / 2.0;
           }
-        }
-      });
-      return scope.$on("$destroy", function() {
-        if (tooltip != null) {
-          return removeTip();
-        }
-      });
-    }
-  };
-});
+          switch (opts.direction) {
+            case "bottom":
+              offset.top += elementSize.height;
+              break;
+            case "top":
+              offset.top -= tooltipSize.height;
+              break;
+            case "left":
+              offset.left -= tooltipSize.width;
+              break;
+            case "right":
+              offset.left += elementSize.width;
+          }
+          offset.top = Math.max(0, offset.top);
+          offset.left = Math.max(0, offset.left);
+          return tooltip.css(offset).addClass("visible");
+        };
+        removeTip = function(event) {
+          tooltip.removeClass("visible");
+          return setTimeout(function() {
+            return tooltip.remove();
+          }, 100);
+        };
+        toggle = function(event) {
+          if (tooltip != null) {
+            return removeTip(event);
+          } else {
+            return showTip(event);
+          }
+        };
+        attrs.$observe("macTooltip", function(value) {
+          var _ref;
+
+          if ((value != null) && value) {
+            text = value;
+            if (!enabled) {
+              if ((_ref = opts.trigger) !== "hover" && _ref !== "click") {
+                return console.error("Invalid trigger");
+              }
+              switch (opts.trigger) {
+                case "click":
+                  element.on("click", toggle);
+                  break;
+                case "hover":
+                  element.on("mouseenter", showTip);
+                  element.on("mouseleave click", removeTip);
+              }
+              return enabled = true;
+            }
+          }
+        });
+        return scope.$on("$destroy", function() {
+          if (tooltip != null) {
+            return removeTip();
+          }
+        });
+      }
+    };
+  }
+]);
 
 var module;
 

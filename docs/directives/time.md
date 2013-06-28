@@ -4,10 +4,6 @@ Time
 A directive for creating a time input field  
   
 ### Parameters
-**mac-time-id**  
-Type: `String`  
-ID of the text input field (default: time-input)  
-  
 **mac-time-model**  
 Type: `String`  
 Model to bind input to  
