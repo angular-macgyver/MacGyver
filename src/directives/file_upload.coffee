@@ -34,7 +34,7 @@ directive("macUpload", ["$rootScope", "$parse", ($rootScope, $parse) ->
         $scope.$apply ->
           $status        = $data.jqXHR?.status
           args           = {$event, $data, $status}
-          args.$response = $data.result.data if action is "Success"
+          args.$response = $data.result if action is "Success"
           callbackFn $scope, args
 
     options =
