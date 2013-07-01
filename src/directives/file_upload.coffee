@@ -32,9 +32,10 @@ directive("macUpload", ["$rootScope", "$parse", ($rootScope, $parse) ->
       callbackFn = $parse attrs["macUpload#{action}"]
       if callbackFn?
         $scope.$apply ->
-          $status        = $data.jqXHR?.status
-          args           = {$event, $data, $status}
-          args.$response = $data.jqXHR
+          $xhr      = $data.jqXHR
+          $status   = $data.jqXHR?.status
+          $response = $data.jqXHR?.responseText
+          args      = {$event, $data, $status, $xhr, $response}
           callbackFn $scope, args
 
     options =
