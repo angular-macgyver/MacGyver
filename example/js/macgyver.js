@@ -10662,17 +10662,18 @@ angular.module("Mac").directive("macUpload", [
           callbackFn = $parse(attrs["macUpload" + action]);
           if (callbackFn != null) {
             return $scope.$apply(function() {
-              var $status, args, _ref;
+              var $response, $status, $xhr, args, _ref, _ref1;
 
+              $xhr = $data.jqXHR;
               $status = (_ref = $data.jqXHR) != null ? _ref.status : void 0;
+              $response = (_ref1 = $data.jqXHR) != null ? _ref1.responseText : void 0;
               args = {
                 $event: $event,
                 $data: $data,
-                $status: $status
+                $status: $status,
+                $xhr: $xhr,
+                $response: $response
               };
-              if (action === "Success") {
-                args.$response = $data.result.data;
-              }
               return callbackFn($scope, args);
             });
           }
