@@ -10928,7 +10928,7 @@ angular.module("Mac").factory("keys", function() {
     SEVEN: 55,
     EIGHT: 56,
     NINE: 57,
-    SEMICOLON: $.browser.safari ? 186 : 59,
+    SEMICOLON: 59,
     EQUALS: 61,
     A: 65,
     B: 66,

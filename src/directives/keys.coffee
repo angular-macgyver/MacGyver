@@ -34,7 +34,7 @@ angular.module("Mac").factory "keys", ->
   SEVEN:         55
   EIGHT:         56
   NINE:          57
-  SEMICOLON:     if $.browser.safari then 186 else 59
+  SEMICOLON:     59
   EQUALS:        61
   A:             65
   B:             66
