@@ -86,10 +86,10 @@ directive("macUpload", ["$rootScope", "$parse", "util", ($rootScope, $parse, uti
           dropZone.removeClass "droppable"
         , 250
 
-    options.dropZone = dropZone
+    options.dropZone = dropZone or $()
 
     if opts.options
-      extraOptions = $scope.$eval opts.options
+      extraOptions = $scope.$eval(opts.options) or {}
       angular.extend options, extraOptions
 
     element.fileupload(options).
