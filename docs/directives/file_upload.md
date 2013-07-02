@@ -39,4 +39,8 @@ The selector that we can drop files onto
 Type: `Expression`  
 Additional form data {Array|Object|Function|FormData}  
   
+**mac-upload-options**  
+Type: `Expression`  
+Additional options to pass to jquery fileupload  
+  
 

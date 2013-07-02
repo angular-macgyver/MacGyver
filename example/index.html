@@ -173,6 +173,7 @@
 <p><strong>mac-upload-progress</strong><br>Type: <code>Function</code><br>Upload progress callback  </p>
 <p><strong>mac-upload-drop-zone</strong><br>Type: <code>String</code><br>The selector that we can drop files onto  </p>
 <p><strong>mac-upload-form-data</strong><br>Type: <code>Expression</code><br>Additional form data {Array|Object|Function|FormData}  </p>
+<p><strong>mac-upload-options</strong><br>Type: <code>Expression</code><br>Additional options to pass to jquery fileupload  </p>
 <h3>Example</h3><div class="docs-example example-hit-area"><form action="..." method="post" enctype="multipart/form-data" name="upload-example"><span class="mac-upload btn fileinput-button"><span>Upload</span><input type="file" name="files[]" multiple mac-upload ng-disabled="!fileUploaderEnabled" mac-upload-route="uploadRoute" mac-upload-success="fileUploadSuccess($data, $status)" mac-upload-error="fileUploadError($response, $data, $status)" mac-upload-submit="fileUploadSubmit($event, $data)" mac-upload-drop-zone=".example-hit-area" mac-upload-previews="uploadPreviews" mac-upload-progress></span></form><ul><li ng-repeat="preview in uploadPreviews"><img ng-src="{{previewImage(preview)}}"><span>{{preview.fileName}}</span><div class="progress"><div ng-style="{{previewProgress(preview)}}" class="bar"></div></div></li></ul></div><pre ng-non-bindable class="prettyprint linenums">&lt;input type=&quot;file&quot;
   name=&quot;files[]&quot;
   ng-disabled=&quot;!fileUploaderEnabled&quot;
