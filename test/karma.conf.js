@@ -11,6 +11,8 @@ files = [
 
   'test/vendor/jquery.min.js',
   'vendor/js/underscore.string.js',
+  'vendor/js/jquery-ui.js',
+  'vendor/js/jquery.fileupload.js',
   'vendor/bower/angular/angular.js',
 
   // Application Code //
