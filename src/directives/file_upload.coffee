@@ -11,6 +11,7 @@ Directive for proxying jQuery file upload
 @param {Function}   mac-upload-submit     Function to call on submit
 @param {Function}   mac-upload-success    Upload success callback
 @param {Function}   mac-upload-error      Upload error callback
+@param {Function}   mac-upload-always     Callback for completed (success, abort or error) requests
 @param {Expression} mac-upload-previews   List of uploaded files {Array}
 @param {Function}   mac-upload-progress   Upload progress callback
 @param {String}     mac-upload-drop-zone  The selector that we can drop files onto
@@ -32,6 +33,7 @@ directive("macUpload", ["$rootScope", "$parse", "util", ($rootScope, $parse, uti
       submit:   ""
       success:  ""
       error:    ""
+      always:   ""
       progress: ""
       formData: ""
       options:  ""
@@ -64,6 +66,9 @@ directive("macUpload", ["$rootScope", "$parse", "util", ($rootScope, $parse, uti
 
       fail:     ($event, $data) -> applyCallback "error", $event, $data
       done:     ($event, $data) -> applyCallback "success", $event, $data
+      always:   ($event, $data) ->
+        element.val ""
+        applyCallback "always", $event, $data
       progress: ($event, $data) ->
         previewCtrl?.updateProgress? $data
         applyCallback "progress", $event, $data

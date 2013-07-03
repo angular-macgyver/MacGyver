@@ -23,6 +23,10 @@ Upload success callback
 Type: `Function`  
 Upload error callback  
   
+**mac-upload-always**  
+Type: `Function`  
+Callback for completed (success, abort or error) requests  
+  
 **mac-upload-previews**  
 Type: `Expression`  
 List of uploaded files {Array}  

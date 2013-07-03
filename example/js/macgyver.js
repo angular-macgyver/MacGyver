@@ -10636,6 +10636,7 @@ Directive for proxying jQuery file upload
 @param {Function}   mac-upload-submit     Function to call on submit
 @param {Function}   mac-upload-success    Upload success callback
 @param {Function}   mac-upload-error      Upload error callback
+@param {Function}   mac-upload-always     Callback for completed (success, abort or error) requests
 @param {Expression} mac-upload-previews   List of uploaded files {Array}
 @param {Function}   mac-upload-progress   Upload progress callback
 @param {String}     mac-upload-drop-zone  The selector that we can drop files onto
@@ -10658,6 +10659,7 @@ angular.module("Mac").directive("macUpload", [
           submit: "",
           success: "",
           error: "",
+          always: "",
           progress: "",
           formData: "",
           options: ""
@@ -10710,6 +10712,10 @@ angular.module("Mac").directive("macUpload", [
           },
           done: function($event, $data) {
             return applyCallback("success", $event, $data);
+          },
+          always: function($event, $data) {
+            element.val("");
+            return applyCallback("always", $event, $data);
           },
           progress: function($event, $data) {
             if (previewCtrl != null) {
