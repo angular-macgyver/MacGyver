@@ -51,8 +51,9 @@ directive("macUpload", ["$rootScope", "$parse", "util", ($rootScope, $parse, uti
           callbackFn $scope, args
 
     options =
-      url:    $parse(opts.route)($scope) or ""
-      submit: ($event, $data) ->
+      url:              $parse(opts.route)($scope) or ""
+      replaceFileInput: false
+      submit:           ($event, $data) ->
         submitEvent = -> applyCallback "submit", $event, $data
 
         # Handle previews.
