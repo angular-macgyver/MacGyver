@@ -1,6 +1,5 @@
-
 /**
- * @license AngularJS v1.0.2
+ * @license AngularJS v1.0.7
  * (c) 2010-2012 Google, Inc. http://angularjs.org
  * License: MIT
  *
@@ -203,6 +202,30 @@ angular.mock.$Browser.prototype = {
  * Mock implementation of {@link ng.$exceptionHandler} that rethrows or logs errors passed
  * into it. See {@link ngMock.$exceptionHandlerProvider $exceptionHandlerProvider} for configuration
  * information.
+ *
+ *
+ * <pre>
+ *   describe('$exceptionHandlerProvider', function() {
+ *
+ *     it('should capture log messages and exceptions', function() {
+ *
+ *       module(function($exceptionHandlerProvider) {
+ *         $exceptionHandlerProvider.mode('log');
+ *       });
+ *
+ *       inject(function($log, $exceptionHandler, $timeout) {
+ *         $timeout(function() { $log.log(1); });
+ *         $timeout(function() { $log.log(2); throw 'banana peel'; });
+ *         $timeout(function() { $log.log(3); });
+ *         expect($exceptionHandler.errors).toEqual([]);
+ *         expect($log.assertEmpty());
+ *         $timeout.flush();
+ *         expect($exceptionHandler.errors).toEqual(['banana peel']);
+ *         expect($log.log.logs).toEqual([[1], [2], [3]]);
+ *       });
+ *     });
+ *   });
+ * </pre>
  */
 
 angular.mock.$ExceptionHandlerProvider = function() {
@@ -218,11 +241,11 @@ angular.mock.$ExceptionHandlerProvider = function() {
    *
    * @param {string} mode Mode of operation, defaults to `rethrow`.
    *
-   *   - `rethrow`: If any errors are are passed into the handler in tests, it typically
+   *   - `rethrow`: If any errors are passed into the handler in tests, it typically
    *                means that there is a bug in the application or test, so this mock will
    *                make these tests fail.
-   *   - `log`: Sometimes it is desirable to test that an error is throw, for this case the `log` mode stores the
-   *            error and allows later assertion of it.
+   *   - `log`: Sometimes it is desirable to test that an error is thrown, for this case the `log` mode stores an
+   *            array of errors in `$exceptionHandler.errors`, to allow later assertion of them.
    *            See {@link ngMock.$log#assertEmpty assertEmpty()} and
    *             {@link ngMock.$log#reset reset()}
    */
@@ -299,7 +322,13 @@ angular.mock.$LogProvider = function() {
        * @propertyOf ngMock.$log
        *
        * @description
-       * Array of logged messages.
+       * Array of messages logged using {@link ngMock.$log#log}.
+       *
+       * @example
+       * <pre>
+       * $log.log('Some Log');
+       * var first = $log.log.logs.unshift();
+       * </pre>
        */
       $log.log.logs = [];
       /**
@@ -308,7 +337,13 @@ angular.mock.$LogProvider = function() {
        * @propertyOf ngMock.$log
        *
        * @description
-       * Array of logged messages.
+       * Array of messages logged using {@link ngMock.$log#warn}.
+       *
+       * @example
+       * <pre>
+       * $log.warn('Some Warning');
+       * var first = $log.warn.logs.unshift();
+       * </pre>
        */
       $log.warn.logs = [];
       /**
@@ -317,7 +352,13 @@ angular.mock.$LogProvider = function() {
        * @propertyOf ngMock.$log
        *
        * @description
-       * Array of logged messages.
+       * Array of messages logged using {@link ngMock.$log#info}.
+       *
+       * @example
+       * <pre>
+       * $log.info('Some Info');
+       * var first = $log.info.logs.unshift();
+       * </pre>
        */
       $log.info.logs = [];
       /**
@@ -326,7 +367,13 @@ angular.mock.$LogProvider = function() {
        * @propertyOf ngMock.$log
        *
        * @description
-       * Array of logged messages.
+       * Array of messages logged using {@link ngMock.$log#error}.
+       *
+       * @example
+       * <pre>
+       * $log.log('Some Error');
+       * var first = $log.error.logs.unshift();
+       * </pre>
        */
       $log.error.logs = [];
     };
@@ -407,7 +454,7 @@ angular.mock.$LogProvider = function() {
    *
    * *NOTE*: this is not an injectable instance, just a globally available mock class of `Date`.
    *
-   * Mock of the Date type which has its timezone specified via constroctor arg.
+   * Mock of the Date type which has its timezone specified via constructor arg.
    *
    * The main purpose is to create Date-like instances with timezone fixed to the specified timezone
    * offset, so that we can test code that depends on local timezone settings without dependency on
@@ -562,7 +609,7 @@ angular.mock.$LogProvider = function() {
 
 /**
  * @ngdoc function
- * @name angular.mock.debug
+ * @name angular.mock.dump
  * @description
  *
  * *NOTE*: this is not an injectable instance, just a globally available function.
@@ -630,14 +677,14 @@ angular.mock.dump = function(object) {
  * @ngdoc object
  * @name ngMock.$httpBackend
  * @description
- * Fake HTTP backend implementation suitable for unit testing application that use the
+ * Fake HTTP backend implementation suitable for unit testing applications that use the
  * {@link ng.$http $http service}.
  *
- * *Note*: For fake http backend implementation suitable for end-to-end testing or backend-less
+ * *Note*: For fake HTTP backend implementation suitable for end-to-end testing or backend-less
  * development please see {@link ngMockE2E.$httpBackend e2e $httpBackend mock}.
  *
  * During unit testing, we want our unit tests to run quickly and have no external dependencies so
- * we don’t want to send {@link https://developer.mozilla.org/en/xmlhttprequest XHR} or
+ * we donâ€™t want to send {@link https://developer.mozilla.org/en/xmlhttprequest XHR} or
  * {@link http://en.wikipedia.org/wiki/JSONP JSONP} requests to a real server. All we really need is
  * to verify whether a certain request has been sent or not, or alternatively just let the
  * application make requests, respond with pre-trained responses and assert that the end result is
@@ -745,7 +792,7 @@ angular.mock.dump = function(object) {
    }
 
    // testing controller
-   var $http;
+   var $httpBackend;
 
    beforeEach(inject(function($injector) {
      $httpBackend = $injector.get('$httpBackend');
@@ -769,7 +816,7 @@ angular.mock.dump = function(object) {
 
 
    it('should send msg to server', function() {
-     // now you don’t care about the authentication, but
+     // now you donâ€™t care about the authentication, but
      // the controller will still send the request and
      // $httpBackend will respond without you having to
      // specify the expectation and response for this request
@@ -903,8 +950,8 @@ function createHttpBackendMock($delegate, $browser) {
    * @returns {requestHandler} Returns an object with `respond` method that control how a matched
    *   request is handled.
    *
-   *  - respond – `{function([status,] data[, headers])|function(function(method, url, data, headers)}`
-   *    – The respond method takes a set of static data to be returned or a function that can return
+   *  - respond â€“ `{function([status,] data[, headers])|function(function(method, url, data, headers)}`
+   *    â€“ The respond method takes a set of static data to be returned or a function that can return
    *    an array containing response status (number), response data (string) and response headers
    *    (Object).
    */
@@ -1022,8 +1069,8 @@ function createHttpBackendMock($delegate, $browser) {
    * @returns {requestHandler} Returns an object with `respond` method that control how a matched
    *  request is handled.
    *
-   *  - respond – `{function([status,] data[, headers])|function(function(method, url, data, headers)}`
-   *    – The respond method takes a set of static data to be returned or a function that can return
+   *  - respond â€“ `{function([status,] data[, headers])|function(function(method, url, data, headers)}`
+   *    â€“ The respond method takes a set of static data to be returned or a function that can return
    *    an array containing response status (number), response data (string) and response headers
    *    (Object).
    */
@@ -1450,11 +1497,11 @@ angular.module('ngMockE2E', ['ng']).config(function($provide) {
  * @returns {requestHandler} Returns an object with `respond` and `passThrough` methods that
  *   control how a matched request is handled.
  *
- *  - respond – `{function([status,] data[, headers])|function(function(method, url, data, headers)}`
- *    – The respond method takes a set of static data to be returned or a function that can return
+ *  - respond â€“ `{function([status,] data[, headers])|function(function(method, url, data, headers)}`
+ *    â€“ The respond method takes a set of static data to be returned or a function that can return
  *    an array containing response status (number), response data (string) and response headers
  *    (Object).
- *  - passThrough – `{function()}` – Any request matching a backend definition with `passThrough`
+ *  - passThrough â€“ `{function()}` â€“ Any request matching a backend definition with `passThrough`
  *    handler, will be pass through to the real backend (an XHR request will be made to the
  *    server.
  */
@@ -1630,7 +1677,7 @@ window.jasmine && (function(window) {
    * @name angular.mock.module
    * @description
    *
-   * *NOTE*: This is function is also published on window for easy access.<br>
+   * *NOTE*: This function is also published on window for easy access.<br>
    * *NOTE*: Only available with {@link http://pivotal.github.com/jasmine/ jasmine}.
    *
    * This function registers a module configuration code. It collects the configuration information
@@ -1664,7 +1711,7 @@ window.jasmine && (function(window) {
    * @name angular.mock.inject
    * @description
    *
-   * *NOTE*: This is function is also published on window for easy access.<br>
+   * *NOTE*: This function is also published on window for easy access.<br>
    * *NOTE*: Only available with {@link http://pivotal.github.com/jasmine/ jasmine}.
    *
    * The inject function wraps a function into an injectable function. The inject() creates new
@@ -1730,7 +1777,7 @@ window.jasmine && (function(window) {
         try {
           injector.invoke(blockFns[i] || angular.noop, this);
         } catch (e) {
-          if(e.stack) e.stack +=  '\n' + errorForStack.stack;
+          if(e.stack && errorForStack) e.stack +=  '\n' + errorForStack.stack;
           throw e;
         } finally {
           errorForStack = null;
