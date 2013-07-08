@@ -46,10 +46,14 @@ directive("macUpload", ["$rootScope", "$parse", "util", ($rootScope, $parse, uti
       callbackFn = $parse opts[action]
       if callbackFn?
         $scope.$apply ->
-          $xhr      = $data.jqXHR
-          $status   = $data.jqXHR?.status
-          $response = $data.jqXHR?.responseText
-          args      = {$event, $data, $status, $xhr, $response}
+          $xhr         = $data.jqXHR
+          $status      = $data.jqXHR?.status
+          responseText = $data.jqXHR?.responseText or ""
+          try
+            $response = JSON.parse responseText
+          catch err
+            $response = responseText
+          args = {$event, $data, $status, $xhr, $response}
           callbackFn $scope, args
 
     options =
@@ -154,24 +158,26 @@ directive("macUploadPreviews", ["$rootScope", ($rootScope) ->
 
     @add = (files = [], callback) ->
       for file in files
-        reader = new FileReader
-
-        pushToPreviews = (event, state) ->
+        pushToPreviews = (event) ->
           previews = @previews()
           if previews?
             newFile =
               fileName: file.name
               type:     file.type
-              fileData: event.target.result
+              fileData: event?.target.result
             previews.push newFile
             @previews previews
 
           callback? newFile
 
-        reader.onload  = (event) => pushToPreviews.apply this, [event, "load"]
-        reader.onerror = (event) => pushToPreviews.apply this, [event, "error"]
+        if file.constructor?.name is "File"
+          reader = new FileReader
+          reader.onload  = (event) => pushToPreviews.apply this, [event, "load"]
+          reader.onerror = (event) => pushToPreviews.apply this, [event, "error"]
 
-        reader.readAsDataURL file
+          reader.readAsDataURL file
+        else
+          pushToPreviews.apply this
 
     return
   ]
@@ -181,7 +187,7 @@ directive("macUploadPreviews", ["$rootScope", ($rootScope) ->
 
 directive("macUploadProgress", [->
   restrict:   "A"
-  require:    ["macUploadProgress", "macUploadPreviews"]
+  require:    ["macUploadProgress", "?macUploadPreviews"]
   controller: ["$scope", ($scope) ->
     updateProgress = (data) ->
       preview           = @getByFilename data.files[0].name
@@ -195,5 +201,6 @@ directive("macUploadProgress", [->
     progressCtrl = ctrls[0]
     previewsCtrl = ctrls[1]
 
-    progressCtrl?.updatePreviewCtrl previewsCtrl
+    if progressCtrl? and previewCtrl?
+      progressCtrl?.updatePreviewCtrl previewsCtrl
 ])
