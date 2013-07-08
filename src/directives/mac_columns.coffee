@@ -46,7 +46,7 @@ angular.module("Mac").factory "macColumnsController", ->
 
 
 angular.module("Mac").directive "macColumns", [ "macColumnsController", (macColumnsController) ->
-  require:    ["^macTableV2", "^tableSection", "tableRow", "macColumns"]
+  require:    ["^macTable", "^tableSection", "tableRow", "macColumns"]
   controller: ["$scope", "$element", "$attrs", macColumnsController]
 
   link: ($scope, $element, $attrs, controllers) ->
@@ -56,7 +56,7 @@ angular.module("Mac").directive "macColumns", [ "macColumnsController", (macColu
 ]
 
 angular.module("Mac").directive "initialWidth", [ ->
-  require:  ["^macTableV2", "^tableSection", "^tableRow", "^macColumns"]
+  require:  ["^macTable", "^tableSection", "^tableRow", "^macColumns"]
   priority: 500
 
   compile: (element, attr) ->

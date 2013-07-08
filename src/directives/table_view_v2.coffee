@@ -1,11 +1,33 @@
-angular.module("Mac").directive "macTableV2", [ "Table", (Table) ->
-  require:    "macTableV2"
+###
+@chalk overview
+@name Table 
+@description
+Directive for displaying tabluar data
+
+@param {None}       mac-table-resizable-columns     Convenience param to add macResizableColumn and dependent directives to template elements
+@param {None}       mac-table-reorderable-columns   Convenience param to add macReorderableColumn and dependent directives to template elements
+
+
+###
+
+
+angular.module("Mac").factory "MacTableController", ["Table", (Table) ->
+  class MacTableController
+    constructor: (@scope) ->
+
+    hasResizableColumns:   false
+    hasReorderableColumns: false
+
+    makeTable: (columns) ->
+      @table = @scope.table = new Table columns
+]
+
+
+angular.module("Mac").directive "macTable", [ "MacTableController", (MacTableController) ->
+  require:    "macTable"
   scope:      true
-  controller: ["$scope", ($scope) ->
-    @directive = "mac-table"
-    @makeTable = (columns) -> @table = $scope.table = new Table columns
-    return
-  ]
+  controller: ["$scope", MacTableController]
+
   compile: (element, attr) ->
     # Bootstrap our template
     # Reduces the amount of setup on the users end when creating a new table
@@ -27,7 +49,7 @@ angular.module("Mac").directive "macTableV2", [ "Table", (Table) ->
       .attr("data-column-name", "{{cell.colName}}")
 
     # Resizable?
-    if attr.resizableColumns?
+    if attr.macTableResizableColumns?
       headerSectionElement
         .find("[mac-cell-template]").find(".cell-wrapper")
         .attr("mac-resizable-column", "")
@@ -35,7 +57,7 @@ angular.module("Mac").directive "macTableV2", [ "Table", (Table) ->
         .attr("mac-resizable-containment", "document")
 
     # Reorderable?
-    if attr.reorderableColumns?
+    if attr.macTableReorderableColumns?
       headerSectionElement
         .find("[table-row]")
         .attr("mac-reorderable", "[mac-cell-template]")

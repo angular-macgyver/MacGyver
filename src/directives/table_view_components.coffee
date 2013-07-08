@@ -3,7 +3,7 @@
 #
 
 angular.module("Mac").directive "tableSection", [ "directiveHelpers", (directiveHelpers) ->
-  require:    ["^macTableV2", "tableSection"]
+  require:    ["^macTable", "tableSection"]
   scope:      true
   controller: ["$scope", "$parse", ($scope, $parse) ->
     @directive = "table-section"
@@ -74,7 +74,7 @@ angular.module("Mac").directive "tableSection", [ "directiveHelpers", (directive
 ]
 
 angular.module("Mac").directive "tableRow", [ "directiveHelpers", (directiveHelpers) ->
-  require: ["^macTableV2", "^tableSection", "tableRow"]
+  require: ["^macTable", "^tableSection", "tableRow"]
 
   controller: ->
     @directive   = "table-row"
@@ -117,7 +117,7 @@ angular.module("Mac").directive "tableRow", [ "directiveHelpers", (directiveHelp
 angular.module("Mac").directive "macCellTemplate", [ ->
   transclude: "element"
   priority:   1000
-  require:    ["^macTableV2", "^tableSection", "^tableRow"]
+  require:    ["^macTable", "^tableSection", "^tableRow"]
 
   compile: (element, attr, linker) ->
     ($scope, $element, $attr, controllers) ->
