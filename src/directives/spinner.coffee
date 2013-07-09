@@ -16,7 +16,6 @@ angular.module("Mac").directive "macSpinner", ->
   template: """<div class="mac-spinner"></div>"""
 
   compile: (element, attributes) ->
-    element.addClass "mac-spinner"
     for i in [0..9]
       element.append """<div class="bar"></div>"""
 
