@@ -79,7 +79,7 @@ angular.module("Mac").directive "macTooltip", [
 
           unless enabled
             unless opts.trigger in ["hover", "click"]
-              return console.error "Invalid trigger"
+              throw "Invalid trigger"
 
             switch opts.trigger
               when "click"
