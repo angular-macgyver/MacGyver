@@ -39,6 +39,8 @@
     "sinon-chai": "2.1.2",
     "stylus": "~0.32.0",
     "underscore": ">= 1.4.0 < 1.5",
-    "wrench": "1.5.1"
+    "wrench": "1.5.1",
+    "karma-coffee-preprocessor": "0.0.2",
+    "karma-ng-html2js-preprocessor": "0.0.2"
   }
 }
