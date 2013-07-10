@@ -337,6 +337,7 @@ module.exports = (grunt) ->
     spawn args: ["compile"], ->
       spawn args: ["watch"]
       spawn args: ["server"]
+      spawn args: ["karma"]
 
   grunt.registerTask "server", "Run test server", ->
     @async()

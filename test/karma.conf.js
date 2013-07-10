@@ -1,31 +1,37 @@
 // Karma configuration
 
-
 // base path, that will be used to resolve files and exclude
-basePath = '../';
+basePath = '../example/';
 
 // list of files / patterns to load in the browser
 files = [
   JASMINE,
   JASMINE_ADAPTER,
 
-  'test/vendor/jquery.min.js',
-  'vendor/js/underscore.string.js',
-  'vendor/js/jquery-ui.js',
-  'vendor/js/jquery.fileupload.js',
-  'vendor/bower/angular/angular.js',
+  // Javascript //
+  '../test/vendor/jquery.min.js',
+  '../vendor/js/underscore.string.js',
+  '../vendor/js/jquery-ui.js',
+  '../vendor/js/jquery.fileupload.js',
+  '../vendor/bower/angular/angular.js',
+
+  // Template //
+  "template/*.html",
 
   // Application Code //
-  'src/*.coffee',
-  'src/**/*.coffee',
+  '../src/*.coffee',
+  '../src/**/*.coffee',
 
-  // Javascript //
-  'test/vendor/angular/angular-mocks.js',
+  '../test/vendor/angular/angular-mocks.js',
 
-  // CoffeeScript //
-  'test/unit/*.spec.coffee'
-
+  // Test Code //
+  '../test/unit/*.spec.coffee'
 ];
+
+preprocessors = {
+  "../**/*.coffee": "coffee",
+  "**/*.html":      "html2js"
+};
 
 // list of files to exclude
 exclude = [];
