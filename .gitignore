@@ -15,3 +15,6 @@ test-results.xml
 
 # Except these files
 !/vendor/bower/vendor.styl
+
+# Chrome generated file
+libpeerconnection.log
