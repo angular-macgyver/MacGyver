@@ -15,31 +15,31 @@ block append content
           )
             thead(table-section="header")
               tr(table-row, ng-repeat="row in section.rows")
-                th(cell-template="No.", initial-width="5%")
+                th(mac-cell-template="No.", initial-width="5%")
                   span {{cell.colName}}
 
-                th(cell-template="Title", initial-width="35%")
+                th(mac-cell-template="Title", initial-width="35%")
                   span {{cell.colName}}
 
-                th(cell-template, initial-width="auto")
+                th(mac-cell-template="", initial-width="auto")
                   span {{cell.colName}}
 
             tbody(table-section="body", models="maGyverSeasonOne")
               tr(table-row, ng-repeat="row in section.rows")
-                td(cell-template)
+                td(mac-cell-template="")
                   span {{cell.value()}}
         pre.prettyprint.linenums(ng-non-bindable)
           | <table mac-table-v2="mac-table-v2" resizable-columns="resizable-columns" reorderable-columns="reorderable-columns" columns="dynamic" class="table mac-table-default">
           |   <thead table-section="header">
           |     <tr table-row="table-row" ng-repeat="row in section.rows">
-          |       <th cell-template="No." initial-width="5%"><span>{{cell.colName}}</span></th>
-          |       <th cell-template="Title" initial-width="35%"><span>{{cell.colName}}</span></th>
-          |       <th cell-template="cell-template" initial-width="auto"><span>{{cell.colName}}</span></th>
+          |       <th mac-cell-template="No." initial-width="5%"><span>{{cell.colName}}</span></th>
+          |       <th mac-cell-template="Title" initial-width="35%"><span>{{cell.colName}}</span></th>
+          |       <th mac-cell-template="" initial-width="auto"><span>{{cell.colName}}</span></th>
           |     </tr>
           |   </thead>
           |   <tbody table-section="body" models="maGyverSeasonOne">
           |     <tr table-row="table-row" ng-repeat="row in section.rows">
-          |       <td cell-template="cell-template"><span>{{cell.value()}}</span></td>
+          |       <td mac-cell-template=""><span>{{cell.value()}}</span></td>
           |     </tr>
           |   </tbody>
           | </table>

@@ -80,7 +80,7 @@ angular.module("Mac").directive "tableRow", [ "directiveHelpers", (directiveHelp
     @directive   = "table-row"
     @repeatCells = (cells, rowElement, sectionController) ->
       # Clear out our existing cell-templates
-      rowElement.find("[cell-template]").remove()
+      rowElement.find("[mac-cell-template]").remove()
 
       # Figure out where to add in our cell templates
       # we search for the markers "before-templates" && "after-templates"
@@ -114,7 +114,7 @@ angular.module("Mac").directive "tableRow", [ "directiveHelpers", (directiveHelp
         controllers[2].repeatCells cells, $element, controllers[1]
 ]
 
-angular.module("Mac").directive "cellTemplate", [ ->
+angular.module("Mac").directive "macCellTemplate", [ ->
   transclude: "element"
   priority:   1000
   require:    ["^macTableV2", "^tableSection", "^tableRow"]

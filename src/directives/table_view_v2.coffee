@@ -20,8 +20,8 @@ angular.module("Mac").directive "macTableV2", [ "Table", (Table) ->
       .parents("[table-row]")
         .attr("mac-columns", "")
 
-    # Format our cell-templates
-    element.find("[cell-template]")
+    # Format our mac-cell-templates
+    element.find("[mac-cell-template]")
       # Add a wrapper to the inside of our cells
       .wrapInner("<div class='cell-wrapper' />")
       .attr("data-column-name", "{{cell.colName}}")
@@ -29,7 +29,7 @@ angular.module("Mac").directive "macTableV2", [ "Table", (Table) ->
     # Resizable?
     if attr.resizableColumns?
       headerSectionElement
-        .find("[cell-template]").find(".cell-wrapper")
+        .find("[mac-cell-template]").find(".cell-wrapper")
         .attr("mac-resizable-column", "")
         .attr("mac-resizable", "")
         .attr("mac-resizable-containment", "document")
@@ -38,7 +38,7 @@ angular.module("Mac").directive "macTableV2", [ "Table", (Table) ->
     if attr.reorderableColumns?
       headerSectionElement
         .find("[table-row]")
-        .attr("mac-reorderable", "[cell-template]")
+        .attr("mac-reorderable", "[mac-cell-template]")
         .attr("mac-reorderable-columns", "")
 
     # Generate our boilerplate ng-repeat on rows if there isn't on set already
