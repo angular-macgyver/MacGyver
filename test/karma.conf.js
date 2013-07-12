@@ -10,6 +10,7 @@ files = [
 
   // Javascript //
   '../test/vendor/jquery.min.js',
+  '../vendor/bower/underscore/underscore.js',
   '../vendor/js/underscore.string.js',
   '../vendor/js/jquery-ui.js',
   '../vendor/js/jquery.fileupload.js',
