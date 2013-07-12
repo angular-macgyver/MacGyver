@@ -13,7 +13,7 @@
     ".bowerrc",
     ".gitignore"
   ],
-  "dependencies": {
+  "devDependencies": {
     "angular": "1.0.7",
     "underscore": "~1.5.1"
   }
