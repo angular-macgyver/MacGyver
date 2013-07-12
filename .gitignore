@@ -9,6 +9,7 @@ example/uploads
 
 # Logs
 test-results.xml
+libpeerconnection.log
 
 # System file types
 .DS_Store
