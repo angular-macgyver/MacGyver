@@ -19,6 +19,10 @@ Placeholder text
 Type: `String`  
 Url to fetch autocomplete dropdown list data  
   
+**mac-autocomplete-source**  
+Type: `Expression`  
+Local data source  
+  
 **mac-autocomplete-disabled**  
 Type: `Boolean`  
 Boolean value if autocomplete should be disabled  

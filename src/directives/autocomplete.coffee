@@ -11,6 +11,7 @@ A directive for providing suggestions while typing into the field
 @param {String} ng-model Assignable angular expression to data-bind to
 @param {String} mac-placeholder Placeholder text
 @param {String} mac-autocomplete-url Url to fetch autocomplete dropdown list data
+@param {Expression} mac-autocomplete-source Local data source
 @param {Boolean} mac-autocomplete-disabled Boolean value if autocomplete should be disabled
 @param {Function} mac-autocomplete-on-select Function called when user select on an item
        - `selected` - {Object} The item selected
@@ -102,12 +103,12 @@ angular.module("Mac").directive "macAutocomplete", [
 
           $http(options)
             .success (data, status, headers, config) ->
-                fetchedList  = onSuccess?({data, status, headers})
-                fetchedList ?= data.data
+              fetchedList  = onSuccess? $scope, {data, status, headers}
+              fetchedList ?= data.data
 
-                resp updateList fetchedList
+              resp updateList fetchedList
             .error (data, status, headers, config) ->
-              onError? {data, status, headers}
+              onError? $scope, {data, status, headers}
         else
           list = updateList(source($scope) or [])
           resp $filter("filter") list, req.term
@@ -119,7 +120,8 @@ angular.module("Mac").directive "macAutocomplete", [
 
         select: (event, ui) ->
           $scope.$apply ->
-            selected = _(currentAutocomplete).find (item) -> item[labelKey] is ui.item.label
+            selected = _(currentAutocomplete).find (item) ->
+              (item[labelKey] or item) is ui.item.label
             onSelect $scope, {selected} if onSelect?
 
       if attrs.macAutocompleteDisabled?

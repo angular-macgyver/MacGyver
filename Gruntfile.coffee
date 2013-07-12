@@ -71,8 +71,6 @@ module.exports = (grunt) ->
       vendorCss:
         dest: "example/css/vendor.css"
         src: [
-          "vendor/bower/*.css"
-          "vendor/bower/**/*.css"
           "tmp/vendor.css"
         ]
 

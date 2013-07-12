@@ -35,7 +35,7 @@ angular.module("Mac").directive "macTime", [
         $scope.placeholder = opts.placeholder
 
         inputDOM        = $("input", element)[0]
-        timeRegex       = /(\d+):(\d+) ([AP]M)?/
+        timeRegex       = /(\d+):(\d+) ([AP]M)/
         highlighActions =
           hours:   -> inputDOM.setSelectionRange 0, 2
           minutes: -> inputDOM.setSelectionRange 3, 5
@@ -96,7 +96,6 @@ angular.module("Mac").directive "macTime", [
 
           inputSelectAction start, end, actions unless actions is {}
 
-          #$scope.$apply ->
           $scope.model = $filter("date") $scope.time.getTime(), "hh:mm a"
 
           # Highlight hour on activating the time input
@@ -121,6 +120,8 @@ angular.module("Mac").directive "macTime", [
               $scope.time.setHours hours, minutes
             else
               $scope.updateInput()
+          else
+            $scope.updateInput()
 
         $scope.keydownEvent = (event) ->
           key = event.which
@@ -150,7 +151,6 @@ angular.module("Mac").directive "macTime", [
               # Using the new start and end index, select the correct value
               inputDOM.setSelectionRange start, end
               $scope.updateInput()
-              #inputSelectAction start, end, highlighActions
 
         $scope.keyupEvent = (event) ->
           key = event.which

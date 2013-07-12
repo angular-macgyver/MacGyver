@@ -1617,10 +1617,10 @@ div.wijmo-wijmenu .wijmo-wijmenu-child .wijmo-wijmenu-text
 .date-time i{position:absolute;width:13px;height:13px;top:8px;left:6px}
 .date-time input{padding:0 0 0 22px;width:78px;height:26px;display:block}
 .date-time.error input{background:#ffe2e2;border:solid 1px #dea9a9}
-.close{width:18px;height:18px;-webkit-border-radius:9px;border-radius:9px;display:block;background:#bdc0c7;position:relative;opacity:1;-ms-filter:none;filter:none;}
-.close:after{content:'';display:block;width:2px;height:10px;background:#fff;position:absolute;top:4px;left:8px;-webkit-transform:rotate(45deg);-moz-transform:rotate(45deg);-o-transform:rotate(45deg);-ms-transform:rotate(45deg);transform:rotate(45deg)}
-.close:before{content:'';display:block;width:2px;height:10px;background:#fff;position:absolute;top:4px;left:8px;-webkit-transform:rotate(-45deg);-moz-transform:rotate(-45deg);-o-transform:rotate(-45deg);-ms-transform:rotate(-45deg);transform:rotate(-45deg)}
-.close:hover{background:#828590}
+.close,.close-modal{width:18px;height:18px;-webkit-border-radius:9px;border-radius:9px;display:block;background:#bdc0c7;position:relative;opacity:1;-ms-filter:none;filter:none;}
+.close:after,.close-modal:after{content:'';display:block;width:2px;height:10px;background:#fff;position:absolute;top:4px;left:8px;-webkit-transform:rotate(45deg);-moz-transform:rotate(45deg);-o-transform:rotate(45deg);-ms-transform:rotate(45deg);transform:rotate(45deg)}
+.close:before,.close-modal:before{content:'';display:block;width:2px;height:10px;background:#fff;position:absolute;top:4px;left:8px;-webkit-transform:rotate(-45deg);-moz-transform:rotate(-45deg);-o-transform:rotate(-45deg);-ms-transform:rotate(-45deg);transform:rotate(-45deg)}
+.close:hover,.close-modal:hover{background:#828590}
 .hide{display:none}
 
 .mac-upload{position:relative;height:21px;line-height:21px;width:65px;overflow:hidden;font-weight:bold;}
@@ -1640,7 +1640,7 @@ table.mac-table-default th .cell-wrapper,table.mac-table-default td .cell-wrappe
 .modal-overlay.visible .modal{top:50%}
 .modal-overlay .modal{position:absolute;top:0;left:50%;width:500px;margin-left:-251px;background:#fff;border:1px solid #d1d3d8;-webkit-box-shadow:0 4px 10px rgba(0,0,0,0.15);box-shadow:0 4px 10px rgba(0,0,0,0.15);-webkit-transition:all .2s ease-out;-moz-transition:all .2s ease-out;-o-transition:all .2s ease-out;-ms-transition:all .2s ease-out;transition:all .2s ease-out;-webkit-border-radius:3px;border-radius:3px;}
 .modal-overlay .modal:after{content:"";display:block;position:absolute;bottom:-20px;height:20px;width:1px}
-.modal-overlay .modal .close.close-modal{position:absolute;top:-5px;right:-5px}
+.modal-overlay .modal .close-modal{position:absolute;top:-5px;right:-5px}
 .modal-overlay .modal .modal-content{padding:20px}
 
 .mac-spinner{display:inline-block;height:16px;position:relative;width:16px;}

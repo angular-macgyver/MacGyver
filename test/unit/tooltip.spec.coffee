@@ -52,7 +52,7 @@ describe "Mac Tooltip", ->
 
       waitsFor ->
         return called
-      , "Tooltip should be removed", "750"
+      , "Tooltip should be removed", 750
 
       runs ->
         expect($(".tooltip").length).toBe 0
@@ -71,7 +71,7 @@ describe "Mac Tooltip", ->
 
       waitsFor ->
         return called
-      , "Tooltip should be removed", "750"
+      , "Tooltip should be removed", 750
 
       runs ->
         expect($(".tooltip").length).toBe 0
