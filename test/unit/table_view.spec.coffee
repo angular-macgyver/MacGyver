@@ -353,17 +353,17 @@ describe "Table View", ->
               >
               <thead table-section="header">
                 <tr table-row>
-                  <th cell-template initial-width="auto">Header Cell</th>
+                  <th mac-cell-template initial-width="auto">Header Cell</th>
                 </tr>
               </thead>
               <tbody table-section="body" models="tableData">
                 <tr table-row>
-                  <td cell-template>{{cell.value()}}</td>
+                  <td mac-cell-template>{{cell.value()}}</td>
                 </tr>
               </tbody>
               <tfoot table-section="footer">
                 <tr table-row>
-                  <td cell-template>Footer Cell</td>
+                  <td mac-cell-template>Footer Cell</td>
                 </tr>
               </tfoot>
             </table>"""
@@ -372,9 +372,9 @@ describe "Table View", ->
           scope.$apply()
 
         it "Should add the resizable directives", ->
-          expect(element.find("[table-section=header] [cell-template] .cell-wrapper[mac-resizable]").length).toBe models.length
-          expect(element.find("[table-section=header] [cell-template] .cell-wrapper[mac-resizable-column]").length).toBe models.length
-          expect(element.find("[table-section=header] [cell-template] .cell-wrapper[mac-resizable-containment]").length).toBe models.length
+          expect(element.find("[table-section=header] [mac-cell-template] .cell-wrapper[mac-resizable]").length).toBe models.length
+          expect(element.find("[table-section=header] [mac-cell-template] .cell-wrapper[mac-resizable-column]").length).toBe models.length
+          expect(element.find("[table-section=header] [mac-cell-template] .cell-wrapper[mac-resizable-containment]").length).toBe models.length
 
         it "Should add the reorderable directives", ->
           expect(element.find("[table-section=header] [table-row][mac-reorderable]").length).toBe 1
