@@ -253,7 +253,7 @@ describe "Table View", ->
           </thead>
           <tbody table-section="body" models="tableData">
             <tr table-row>
-              <td mac-cell-template>{{cell.value()}}</td>
+              <td mac-cell-template="first_name last_name">{{cell.value()}}</td>
             </tr>
           </tbody>
           <tfoot table-section="footer">
