@@ -10265,6 +10265,7 @@ A directive for providing suggestions while typing into the field
 @param {String} ng-model Assignable angular expression to data-bind to
 @param {String} mac-placeholder Placeholder text
 @param {String} mac-autocomplete-url Url to fetch autocomplete dropdown list data
+@param {Expression} mac-autocomplete-source Local data source
 @param {Boolean} mac-autocomplete-disabled Boolean value if autocomplete should be disabled
 @param {Function} mac-autocomplete-on-select Function called when user select on an item
        - `selected` - {Object} The item selected
@@ -10339,7 +10340,7 @@ angular.module("Mac").directive("macAutocomplete", [
             return $http(options).success(function(data, status, headers, config) {
               var fetchedList;
 
-              fetchedList = typeof onSuccess === "function" ? onSuccess({
+              fetchedList = typeof onSuccess === "function" ? onSuccess($scope, {
                 data: data,
                 status: status,
                 headers: headers
@@ -10349,7 +10350,7 @@ angular.module("Mac").directive("macAutocomplete", [
               }
               return resp(updateList(fetchedList));
             }).error(function(data, status, headers, config) {
-              return typeof onError === "function" ? onError({
+              return typeof onError === "function" ? onError($scope, {
                 data: data,
                 status: status,
                 headers: headers
@@ -10369,7 +10370,7 @@ angular.module("Mac").directive("macAutocomplete", [
               var selected;
 
               selected = _(currentAutocomplete).find(function(item) {
-                return item[labelKey] === ui.item.label;
+                return (item[labelKey] || item) === ui.item.label;
               });
               if (onSelect != null) {
                 return onSelect($scope, {
@@ -10636,21 +10637,35 @@ Directive for proxying jQuery file upload
 @param {Function}   mac-upload-submit     Function to call on submit
 @param {Function}   mac-upload-success    Upload success callback
 @param {Function}   mac-upload-error      Upload error callback
+@param {Function}   mac-upload-always     Callback for completed (success, abort or error) requests
 @param {Expression} mac-upload-previews   List of uploaded files {Array}
 @param {Function}   mac-upload-progress   Upload progress callback
 @param {String}     mac-upload-drop-zone  The selector that we can drop files onto
 @param {Expression} mac-upload-form-data  Additional form data {Array|Object|Function|FormData}
+@param {Expression} mac-upload-options    Additional options to pass to jquery fileupload
 */
 angular.module("Mac").directive("macUpload", [
-  "$rootScope", "$parse", function($rootScope, $parse) {
+  "$rootScope", "$parse", "util", function($rootScope, $parse, util) {
     return {
       require: ["macUpload", "?macUploadPreviews"],
       controller: ["$scope", function() {}],
       link: function($scope, element, attrs, ctrls) {
-        var applyCallback, dragoverTimeout, dropZone, options, previewCtrl, setOptions, uploadCtrl;
+        var applyCallback, defaults, dragoverTimeout, dropZone, extraOptions, options, opts, previewCtrl, setOptions, uploadCtrl;
 
         uploadCtrl = ctrls[0];
         previewCtrl = ctrls[1];
+        defaults = {
+          route: "",
+          dropZone: null,
+          submit: "",
+          success: "",
+          error: "",
+          always: "",
+          progress: "",
+          formData: "",
+          options: ""
+        };
+        opts = util.extendAttributes("macUpload", defaults, attrs);
         setOptions = function(option, value) {
           if (value != null) {
             return element.fileupload("option", option, value);
@@ -10659,31 +10674,39 @@ angular.module("Mac").directive("macUpload", [
         applyCallback = function(action, $event, $data) {
           var callbackFn;
 
-          callbackFn = $parse(attrs["macUpload" + action]);
+          callbackFn = $parse(opts[action]);
           if (callbackFn != null) {
             return $scope.$apply(function() {
-              var $status, args, _ref;
+              var $response, $status, $xhr, args, err, responseText, _ref, _ref1;
 
+              $xhr = $data.jqXHR;
               $status = (_ref = $data.jqXHR) != null ? _ref.status : void 0;
+              responseText = ((_ref1 = $data.jqXHR) != null ? _ref1.responseText : void 0) || "";
+              try {
+                $response = JSON.parse(responseText);
+              } catch (_error) {
+                err = _error;
+                $response = responseText;
+              }
               args = {
                 $event: $event,
                 $data: $data,
-                $status: $status
+                $status: $status,
+                $xhr: $xhr,
+                $response: $response
               };
-              if (action === "Success") {
-                args.$response = $data.result.data;
-              }
               return callbackFn($scope, args);
             });
           }
         };
         options = {
-          url: $parse(attrs.macUploadRoute)($scope) || "",
+          url: $parse(opts.route)($scope) || "",
+          replaceFileInput: false,
           submit: function($event, $data) {
             var submitEvent;
 
             submitEvent = function() {
-              return applyCallback("Submit", $event, $data);
+              return applyCallback("submit", $event, $data);
             };
             if (previewCtrl != null) {
               return previewCtrl.add($data.files, submitEvent);
@@ -10692,10 +10715,14 @@ angular.module("Mac").directive("macUpload", [
             }
           },
           fail: function($event, $data) {
-            return applyCallback("Error", $event, $data);
+            return applyCallback("error", $event, $data);
           },
           done: function($event, $data) {
-            return applyCallback("Success", $event, $data);
+            return applyCallback("success", $event, $data);
+          },
+          always: function($event, $data) {
+            element.val("");
+            return applyCallback("always", $event, $data);
           },
           progress: function($event, $data) {
             if (previewCtrl != null) {
@@ -10703,22 +10730,22 @@ angular.module("Mac").directive("macUpload", [
                 previewCtrl.updateProgress($data);
               }
             }
-            return applyCallback("Progress", $event, $data);
+            return applyCallback("progress", $event, $data);
           }
         };
-        if (attrs.macUploadDropZone != null) {
+        if (opts.dropZone != null) {
           $(document).on("drop dragover", function(event) {
             return event.preventDefault();
           });
           dragoverTimeout = null;
-          dropZone = element.parents(attrs.macUploadDropZone);
+          dropZone = element.parents(opts.dropZone);
           $(document).bind("dragover", function(event) {
             var method, node;
 
             if (dragoverTimeout != null) {
               clearTimeout(dragoverTimeout);
             }
-            node = $(event.target).parents(attrs.macUploadDropZone);
+            node = $(event.target).parents(opts.dropZone);
             method = node.length ? "addClass" : "removeClass";
             dropZone[method]("droppable");
             return dragoverTimeout = setTimeout(function() {
@@ -10729,15 +10756,22 @@ angular.module("Mac").directive("macUpload", [
             }, 250);
           });
         }
-        options.dropZone = dropZone;
+        options.dropZone = dropZone || $();
+        if (opts.options) {
+          extraOptions = $scope.$eval(opts.options) || {};
+          angular.extend(options, extraOptions);
+        }
         element.fileupload(options).on(['fileuploadadd', 'fileuploadsubmit', 'fileuploadsend', 'fileuploaddone', 'fileuploadfail', 'fileuploadalways', 'fileuploadprogress', 'fileuploadprogressall', 'fileuploadstart', 'fileuploadstop', 'fileuploadchange', 'fileuploadpaste', 'fileuploaddrop', 'fileuploaddragover', 'fileuploadchunksend', 'fileuploadchunkdone', 'fileuploadchunkfail', 'fileuploadchunkalways', 'fileuploadprocessstart', 'fileuploadprocess', 'fileuploadprocessdone', 'fileuploadprocessfail', 'fileuploadprocessalways', 'fileuploadprocessstop'].join(' '), function(event, data) {
           return $scope.$emit(event.type, data);
         });
-        $scope.$watch(attrs.macUploadRoute, function(route) {
+        $scope.$watch(opts.route, function(route) {
           return setOptions("url", route);
         });
-        return $scope.$watch(attrs.macUploadFormData, function(value) {
+        $scope.$watch(opts.formData, function(value) {
           return setOptions("formData", value);
+        });
+        return $scope.$watch(opts.options, function(value) {
+          return element.fileupload("option", value);
         });
       }
     };
@@ -10772,7 +10806,7 @@ angular.module("Mac").directive("macUpload", [
             }
           };
           this.add = function(files, callback) {
-            var file, pushToPreviews, reader, _i, _len, _results,
+            var file, pushToPreviews, reader, _i, _len, _ref, _results,
               _this = this;
 
             if (files == null) {
@@ -10781,8 +10815,7 @@ angular.module("Mac").directive("macUpload", [
             _results = [];
             for (_i = 0, _len = files.length; _i < _len; _i++) {
               file = files[_i];
-              reader = new FileReader;
-              pushToPreviews = function(event, state) {
+              pushToPreviews = function(event) {
                 var newFile, previews;
 
                 previews = this.previews();
@@ -10790,20 +10823,25 @@ angular.module("Mac").directive("macUpload", [
                   newFile = {
                     fileName: file.name,
                     type: file.type,
-                    fileData: event.target.result
+                    fileData: event != null ? event.target.result : void 0
                   };
                   previews.push(newFile);
                   this.previews(previews);
                 }
                 return typeof callback === "function" ? callback(newFile) : void 0;
               };
-              reader.onload = function(event) {
-                return pushToPreviews.apply(_this, [event, "load"]);
-              };
-              reader.onerror = function(event) {
-                return pushToPreviews.apply(_this, [event, "error"]);
-              };
-              _results.push(reader.readAsDataURL(file));
+              if (((_ref = file.constructor) != null ? _ref.name : void 0) === "File") {
+                reader = new FileReader;
+                reader.onload = function(event) {
+                  return pushToPreviews.apply(_this, [event, "load"]);
+                };
+                reader.onerror = function(event) {
+                  return pushToPreviews.apply(_this, [event, "error"]);
+                };
+                _results.push(reader.readAsDataURL(file));
+              } else {
+                _results.push(pushToPreviews.apply(this));
+              }
             }
             return _results;
           };
@@ -10820,7 +10858,7 @@ angular.module("Mac").directive("macUpload", [
   function() {
     return {
       restrict: "A",
-      require: ["macUploadProgress", "macUploadPreviews"],
+      require: ["macUploadProgress", "?macUploadPreviews"],
       controller: [
         "$scope", function($scope) {
           var updateProgress;
@@ -10841,7 +10879,9 @@ angular.module("Mac").directive("macUpload", [
 
         progressCtrl = ctrls[0];
         previewsCtrl = ctrls[1];
-        return progressCtrl != null ? progressCtrl.updatePreviewCtrl(previewsCtrl) : void 0;
+        if ((progressCtrl != null) && (typeof previewCtrl !== "undefined" && previewCtrl !== null)) {
+          return progressCtrl != null ? progressCtrl.updatePreviewCtrl(previewsCtrl) : void 0;
+        }
       }
     };
   }
@@ -10908,7 +10948,7 @@ angular.module("Mac").factory("keys", function() {
     SEVEN: 55,
     EIGHT: 56,
     NINE: 57,
-    SEMICOLON: $.browser.safari ? 186 : 59,
+    SEMICOLON: 59,
     EQUALS: 61,
     A: 65,
     B: 66,
@@ -11311,7 +11351,6 @@ angular.module("Mac").directive("macSpinner", function() {
     compile: function(element, attributes) {
       var i, _i;
 
-      element.addClass("mac-spinner");
       for (i = _i = 0; _i <= 9; i = ++_i) {
         element.append("<div class=\"bar\"></div>");
       }
@@ -12512,7 +12551,7 @@ angular.module("Mac").directive("macTime", [
 
           $scope.placeholder = opts.placeholder;
           inputDOM = $("input", element)[0];
-          timeRegex = /(\d+):(\d+) ([AP]M)?/;
+          timeRegex = /(\d+):(\d+) ([AP]M)/;
           highlighActions = {
             hours: function() {
               return inputDOM.setSelectionRange(0, 2);
@@ -12595,6 +12634,8 @@ angular.module("Mac").directive("macTime", [
               } else {
                 return $scope.updateInput();
               }
+            } else {
+              return $scope.updateInput();
             }
           };
           $scope.keydownEvent = function(event) {
@@ -12749,7 +12790,7 @@ angular.module("Mac").directive("macTooltip", [
             text = value;
             if (!enabled) {
               if ((_ref = opts.trigger) !== "hover" && _ref !== "click") {
-                return console.error("Invalid trigger");
+                throw "Invalid trigger";
               }
               switch (opts.trigger) {
                 case "click":

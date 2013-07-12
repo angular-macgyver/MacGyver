@@ -43,6 +43,7 @@
 <p><strong>ng-model</strong><br>Type: <code>String</code><br>Assignable angular expression to data-bind to  </p>
 <p><strong>mac-placeholder</strong><br>Type: <code>String</code><br>Placeholder text  </p>
 <p><strong>mac-autocomplete-url</strong><br>Type: <code>String</code><br>Url to fetch autocomplete dropdown list data  </p>
+<p><strong>mac-autocomplete-source</strong><br>Type: <code>Expression</code><br>Local data source  </p>
 <p><strong>mac-autocomplete-disabled</strong><br>Type: <code>Boolean</code><br>Boolean value if autocomplete should be disabled  </p>
 <p><strong>mac-autocomplete-on-select</strong><br>Type: <code>Function</code><br>Function called when user select on an item<br>- <code>selected</code> - {Object} The item selected  </p>
 <p><strong>mac-autocomplete-on-success</strong><br>Type: <code>Function</code><br>function called on success ajax request<br>- <code>data</code> - {Object} Data returned from the request<br>- <code>status</code> - {Number} The status code of the response<br>- <code>header</code> - {Object} Header of the response  </p>
@@ -169,10 +170,12 @@
 <p><strong>mac-upload-submit</strong><br>Type: <code>Function</code><br>Function to call on submit  </p>
 <p><strong>mac-upload-success</strong><br>Type: <code>Function</code><br>Upload success callback  </p>
 <p><strong>mac-upload-error</strong><br>Type: <code>Function</code><br>Upload error callback  </p>
+<p><strong>mac-upload-always</strong><br>Type: <code>Function</code><br>Callback for completed (success, abort or error) requests  </p>
 <p><strong>mac-upload-previews</strong><br>Type: <code>Expression</code><br>List of uploaded files {Array}  </p>
 <p><strong>mac-upload-progress</strong><br>Type: <code>Function</code><br>Upload progress callback  </p>
 <p><strong>mac-upload-drop-zone</strong><br>Type: <code>String</code><br>The selector that we can drop files onto  </p>
 <p><strong>mac-upload-form-data</strong><br>Type: <code>Expression</code><br>Additional form data {Array|Object|Function|FormData}  </p>
+<p><strong>mac-upload-options</strong><br>Type: <code>Expression</code><br>Additional options to pass to jquery fileupload  </p>
 <h3>Example</h3><div class="docs-example example-hit-area"><form action="..." method="post" enctype="multipart/form-data" name="upload-example"><span class="mac-upload btn fileinput-button"><span>Upload</span><input type="file" name="files[]" multiple mac-upload ng-disabled="!fileUploaderEnabled" mac-upload-route="uploadRoute" mac-upload-success="fileUploadSuccess($data, $status)" mac-upload-error="fileUploadError($response, $data, $status)" mac-upload-submit="fileUploadSubmit($event, $data)" mac-upload-drop-zone=".example-hit-area" mac-upload-previews="uploadPreviews" mac-upload-progress></span></form><ul><li ng-repeat="preview in uploadPreviews"><img ng-src="{{previewImage(preview)}}"><span>{{preview.fileName}}</span><div class="progress"><div ng-style="{{previewProgress(preview)}}" class="bar"></div></div></li></ul></div><pre ng-non-bindable class="prettyprint linenums">&lt;input type=&quot;file&quot;
   name=&quot;files[]&quot;
   ng-disabled=&quot;!fileUploaderEnabled&quot;
@@ -197,5 +200,5 @@
 <p>Dynamically fill out the placeholder text of input  </p>
 <h3>Parameters</h3>
 <p><strong>mac-placeholder</strong><br>Type: <code>String</code><br>Variable that contains the placeholder text  </p>
-<h3>Example</h3><div class="docs-example"><input type="text" mac-placeholder="tagAutocompletePlaceholder"></div><pre ng-non-bindable class="prettyprint linenums">&lt;input type=&quot;text&quot; mac-placeholder=&quot;placeholderVariable&quot;&gt;</pre></section></div></div></div><script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js" type="text/javascript"></script><script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.3/underscore-min.js" type="text/javascript"></script><script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/bootstrap.js" type="text/javascript"></script><script src="//cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.js" type="text/javascript"></script><script src="js/vendor.js" type="text/javascript"></script><script src="js/macgyver.js" type="text/javascript"></script><script>$("#top-nav li").removeClass("active");
+<h3>Example</h3><div class="docs-example"><input type="text" mac-placeholder="tagAutocompletePlaceholder"></div><pre ng-non-bindable class="prettyprint linenums">&lt;input type=&quot;text&quot; mac-placeholder=&quot;placeholderVariable&quot;&gt;</pre></section></div></div></div><script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.10.1/jquery.min.js" type="text/javascript"></script><script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.3/underscore-min.js" type="text/javascript"></script><script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/bootstrap.js" type="text/javascript"></script><script src="//cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.js" type="text/javascript"></script><script src="js/vendor.js" type="text/javascript"></script><script src="js/macgyver.js" type="text/javascript"></script><script>$("#top-nav li").removeClass("active");
 $("#directives-nav").addClass("active");</script></body></html>
