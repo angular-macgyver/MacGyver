@@ -121,6 +121,8 @@ angular.module("Mac").directive "cellTemplate", [ ->
 
   compile: (element, attr, linker) ->
     ($scope, $element, $attr, controllers) ->
-      templateName = $attr.for or $attr.cellTemplate or "?" # == default
-      controllers[1].cellTemplates[templateName] = [$element, linker, $attr]
+      templateNames =
+        if $attr.macCellTemplate then $attr.macCellTemplate.split() else ["?"]
+      for templateName in templateNames
+        controllers[1].cellTemplates[templateName] = [$element, linker, $attr]
 ]
