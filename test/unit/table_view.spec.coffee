@@ -251,7 +251,7 @@ describe "Table View", ->
               <th mac-cell-template mac-column-width="auto">Header Cell</th>
             </tr>
           </thead>
-          <tbody mac-table-section="body" models="tableData">
+          <tbody mac-table-section="body" mac-table-section-models="tableData">
             <tr mac-table-row>
               <td mac-cell-template="first_name last_name">{{cell.value()}}</td>
             </tr>
@@ -313,7 +313,7 @@ describe "Table View", ->
                   <th mac-cell-template mac-column-width="auto">Header Cell</th>
                 </tr>
               </thead>
-              <tbody mac-table-section="body" models="tableData" controller="tableBodySectionController">
+              <tbody mac-table-section="body" mac-table-section-models="tableData" mac-table-section-controller="tableBodySectionController">
                 <tr mac-table-row>
                   <td mac-cell-template>{{cell.value()}}</td>
                 </tr>
@@ -356,7 +356,7 @@ describe "Table View", ->
                   <th mac-cell-template mac-column-width="auto">Header Cell</th>
                 </tr>
               </thead>
-              <tbody mac-table-section="body" models="tableData">
+              <tbody mac-table-section="body" mac-table-section-models="tableData">
                 <tr mac-table-row>
                   <td mac-cell-template>{{cell.value()}}</td>
                 </tr>
@@ -396,7 +396,7 @@ describe "Table View", ->
                   <th mac-cell-template="born" mac-column-width="10%">born on {{cell.value()}}</th>
                 </tr>
               </thead>
-              <tbody mac-table-section="body" models="tableData">
+              <tbody mac-table-section="body" mac-table-section-models="tableData">
                 <tr mac-table-row>
                   <td mac-cell-template>{{cell.value()}}</th>
                 </tr>

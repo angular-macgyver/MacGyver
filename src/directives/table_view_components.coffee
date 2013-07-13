@@ -1,5 +1,5 @@
 #
-# macTableSection, Row, and cellTemplate
+# macTableSection, macTableRow, and macCellTemplate
 #
 
 angular.module("Mac").directive "macTableSection", [ "directiveHelpers", (directiveHelpers) ->
@@ -37,7 +37,7 @@ angular.module("Mac").directive "macTableSection", [ "directiveHelpers", (direct
 
           # Autogenerate if the section has no models (most likely a header or
           # footer)
-          if not $attr.models?
+          if not $attr.macTableSectionModels?
             # We want to wait for another section to be populated before we
             # continue so we have rows to work from, we'll assume there's going
             # to be a body...
@@ -54,13 +54,13 @@ angular.module("Mac").directive "macTableSection", [ "directiveHelpers", (direct
             $scope.section = controllers[1].section = $scope.table.sections[sectionName]
 
         # Watch and evaluate for our models
-        $attr.$observe "models", (modelsExp) ->
+        $attr.$observe "macTableSectionModels", (modelsExp) ->
           $scope.$watch "table", (table) ->
             return unless table
 
             # If we've got a controller attribute, we need to grab that first
-            if $attr.controller?
-              $attr.$observe "controller", (controllerExp) ->
+            if $attr.macTableSectionController?
+              $attr.$observe "macTableSectionController", (controllerExp) ->
                 $scope.$watch controllerExp, (controller) ->
                   controllers[1].watchModels modelsExp, controller
             # Otherwise just make the section
