@@ -52,7 +52,6 @@ angular.module("Mac").directive "macColumns", [ "macColumnsController", (macColu
   link: ($scope, $element, $attrs, controllers) ->
     $scope.$on "mac-columns-#{$scope.$id}-changed", (event, id, newValue, oldValue) ->
       controllers[3].recalculateWidths.apply controllers[3], arguments
-
 ]
 
 angular.module("Mac").directive "macColumnWidth", [ ->
