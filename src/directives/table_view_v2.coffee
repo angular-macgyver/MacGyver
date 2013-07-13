@@ -33,13 +33,13 @@ angular.module("Mac").directive "macTable", [ "MacTableController", (MacTableCon
     # Reduces the amount of setup on the users end when creating a new table
 
     # Cache our selectors
-    headerSectionElement = element.find("[table-section=header]")
+    headerSectionElement = element.find("[mac-table-section=header]")
 
-    # If we find the initial-width directive we can assume that the parent
+    # If we find the width directive we can assume that the parent
     # should have the mac-columns directive
-    element.find("[initial-width]")
+    element.find("[mac-column-width]")
       .attr("width", "{{cell.width}}%")
-      .parents("[table-row]")
+      .parents("[mac-table-row]")
         .attr("mac-columns", "")
 
     # Format our mac-cell-templates
@@ -59,27 +59,27 @@ angular.module("Mac").directive "macTable", [ "MacTableController", (MacTableCon
     # Reorderable?
     if attr.macTableReorderableColumns?
       headerSectionElement
-        .find("[table-row]")
+        .find("[mac-table-row]")
         .attr("mac-reorderable", "[mac-cell-template]")
         .attr("mac-reorderable-columns", "")
 
     # Generate our boilerplate ng-repeat on rows if there isn't on set already
-    element.find("[table-row]")
-      .not("[table-row][ng-repeat]")
+    element.find("[mac-table-row]")
+      .not("[mac-table-row][ng-repeat]")
       .attr("ng-repeat", "row in section.rows")
 
-    # Generating the boilerplate initial-width calculations is a drag,
-    # lets do that automatically looking for "auto" in initial-width
-    autoWidthTemplates = headerSectionElement.find("[initial-width=auto]")
+    # Generating the boilerplate mac-column-width calculations is a drag,
+    # lets do that automatically looking for "auto" in mac-column-width
+    autoWidthTemplates = headerSectionElement.find("[mac-column-width=auto]")
     if autoWidthTemplates.length
-      siblingTemplates = headerSectionElement.find("[initial-width]").not("[initial-width = auto]")
+      siblingTemplates = headerSectionElement.find("[mac-column-width]").not("[mac-column-width=auto]")
       remainingPercent = 100
       siblingTemplates.each ->
-        remainingPercent -= +$(this).attr('initial-width').replace "%", ""
+        remainingPercent -= +$(this).attr('mac-column-width').replace "%", ""
       initialWidthExp =
         "{{#{remainingPercent} / (table.columns.length - #{siblingTemplates.length})}}%"
       # Set each auto width template with our expression
-      autoWidthTemplates.attr "initial-width",  initialWidthExp
+      autoWidthTemplates.attr "mac-column-width",  initialWidthExp
 
     ($scope, $element, $attr, controller) ->
       controller.$element = $element

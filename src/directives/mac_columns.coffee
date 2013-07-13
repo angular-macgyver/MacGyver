@@ -46,7 +46,7 @@ angular.module("Mac").factory "macColumnsController", ->
 
 
 angular.module("Mac").directive "macColumns", [ "macColumnsController", (macColumnsController) ->
-  require:    ["^macTable", "^tableSection", "tableRow", "macColumns"]
+  require:    ["^macTable", "^macTableSection", "macTableRow", "macColumns"]
   controller: ["$scope", "$element", "$attrs", macColumnsController]
 
   link: ($scope, $element, $attrs, controllers) ->
@@ -55,8 +55,8 @@ angular.module("Mac").directive "macColumns", [ "macColumnsController", (macColu
 
 ]
 
-angular.module("Mac").directive "initialWidth", [ ->
-  require:  ["^macTable", "^tableSection", "^tableRow", "^macColumns"]
+angular.module("Mac").directive "macColumnWidth", [ ->
+  require:  ["^macTable", "^macTableSection", "^macTableRow", "^macColumns"]
   priority: 500
 
   compile: (element, attr) ->
@@ -65,7 +65,7 @@ angular.module("Mac").directive "initialWidth", [ ->
       controllers[3].trackedColumns[$scope.$id] = [$scope, $element]
 
       # Set the initial percentage
-      $attrs.$observe "initialWidth", (value) ->
+      $attrs.$observe "macColumnWidth", (value) ->
         # Only set this if we don't have a width
         return if $scope.cell.column.width
         $scope.cell.column.width = +value.replace "%", ""

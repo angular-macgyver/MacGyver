@@ -1,13 +1,11 @@
 #
-# tableSection, tableRow, and cellTemplate
+# macTableSection, Row, and cellTemplate
 #
 
-angular.module("Mac").directive "tableSection", [ "directiveHelpers", (directiveHelpers) ->
-  require:    ["^macTable", "tableSection"]
+angular.module("Mac").directive "macTableSection", [ "directiveHelpers", (directiveHelpers) ->
+  require:    ["^macTable", "macTableSection"]
   scope:      true
   controller: ["$scope", "$parse", ($scope, $parse) ->
-    @directive = "table-section"
-
     @cellTemplates = {}
 
     @watchModels = (modelsExp, controller) ->
@@ -22,9 +20,6 @@ angular.module("Mac").directive "tableSection", [ "directiveHelpers", (directive
         else
           $scope.table.load @name, models
 
-    @watchTable = (callback) ->
-      $scope.$watch "table", callback
-
     return
   ]
   compile: (element, attr, linker) ->
@@ -32,7 +27,7 @@ angular.module("Mac").directive "tableSection", [ "directiveHelpers", (directive
       # TODO: Clean this up... it's pretty confusing
 
       # Track our section name / section data
-      $attr.$observe "tableSection", (sectionName) ->
+      $attr.$observe "macTableSection", (sectionName) ->
         return unless sectionName
         controllers[1].name = sectionName
 
@@ -73,11 +68,10 @@ angular.module("Mac").directive "tableSection", [ "directiveHelpers", (directive
                 controllers[1].watchModels modelsExp
 ]
 
-angular.module("Mac").directive "tableRow", [ "directiveHelpers", (directiveHelpers) ->
-  require: ["^macTable", "^tableSection", "tableRow"]
+angular.module("Mac").directive "macTableRow", [ "directiveHelpers", (directiveHelpers) ->
+  require: ["^macTable", "^macTableSection", "macTableRow"]
 
   controller: ->
-    @directive   = "table-row"
     @repeatCells = (cells, rowElement, sectionController) ->
       # Clear out our existing cell-templates
       rowElement.find("[mac-cell-template]").remove()
@@ -117,7 +111,7 @@ angular.module("Mac").directive "tableRow", [ "directiveHelpers", (directiveHelp
 angular.module("Mac").directive "macCellTemplate", [ ->
   transclude: "element"
   priority:   1000
-  require:    ["^macTable", "^tableSection", "^tableRow"]
+  require:    ["^macTable", "^macTableSection", "^macTableRow"]
 
   compile: (element, attr, linker) ->
     ($scope, $element, $attr, controllers) ->
