@@ -246,7 +246,7 @@ describe "Table View", ->
       element  = null
       template =
       """<table mac-table columns="tableColumns">
-          <thead mac-table-section="header">
+          <thead mac-table-section="header" mac-table-section-blank-row>
             <tr mac-table-row>
               <th mac-cell-template mac-column-width="auto">Header Cell</th>
             </tr>
@@ -256,7 +256,7 @@ describe "Table View", ->
               <td mac-cell-template="first_name last_name">{{cell.value()}}</td>
             </tr>
           </tbody>
-          <tfoot mac-table-section="footer">
+          <tfoot mac-table-section="footer" mac-table-section-blank-row>
             <tr mac-table-row>
               <td mac-cell-template>Footer Cell</td>
             </tr>
@@ -308,7 +308,7 @@ describe "Table View", ->
 
           sectionControllersTemplate =
           """<table mac-table columns="tableColumns">
-              <thead mac-table-section="header">
+              <thead mac-table-section="header" mac-table-section-blank-row>
                 <tr mac-table-row>
                   <th mac-cell-template mac-column-width="auto">Header Cell</th>
                 </tr>
@@ -318,7 +318,7 @@ describe "Table View", ->
                   <td mac-cell-template>{{cell.value()}}</td>
                 </tr>
               </tbody>
-              <tfoot mac-table-section="footer">
+              <tfoot mac-table-section="footer" mac-table-section-blank-row>
                 <tr mac-table-row>
                   <td mac-cell-template>Footer Cell</td>
                 </tr>
@@ -351,7 +351,7 @@ describe "Table View", ->
                 mac-table-resizable-columns
                 mac-table-reorderable-columns
               >
-              <thead mac-table-section="header">
+              <thead mac-table-section="header" mac-table-section-blank-row>
                 <tr mac-table-row>
                   <th mac-cell-template mac-column-width="auto">Header Cell</th>
                 </tr>
@@ -361,7 +361,7 @@ describe "Table View", ->
                   <td mac-cell-template>{{cell.value()}}</td>
                 </tr>
               </tbody>
-              <tfoot mac-table-section="footer">
+              <tfoot mac-table-section="footer" mac-table-section-blank-row>
                 <tr mac-table-row>
                   <td mac-cell-template>Footer Cell</td>
                 </tr>
@@ -389,7 +389,7 @@ describe "Table View", ->
         beforeEach ->
           autoWidthsTemplate =
           """<table mac-table columns="tableColumns">
-              <thead mac-table-section="header">
+              <thead mac-table-section="header" mac-table-section-blank-row>
                 <tr mac-table-row>
                   <th mac-cell-template mac-column-width="auto">{{cell.value()}}</th>
                   <th mac-cell-template="band" mac-column-width="auto">{{cell.value()}}</th>
