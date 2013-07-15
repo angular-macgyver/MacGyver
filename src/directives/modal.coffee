@@ -61,7 +61,7 @@ angular.module("Mac").directive("macModal", [
         if opts.overlayClose and $($event.target).is(".modal-overlay")
           $scope.closeModal()
 
-      $scope.closeModal = ($event)->
+      $scope.closeModal = ($event) ->
         modal.hide -> bindingEvents "unbind"
 
       if elementId
