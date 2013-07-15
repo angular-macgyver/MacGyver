@@ -30,7 +30,7 @@ angular.module("Mac").directive "macTableSection", [
     directiveHelpers
     MacTableSectionController
   ) ->
-    require:    ["^macTable", "macTableSection", "?macTableSectionModels"]
+    require:    ["^macTable", "macTableSection", "?macTableSectionModels", "?macTableSectionController"]
     scope:      true
     controller: ["$scope", MacTableSectionController]
 
@@ -65,53 +65,71 @@ angular.module("Mac").directive "macTableSection", [
             $scope.$watch "table.sections.#{sectionName}", (section) ->
               $scope.section = controllers[1].section = $scope.table.sections[sectionName]
 
-          # We don't have a controller to watch models on
-          return unless controllers[2]
+          if controllers[2]
+            # Watch and evaluate for our models
+            $attr.$observe "macTableSectionModels", (modelsExp) ->
+              $scope.$watch "table", (table) ->
+                return unless table
+                controllers[2].watchModels sectionName, modelsExp
 
-          # Watch and evaluate for our models
-          $attr.$observe "macTableSectionModels", (modelsExp) ->
-            $scope.$watch "table", (table) ->
-              return unless table
-
-              # If we've got a controller attribute, we need to grab that first
-              if $attr.macTableSectionController?
-                $attr.$observe "macTableSectionController", (controllerExp) ->
-                  $scope.$watch controllerExp, (controller) ->
-                    controllers[2].watchModels sectionName, modelsExp, controller
-              # Otherwise just make the section
-              else
-                  controllers[2].watchModels sectionName, modelsExp
+          if controllers[3]
+            # Watch and evalute for our controller
+            $attr.$observe "macTableSectionController", (controllerExp) ->
+              $scope.$watch "table", (table) ->
+                return unless table
+                controllers[3].watchController sectionName, controllerExp
 ]
 
-angular.module("Mac").factory "MacTableSectionModelsController", [
+angular.module("Mac").factory "MacTableSectionModelsCtrl", [
   "$parse"
   (
     $parse
   ) ->
-    class MacTableSectionModelsController
+    class MacTableSectionModelsCtrl
       constructor: (@scope) ->
 
-      watchModels: (sectionName, modelsExp, controller) ->
+      watchModels: (sectionName, modelsExp) ->
         @scope.$watch "#{modelsExp}.length", (modelsLength) =>
           models = $parse(modelsExp)(@scope)
           return unless models
-          @models = models
 
-          if controller?
-            @scope.table.load sectionName, models, controller
-          else
-            @scope.table.load sectionName, models
+          @models = models
+          @scope.table.load sectionName, models
 ]
 
 angular.module("Mac").directive "macTableSectionModels", [
-  "MacTableSectionModelsController"
+  "MacTableSectionModelsCtrl"
   (
-    MacTableSectionModelsController
+    MacTableSectionModelsCtrl
   ) ->
-    controller: ["$scope", MacTableSectionModelsController]
+    controller: ["$scope", MacTableSectionModelsCtrl]
     compile: (element, attr) ->
 ]
 
+angular.module("Mac").factory "MacTableSectionControllerCtrl", [
+  "$parse"
+  (
+    $parse
+  ) ->
+    class MacTableSectionControllerCtrl
+      constructor: (@scope) ->
+
+      watchController: (sectionName, controllerExp) ->
+        @scope.$watch controllerExp, (controller) =>
+          return unless controller
+
+          @controller = controller
+          @scope.table.load sectionName, null, controller
+]
+
+angular.module("Mac").directive "macTableSectionController", [
+  "MacTableSectionControllerCtrl"
+  (
+    MacTableSectionControllerCtrl
+  ) ->
+    controller: ["$scope", MacTableSectionControllerCtrl]
+    compile: (element, attr) ->
+]
 
 angular.module("Mac").factory "MacTableRowController", [
   "directiveHelpers"
