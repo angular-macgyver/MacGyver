@@ -80,28 +80,24 @@ angular.module("Mac").directive "tableRow", [ "directiveHelpers", (directiveHelp
     @directive   = "table-row"
     @repeatCells = (cells, rowElement, sectionController) ->
       # Clear out our existing cell-templates
-      rowElement.find("[mac-cell-template]").remove()
+      rowElement.html ""
 
-      # Figure out where to add in our cell templates
-      # we search for the markers "before-templates" && "after-templates"
-      # or else default to appending it first into the row
-      beforeElement = rowElement.find("[before-templates]:last")
-      afterElement  = rowElement.find("[after-templates]:first")
-
-      if beforeElement.length
-        cellMarker = beforeElement
-      else if afterElement.length
-        cellMarker = angular.element "<!-- cells: #{sectionController.section.name} -->"
-        afterElement.before cellMarker
-      else
-        cellMarker = angular.element "<!-- cells: #{sectionController.section.name} -->"
-        rowElement.append cellMarker
+      cellMarker = angular.element "<!-- cells: #{sectionController.section.name} -->"
+      rowElement.append cellMarker
 
       linkerFactory = (cell) =>
-        templateName = cell.colName of sectionController.cellTemplates and cell.colName or "?"
+        templateName = cell.column.colName of sectionController.cellTemplates and cell.column.colName or "?"
         return template[1] if template = sectionController.cellTemplates[templateName]
 
+      # Store current display and then set it to display none
+      currentDisplay = rowElement.css "display"
+      rowElement.css "display", "none"
+
+      # Repeat our cells
       directiveHelpers.repeater cells, "cell", rowElement.scope(), cellMarker, linkerFactory
+
+      # Reset our display
+      rowElement.css "display", currentDisplay
 
     return
   compile: (element, attr) ->
