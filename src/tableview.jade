@@ -24,7 +24,7 @@ block append content
                 th(mac-cell-template="", initial-width="auto")
                   span {{cell.colName}}
 
-            tbody(table-section="body", models="maGyverSeasonOne")
+            tbody(table-section="body", models="macGyverSeasonOne")
               tr(table-row, ng-repeat="row in section.rows")
                 td(mac-cell-template="")
                   span {{cell.value()}}
@@ -37,7 +37,7 @@ block append content
           |       <th mac-cell-template="" initial-width="auto"><span>{{cell.colName}}</span></th>
           |     </tr>
           |   </thead>
-          |   <tbody table-section="body" models="maGyverSeasonOne">
+          |   <tbody table-section="body" models="macGyverSeasonOne">
           |     <tr table-row="table-row" ng-repeat="row in section.rows">
           |       <td mac-cell-template=""><span>{{cell.value()}}</span></td>
           |     </tr>
