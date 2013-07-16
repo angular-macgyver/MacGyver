@@ -11247,7 +11247,7 @@ angular.module("Mac").directive("macReorderableColumns", [
           columnsOrder = [];
           changedElement = $(ui.item);
           columnElements.each(function() {
-            return columnsOrder.push($(this).scope().cell.colName);
+            return columnsOrder.push($(this).scope().cell.column.colName);
           });
           return $scope.$apply(function() {
             controllers[0].table.columnsOrder = columnsOrder;
@@ -12091,28 +12091,22 @@ angular.module("Mac").directive("tableRow", [
       controller: function() {
         this.directive = "table-row";
         this.repeatCells = function(cells, rowElement, sectionController) {
-          var afterElement, beforeElement, cellMarker, linkerFactory,
+          var cellMarker, currentDisplay, linkerFactory,
             _this = this;
-          rowElement.find("[mac-cell-template]").remove();
-          beforeElement = rowElement.find("[before-templates]:last");
-          afterElement = rowElement.find("[after-templates]:first");
-          if (beforeElement.length) {
-            cellMarker = beforeElement;
-          } else if (afterElement.length) {
-            cellMarker = angular.element("<!-- cells: " + sectionController.section.name + " -->");
-            afterElement.before(cellMarker);
-          } else {
-            cellMarker = angular.element("<!-- cells: " + sectionController.section.name + " -->");
-            rowElement.append(cellMarker);
-          }
+          rowElement.html("");
+          cellMarker = angular.element("<!-- cells: " + sectionController.section.name + " -->");
+          rowElement.append(cellMarker);
           linkerFactory = function(cell) {
             var template, templateName;
-            templateName = cell.colName in sectionController.cellTemplates && cell.colName || "?";
+            templateName = cell.column.colName in sectionController.cellTemplates && cell.column.colName || "?";
             if (template = sectionController.cellTemplates[templateName]) {
               return template[1];
             }
           };
-          return directiveHelpers.repeater(cells, "cell", rowElement.scope(), cellMarker, linkerFactory);
+          currentDisplay = rowElement.css("display");
+          rowElement.css("display", "none");
+          directiveHelpers.repeater(cells, "cell", rowElement.scope(), cellMarker, linkerFactory);
+          return rowElement.css("display", currentDisplay);
         };
       },
       compile: function(element, attr) {
@@ -12168,8 +12162,8 @@ angular.module("Mac").directive("macTableV2", [
       compile: function(element, attr) {
         var autoWidthTemplates, headerSectionElement, initialWidthExp, remainingPercent, siblingTemplates;
         headerSectionElement = element.find("[table-section=header]");
-        element.find("[initial-width]").attr("width", "{{cell.width}}%").parents("[table-row]").attr("mac-columns", "");
-        element.find("[mac-cell-template]").wrapInner("<div class='cell-wrapper' />").attr("data-column-name", "{{cell.colName}}");
+        element.find("[initial-width]").attr("width", "{{cell.column.width}}%").parents("[table-row]").attr("mac-columns", "");
+        element.find("[mac-cell-template]").wrapInner("<div class='cell-wrapper' />").attr("data-column-name", "{{cell.column.colName}}");
         if (attr.resizableColumns != null) {
           headerSectionElement.find("[mac-cell-template]").find(".cell-wrapper").attr("mac-resizable-column", "").attr("mac-resizable", "").attr("mac-resizable-containment", "document");
         }
@@ -12751,6 +12745,7 @@ module.controller("modalController", [
 
 module.controller("ExampleController", [
   "$scope", "$timeout", "Table", function($scope, $timeout, Table) {
+    var i, _i;
     $scope.data = [];
     $scope.loading = true;
     setTimeout((function() {
@@ -12782,141 +12777,16 @@ module.controller("ExampleController", [
       return alert("Loading 20 more rows");
     };
     $scope.columnOrder = ["Name", "anotherName", "d", "c", "b", "Created"];
-    $scope.maGyverSeasonOne = [
-      {
+    $scope.macGyverSeasonOne = [];
+    for (i = _i = 1; _i <= 1000; i = ++_i) {
+      $scope.macGyverSeasonOne.push({
         'No.': '1',
         'Title': '"Pilot"',
         'Directed by': 'Jerrold Freedman',
         'Written by': 'Thackary Pallor',
         'Original air date': 'September 29, 1985'
-      }, {
-        'No.': '2',
-        'Title': '"The Golden Triangle"',
-        'Directed by': 'Paul Stanley & Donald Petrie',
-        'Written by': 'Dennis R. Foley & Terry Nation',
-        'Original air date': 'October 6, 1985'
-      }, {
-        'No.': '3',
-        'Title': '"Thief of Budapest"',
-        'Directed by': 'Lee H. Katzin & John Patterson',
-        'Written by': 'Terry Nation & Stephen Downing & Joe Viola',
-        'Original air date': 'October 13, 1985'
-      }, {
-        'No.': '4',
-        'Title': '"The Gauntlet"',
-        'Directed by': 'Lee H. Katzin',
-        'Written by': 'Stephen Kandel',
-        'Original air date': 'October 20, 1985'
-      }, {
-        'No.': '5',
-        'Title': '"The Heist"',
-        'Directed by': 'Alan Smithee',
-        'Written by': 'Larry Alexander & James Schmerer',
-        'Original air date': 'November 3, 1985'
-      }, {
-        'No.': '6',
-        'Title': '"Trumbo\'s World"',
-        'Directed by': 'Donald Petrie & Lee H. Katzin',
-        'Written by': 'Stephen Kandel',
-        'Original air date': 'November 10, 1985'
-      }, {
-        'No.': '7',
-        'Title': '"Last Stand"',
-        'Directed by': 'John Florea',
-        'Written by': 'Judy Burns',
-        'Original air date': 'November 17, 1985'
-      }, {
-        'No.': '8',
-        'Title': '"Hellfire"',
-        'Directed by': 'Richard Colla',
-        'Written by': 'Story by: Douglas Brooks West',
-        'Original air date': 'November 24, 1985'
-      }, {
-        'No.': '9',
-        'Title': '"The Prodigal"',
-        'Directed by': 'Alexander Singer',
-        'Written by': 'Story by: David Abramowitz & Paul Savage',
-        'Original air date': 'December 8, 1985'
-      }, {
-        'No.': '10',
-        'Title': '"Target MacGyver"',
-        'Directed by': 'Lee H. Katzin & Ernest Pintoff',
-        'Written by': 'Story by: Mike Marvin',
-        'Original air date': 'December 22, 1985'
-      }, {
-        'No.': '11',
-        'Title': '"Nightmares"',
-        'Directed by': 'Cliff Bole',
-        'Written by': 'James Schmerer',
-        'Original air date': 'January 15, 1986'
-      }, {
-        'No.': '12',
-        'Title': '"Deathlock"',
-        'Directed by': 'Cliff Bole & Alexander Singer',
-        'Written by': 'Jerry Ludwig & Stephen Kandel',
-        'Original air date': 'January 22, 1986'
-      }, {
-        'No.': '13',
-        'Title': '"Flame\'s End"',
-        'Directed by': 'Bruce Seth Green',
-        'Written by': 'Story by: Hannah Louise Shearer',
-        'Original air date': 'January 29, 1986'
-      }, {
-        'No.': '14',
-        'Title': '"Countdown"',
-        'Directed by': 'Stan Jolley',
-        'Written by': 'Tony DiMarco & David Ketchum',
-        'Original air date': 'February 5, 1986'
-      }, {
-        'No.': '15',
-        'Title': '"The Enemy Within"',
-        'Directed by': 'Cliff Bole',
-        'Written by': 'David Abramowitz',
-        'Original air date': 'February 12, 1986'
-      }, {
-        'No.': '16',
-        'Title': '"Every Time She Smiles"',
-        'Directed by': 'Charlie Correll',
-        'Written by': 'James Schmerer',
-        'Original air date': 'February 19, 1986'
-      }, {
-        'No.': '17',
-        'Title': '"To Be a Man"',
-        'Directed by': 'Cliff Bole',
-        'Written by': 'Don Mankiewicz',
-        'Original air date': 'March 5, 1986'
-      }, {
-        'No.': '18',
-        'Title': '"Ugly Duckling"',
-        'Directed by': 'Charlie Correll',
-        'Written by': 'Larry Gross',
-        'Original air date': 'March 12, 1986'
-      }, {
-        'No.': '19',
-        'Title': '"Slow Death"',
-        'Directed by': 'Don Weis',
-        'Written by': 'Stephen Kandel',
-        'Original air date': 'April 2, 1986'
-      }, {
-        'No.': '20',
-        'Title': '"The Escape"',
-        'Directed by': 'Don Chaffey',
-        'Written by': 'Stephen Kandel',
-        'Original air date': 'April 16, 1986'
-      }, {
-        'No.': '21',
-        'Title': '"A Prisoner of Conscience"',
-        'Directed by': 'Cliff Bole',
-        'Written by': 'Stephen Kandel',
-        'Original air date': 'April 30, 1986'
-      }, {
-        'No.': '22',
-        'Title': '"The Assassin"',
-        'Directed by': 'Charlie Correll',
-        'Written by': 'James Schmerer',
-        'Original air date': 'May 7, 1986'
-      }
-    ];
+      });
+    }
     $scope.reverse = false;
     $scope.genPredicate = function(colName) {
       return function(row) {
@@ -12949,10 +12819,10 @@ module.controller("ExampleController", [
     ];
     $scope.selectedOptionValue = "1";
     $scope.convertToText = function() {
-      var option, _i, _len, _ref;
+      var option, _j, _len, _ref;
       _ref = $scope.selectOptions;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        option = _ref[_i];
+      for (_j = 0, _len = _ref.length; _j < _len; _j++) {
+        option = _ref[_j];
         if (option.value === +$scope.selectedOptionValue) {
           return option.text;
         }
@@ -13311,7 +13181,7 @@ angular.module("Mac").factory("modal", [
         } else {
           return this.waiting = {
             id: id,
-            options: options
+            options: triggerOptions
           };
         }
       },
@@ -13342,8 +13212,8 @@ angular.module("Mac").factory("modal", [
           return;
         }
         id = this.opened.id;
-        this.opened.element.removeClass("visible");
         opened = this.opened.element;
+        opened.removeClass("visible");
         setTimeout(function() {
           return opened.addClass("hide");
         }, 250);
@@ -13377,7 +13247,8 @@ angular.module("Mac").factory("modal", [
         return delete this.registered[id];
       },
       clearWaiting: function(id) {
-        if ((id != null) && this.waiting.id !== id) {
+        var _ref;
+        if ((id != null) && ((_ref = this.waiting) != null ? _ref.id : void 0) !== id) {
           return;
         }
         return this.waiting = null;
@@ -13387,18 +13258,6 @@ angular.module("Mac").factory("modal", [
 ]);
 
 var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
-
-angular.module("Mac").factory("TableBaseColumn", [
-  function() {
-    var TableBaseColumn;
-    return TableBaseColumn = (function() {
-      function TableBaseColumn() {}
-
-      return TableBaseColumn;
-
-    })();
-  }
-]);
 
 angular.module("Mac").factory("TableSectionController", [
   function() {
@@ -13422,77 +13281,88 @@ angular.module("Mac").factory("TableSectionController", [
   }
 ]);
 
-angular.module("Mac").factory("SectionController", [
-  "TableSectionController", function(TableSectionController) {
-    return TableSectionController;
-  }
-]);
+angular.module("Mac").factory("TableRow", function() {
+  var TableRow;
+  return TableRow = (function() {
+    function TableRow(section, model, cells, cellsMap) {
+      this.section = section;
+      this.model = model;
+      this.cells = cells != null ? cells : [];
+      this.cellsMap = cellsMap != null ? cellsMap : {};
+    }
 
-angular.module("Mac").factory("TableRow", [
-  function() {
-    var TableRow;
-    return TableRow = (function() {
-      function TableRow(section, model, cells, cellsMap) {
-        this.section = section;
-        this.model = model;
-        this.cells = cells != null ? cells : [];
-        this.cellsMap = cellsMap != null ? cellsMap : {};
-      }
-
-      TableRow.prototype.toJSON = function() {
-        return {
-          cells: this.cells
-        };
+    TableRow.prototype.toJSON = function() {
+      return {
+        cells: this.cells
       };
+    };
 
-      return TableRow;
+    return TableRow;
 
-    })();
-  }
-]);
+  })();
+});
 
-angular.module("Mac").factory("TableSection", [
-  function() {
-    var TableSection;
-    return TableSection = (function() {
-      function TableSection(controller, table, name, rows) {
-        this.table = table;
-        this.name = name;
-        this.rows = rows != null ? rows : [];
-        this.setController(controller);
-      }
+angular.module("Mac").factory("TableSection", function() {
+  var TableSection;
+  return TableSection = (function() {
+    function TableSection(controller, table, name, rows) {
+      this.table = table;
+      this.name = name;
+      this.rows = rows != null ? rows : [];
+      this.setController(controller);
+    }
 
-      TableSection.prototype.setController = function(controller) {
-        return this.ctrl = new controller(this);
+    TableSection.prototype.setController = function(controller) {
+      return this.ctrl = new controller(this);
+    };
+
+    TableSection.prototype.toJSON = function() {
+      return {
+        rows: this.rows
       };
+    };
 
-      TableSection.prototype.toJSON = function() {
-        return {
-          rows: this.rows
-        };
+    return TableSection;
+
+  })();
+});
+
+angular.module("Mac").factory("TableCell", function() {
+  var Cell;
+  return Cell = (function() {
+    function Cell(row, column) {
+      this.row = row;
+      this.column = column;
+    }
+
+    Cell.prototype.value = function() {
+      var _ref, _ref1;
+      return (_ref = this.row) != null ? (_ref1 = _ref.section) != null ? _ref1.ctrl.cellValue(this.row, this.column.colName) : void 0 : void 0;
+    };
+
+    Cell.prototype.toJSON = function() {
+      return {
+        value: this.value(),
+        column: this.column.colName
       };
+    };
 
-      return TableSection;
+    return Cell;
 
-    })();
-  }
-]);
+  })();
+});
 
 angular.module("Mac").factory("tableComponents", [
-  "TableSectionController", "TableRow", "TableSection", function(TableSectionController, TableRow, TableSection) {
+  "TableSectionController", "TableRow", "TableSection", "TableCell", function(TableSectionController, TableRow, TableSection, TableCell) {
     return {
       rowFactory: function(section, model) {
         return new TableRow(section, model);
       },
-      columnFactory: function(colName, proto) {
+      columnFactory: function(colName) {
         var Column;
-        if (proto == null) {
-          proto = {};
-        }
         Column = function(colName) {
           this.colName = colName;
         };
-        Column.prototype = proto;
         return new Column(colName);
       },
       sectionFactory: function(table, sectionName, controller) {
@@ -13501,31 +13371,11 @@ angular.module("Mac").factory("tableComponents", [
         }
         return new TableSection(controller, table, sectionName);
       },
-      cellFactory: function(row, proto) {
-        var Cell;
-        if (proto == null) {
-          proto = {};
+      cellFactory: function(row, column) {
+        if (column == null) {
+          column = {};
         }
-        Cell = function(row, column) {
-          this.row = row;
-          this.column = column;
-          this.value = function() {
-            var _ref, _ref1;
-            return (_ref = this.row) != null ? (_ref1 = _ref.section) != null ? _ref1.ctrl.cellValue(this.row, this.colName) : void 0 : void 0;
-          };
-          this.get = function(name) {
-            var _base, _ref, _ref1;
-            return (_ref = this.row) != null ? (_ref1 = _ref.section) != null ? typeof (_base = _ref1.ctrl)[name] === "function" ? _base[name](this.row, this.colName) : void 0 : void 0 : void 0;
-          };
-          this.toJSON = function() {
-            return {
-              value: this.value(),
-              column: this.column.colName
-            };
-          };
-        };
-        Cell.prototype = proto;
-        return new Cell(row, proto);
+        return new TableCell(row, column);
       }
     };
   }
@@ -13582,7 +13432,7 @@ angular.module("Mac").factory("TableColumnsController", [
         _results = [];
         for (_i = 0, _len = columns.length; _i < _len; _i++) {
           colName = columns[_i];
-          column = tableComponents.columnFactory(colName, this.table.baseColumn);
+          column = tableComponents.columnFactory(colName);
           this.table.columnsMap[colName] = column;
           _results.push(this.table.columns.push(column));
         }
@@ -13680,7 +13530,7 @@ angular.module("Mac").factory("TableRowsController", [
 ]);
 
 angular.module("Mac").factory("Table", [
-  "TableBaseColumn", "TableColumnsController", "TableRowsController", function(TableBaseColumn, TableColumnsController, TableRowsController) {
+  "TableColumnsController", "TableRowsController", function(TableColumnsController, TableRowsController) {
     var Table, convertObjectModelsToArray;
     convertObjectModelsToArray = function(models) {
       if (models && !angular.isArray(models)) {
@@ -13690,11 +13540,10 @@ angular.module("Mac").factory("Table", [
       }
     };
     return Table = (function() {
-      function Table(columns, baseColumn) {
+      function Table(columns) {
         if (columns == null) {
           columns = [];
         }
-        this.baseColumn = baseColumn != null ? baseColumn : new TableBaseColumn();
         this.sections = {};
         this.columns = [];
         this.columnsCtrl = new TableColumnsController(this);
