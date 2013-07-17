@@ -83,15 +83,12 @@ angular.module("Mac").directive "tableRow", [ "directiveHelpers", (directiveHelp
       while child = rowElement[0].firstChild
         child.remove()
 
-      cellMarker = angular.element "<!-- cells: #{sectionController.section.name} -->"
-      rowElement[0].appendChild cellMarker[0]
-
       linkerFactory = (cell) ->
         templateName = if cell.column.colName of sectionController.cellTemplates then cell.column.colName else "?"
         return template[1] if template = sectionController.cellTemplates[templateName]
 
       # Repeat our cells
-      directiveHelpers.repeater cells, "cell", rowElement.scope(), cellMarker, linkerFactory
+      directiveHelpers.repeater cells, "cell", rowElement.scope(), rowElement, linkerFactory
 
     return
   compile: (element, attr) ->
