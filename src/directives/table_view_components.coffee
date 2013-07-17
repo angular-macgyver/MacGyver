@@ -80,24 +80,18 @@ angular.module("Mac").directive "tableRow", [ "directiveHelpers", (directiveHelp
     @directive   = "table-row"
     @repeatCells = (cells, rowElement, sectionController) ->
       # Clear out our existing cell-templates
-      rowElement.html ""
+      while child = rowElement[0].firstChild
+        child.remove()
 
       cellMarker = angular.element "<!-- cells: #{sectionController.section.name} -->"
-      rowElement.append cellMarker
+      rowElement[0].appendChild cellMarker[0]
 
-      linkerFactory = (cell) =>
-        templateName = cell.column.colName of sectionController.cellTemplates and cell.column.colName or "?"
+      linkerFactory = (cell) ->
+        templateName = if cell.column.colName of sectionController.cellTemplates then cell.column.colName else "?"
         return template[1] if template = sectionController.cellTemplates[templateName]
-
-      # Store current display and then set it to display none
-      currentDisplay = rowElement.css "display"
-      rowElement.css "display", "none"
 
       # Repeat our cells
       directiveHelpers.repeater cells, "cell", rowElement.scope(), cellMarker, linkerFactory
-
-      # Reset our display
-      rowElement.css "display", currentDisplay
 
     return
   compile: (element, attr) ->
