@@ -80,8 +80,7 @@ angular.module("Mac").directive "tableRow", [ "directiveHelpers", (directiveHelp
     @directive   = "table-row"
     @repeatCells = (cells, rowElement, sectionController) ->
       # Clear out our existing cell-templates
-      while child = rowElement[0].firstChild
-        child.remove()
+      rowElement.children().remove()
 
       linkerFactory = (cell) ->
         templateName = if cell.column.colName of sectionController.cellTemplates then cell.column.colName else "?"
