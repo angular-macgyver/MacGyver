@@ -37,24 +37,28 @@ angular.module("Mac").directive "macTagAutocomplete", [
     scope:
       url:         "=macTagAutocompleteUrl"
       placeholder: "=macTagAutocompletePlaceholder"
-      onEnter:     "&macTagAutocompleteOnEnter"
       selected:    "=macTagAutocompleteSelected"
       source:      "=macTagAutocompleteSource"
       disabled:    "=macTagAutocompleteDisabled"
-      onKeydown:   "&macTagAutocompleteOnKeydown"
       model:       "=macTagAutocompleteModel"
+      onEnter:     "&macTagAutocompleteOnEnter"
+      onKeydown:   "&macTagAutocompleteOnKeydown"
 
     compile: (element, attrs) ->
-      valueKey    = attrs.macTagAutocompleteValue  or "id"
-      labelKey    = attrs.macTagAutocompleteLabel  or "name"
+      valueKey    = attrs.macTagAutocompleteValue
+      valueKey   ?= "id"
+      labelKey    = attrs.macTagAutocompleteLabel
+      labelKey   ?= "name"
       queryKey    = attrs.macTagAutocompleteQuery  or "q"
       delay       = +attrs.macTagAutocompleteDelay or 800
       events      = attrs.macTagAutocompleteEvents or ""
-      eventsList  = _(events.split ",").map (item) ->
-        attrEvent = _.string.capitalize item
-        name:        item
-        capitalized: attrEvent
-        eventFn:     attrs["macTagAutocompleteOn#{attrEvent}"]
+      eventsList  = []
+      if events
+        eventsList  = _(events.split ",").map (item) ->
+          attrEvent = _.string.capitalize item
+          name:        item
+          capitalized: attrEvent
+          eventFn:     attrs["macTagAutocompleteOn#{attrEvent}"]
 
       # Update template on label variable name
       tagLabelKey = if labelKey then ".#{labelKey}" else labelKey
@@ -69,7 +73,7 @@ angular.module("Mac").directive "macTagAutocomplete", [
 
       if attrs.macTagAutocompleteUrl?
         attrsObject["mac-autocomplete-url"] = "url"
-      else
+      else if attrs.macTagAutocompleteSource?
         attrsObject["mac-autocomplete-source"] = "autocompleteSource"
 
       textInput.attr attrsObject
@@ -78,22 +82,16 @@ angular.module("Mac").directive "macTagAutocomplete", [
         # Variable for input element
         $scope.textInput = ""
 
-        $scope.$watch "textInput", (value) ->
-          $scope.model = value if attrs.macTagAutocompleteModel?
-
-        $scope.$watch "model", (value) -> $scope.textInput = value
+        if attrs.macTagAutocompleteModel?
+          $scope.$watch "textInput", (value) -> $scope.model = value
+          $scope.$watch "model",     (value) -> $scope.textInput = value
 
         # Clicking on the element will focus on input
-        element.click ->
-          $(".text-input", element).focus()
+        element.click -> $(".text-input", element).focus()
 
-        #
-        # @watcher
-        # @name disabled
-        # @description
-        # Rebind events after ng-switch
-        #
-        $scope.$watch "disabled", (value) ->
+        # HACK - To make sure autocomplete html has been replaced
+        $scope.eventsList = eventsList
+        $scope.$watch "eventsList", (value) ->
           # Loop through the list of events user specified
           for event in eventsList
             continue unless event.eventFn and event.name isnt "keydown"
@@ -105,6 +103,7 @@ angular.module("Mac").directive "macTagAutocomplete", [
                   expression $scope.$parent, {$event, item: $scope.textInput }
 
         $scope.$watch "selected.length", (length) ->
+          # TODO Better way to find the difference between selected and source
           sourceValues   = _($scope.source or []).pluck valueKey
           selectedValues = _($scope.selected or []).pluck valueKey
           difference     = _(sourceValues).difference selectedValues
@@ -116,7 +115,7 @@ angular.module("Mac").directive "macTagAutocomplete", [
           stroke = $event.which or $event.keyCode
           switch stroke
             when keys.BACKSPACE
-              $scope.selected.pop() unless $scope.textInput
+              $scope.selected.pop?() unless $scope.textInput
             when keys.ENTER
               # Used when autocomplete is not needed
               if $scope.textInput.length > 0 and $scope.disabled

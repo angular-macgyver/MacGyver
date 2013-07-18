@@ -17,11 +17,9 @@ module.controller "ExampleController", ["$scope", "$timeout", "Table", ($scope, 
   # Current generating 10000 rows of entries to make sure table view can handle large
   # amount of data
   $scope.data = []
-  #for i in [1..10000]
   # Added setTimeout to mimic ajax delay
   $scope.loading = true
   setTimeout (->
-    #for i in [1..5000]
     for i in [1..23]
       obj =
         name: "Test " + i
@@ -49,7 +47,6 @@ module.controller "ExampleController", ["$scope", "$timeout", "Table", ($scope, 
 
   # Columns to display and their order
   $scope.columnOrder = ["Name", "anotherName", "d", "c", "b", "Created"]
-  #$scope.columnOrder = ["Name", "Abc"] # Used for testing values inside attributes
 
   # MacTableV2
 
@@ -100,24 +97,18 @@ module.controller "ExampleController", ["$scope", "$timeout", "Table", ($scope, 
   $scope.tagAutocompleteEvents           = []
 
   $scope.tagAutocompletePlaceholder = "Hello"
+  $scope.tagAutocompleteModel       = ""
 
   $scope.tagAutocompleteOnSelected = (item) ->
     return {key: item}
 
   $scope.tagAutocompleteOnBlur = (event, item) ->
-    # Tokenize on blur
+    return unless item
     $scope.tagAutocompleteEvents.push key: item
+    $scope.tagAutocompleteModel = ""
 
   $scope.tagAutocompleteOnKeyup = (event, item) ->
     console.debug "You just typed something"
-
-  $scope.tagAutocompleteClearText = ->
-    $scope.$broadcast "mac-tag-autocomplete-clear-input"
-
-  # Blur section
-  # Called with blur directive on blur
-  $scope.onTextBlur = ->
-    alert "You just blurred out of text input"
 
   # Tag input section
   # tag input options
