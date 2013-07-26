@@ -1,6 +1,12 @@
-##
-## macTableRow, and macCellTemplate
-##
+###
+@chalk overview
+@name Table Row
+@description
+Directive initializing a table row for cell templates to be registered under
+
+@dependencies
+macTable, macTableSection
+###
 
 angular.module("Mac").factory "MacTableRowController", [
   "directiveHelpers"
@@ -14,8 +20,14 @@ angular.module("Mac").factory "MacTableRowController", [
         rowElement.children().remove()
 
         linkerFactory = (cell) ->
-          templateName = if cell.column.colName of sectionController.cellTemplates then cell.column.colName else "?"
-          return template[1] if template = sectionController.cellTemplates[templateName]
+          templateName =
+            if cell.column.colName of sectionController.cellTemplates
+              cell.column.colName
+            else
+              "?"
+
+          if template = sectionController.cellTemplates[templateName]
+            return template[1]
 
         # Repeat our cells
         directiveHelpers.repeater cells, "cell", rowElement.scope(), rowElement, linkerFactory
@@ -37,17 +49,4 @@ angular.module("Mac").directive "macTableRow", [
           # if so return without anymore processing
           return unless controllers[1].section?.name?
           controllers[2].repeatCells cells, $element, controllers[1]
-]
-
-angular.module("Mac").directive "macCellTemplate", [ ->
-  transclude: "element"
-  priority:   1000
-  require:    ["^macTable", "^macTableSection", "^macTableRow"]
-
-  compile: (element, attr, linker) ->
-    ($scope, $element, $attr, controllers) ->
-      templateNames =
-        if $attr.macCellTemplate then $attr.macCellTemplate.split " " else ["?"]
-      for templateName in templateNames
-        controllers[1].cellTemplates[templateName] = [$element, linker, $attr]
 ]

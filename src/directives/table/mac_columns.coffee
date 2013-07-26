@@ -1,3 +1,13 @@
+###
+@chalk overview
+@name Columns
+@description
+Directive that keeps track of the widths of the columns in the table.
+This directive is automatically added to any row whose cells use `mac-columns-width`.
+
+@dependencies
+macTable, macTableSection, macTableRow
+###
 
 angular.module("Mac").factory "macColumnsController", ->
   class MacColumnsController
