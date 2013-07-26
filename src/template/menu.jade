@@ -1,3 +1,11 @@
-.mac-menu
+.mac-menu(
+  ng-class="{'visible': items.length}"
+  ng-style="style"
+)
   ul
-    li(ng-repeat="item in items") {{item}}
+    li.mac-menu-item(
+      ng-repeat      = "item in items"
+      ng-click       = "selectItem($index)"
+      ng-class       = "{'active': $index == index}"
+      mac-mouseenter = "setIndex($index)"
+    ) {{item.label}}

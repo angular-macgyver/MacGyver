@@ -1,0 +1,34 @@
+.mac-menu
+  position   absolute
+  top        0
+  left       0
+  width      200px
+  background #FFF
+  box-shadow 0 3px 6px rgba(0,0,0,0.2)
+  border     1px solid #d1d3d8
+  box-sizing border-box
+  max-height 325px
+  overflow-y auto
+  opacity    0
+  visibility hidden
+  transition opacity 0.1s ease-out, visibility 0.1s ease-out
+
+  &.visible
+    visibility visible
+    opacity    1
+
+  ul
+    list-style none
+    margin     0px
+
+    .mac-menu-item
+      display    block
+      padding    5px 10px
+      transition background 0.1s ease-out
+      color      #000
+      cursor     pointer
+
+      &.active
+        background      #e0e8fb
+        transition      0
+        text-decoration none
