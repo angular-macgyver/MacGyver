@@ -4,14 +4,14 @@ angular.module("Mac").factory "directiveHelpers", [ ->
   # ngRepeat-esque cloning
   # TODO: Optimize this similar to ngRepeat
   repeater: (iterator, keyName, $scope, $element, linkerFactory, postClone) ->
-    cursor = $element
+    return unless $element.length
+
     for item in iterator
       nScope          = $scope.$new()
       nScope[keyName] = item
 
       if linkerFn = linkerFactory item
-        clonedElement = linkerFn nScope, (clone) =>
-          cursor.after clone
-          cursor = clone
+        clonedElement = linkerFn nScope, (clone) ->
+          $element[0].appendChild clone[0]
         postClone and postClone item, clonedElement
 ]

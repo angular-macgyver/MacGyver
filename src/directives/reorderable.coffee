@@ -25,7 +25,7 @@ angular.module("Mac").directive "macReorderableColumns", [ ->
       changedElement = $(ui.item)
 
       columnElements.each ->
-        columnsOrder.push $(this).scope().cell.colName
+        columnsOrder.push $(this).scope().cell.column.colName
 
       $scope.$apply ->
         controllers[0].table.columnsOrder = columnsOrder

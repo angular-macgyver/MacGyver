@@ -16,12 +16,13 @@ The id of the text input field
 Type: `String`  
 The model to store the selected date  
   
-**mac-datepicker-on-before-select**  
+**mac-datepicker-on-select**  
 Type: `Function`  
 Function called before setting the value to the model  
 - `date` - {String} Selected date from the datepicker  
+- `instance` - {Object} Datepicker instance  
   
-**mac-datepicker-on-before-close**  
+**mac-datepicker-on-close**  
 Type: `String`  
 Function called before closing datepicker  
 - `date` - {String} Selected date from the datepicker  

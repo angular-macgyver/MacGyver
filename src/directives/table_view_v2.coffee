@@ -7,9 +7,7 @@ Directive for displaying tabluar data
 @param {None}       mac-table-resizable-columns     Convenience param to add macResizableColumn and dependent directives to template elements
 @param {None}       mac-table-reorderable-columns   Convenience param to add macReorderableColumn and dependent directives to template elements
 
-
 ###
-
 
 angular.module("Mac").factory "MacTableController", ["Table", (Table) ->
   class MacTableController
@@ -21,7 +19,6 @@ angular.module("Mac").factory "MacTableController", ["Table", (Table) ->
     makeTable: (columns) ->
       @table = @scope.table = new Table columns
 ]
-
 
 angular.module("Mac").directive "macTable", [ "MacTableController", (MacTableController) ->
   require:    "macTable"
@@ -38,15 +35,15 @@ angular.module("Mac").directive "macTable", [ "MacTableController", (MacTableCon
     # If we find the width directive we can assume that the parent
     # should have the mac-columns directive
     element.find("[mac-column-width]")
-      .attr("width", "{{cell.width}}%")
+      .attr("width", "{{cell.column.width}}%")
       .parents("[mac-table-row]")
-        .attr("mac-columns", "")
+      .attr("mac-columns", "")
 
     # Format our mac-cell-templates
     element.find("[mac-cell-template]")
       # Add a wrapper to the inside of our cells
       .wrapInner("<div class='cell-wrapper' />")
-      .attr("data-column-name", "{{cell.colName}}")
+      .attr("data-column-name", "{{cell.column.colName}}")
 
     # Resizable?
     if attr.macTableResizableColumns?

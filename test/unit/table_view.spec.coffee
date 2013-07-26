@@ -30,7 +30,7 @@ describe "Table Data", ->
 
     it "sets the column name on cells", ->
       table = @scope.table
-      expect(table.sections.body.rows[0].cells[0].colName).toBe "fullName"
+      expect(table.sections.body.rows[0].cells[0].column.colName).toBe "fullName"
 
     it "gets the right value on cells", ->
       table = @scope.table
@@ -69,7 +69,7 @@ describe "Table Data", ->
     it "updates the properties on the cells with properties on that column", ->
       table = @scope.table
       table.columns[0].width = 50
-      expect(table.sections.body.rows[0].cells[0].width).toBe 50
+      expect(table.sections.body.rows[0].cells[0].column.width).toBe 50
 
     it "can remove a row at an index", ->
       table = @scope.table
@@ -117,7 +117,7 @@ describe "Table Data", ->
       table.columnsOrder.reverse()
       table.columnsCtrl.syncOrder()
       columns = []
-      columns.push cell.colName for cell in table.sections.body.rows[0].cells
+      columns.push cell.column.colName for cell in table.sections.body.rows[0].cells
       expect(columns).toEqual table.columnsOrder
 
     it "keeps the columns in the correct order when a new section is loaded", ->
@@ -128,7 +128,7 @@ describe "Table Data", ->
           {first_name: "Mick", last_name: "Jagger", age: 30}
           {first_name: "Keith", last_name: "Richards", age: 29} ]
       table.load "stones", stones
-      expect(table.sections.stones.rows[0].cells[0].colName).toBe "age"
+      expect(table.sections.stones.rows[0].cells[0].column.colName).toBe "age"
 
     it "doesn't need to wrap a single model in an array to load it into a section", ->
       table    = @scope.table
@@ -192,7 +192,7 @@ describe "Table Data", ->
         cells = @table.sections.body.rows[0].cells
         columns = []
         for cell in cells
-          columns.push cell.colName
+          columns.push cell.column.colName
         expect(columns).toEqual ['first_name', 'last_name', 'age', 'date_of_birth']
 
       it "can have an empty section become populated", ->
@@ -203,7 +203,7 @@ describe "Table Data", ->
         @table.columnsOrder.reverse()
         @table.columnsCtrl.syncOrder()
         columns = []
-        columns.push cell.colName for cell in @table.sections.body.rows[0].cells
+        columns.push cell.column.colName for cell in @table.sections.body.rows[0].cells
         expect(columns).toEqual @table.columnsOrder
 
       # TODO: This doesn't work yet, see below
@@ -221,8 +221,8 @@ describe "Table Data", ->
         #
         @table.insert "header", @table.blankRow()
         @table.columns[0].width = 50
-        expect(@table.sections.header.rows[0].cells[0].width).toBe 50
-        expect(@table.sections.body.rows[0].cells[0].width).toBe 50
+        expect(@table.sections.header.rows[0].cells[0].column.width).toBe 50
+        expect(@table.sections.body.rows[0].cells[0].column.width).toBe 50
 
 describe "Table View", ->
   # Initialize these values up here

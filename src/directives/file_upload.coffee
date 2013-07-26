@@ -96,7 +96,8 @@ directive("macUpload", ["$rootScope", "$parse", "util", ($rootScope, $parse, uti
           dropZone.removeClass "droppable"
         , 250
 
-    options.dropZone = dropZone or $()
+    options.dropZone  = dropZone or $()
+    options.pasteZone = null
 
     if opts.options
       extraOptions = $scope.$eval(opts.options) or {}

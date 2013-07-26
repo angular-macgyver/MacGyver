@@ -8,15 +8,15 @@ A directive for generating tag input with autocomplete support on text input
 @dependencies
 - jQuery UI autocomplete
 
-@param {String} mac-tag-autocomplete-url Url to fetch autocomplete dropdown list data
-@param {String} mac-tag-autocomplete-value The value to be sent back upon selection (default "id")
-@param {String} mac-tag-autocomplete-label The label to display to the users (default "name")
-@param {Boolean} mac-tag-autocomplete-full-object Push the full object into the selected array (default false)
-@param {Array} mac-tag-autocomplete-selected The list of elements selected by the user
-@param {String} mac-tag-autocomplete-query The query parameter on GET command (defualt "q")
-@param {Integer} mac-tag-autocomplete-delay Time delayed on fetching autocomplete data after keyup  (default 800)
-@param {String} mac-tag-autocomplete-placeholder Placeholder text of the text input (default "")
-@param {Boolean} mac-tag-autocomplete-disabled If autocomplete is enabled or disabled (default false)
+@param {String} mac-tag-autocomplete-url          Url to fetch autocomplete dropdown list data
+@param {String} mac-tag-autocomplete-value        The value to be sent back upon selection (default "id")
+@param {String} mac-tag-autocomplete-label        The label to display to the users (default "name")
+@param {Expression} mac-tag-autocomplete-model    Model for autocomplete
+@param {Array} mac-tag-autocomplete-selected      The list of elements selected by the user
+@param {String} mac-tag-autocomplete-query        The query parameter on GET command (defualt "q")
+@param {Integer} mac-tag-autocomplete-delay       Time delayed on fetching autocomplete data after keyup  (default 800)
+@param {String} mac-tag-autocomplete-placeholder  Placeholder text of the text input (default "")
+@param {Boolean} mac-tag-autocomplete-disabled    If autocomplete is enabled or disabled (default false)
 @param {Expression} mac-tag-autocomplete-on-enter When autocomplete is disabled, this function is called on enter, Should return either string, object or boolean. If false, item is not added
         - `item` - {String} User input
 @param {String} mac-tag-autocomplete-events a CSV list of events to attach functions to
@@ -29,78 +29,69 @@ A directive for generating tag input with autocomplete support on text input
 
 angular.module("Mac").directive "macTagAutocomplete", [
   "$parse",
-  "$http",
   "keys",
-  ($parse, $http, keys) ->
+  ($parse, keys) ->
     restrict:    "E"
     templateUrl: "template/tag_autocomplete.html"
     replace:     true
     scope:
-      autocompleteUrl:      "=macTagAutocompleteUrl"
-      autocompleteValue:    "=macTagAutocompleteValue"
-      autocompleteLabel:    "=macTagAutocompleteLabel"
-      autocompleteQuery:    "=macTagAutocompleteQuery"
-      autocompleteDelay:    "=macTagAutocompleteDelay"
-      placeholder:          "=macTagAutocompletePlaceholder"
-      autocompleteOnEnter:  "&macTagAutocompleteOnEnter"
-      events:               "@macTagAutocompleteEvents"
-      selected:             "=macTagAutocompleteSelected"
-      source:               "=macTagAutocompleteSource"
-      fullObject:           "&macTagAutocompleteFullObject"
+      url:         "=macTagAutocompleteUrl"
+      placeholder: "=macTagAutocompletePlaceholder"
+      selected:    "=macTagAutocompleteSelected"
+      source:      "=macTagAutocompleteSource"
+      disabled:    "=macTagAutocompleteDisabled"
+      model:       "=macTagAutocompleteModel"
+      onEnter:     "&macTagAutocompleteOnEnter"
+      onKeydown:   "&macTagAutocompleteOnKeydown"
 
     compile: (element, attrs) ->
       valueKey    = attrs.macTagAutocompleteValue
       valueKey   ?= "id"
       labelKey    = attrs.macTagAutocompleteLabel
       labelKey   ?= "name"
-      queryKey    = attrs.macTagAutocompleteQuery    or "q"
-      delay       = +attrs.macTagAutocompleteDelay   or 800
-      selectedExp = attrs.macTagAutocompleteSelected
-      events      = attrs.macTagAutocompleteEvents   or ""
-      disabled    = attrs.macTagAutocompleteDisabled?
-      eventsList  = _(events.split ",").map (item) ->
-        attrEvent = _.string.capitalize item
-        name:        item
-        capitalized: attrEvent
-        eventFn:     attrs["macTagAutocompleteOn#{attrEvent}"]
+      queryKey    = attrs.macTagAutocompleteQuery  or "q"
+      delay       = +attrs.macTagAutocompleteDelay or 800
+      events      = attrs.macTagAutocompleteEvents or ""
+      eventsList  = []
+      if events
+        eventsList  = _(events.split ",").map (item) ->
+          attrEvent = _.string.capitalize item
+          name:        item
+          capitalized: attrEvent
+          eventFn:     attrs["macTagAutocompleteOn#{attrEvent}"]
 
       # Update template on label variable name
-      tagLabelKey = if labelKey is "" then labelKey else ".#{labelKey}"
+      tagLabelKey = if labelKey then ".#{labelKey}" else labelKey
       $(".tag-label", element).text "{{tag#{tagLabelKey}}}"
 
       textInput   = $(".mac-autocomplete", element)
       attrsObject =
-        "mac-autocomplete-value":  valueKey
-        "mac-autocomplete-label":  labelKey
-        "mac-autocomplete-query":  queryKey
-        "mac-autocomplete-delay":  delay
-        "mac-autocomplete-events": events
+        "mac-autocomplete-value": valueKey
+        "mac-autocomplete-label": labelKey
+        "mac-autocomplete-query": queryKey
+        "mac-autocomplete-delay": delay
 
       if attrs.macTagAutocompleteUrl?
-        attrsObject["mac-autocomplete-url"] = "autocompleteUrl"
-      else
+        attrsObject["mac-autocomplete-url"] = "url"
+      else if attrs.macTagAutocompleteSource?
         attrsObject["mac-autocomplete-source"] = "autocompleteSource"
 
       textInput.attr attrsObject
 
       ($scope, element, attrs) ->
-        # Put disabled inside template scope:
-        $scope.disabled = disabled
-
         # Variable for input element
         $scope.textInput = ""
 
-        # Clicking on the element will focus on input
-        element.click ->
-          $(".text-input", element).focus()
+        if attrs.macTagAutocompleteModel?
+          $scope.$watch "textInput", (value) -> $scope.model = value
+          $scope.$watch "model",     (value) -> $scope.textInput = value
 
-        #
-        # @watcher
-        # @name disabled
-        # @description
-        # Rebind events after ng-switch
-        #
-        $scope.$watch "disabled", (value) ->
+        # Clicking on the element will focus on input
+        element.click -> $(".text-input", element).focus()
+
+        # HACK - To make sure autocomplete html has been replaced
+        $scope.eventsList = eventsList
+        $scope.$watch "eventsList", (value) ->
           # Loop through the list of events user specified
           for event in eventsList
             continue unless event.eventFn and event.name isnt "keydown"
@@ -109,29 +100,10 @@ angular.module("Mac").directive "macTagAutocomplete", [
               $(".text-input", element).on event.name, ($event) ->
                 expression = $parse event.eventFn
                 $scope.$apply ->
-                  expression $scope.$parent, {$event, item: $(".text-input", element).val() }
+                  expression $scope.$parent, {$event, item: $scope.textInput }
 
         $scope.$watch "selected.length", (length) ->
-          $scope.updateSource()
-
-        #
-        # @function
-        # @name $scope.pushToSelected
-        # @description
-        # Convert item to the correct format before adding to the selected array
-        # @param {Any} item Item to be pushed to selected array
-        #
-        $scope.pushToSelected = (item) ->
-          output           = {}
-          output[labelKey] = item[labelKey] if labelKey
-          output[valueKey] = item[valueKey] if valueKey
-
-          if $scope.fullObject or (not labelKey and not valueKey)
-            output = item
-
-          $scope.selected.push output
-
-        $scope.updateSource = ->
+          # TODO Better way to find the difference between selected and source
           sourceValues   = _($scope.source or []).pluck valueKey
           selectedValues = _($scope.selected or []).pluck valueKey
           difference     = _(sourceValues).difference selectedValues
@@ -143,16 +115,14 @@ angular.module("Mac").directive "macTagAutocomplete", [
           stroke = $event.which or $event.keyCode
           switch stroke
             when keys.BACKSPACE
-              if $scope.textInput.length is 0
-                $scope.selected.pop()
+              $scope.selected.pop?() unless $scope.textInput
             when keys.ENTER
               # Used when autocomplete is not needed
               if $scope.textInput.length > 0 and $scope.disabled
                 $scope.onSelect $scope.textInput
 
           if attrs.macTagAutocompleteOnKeydown?
-            expression = $parse attrs.macTagAutocompleteOnKeydown
-            expression $scope.$parent, {$event, item: value}
+            $scope.onKeydown? {$event, value: $scope.textInput}
 
           return true
 
@@ -163,13 +133,11 @@ angular.module("Mac").directive "macTagAutocomplete", [
           return _(data.data).reject (item) -> (item[valueKey] or item) in existingValues
 
         $scope.onSelect = (item) ->
-          item = $scope.autocompleteOnEnter {item} if attrs.macTagAutocompleteOnEnter?
-          $scope.pushToSelected item if item
-          $scope.textInput = ""
+          if attrs.macTagAutocompleteOnEnter?
+            item = $scope.onEnter {item}
 
-        $scope.reset = ->
+          $scope.selected.push item if item?
           $scope.textInput = ""
-          $scope.updateSource()
 
         $scope.$on "mac-tag-autocomplete-clear-input", ->
           $scope.textInput = ""

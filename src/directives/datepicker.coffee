@@ -8,11 +8,12 @@ A directive for creating a datepicker on text input using jquery ui
 - jQuery
 - jQuery datepicker
 
-@param {String}     mac-datepicker-id               The id of the text input field
-@param {String}     mac-datepicker-model            The model to store the selected date
-@param {Function}   mac-datepicker-on-before-select Function called before setting the value to the model
+@param {String}     mac-datepicker-id        The id of the text input field
+@param {String}     mac-datepicker-model     The model to store the selected date
+@param {Function}   mac-datepicker-on-select Function called before setting the value to the model
   - `date` - {String} Selected date from the datepicker
-@param {String}     mac-datepicker-on-before-close Function called before closing datepicker
+  - `instance` - {Object} Datepicker instance
+@param {String}     mac-datepicker-on-close Function called before closing datepicker
   - `date` - {String} Selected date from the datepicker
   - `instance` - {Object} Datepicker instance
 @param {String}     mac-datepicker-append-text          The text to display after each date field
@@ -62,16 +63,17 @@ angular.module("Mac").directive "macDatepicker", [
 
       opts = util.extendAttributes "macDatepicker", defaults, attrs
 
-      inputAttrs                = "mac-id": opts.id
-      inputAttrs["ng-disabled"] = attrs.macDatepickerDisabled or ""
+      inputAttrs = "mac-id": opts.id
+      if attrs.macDatepickerDisabled?
+        inputAttrs["ng-disabled"] = attrs.macDatepickerDisabled
 
       inputElement = $("input", element).attr inputAttrs
 
       ($scope, element, attrs) ->
-        onBeforeSelect = $parse attrs.macDatepickerOnBeforeSelect
-        onBeforeClose  = $parse attrs.macDatepickerOnBeforeClose
-        model          = $parse attrs.macDatepickerModel
-        initialized    = false
+        onSelect    = $parse attrs.macDatepickerOnSelect
+        onClose     = $parse attrs.macDatepickerOnClose
+        model       = $parse attrs.macDatepickerModel
+        initialized = false
 
         setOptions = (name, value) ->
           return unless initialized and value?
@@ -94,12 +96,12 @@ angular.module("Mac").directive "macDatepicker", [
 
         opts.onSelect = (date, instance) ->
           $scope.$apply ->
-            date = onBeforeSelect($scope)?({date}) or date
-            model.assign $scope, date
+            onSelect? $scope, {date, instance}
+            model.assign? $scope, date
 
         opts.onClose = (date, instance) ->
           $scope.$apply ->
-            onBeforeClose($scope)? {date, instance}
+            onClose? $scope, {date, instance}
 
         inputElement.datepicker opts
         initialized = true

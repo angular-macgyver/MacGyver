@@ -71,7 +71,7 @@ angular.module("Mac").factory("modal", [
         @clearWaiting()
 
       else
-        @waiting = {id, options}
+        @waiting = {id, options: triggerOptions}
 
     #
     # @name resize
@@ -109,8 +109,8 @@ angular.module("Mac").factory("modal", [
 
       id = @opened.id
 
-      @opened.element.removeClass "visible"
       opened = @opened.element
+      opened.removeClass "visible"
       setTimeout ->
         opened.addClass "hide"
       , 250
@@ -158,7 +158,7 @@ angular.module("Mac").factory("modal", [
     #
     clearWaiting: (id) ->
       # clear modal with the same id if id is provided
-      return if id? and @waiting.id isnt id
+      return if id? and @waiting?.id isnt id
 
       @waiting = null
 ])

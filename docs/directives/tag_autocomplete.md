@@ -19,9 +19,9 @@ The value to be sent back upon selection (default "id")
 Type: `String`  
 The label to display to the users (default "name")  
   
-**mac-tag-autocomplete-full-object**  
-Type: `Boolean`  
-Push the full object into the selected array (default false)  
+**mac-tag-autocomplete-model**  
+Type: `Expression`  
+Model for autocomplete  
   
 **mac-tag-autocomplete-selected**  
 Type: `Array`  

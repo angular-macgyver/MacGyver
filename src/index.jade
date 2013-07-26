@@ -117,13 +117,15 @@ block append content
             mac-tag-autocomplete-value       = "id"
             mac-tag-autocomplete-label       = "name"
             mac-tag-autocomplete-placeholder = "tagAutocompletePlaceholder"
+            mac-tag-autocomplete-model       = "tagAutocompleteModel"
           )
         pre.prettyprint.linenums(ng-non-bindable)
           | <mac-autocomplete
           |   mac-autocomplete-url="autocompleteUrl"
           |   mac-autocomplete-query="q"
           |   mac-autocomplete-on-success="onSuccess(data)"
-          |   mac-autocomplete-placeholder="'Autocomplete'">
+          |   mac-autocomplete-placeholder="'Autocomplete'"
+          |   mac-autocomplete-model="tagAutocompleteModel">
           | </mac-autocomplete>
 
         h3 Example with autocomplete disabled
@@ -133,7 +135,7 @@ block append content
             mac-tag-autocomplete-placeholder = "tagAutocompletePlaceholder"
             mac-tag-autocomplete-value       = ""
             mac-tag-autocomplete-label       = ""
-            mac-tag-autocomplete-disabled
+            mac-tag-autocomplete-disabled    = "true"
           )
         pre.prettyprint.linenums(ng-non-bindable)
           | <mac-tag-autocomplete
@@ -141,7 +143,7 @@ block append content
           |   mac-tag-autocomplete-placeholder="tagAutocompletePlaceholder"
           |   mac-tag-autocomplete-value=""
           |   mac-tag-autocomplete-label=""
-          |   mac-tag-autocomplete-disabled="mac-tag-autocomplete-disabled">
+          |   mac-tag-autocomplete-disabled="true">
           | </mac-tag-autocomplete>
 
         h3 Example with custom actions on events
@@ -155,7 +157,8 @@ block append content
             mac-tag-autocomplete-events      = "blur,keyup"
             mac-tag-autocomplete-on-blur     = "tagAutocompleteOnBlur($event, item)"
             mac-tag-autocomplete-on-keyup    = "tagAutocompleteOnKeyup()"
-            mac-tag-autocomplete-disabled
+            mac-tag-autocomplete-disabled    = "true"
+            mac-tag-autocomplete-model       = "tagAutocompleteModel"
           )
         pre.prettyprint.linenums(ng-non-bindable)
           | <mac-tag-autocomplete
@@ -167,10 +170,9 @@ block append content
           |   mac-tag-autocomplete-events="blur,keyup"
           |   mac-tag-autocomplete-on-blur="tagAutocompleteOnBlur($event, item)"
           |   mac-tag-autocomplete-on-keyup="tagAutocompleteOnKeyup()"
-          |   mac-tag-autocomplete-disabled="mac-tag-autocomplete-disabled">
+          |   mac-tag-autocomplete-disabled="true"
+          |   mac-tag-autocomplete-model="tagAutocompleteModel">
           | </mac-tag-autocomplete>
-
-        button(ng-click="tagAutocompleteClearText()") Clear Text Input
 
       section#datepicker
         @@include("docs/html/directives/datepicker.html")

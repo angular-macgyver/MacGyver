@@ -1,7 +1,3 @@
-angular.module("Mac").factory "TableBaseColumn", [ ->
-  class TableBaseColumn
-]
-
 angular.module("Mac").factory "TableSectionController", [ ->
   class TableSectionController
     constructor: (@section) ->
@@ -12,21 +8,14 @@ angular.module("Mac").factory "TableSectionController", [ ->
     defaultCellValue: (row, colName) -> row.model[colName]
 ]
 
-# For legacy support only
-angular.module("Mac").factory "SectionController", [
-  "TableSectionController"
-  (TableSectionController) -> TableSectionController
-]
-
-angular.module("Mac").factory "TableRow", [ ->
+angular.module("Mac").factory "TableRow", ->
   class TableRow
     constructor: (@section, @model, @cells = [], @cellsMap = {}) ->
 
     toJSON: ->
       cells: @cells
-]
 
-angular.module("Mac").factory "TableSection", [ ->
+angular.module("Mac").factory "TableSection", ->
   class TableSection
     constructor: (controller, @table, @name, @rows = []) ->
       @setController controller
@@ -36,40 +25,41 @@ angular.module("Mac").factory "TableSection", [ ->
 
     toJSON: ->
       rows: @rows
-]
+
+angular.module("Mac").factory "TableCell", ->
+  class Cell
+    constructor: (@row, @column) ->
+
+    value: ->
+      @row?.section?.ctrl.cellValue(@row, @column.colName)
+
+    toJSON: ->
+      value: @value()
+      column: @column.colName
 
 angular.module("Mac").factory "tableComponents", [
   "TableSectionController"
   "TableRow"
   "TableSection"
+  "TableCell"
   (
     TableSectionController
     TableRow
     TableSection
+    TableCell
   ) ->
     rowFactory: (section, model) ->
       return new TableRow(section, model)
 
-    columnFactory: (colName, proto = {}) ->
-      Column           = (@colName) ->
-      Column.prototype = proto
+    columnFactory: (colName) ->
+      Column = (@colName) ->
       return new Column(colName)
 
     sectionFactory: (table, sectionName, controller = TableSectionController) ->
       return new TableSection(controller, table, sectionName)
 
-    cellFactory: (row, proto = {}) ->
-      Cell = (@row, @column) ->
-        # TODO: Find a better place for this, we can't use our prototype though...
-        @value = -> @row?.section?.ctrl.cellValue(@row, @colName)
-        # Allow for custom functions on the controller
-        @get   = (name) -> @row?.section?.ctrl[name]?(@row, @colName)
-        @toJSON = ->
-          value: @value()
-          column: @column.colName
-        return
-      Cell.prototype = proto
-      return new Cell(row, proto)
+    cellFactory: (row, column = {}) ->
+      return new TableCell(row, column)
 ]
 
 angular.module("Mac").factory "dynamicColumnsFunction", ->
@@ -108,7 +98,7 @@ angular.module("Mac").factory "TableColumnsController", [
         # Store the order
         @table.columnsOrder = columns
         for colName in columns
-          column = tableComponents.columnFactory(colName, @table.baseColumn)
+          column = tableComponents.columnFactory colName
           @table.columnsMap[colName] = column
           @table.columns.push column
 
@@ -170,12 +160,10 @@ angular.module("Mac").factory "TableRowsController", [
 ]
 
 angular.module("Mac").factory "Table", [
-    "TableBaseColumn"
     "TableColumnsController"
     "TableRowsController"
     "tableComponents"
     (
-        TableBaseColumn
         TableColumnsController
         TableRowsController
         tableComponents
@@ -186,7 +174,7 @@ angular.module("Mac").factory "Table", [
 
       # The Table class
       class Table
-        constructor: (columns = [], @baseColumn = new TableBaseColumn()) ->
+        constructor: (columns = []) ->
           @sections       = {}
           @columns        = []
           @columnsCtrl    = new TableColumnsController(this)
