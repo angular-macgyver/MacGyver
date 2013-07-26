@@ -1,25 +1,35 @@
 ###
 @chalk overview
-@name macTableSection 
+@name Table Section 
 @description
-Main directive for registering table sections
+Main directive for registering table sections. Can optionally have 
+macTableSectionModels, macTableSectionController, or macTableSectionBlankRow.
+
+@dependencies
+macTable
 ###
 
 angular.module("Mac").directive "macTableSection", ->
   class MacTableSectionController
-    constructor: (@scope) ->
+    constructor: (@scope, @attrs) ->
+      @name          = null
+      @section       = null
       @cellTemplates = {}
+      @watchers      = {}
+
+    registerWatcher: (directiveName, controller) ->
+      @watchers[directiveName] = controller
+
+    applyWatchers: ->
+      for directiveName, controller of @watchers
+        do (directiveName, controller) =>
+          @attrs.$observe directiveName, (expression) =>
+            controller.watch expression, @name
 
   # Config our directive object
-  require: [
-    "^macTable",
-    "macTableSection",
-    "?macTableSectionModels",
-    "?macTableSectionController",
-    "?macTableSectionBlankRow"
-  ]
+  require:    ["^macTable", "macTableSection"]
   scope:      true
-  controller: ["$scope", MacTableSectionController]
+  controller: ["$scope", "$attrs", MacTableSectionController]
 
   compile: (element, attr, linker) ->
     ($scope, $element, $attr, controllers) ->
@@ -36,26 +46,24 @@ angular.module("Mac").directive "macTableSection", ->
           $scope.$watch "table.sections.#{sectionName}", (section) ->
             $scope.section = controllers[1].section = $scope.table.sections[sectionName]
 
-          # Watch and evaluate for our models
-          if controllers[2]
-            $attr.$observe "macTableSectionModels", (modelsExp) ->
-              controllers[2].watch sectionName, modelsExp
+          # Call the watch method on any directives that have registered
+          controllers[1].applyWatchers()
 
-          # Watch and evalute for our controller
-          if controllers[3]
-            $attr.$observe "macTableSectionController", (controllerExp) ->
-              controllers[3].watch sectionName, controllerExp
+###
+@chalk overview
+@name Table Section Blank Row
+@description
+Inserts a blank row with keys matching those of the tables columns.
 
-          # Watch and evaluate any blank rows
-          if controllers[4]
-            $attr.$observe "macTableSectionBlankRow", ->
-              controllers[4].watch sectionName
+@dependencies
+macTable, macTableSection
+###
 
 angular.module("Mac").directive "macTableSectionBlankRow", ->
   class MacTableSectionBlankRowCtrl
     constructor: (@scope) ->
 
-    watch: (sectionName) ->
+    watch: (expression, sectionName) ->
       # We want to wait for another section to be loaded before we create out
       # blank row, this ensures we actually have column names to work with
       # TODO: make this less specific (using "body" right now)
@@ -66,35 +74,64 @@ angular.module("Mac").directive "macTableSectionBlankRow", ->
         @scope.table.insert sectionName, @scope.table.blankRow()
       , true
 
+  require:    ["^macTable", "macTableSection", "macTableSectionBlankRow"]
   controller: ["$scope", MacTableSectionBlankRowCtrl]
-  compile:    ->
+
+  link: ($scope, $element, $attrs, controllers) ->
+    controllers[1].registerWatcher "macTableSectionBlankRow", controllers[2]
+
+###
+@chalk overview
+@name Table Section Models
+@description
+Watches a models expression and loads them into the section whenever their length changes
+
+@dependencies
+macTable, macTableSection
+###
 
 angular.module("Mac").directive "macTableSectionModels", ["$parse", ($parse) ->
   class MacTableSectionModelsCtrl
     constructor: (@scope) ->
 
-    watch: (sectionName, modelsExp) ->
-      @scope.$watch "#{modelsExp}.length", (modelsLength) =>
-        models = $parse(modelsExp)(@scope)
+    watch: (expression, sectionName) ->
+      @scope.$watch "#{expression}.length", (modelsLength) =>
+        models = $parse(expression)(@scope)
         return unless models
 
         @models = models
         @scope.table.load sectionName, models
 
+  require:    ["^macTable", "macTableSection", "macTableSectionModels"]
   controller: ["$scope", MacTableSectionModelsCtrl]
-  compile:    ->
+
+  link: ($scope, $element, $attrs, controllers) ->
+    controllers[1].registerWatcher "macTableSectionModels", controllers[2]
 ]
+
+###
+@chalk overview
+@name Table Section Controller
+@description
+Watches a controller expression and loads the controller into the section
+
+@dependencies
+macTable, macTableSection
+###
 
 angular.module("Mac").directive "macTableSectionController", ->
   class MacTableSectionControllerCtrl
     constructor: (@scope) ->
 
-    watch: (sectionName, controllerExp) ->
-      @scope.$watch controllerExp, (controller) =>
+    watch: (expression, sectionName) ->
+      @scope.$watch expression, (controller) =>
         return unless controller
 
         @controller = controller
         @scope.table.load sectionName, null, controller
 
+  require:    ["^macTable", "macTableSection", "macTableSectionController"]
   controller: ["$scope", MacTableSectionControllerCtrl]
-  compile:    ->
+
+  link: ($scope, $element, $attrs, controllers) ->
+    controllers[1].registerWatcher "macTableSectionController", controllers[2]

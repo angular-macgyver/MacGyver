@@ -329,8 +329,10 @@ describe "Table View", ->
             name: "SectionTestBodySectionController"
             cellValue: (row, colName) ->
                 switch colName
-                  when "full_name" then "#{row.model.first_name} #{row.model.last_name}"
-                  when "age" then row.model.age
+                  when "full_name"
+                    "#{row.model.first_name} #{row.model.last_name}"
+                  when "age"
+                    row.model.age
 
           element = $compile(sectionControllersTemplate)(scope)
 
