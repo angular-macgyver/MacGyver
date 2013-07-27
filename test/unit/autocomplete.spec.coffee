@@ -43,113 +43,110 @@ describe "Mac autocomplete", ->
     it "should use local array", ->
       $rootScope.source = data
       $rootScope.test   = ""
-      element           = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-source='source'></mac-autocomplete>") $rootScope
+      element           = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-source='source' mac-autocomplete-delay='0'></mac-autocomplete>") $rootScope
       $rootScope.$digest()
 
       changeInputValue element, "fo"
-      #element.trigger $.Event("keydown", {which: 13})
       $rootScope.$digest()
-
-      console.log angular.element(".mac-menu").scope().items, $(".mac-menu").length
 
       expect($(".mac-menu-item").text() == "foo").toBe true
 
-    xit "should use local label, value object", ->
+    it "should use local label, value object", ->
       $rootScope.source = [
         {name: "foo", value: "foo"}
         {name: "world", value: "world"}
         {name: "bar", value: "bar"}
       ]
-      element           = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-source='source'></mac-autocomplete>") $rootScope
+      element = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-source='source' mac-autocomplete-delay='0'></mac-autocomplete>") $rootScope
       $rootScope.$digest()
 
-      menu = element.autocomplete("widget")
-
-      element.val("f").autocomplete("search")
-      expect(menu.find(".ui-menu-item").text() == "foo").toBe true
+      changeInputValue element, "f"
+      expect($(".mac-menu-item").text() == "foo").toBe true
 
   describe "label", ->
-    xit "should use default 'name' label", ->
+    it "should use default 'name' label", ->
       $rootScope.source = [
         {name: "foo", value: "foo"}
         {name: "world", value: "world"}
         {name: "bar", value: "bar"}
       ]
-      element = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-source='source'></mac-autocomplete>") $rootScope
+      element = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-source='source' mac-autocomplete-delay='0'></mac-autocomplete>") $rootScope
       $rootScope.$digest()
 
-      menu = element.autocomplete("widget")
+      changeInputValue element, "f"
+      expect($(".mac-menu-item").text() == "foo").toBe true
 
-      element.val("f").autocomplete("search")
-      expect(menu.find(".ui-menu-item").text() == "foo").toBe true
-
-    xit "should not be able to find anything", ->
+    it "should not be able to find anything", ->
       $rootScope.source = [
         {key: "foo", value: "foo"}
         {key: "world", value: "world"}
         {key: "bar", value: "bar"}
       ]
-      element = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-source='source'></mac-autocomplete>") $rootScope
+      element = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-source='source' mac-autocomplete-delay='0'></mac-autocomplete>") $rootScope
       $rootScope.$digest()
 
-      menu = element.autocomplete("widget")
+      changeInputValue element, "f"
+      expect($(".mac-menu-item").text() == "foo").toBe false
 
-      element.val("f").autocomplete("search")
-      expect(menu.find(".ui-menu-item").text() == "foo").toBe false
-
-    xit "should use 'label' as the key", ->
+    it "should use 'label' as the key", ->
       $rootScope.source = [
         {label: "foo", value: "foo"}
         {label: "world", value: "world"}
         {label: "bar", value: "bar"}
       ]
-      element = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-source='source' mac-autocomplete-label='label'></mac-autocomplete>") $rootScope
+      element = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-source='source' mac-autocomplete-label='label' mac-autocomplete-delay='0'></mac-autocomplete>") $rootScope
       $rootScope.$digest()
 
-      menu = element.autocomplete("widget")
-
-      element.val("f").autocomplete("search")
-      expect(menu.find(".ui-menu-item").text() == "foo").toBe true
+      changeInputValue element, "f"
+      expect($(".mac-menu-item").text() == "foo").toBe true
 
   describe "options", ->
-    xit "should use default delay", ->
+    $timeout = null
+
+    beforeEach inject (_$timeout_) ->
+      $timeout = _$timeout_
+
+    it "should use default delay - 800ms", ->
       called            = false
       $rootScope.source = data
 
       element = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-source='source'></mac-autocomplete>") $rootScope
       $rootScope.$digest()
 
-      menu = element.autocomplete("widget")
-
       runs ->
-        element.val("f").keydown()
-        expect(menu.is(":hidden")).toBe true
+        expect($(".mac-menu").hasClass "visible").toBe false
+
+        changeInputValue element, "f"
+        $rootScope.$digest()
 
         setTimeout ->
+          $timeout.flush()
           called = true
-        , 850
+        , 900
 
       waitsFor ->
         return called
-      , "Menu delay", 850
+
+      , "Menu delay", 950
 
       runs ->
-        expect(menu.is(":visible")).toBe true
+        expect($(".mac-menu").hasClass "visible").toBe true
 
-    xit "should delay for 200ms", ->
+    it "should delay for 200ms", ->
       called            = false
       $rootScope.source = data
 
       element = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-source='source' mac-autocomplete-delay='200'></mac-autocomplete>") $rootScope
       $rootScope.$digest()
 
-      menu = element.autocomplete("widget")
-
       runs ->
-        element.val("f").keydown()
-        expect(menu.is(":hidden")).toBe true
+        expect($(".mac-menu").hasClass "visible").toBe false
+
+        changeInputValue element, "f"
+        $rootScope.$digest()
 
         setTimeout ->
+          $timeout.flush()
           called = true
         , 250
 
@@ -158,26 +155,29 @@ describe "Mac autocomplete", ->
       , "Menu delay for 200ms", 250
 
       runs ->
-        expect(menu.is(":visible")).toBe true
+        expect($(".mac-menu").hasClass "visible").toBe true
 
-    xit "should disable autocomplete", ->
+    it "should disable autocomplete", ->
       $rootScope.disabled = true
       element             = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-disabled='disabled'></mac-autocomplete>") $rootScope
       $rootScope.$digest()
 
-      menu = element.autocomplete("widget")
-      element.val("test").keydown()
+      expect($(".mac-menu").hasClass "visible").toBe false
 
-      expect(menu.is(":hidden")).toBe true
+      changeInputValue element, "f"
+      $rootScope.$digest()
 
-      expect(menu.hasClass("ui-autocomplete-disabled")).toBe true
+      expect($(".mac-menu").hasClass "visible").toBe false
 
   describe "callbacks", ->
     $httpBackend = null
-    beforeEach inject (_$httpBackend_) ->
-      $httpBackend = _$httpBackend_
+    $timeout     = null
 
-    xit "should call select", ->
+    beforeEach inject (_$httpBackend_, _$timeout_) ->
+      $httpBackend = _$httpBackend_
+      $timeout     = _$timeout_
+
+    it "should call select", ->
       called            = false
       selectedItem      = ""
       $rootScope.source = data
@@ -185,15 +185,16 @@ describe "Mac autocomplete", ->
         selectedItem = selected
         called       = true
 
-      element = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-source='source' mac-autocomplete-delay='0' mac-autocomplete-on-select='select(selected)'></mac-autocomplete>") $rootScope
+      element = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-source='source' mac-autocomplete-on-select='select(selected)'></mac-autocomplete>") $rootScope
       $rootScope.$digest()
 
-      menu = element.autocomplete("widget")
-
       runs ->
-        element.val("f").keydown()
-        element.trigger $.Event("keydown", {keyCode: keys.DOWN})
-        element.trigger $.Event("keydown", {keyCode: keys.ENTER})
+        changeInputValue element, "f"
+        $rootScope.$digest()
+
+        $timeout.flush()
+
+        element.trigger $.Event("keydown", {which: keys.ENTER})
 
       waitsFor ->
         return called
@@ -202,79 +203,64 @@ describe "Mac autocomplete", ->
       runs ->
         expect(selectedItem).toBe "foo"
 
-    xit "should call success", ->
+    it "should call success", ->
       $httpBackend.when("GET", "/api/autocomplete?q=f").respond({data})
 
-      called             = false
       result             = []
       $rootScope.url     = "/api/autocomplete"
       $rootScope.success = (data) ->
         result = data
-        called = true
 
-      element = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-url='url' mac-autocomplete-delay='0' mac-autocomplete-on-success='success(data)'></mac-autocomplete>") $rootScope
+      element = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-url='url' mac-autocomplete-on-success='success(data)'></mac-autocomplete>") $rootScope
       $rootScope.$digest()
 
-      runs ->
-        element.val("f").autocomplete("search")
-        $httpBackend.flush()
+      changeInputValue element, "f"
+      $rootScope.$digest()
 
-      waitsFor ->
-        return called
-      , "Remote source", 750
+      $timeout.flush()
+      $httpBackend.flush()
 
-      runs ->
-        expect(result.data.length).toBe 3
+      expect(result.data.length).toBe 3
 
-    xit "should have three items in autocomplete list", ->
+    it "should have three items in autocomplete list", ->
       $httpBackend.when("GET", "/api/autocomplete?q=f").respond({data})
 
-      called             = false
       $rootScope.url     = "/api/autocomplete"
       $rootScope.success = (data) ->
-        called = true
         return data.data
 
-      element = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-url='url' mac-autocomplete-delay='0' mac-autocomplete-on-success='success(data)'></mac-autocomplete>") $rootScope
+      element = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-url='url' mac-autocomplete-on-success='success(data)'></mac-autocomplete>") $rootScope
       $rootScope.$digest()
 
-      menu = element.autocomplete("widget")
+      changeInputValue element, "f"
+      $rootScope.$digest()
 
-      runs ->
-        element.val("f").autocomplete("search")
-        $httpBackend.flush()
+      $timeout.flush()
+      $httpBackend.flush()
 
-      waitsFor ->
-        return called
-      , "Remote source", 750
+      expect($(".mac-menu-item").length).toBe 3
 
-      runs ->
-        expect(menu.find(".ui-menu-item").length).toBe 3
-
-    xit "should call error", ->
+    it "should call error", ->
       $httpBackend.when("GET", "/api/404?q=f").respond(404)
 
       called           = false
       $rootScope.url   = "/api/404"
       $rootScope.error = (data) -> called = true
 
-      element = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-url='url' mac-autocomplete-delay='0' mac-autocomplete-on-error='error(data)'></mac-autocomplete>") $rootScope
+      element = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-url='url' mac-autocomplete-on-error='error(data)'></mac-autocomplete>") $rootScope
       $rootScope.$digest()
 
-      runs ->
-        element.val("f").autocomplete("search")
-        $httpBackend.flush()
+      changeInputValue element, "f"
+      $rootScope.$digest()
 
-      waitsFor ->
-        return called
-      , "Remote source", 750
+      $timeout.flush()
+      $httpBackend.flush()
 
-      runs ->
-        expect(called).toBe true
+      expect(called).toBe true
 
   describe "model -> view", ->
-    xit "should update the view", ->
-      element = $compile("<mac-autocomplete ng-model='test' ng-model='value'></mac-autocomplete>") $rootScope
+    it "should update the view", ->
+      element = $compile("<mac-autocomplete ng-model='value'></mac-autocomplete>") $rootScope
       $rootScope.$digest()
 
       $rootScope.value = "hello"

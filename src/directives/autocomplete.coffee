@@ -45,7 +45,7 @@ angular.module("Mac").directive "macAutocomplete", [
     link: ($scope, element, attrs, ctrl) ->
       labelKey = attrs.macAutocompleteLabel  or "name"
       queryKey = attrs.macAutocompleteQuery  or "q"
-      delay    = +attrs.macAutocompleteDelay or 800
+      delay    = +(attrs.macAutocompleteDelay or 800)
       inside   = attrs.macAutocompleteInside?
 
       autocompleteUrl = $parse attrs.macAutocompleteUrl
