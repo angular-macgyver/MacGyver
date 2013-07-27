@@ -108,10 +108,10 @@ angular.module("Mac").directive "macAutocomplete", [
       #
       updateItem = (data = []) ->
         currentAutocomplete = data
-        $menuScope.items    =
-          _(data).map (item) ->
-            label = value = item[labelKey] or item
-            return {label, value}
+        $menuScope.items    = []
+        for item in data
+          label = value = item[labelKey] or item
+          $menuScope.items.push {label, value}
 
       #
       # @function

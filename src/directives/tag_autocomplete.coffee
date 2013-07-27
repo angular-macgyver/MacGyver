@@ -55,11 +55,12 @@ angular.module("Mac").directive "macTagAutocomplete", [
       events      = attrs.macTagAutocompleteEvents or ""
       eventsList  = []
       if events
-        eventsList  = _(events.split ",").map (item) ->
+        for item in events.split(",")
           attrEvent = _.string.capitalize item
-          name:        item
-          capitalized: attrEvent
-          eventFn:     attrs["macTagAutocompleteOn#{attrEvent}"]
+          eventsList.push
+            name:        item
+            capitalized: attrEvent
+            eventFn:     attrs["macTagAutocompleteOn#{attrEvent}"]
 
       # Update template on label variable name
       tagLabelKey = if labelKey then ".#{labelKey}" else labelKey
@@ -105,12 +106,11 @@ angular.module("Mac").directive "macTagAutocomplete", [
 
         $scope.$watch "selected.length", (length) ->
           # TODO Better way to find the difference between selected and source
-          sourceValues   = _($scope.source or []).pluck valueKey
-          selectedValues = _($scope.selected or []).pluck valueKey
-          difference     = _(sourceValues).difference selectedValues
+          sourceValues   = (item[valueKey] for item in ($scope.source or []))
+          selectedValues = (item[valueKey] for item in ($scope.selected or []))
+          difference     = (item for item in sourceValues when item not in selectedValues)
 
-          $scope.autocompleteSource = _($scope.source).filter (item) ->
-            item[valueKey] in difference
+          $scope.autocompleteSource  = (item for item in ($scope.source or []) when item[valueKey] in difference)
 
         $scope.onKeyDown = ($event) ->
           stroke = $event.which or $event.keyCode
@@ -129,9 +129,9 @@ angular.module("Mac").directive "macTagAutocomplete", [
 
         $scope.onSuccess = (data) ->
           # get all selected values
-          existingValues = _($scope.selected).pluck valueKey
+          existingValues = (item[valueKey] for item in ($scope.selected or []))
           # remove selected tags on autocomplete dropdown
-          return _(data.data).reject (item) -> (item[valueKey] or item) in existingValues
+          return (item for item in data.data when (item[valueKey] or item) not in existingValues)
 
         $scope.onSelect = (item) ->
           if attrs.macTagAutocompleteOnEnter?
