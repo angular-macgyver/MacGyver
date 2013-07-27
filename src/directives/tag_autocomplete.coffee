@@ -137,7 +137,9 @@ angular.module("Mac").directive "macTagAutocomplete", [
             item = $scope.onEnter {item}
 
           $scope.selected.push item if item?
-          $scope.textInput = ""
+          setTimeout ->
+            $scope.$apply -> $scope.textInput = ""
+          , 0
 
         $scope.$on "mac-tag-autocomplete-clear-input", ->
           $scope.textInput = ""

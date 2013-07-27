@@ -14,6 +14,9 @@ block append content
         li: a(href="#tooltip")
           i.icon-chevron-right
           | Tooltip
+        li: a(href="#menu")
+          i.icon-chevron-right
+          | Menu
         li: a(href="#autocomplete")
           i.icon-chevron-right
           | Autocomplete
@@ -73,6 +76,12 @@ block append content
             li: a(href="#", mac-tooltip="Tooltip on right", mac-tooltip-direction="right") Tooltip on right
         pre.prettyprint.linenums(ng-non-bindable)
           | <a href="#" mac-tooltip="Tooltip on bottom" mac-tooltip-direction="bottom">Tooltip on bottom</a>
+
+      section#menu
+        @@include("docs/html/directives/menu.html")
+        h3 Example
+        .docs-example
+          mac-menu
 
       section#autocomplete
         @@include("docs/html/directives/autocomplete.html")
