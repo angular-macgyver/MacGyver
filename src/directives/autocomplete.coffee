@@ -6,7 +6,7 @@
 A directive for providing suggestions while typing into the field
 
 @dependencies
-- jQuery UI autocomplete
+- mac-menu
 
 @param {String} ng-model Assignable angular expression to data-bind to
 @param {String} mac-placeholder Placeholder text

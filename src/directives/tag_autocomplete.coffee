@@ -6,7 +6,8 @@
 A directive for generating tag input with autocomplete support on text input
 
 @dependencies
-- jQuery UI autocomplete
+- mac-autocomplete
+- mac-menu
 
 @param {String} mac-tag-autocomplete-url          Url to fetch autocomplete dropdown list data
 @param {String} mac-tag-autocomplete-value        The value to be sent back upon selection (default "id")
