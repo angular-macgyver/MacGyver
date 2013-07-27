@@ -84,7 +84,7 @@ angular.module("Mac").directive "macTable", [ "MacTableController", (MacTableCon
       # A note about how we're $observing and then $watching
       # this is done to avoid using an isolate scope
 
-      $attr.$observe "columns", (columnsExp) ->
+      $attr.$observe "macTableColumns", (columnsExp) ->
         # As a convenience, we'll take the word "dynamic" unevaluated
         # and make a dynamic table
         if columnsExp is "dynamic"

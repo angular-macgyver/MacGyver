@@ -8,26 +8,25 @@ block append content
         .docs-example
           h3 MacTableV2
           table.table.mac-table-default(
-            mac-table-v2
-            resizable-columns
-            reorderable-columns
-            columns="dynamic"
+            mac-table
+            mac-table-columns="dynamic"
           )
-            thead(table-section="header")
-              tr(table-row, ng-repeat="row in section.rows")
-                th(mac-cell-template="No.", initial-width="5%")
-                  span {{cell.colName}}
+            thead(mac-table-section="header", mac-table-section-blank-row)
+              tr(mac-table-row)
+                th(mac-cell-template="No.", mac-column-width="5%")
+                  span {{cell.column.colName}}
 
-                th(mac-cell-template="Title", initial-width="35%")
-                  span {{cell.colName}}
+                th(mac-cell-template="Title", mac-column-width="35%")
+                  span {{cell.column.colName}}
 
-                th(mac-cell-template="", initial-width="auto")
-                  span {{cell.colName}}
+                th(mac-cell-template="", mac-column-width="auto")
+                  span {{cell.column.colName}}
 
-            tbody(table-section="body", models="macGyverSeasonOne")
-              tr(table-row, ng-repeat="row in section.rows")
+            tbody(mac-table-section="body", mac-table-section-models="macGyverSeasonOne")
+              tr(mac-table-row)
                 td(mac-cell-template="")
                   span {{cell.value()}}
+
         pre.prettyprint.linenums(ng-non-bindable)
           | <table mac-table-v2="mac-table-v2" resizable-columns="resizable-columns" reorderable-columns="reorderable-columns" columns="dynamic" class="table mac-table-default">
           |   <thead table-section="header">

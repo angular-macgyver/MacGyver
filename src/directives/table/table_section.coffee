@@ -64,15 +64,19 @@ angular.module("Mac").directive "macTableSectionBlankRow", ->
     constructor: (@scope) ->
 
     watch: (expression, sectionName) ->
-      # We want to wait for another section to be loaded before we create out
+      # We want to wait for another section to be loaded before we create our
       # blank row, this ensures we actually have column names to work with
-      # TODO: make this less specific (using "body" right now)
-      @scope.$watch "table.section.body.rows.length", (rows) =>
-        # We do this in two steps to avoid clobbering our columns when
-        # the table has dynamic columns
-        @scope.table.load   sectionName
-        @scope.table.insert sectionName, @scope.table.blankRow()
-      , true
+      sectionToWaitOn = expression or "body"
+      
+      killWatcher = @scope.$watch "table.sections.#{sectionToWaitOn}.rows", (rows) =>
+        return unless rows
+        killWatcher()
+
+        @scope.$watch "table.columnsOrder", =>
+          # We do this in two steps to avoid clobbering our columns when
+          # the table has dynamic columns
+          @scope.table.load   sectionName
+          @scope.table.insert sectionName, @scope.table.blankRow()
 
   require:    ["^macTable", "macTableSection", "macTableSectionBlankRow"]
   controller: ["$scope", MacTableSectionBlankRowCtrl]
@@ -84,7 +88,7 @@ angular.module("Mac").directive "macTableSectionBlankRow", ->
 @chalk overview
 @name Table Section Models
 @description
-Watches a models expression and loads them into the section whenever their length changes
+Watches a models expression and loads them into the section
 
 @dependencies
 macTable, macTableSection
@@ -95,12 +99,24 @@ angular.module("Mac").directive "macTableSectionModels", ["$parse", ($parse) ->
     constructor: (@scope) ->
 
     watch: (expression, sectionName) ->
-      @scope.$watch "#{expression}.length", (modelsLength) =>
-        models = $parse(expression)(@scope)
-        return unless models
+      lastStringified = ""
 
-        @models = models
-        @scope.table.load sectionName, models
+      @scope.$watch =>
+        models = $parse(expression)(@scope)
+        return unless angular.isArray models
+
+        # We compare these using JSON.stringify, which guards against circular
+        # structure better than the angular `copy` method
+        currStringified = JSON.stringify models
+
+        if currStringified isnt lastStringified
+          lastStringified = currStringified
+
+          @models = models
+          @scope.table.load sectionName, models
+
+          # This will cause our watcher to be fired again if something has changed
+          return currStringified
 
   require:    ["^macTable", "macTableSection", "macTableSectionModels"]
   controller: ["$scope", MacTableSectionModelsCtrl]

@@ -8,63 +8,13 @@ module.controller "modalController", ["$scope", "modal", ($scope, modal) ->
 
 module.controller "ExampleController", ["$scope", "$timeout", "Table", ($scope, $timeout, Table) ->
 
+  # MacTable
+  $scope.loadDataIntoTable = (x = 3000) ->
+    $scope.macGyverSeasonOne = []
+    for i in [1..x]
+      $scope.macGyverSeasonOne.push {'No.': '1', 'Title': '"Pilot"', 'Directed by': 'Jerrold Freedman', 'Written by': 'Thackary Pallor', 'Original air date': 'September 29, 1985'}
 
-  # Table view section
-
-  # MacTableV1
-
-  # Data for table view
-  # Current generating 10000 rows of entries to make sure table view can handle large
-  # amount of data
-  $scope.data = []
-  # Added setTimeout to mimic ajax delay
-  $scope.loading = true
-  setTimeout (->
-    for i in [1..23]
-      obj =
-        name: "Test " + i
-        a: Math.random() * 100000
-        b: Math.random() * 10000
-        c: Math.random()
-        d: Math.random()
-        created: (new Date()).getTime()
-        attributes:
-          name: "Test " + i
-          abc: Math.random() * 1000
-
-      $scope.data.push obj
-    $scope.loading = false
-    $scope.$digest()
-  ), 2500
-
-  $scope.createRow = (event) ->
-    event.stopPropagation()
-    console.log "Creating row"
-
-  $scope.loadMoreRows = ->
-    event.stopPropagation()
-    alert "Loading 20 more rows"
-
-  # Columns to display and their order
-  $scope.columnOrder = ["Name", "anotherName", "d", "c", "b", "Created"]
-
-  # MacTableV2
-
-  $scope.macGyverSeasonOne = []
-
-  for i in [1..1000]
-    $scope.macGyverSeasonOne.push {'No.': '1', 'Title': '"Pilot"', 'Directed by': 'Jerrold Freedman', 'Written by': 'Thackary Pallor', 'Original air date': 'September 29, 1985'}
-
-  $scope.reverse = false
-
-  $scope.genPredicate = (colName) ->
-    (row) -> row.cellsMap[colName].value()
-
-  $scope.genSearchPredicate = (colName, value) ->
-    (row) ->
-      cellValue = String(row.cellsMap[colName].value()).toLowerCase()
-      value     = String(value).toLowerCase()
-      cellValue.indexOf(value) != -1
+  $scope.loadDataIntoTable(1000)
 
   # Editable
   $scope.editableTest = "Hello"

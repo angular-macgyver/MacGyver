@@ -245,7 +245,7 @@ describe "Table View", ->
     describe "Table Structure", ->
       element  = null
       template =
-      """<table mac-table columns="tableColumns">
+      """<table mac-table mac-table-columns="tableColumns">
           <thead mac-table-section="header" mac-table-section-blank-row>
             <tr mac-table-row>
               <th mac-cell-template mac-column-width="auto">Header Cell</th>
@@ -307,7 +307,7 @@ describe "Table View", ->
           sectionControllersColumns = ["full_name", "age"]
 
           sectionControllersTemplate =
-          """<table mac-table columns="tableColumns">
+          """<table mac-table mac-table-columns="tableColumns">
               <thead mac-table-section="header" mac-table-section-blank-row>
                 <tr mac-table-row>
                   <th mac-cell-template mac-column-width="auto">Header Cell</th>
@@ -349,7 +349,7 @@ describe "Table View", ->
           helperAttributeTemplate =
           """<table 
                 mac-table
-                mac-table columns="tableColumns"
+                mac-table-columns="tableColumns"
                 mac-table-resizable-columns
                 mac-table-reorderable-columns
               >
@@ -390,7 +390,7 @@ describe "Table View", ->
 
         beforeEach ->
           autoWidthsTemplate =
-          """<table mac-table columns="tableColumns">
+          """<table mac-table mac-table-columns="tableColumns">
               <thead mac-table-section="header" mac-table-section-blank-row>
                 <tr mac-table-row>
                   <th mac-cell-template mac-column-width="auto">{{cell.value()}}</th>
