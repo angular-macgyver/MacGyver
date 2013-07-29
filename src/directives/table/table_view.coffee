@@ -1,24 +1,43 @@
-angular.module("Mac").directive "macTableV2", [ "Table", (Table) ->
-  require:    "macTableV2"
+###
+@chalk overview
+@name Table 
+@description
+Directive for displaying tabluar data
+
+@param {None}       mac-table-resizable-columns     Convenience param to add macResizableColumn and dependent directives to template elements
+@param {None}       mac-table-reorderable-columns   Convenience param to add macReorderableColumn and dependent directives to template elements
+
+###
+
+angular.module("Mac").factory "MacTableController", ["Table", (Table) ->
+  class MacTableController
+    constructor: (@scope) ->
+
+    hasResizableColumns:   false
+    hasReorderableColumns: false
+
+    makeTable: (columns) ->
+      @table = @scope.table = new Table columns
+]
+
+angular.module("Mac").directive "macTable", [ "MacTableController", (MacTableController) ->
+  require:    "macTable"
   scope:      true
-  controller: ["$scope", ($scope) ->
-    @directive = "mac-table"
-    @makeTable = (columns) -> @table = $scope.table = new Table columns
-    return
-  ]
+  controller: ["$scope", MacTableController]
+
   compile: (element, attr) ->
     # Bootstrap our template
     # Reduces the amount of setup on the users end when creating a new table
 
     # Cache our selectors
-    headerSectionElement = element.find("[table-section=header]")
+    headerSectionElement = element.find("[mac-table-section=header]")
 
-    # If we find the initial-width directive we can assume that the parent
+    # If we find the width directive we can assume that the parent
     # should have the mac-columns directive
-    element.find("[initial-width]")
+    element.find("[mac-column-width]")
       .attr("width", "{{cell.column.width}}%")
-      .parents("[table-row]")
-        .attr("mac-columns", "")
+      .parents("[mac-table-row]")
+      .attr("mac-columns", "")
 
     # Format our mac-cell-templates
     element.find("[mac-cell-template]")
@@ -27,7 +46,7 @@ angular.module("Mac").directive "macTableV2", [ "Table", (Table) ->
       .attr("data-column-name", "{{cell.column.colName}}")
 
     # Resizable?
-    if attr.resizableColumns?
+    if attr.macTableResizableColumns?
       headerSectionElement
         .find("[mac-cell-template]").find(".cell-wrapper")
         .attr("mac-resizable-column", "")
@@ -35,29 +54,29 @@ angular.module("Mac").directive "macTableV2", [ "Table", (Table) ->
         .attr("mac-resizable-containment", "document")
 
     # Reorderable?
-    if attr.reorderableColumns?
+    if attr.macTableReorderableColumns?
       headerSectionElement
-        .find("[table-row]")
+        .find("[mac-table-row]")
         .attr("mac-reorderable", "[mac-cell-template]")
         .attr("mac-reorderable-columns", "")
 
     # Generate our boilerplate ng-repeat on rows if there isn't on set already
-    element.find("[table-row]")
-      .not("[table-row][ng-repeat]")
+    element.find("[mac-table-row]")
+      .not("[mac-table-row][ng-repeat]")
       .attr("ng-repeat", "row in section.rows")
 
-    # Generating the boilerplate initial-width calculations is a drag,
-    # lets do that automatically looking for "auto" in initial-width
-    autoWidthTemplates = headerSectionElement.find("[initial-width=auto]")
+    # Generating the boilerplate mac-column-width calculations is a drag,
+    # lets do that automatically looking for "auto" in mac-column-width
+    autoWidthTemplates = headerSectionElement.find("[mac-column-width=auto]")
     if autoWidthTemplates.length
-      siblingTemplates = headerSectionElement.find("[initial-width]").not("[initial-width = auto]")
+      siblingTemplates = headerSectionElement.find("[mac-column-width]").not("[mac-column-width=auto]")
       remainingPercent = 100
       siblingTemplates.each ->
-        remainingPercent -= +$(this).attr('initial-width').replace "%", ""
+        remainingPercent -= +$(this).attr('mac-column-width').replace "%", ""
       initialWidthExp =
         "{{#{remainingPercent} / (table.columns.length - #{siblingTemplates.length})}}%"
       # Set each auto width template with our expression
-      autoWidthTemplates.attr "initial-width",  initialWidthExp
+      autoWidthTemplates.attr "mac-column-width",  initialWidthExp
 
     ($scope, $element, $attr, controller) ->
       controller.$element = $element
@@ -65,7 +84,7 @@ angular.module("Mac").directive "macTableV2", [ "Table", (Table) ->
       # A note about how we're $observing and then $watching
       # this is done to avoid using an isolate scope
 
-      $attr.$observe "columns", (columnsExp) ->
+      $attr.$observe "macTableColumns", (columnsExp) ->
         # As a convenience, we'll take the word "dynamic" unevaluated
         # and make a dynamic table
         if columnsExp is "dynamic"

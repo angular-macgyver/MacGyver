@@ -17,7 +17,7 @@ angular.module("Mac").directive "macReorderable", [
 
 
 angular.module("Mac").directive "macReorderableColumns", [ ->
-  require: ["^macTableV2", "macReorderable"]
+  require: ["^macTable", "macReorderable"]
 
   link: ($scope, $element, $attr, controllers) ->
     controllers[1].registerCallback (event, ui, columnElements) ->

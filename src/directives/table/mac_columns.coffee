@@ -1,3 +1,13 @@
+###
+@chalk overview
+@name Columns
+@description
+Directive that keeps track of the widths of the columns in the table.
+This directive is automatically added to any row whose cells use `mac-columns-width`.
+
+@dependencies
+macTable, macTableSection, macTableRow
+###
 
 angular.module("Mac").factory "macColumnsController", ->
   class MacColumnsController
@@ -46,17 +56,16 @@ angular.module("Mac").factory "macColumnsController", ->
 
 
 angular.module("Mac").directive "macColumns", [ "macColumnsController", (macColumnsController) ->
-  require:    ["^macTableV2", "^tableSection", "tableRow", "macColumns"]
+  require:    ["^macTable", "^macTableSection", "macTableRow", "macColumns"]
   controller: ["$scope", "$element", "$attrs", macColumnsController]
 
   link: ($scope, $element, $attrs, controllers) ->
     $scope.$on "mac-columns-#{$scope.$id}-changed", (event, id, newValue, oldValue) ->
       controllers[3].recalculateWidths.apply controllers[3], arguments
-
 ]
 
-angular.module("Mac").directive "initialWidth", [ ->
-  require:  ["^macTableV2", "^tableSection", "^tableRow", "^macColumns"]
+angular.module("Mac").directive "macColumnWidth", [ ->
+  require:  ["^macTable", "^macTableSection", "^macTableRow", "^macColumns"]
   priority: 500
 
   compile: (element, attr) ->
@@ -65,7 +74,7 @@ angular.module("Mac").directive "initialWidth", [ ->
       controllers[3].trackedColumns[$scope.$id] = [$scope, $element]
 
       # Set the initial percentage
-      $attrs.$observe "initialWidth", (value) ->
+      $attrs.$observe "macColumnWidth", (value) ->
         # Only set this if we don't have a width
         return if $scope.cell.column.width
         $scope.cell.column.width = +value.replace "%", ""

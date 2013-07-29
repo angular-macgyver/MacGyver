@@ -164,6 +164,11 @@ describe "Table Data", ->
         table.load "body", [{first_name: "Mick", last_name: "Jagger", age: 30}]
         expect(table.sections.body.rows.length).toBe 1
 
+      it "can clear a section", ->
+        table = @scope.table
+        table.clear "body"
+        expect(table.sections.body.rows.length).toBe 0
+
     describe "Dynamic Table", ->
       beforeEach inject ($rootScope, Table, TableSectionController) ->
         # Our custom header controller, we'll use this later
@@ -245,19 +250,19 @@ describe "Table View", ->
     describe "Table Structure", ->
       element  = null
       template =
-      """<table mac-table-v2 columns="tableColumns">
-          <thead table-section="header">
-            <tr table-row>
-              <th mac-cell-template initial-width="auto">Header Cell</th>
+      """<table mac-table mac-table-columns="tableColumns">
+          <thead mac-table-section="header" mac-table-section-blank-row>
+            <tr mac-table-row>
+              <th mac-cell-template mac-column-width="auto">Header Cell</th>
             </tr>
           </thead>
-          <tbody table-section="body" models="tableData">
-            <tr table-row>
+          <tbody mac-table-section="body" mac-table-section-models="tableData">
+            <tr mac-table-row>
               <td mac-cell-template="first_name last_name">{{cell.value()}}</td>
             </tr>
           </tbody>
-          <tfoot table-section="footer">
-            <tr table-row>
+          <tfoot mac-table-section="footer" mac-table-section-blank-row>
+            <tr mac-table-row>
               <td mac-cell-template>Footer Cell</td>
             </tr>
           </tfoot>
@@ -269,30 +274,30 @@ describe "Table View", ->
           scope.tableData    = models
           scope.tableColumns = columns
 
-      it "Should repeat table-row for each item", ->
-        expect(element.find("[table-section=body] [table-row]").length).toBe 2
+      it "Should repeat mac-table-row for each item", ->
+        expect(element.find("[mac-table-section=body] [mac-table-row]").length).toBe 2
 
       it "Should repeat mac-cell-template for each column", ->
-        expect(element.find("[table-section=body] [table-row] [mac-cell-template]").length).toBe 4
+        expect(element.find("[mac-table-section=body] [mac-table-row] [mac-cell-template]").length).toBe 4
 
       it "Should auto populate a blank row for header and footer", ->
-        expect(element.find("[table-section=header] [table-row]").length).toBe 1
-        expect(element.find("[table-section=footer] [table-row]").length).toBe 1
+        expect(element.find("[mac-table-section=header] [mac-table-row]").length).toBe 1
+        expect(element.find("[mac-table-section=footer] [mac-table-row]").length).toBe 1
 
       it "Should repeat mac-cell-template for each column in header and footer", ->
-        expect(element.find("[table-section=header] [table-row] [mac-cell-template]").length).toBe 2
-        expect(element.find("[table-section=footer] [table-row] [mac-cell-template]").length).toBe 2
+        expect(element.find("[mac-table-section=header] [mac-table-row] [mac-cell-template]").length).toBe 2
+        expect(element.find("[mac-table-section=footer] [mac-table-row] [mac-cell-template]").length).toBe 2
 
       it "Should adjust when columns are removed", ->
         scope.$apply -> scope.tableColumns.pop()
-        expect(element.find("[table-section=body] [table-row] [mac-cell-template]").length).toBe 2
+        expect(element.find("[mac-table-section=body] [mac-table-row] [mac-cell-template]").length).toBe 2
 
       it "Should adjust when rows are removed", ->
         scope.$apply -> scope.tableData.pop()
-        expect(element.find("[table-section=body] [table-row]").length).toBe 1
+        expect(element.find("[mac-table-section=body] [mac-table-row]").length).toBe 1
 
-      it "Should set mac-columns attribute on parent of initial-width directives", ->
-        expect(element.find("[table-section=header] [table-row][mac-columns]").length).toBe 1
+      it "Should set mac-columns attribute on parent of mac-column-width directives", ->
+        expect(element.find("[mac-table-section=header] [mac-table-row][mac-columns]").length).toBe 1
 
       it "Should set a width attribute on every header mac-cell-template", ->
         # Counts header (1*2)
@@ -307,19 +312,19 @@ describe "Table View", ->
           sectionControllersColumns = ["full_name", "age"]
 
           sectionControllersTemplate =
-          """<table mac-table-v2 columns="tableColumns">
-              <thead table-section="header">
-                <tr table-row>
-                  <th mac-cell-template initial-width="auto">Header Cell</th>
+          """<table mac-table mac-table-columns="tableColumns">
+              <thead mac-table-section="header" mac-table-section-blank-row>
+                <tr mac-table-row>
+                  <th mac-cell-template mac-column-width="auto">Header Cell</th>
                 </tr>
               </thead>
-              <tbody table-section="body" models="tableData" controller="tableBodySectionController">
-                <tr table-row>
+              <tbody mac-table-section="body" mac-table-section-models="tableData" mac-table-section-controller="tableBodySectionController">
+                <tr mac-table-row>
                   <td mac-cell-template>{{cell.value()}}</td>
                 </tr>
               </tbody>
-              <tfoot table-section="footer">
-                <tr table-row>
+              <tfoot mac-table-section="footer" mac-table-section-blank-row>
+                <tr mac-table-row>
                   <td mac-cell-template>Footer Cell</td>
                 </tr>
               </tfoot>
@@ -329,8 +334,10 @@ describe "Table View", ->
             name: "SectionTestBodySectionController"
             cellValue: (row, colName) ->
                 switch colName
-                  when "full_name" then "#{row.model.first_name} #{row.model.last_name}"
-                  when "age" then row.model.age
+                  when "full_name"
+                    "#{row.model.first_name} #{row.model.last_name}"
+                  when "age"
+                    row.model.age
 
           element = $compile(sectionControllersTemplate)(scope)
 
@@ -339,7 +346,52 @@ describe "Table View", ->
             scope.tableColumns               = sectionControllersColumns
 
         it "Should use the values in the section controller", ->
-          expect(element.find("[table-section=body] [table-row]:first [mac-cell-template]:first").text()).toBe "Paul McCartney"
+          expect(element.find("[mac-table-section=body] [mac-table-row]:first [mac-cell-template]:first").text()).toBe "Paul McCartney"
+
+        it "Should only have a single row in the header and footer if the columns change", ->
+          scope.$apply ->
+            scope.tableColumns = ["first_name"]
+          expect(element.find("[mac-table-section=header] [mac-table-row]").length).toBe 1
+          expect(element.find("[mac-table-section=footer] [mac-table-row]").length).toBe 1
+
+      describe "Table helper attributes", ->
+
+        beforeEach inject ->
+          helperAttributeTemplate =
+          """<table 
+                mac-table
+                mac-table-columns="tableColumns"
+                mac-table-resizable-columns
+                mac-table-reorderable-columns
+              >
+              <thead mac-table-section="header" mac-table-section-blank-row>
+                <tr mac-table-row>
+                  <th mac-cell-template mac-column-width="auto">Header Cell</th>
+                </tr>
+              </thead>
+              <tbody mac-table-section="body" mac-table-section-models="tableData">
+                <tr mac-table-row>
+                  <td mac-cell-template>{{cell.value()}}</td>
+                </tr>
+              </tbody>
+              <tfoot mac-table-section="footer" mac-table-section-blank-row>
+                <tr mac-table-row>
+                  <td mac-cell-template>Footer Cell</td>
+                </tr>
+              </tfoot>
+            </table>"""
+
+          element = $compile(helperAttributeTemplate)(scope)
+          scope.$apply()
+
+        it "Should add the resizable directives", ->
+          expect(element.find("[mac-table-section=header] [mac-cell-template] .cell-wrapper[mac-resizable]").length).toBe models.length
+          expect(element.find("[mac-table-section=header] [mac-cell-template] .cell-wrapper[mac-resizable-column]").length).toBe models.length
+          expect(element.find("[mac-table-section=header] [mac-cell-template] .cell-wrapper[mac-resizable-containment]").length).toBe models.length
+
+        it "Should add the reorderable directives", ->
+          expect(element.find("[mac-table-section=header] [mac-table-row][mac-reorderable]").length).toBe 1
+          expect(element.find("[mac-table-section=header] [mac-table-row][mac-reorderable-columns]").length).toBe 1
 
       describe "Column Auto Widths", ->
         firstNameElement = null
@@ -349,16 +401,16 @@ describe "Table View", ->
 
         beforeEach ->
           autoWidthsTemplate =
-          """<table mac-table-v2 columns="tableColumns">
-              <thead table-section="header">
-                <tr table-row>
-                  <th mac-cell-template initial-width="auto">{{cell.value()}}</th>
-                  <th mac-cell-template="band" initial-width="auto">{{cell.value()}}</th>
-                  <th mac-cell-template="born" initial-width="10%">born on {{cell.value()}}</th>
+          """<table mac-table mac-table-columns="tableColumns">
+              <thead mac-table-section="header" mac-table-section-blank-row>
+                <tr mac-table-row>
+                  <th mac-cell-template mac-column-width="auto">{{cell.value()}}</th>
+                  <th mac-cell-template="band" mac-column-width="auto">{{cell.value()}}</th>
+                  <th mac-cell-template="born" mac-column-width="10%">born on {{cell.value()}}</th>
                 </tr>
               </thead>
-              <tbody table-section="body" models="tableData">
-                <tr table-row>
+              <tbody mac-table-section="body" mac-table-section-models="tableData">
+                <tr mac-table-row>
                   <td mac-cell-template>{{cell.value()}}</th>
                 </tr>
               </tbody>
@@ -369,7 +421,7 @@ describe "Table View", ->
             scope.tableColumns = ["first_name", "last_name", "band", "born"]
 
           [firstNameElement, lastNameElement, bandElement, bornElement] =
-            element.find("[table-section=header] [mac-cell-template]")
+            element.find("[mac-table-section=header] [mac-cell-template]")
 
         it "Should set firstNameElement and lastNameElement to be 30%", ->
           expect($(firstNameElement).attr("width")).toBe "30%"
@@ -384,7 +436,7 @@ describe "Table View", ->
       describe "macColumns behaviour", ->
         # We are collecting all this information to pass as arguments to our mac-columns event listener
         changeColumnWidth = (width) ->
-          column                           = element.find("[table-section=header] [table-row] [mac-cell-template]").first()
+          column                           = element.find("[mac-table-section=header] [mac-table-row] [mac-cell-template]").first()
           columnId                         = column.scope().$id
           macColumnsId                     = element.find("[mac-columns]").scope().$id
           column.scope().cell.column.width = width
@@ -398,7 +450,7 @@ describe "Table View", ->
             [macColumnsId, columnId] = changeColumnWidth 70
             scope.$broadcast "mac-columns-#{macColumnsId}-changed", columnId, 70, 50
 
-          expect(element.find("[table-section=header] [table-row] [mac-cell-template]").last().attr("width")).toBe "30%"
+          expect(element.find("[mac-table-section=header] [mac-table-row] [mac-cell-template]").last().attr("width")).toBe "30%"
 
         it "Should abort if it causes a column to be less than 5%", ->
           macColumnsId = null
@@ -407,5 +459,5 @@ describe "Table View", ->
             [macColumnsId, columnId] = changeColumnWidth 100
             scope.$broadcast "mac-columns-#{macColumnsId}-changed", columnId, 100, 50
 
-          expect(element.find("[table-section=header] [table-row] [mac-cell-template]").last().attr("width")).toBe "50%"
+          expect(element.find("[mac-table-section=header] [mac-table-row] [mac-cell-template]").last().attr("width")).toBe "50%"
 

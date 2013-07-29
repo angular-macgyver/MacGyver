@@ -6,118 +6,42 @@ block append content
       section#table-view
         h2 Example
         .docs-example
-          h3 MacTableV2
+          h3 MacTable
           table.table.mac-table-default(
-            mac-table-v2
-            resizable-columns
-            reorderable-columns
-            columns="dynamic"
+            mac-table
+            mac-table-columns="dynamic"
           )
-            thead(table-section="header")
-              tr(table-row, ng-repeat="row in section.rows")
-                th(mac-cell-template="No.", initial-width="5%")
-                  span {{cell.colName}}
+            thead(mac-table-section="header", mac-table-section-blank-row)
+              tr(mac-table-row)
+                th(mac-cell-template="No.", mac-column-width="5%")
+                  span {{cell.column.colName}}
 
-                th(mac-cell-template="Title", initial-width="35%")
-                  span {{cell.colName}}
+                th(mac-cell-template="Title", mac-column-width="35%")
+                  span {{cell.column.colName}}
 
-                th(mac-cell-template="", initial-width="auto")
-                  span {{cell.colName}}
+                th(mac-cell-template="", mac-column-width="auto")
+                  span {{cell.column.colName}}
 
-            tbody(table-section="body", models="macGyverSeasonOne")
-              tr(table-row, ng-repeat="row in section.rows")
+            tbody(mac-table-section="body", mac-table-section-models="macGyverSeasonOne")
+              tr(mac-table-row)
                 td(mac-cell-template="")
                   span {{cell.value()}}
+
         pre.prettyprint.linenums(ng-non-bindable)
-          | <table mac-table-v2="mac-table-v2" resizable-columns="resizable-columns" reorderable-columns="reorderable-columns" columns="dynamic" class="table mac-table-default">
-          |   <thead table-section="header">
-          |     <tr table-row="table-row" ng-repeat="row in section.rows">
-          |       <th mac-cell-template="No." initial-width="5%"><span>{{cell.colName}}</span></th>
-          |       <th mac-cell-template="Title" initial-width="35%"><span>{{cell.colName}}</span></th>
-          |       <th mac-cell-template="" initial-width="auto"><span>{{cell.colName}}</span></th>
+          | <table mac-table  mac-table-columns="dynamic" class="table mac-table-default">
+          |   <thead mac-table-section="header" mac-table-section-blank-row>
+          |     <tr mac-table-row>
+          |       <th mac-cell-template="No." mac-column-width="5%"><span>{{cell.colName}}</span></th>
+          |       <th mac-cell-template="Title" mac-column-width="35%"><span>{{cell.colName}}</span></th>
+          |       <th mac-cell-template="" mac-column-width="auto"><span>{{cell.colName}}</span></th>
           |     </tr>
           |   </thead>
-          |   <tbody table-section="body" models="macGyverSeasonOne">
-          |     <tr table-row="table-row" ng-repeat="row in section.rows">
+          |   <tbody mac-table-section="body" mac-table-section-models="macGyverSeasonOne">
+          |     <tr table-row>
           |       <td mac-cell-template=""><span>{{cell.value()}}</span></td>
           |     </tr>
           |   </tbody>
           | </table>
-
-        .docs-example
-          h3 MacTableV1
-          .table-view-wrapper(
-            mac-table
-            mac-table-data          = "data"
-            mac-table-width         = "750"
-            mac-table-header-height = "30"
-            mac-table-columns       = "columnOrder"
-            mac-table-loading       = "loading"
-            mac-table-resizable
-            mac-table-has-footer
-            mac-table-sortable
-            mac-table-lock-first-column
-            mac-table-calculate-total-locally
-            mac-table-fluid-width
-            ng-cloak
-          )
-            .table-header-template
-              .cell(column="Name") Name
-              .cell(column="anotherName", sort-by="a") Second Column
-            .table-body-template
-              .mac-table-row(class="{{'true' | true:'hello'}}")
-                .cell(column="Name", style="width: 200px")
-                  a(
-                    mac-click       = "loadMoreRows()"
-                    mac-click-depth = "5"
-                  ) {{row.value.name}}
-                .cell(column="anotherName") {{row.value.a | number: 0}}
-                .cell(column="d") {{row.value.d | number: 4}}
-                .cell(column="c") {{row.value.c | number: 4}}
-                .cell(column="b") {{row.parent.getRandomText()}} {{row.value.b | currency}}
-                .cell(column="Abc") {{row.value.attributes.abc | number:4}}
-                .cell(column="Created") {{row.value.created | date: 'mediumDate'}}
-            .table-footer-template
-              a.btn(mac-click="loadMoreRows()") Load 20 More Rows
-            .table-total-footer-template
-              .cell(column="Name") {{ "Row" | pluralize: data.length}}
-              .cell(column="b") {{ total.b | currency}}
-        pre.prettyprint.linenums(ng-non-bindable)
-          | <div mac-table="mac-table"
-          |   mac-table-data="data"
-          |   mac-table-width="750"
-          |   mac-table-header-height="30"
-          |   mac-table-columns="columnOrder"
-          |   mac-table-loading="loading"
-          |   mac-table-resizable="mac-table-resizable"
-          |   mac-table-has-footer="mac-table-has-footer"
-          |   mac-table-sortable="mac-table-sortable"
-          |   mac-table-lock-first-column="mac-table-lock-first-column"
-          |   mac-table-calculate-total-locally="mac-table-calculate-total-locally"
-          |   mac-table-fluid-width="mac-table-fluid-width"
-          |   ng-cloak="ng-cloak"
-          |   class="table-view-wrapper">
-          |   <div class="table-header-template">
-          |     <div column="Name" class="cell">Name</div>
-          |     <div column="anotherName" sort-by="a" class="cell">Second Column</div>
-          |   </div>
-          |   <div class="table-body-template">
-          |     <div class="mac-table-row {{'true' | true:'hello'}}">
-          |       <div column="Name" style="width: 200px" class="cell"><a mac-click="loadMoreRows()" mac-click-depth="5">{{row.value.name}}</a></div>
-          |       <div column="anotherName" class="cell">{{row.value.a | number: 0}}</div>
-          |       <div column="d" class="cell">{{row.value.d | number: 4}}</div>
-          |       <div column="c" class="cell">{{row.value.c | number: 4}}</div>
-          |       <div column="b" class="cell">{{row.parent.getRandomText()}} {{row.value.b | currency}}</div>
-          |       <div column="Abc" class="cell">{{row.value.attributes.abc | number:4}}</div>
-          |       <div column="Created" class="cell">{{row.value.created | date: 'mediumDate'}}</div>
-          |     </div>
-          |   </div>
-          |   <div class="table-footer-template"><a mac-click="loadMoreRows()" class="btn">Load 20 More Rows</a></div>
-          |   <div class="table-total-footer-template">
-          |     <div column="Name" class="cell">{{ "Row" | pluralize: data.length}}</div>
-          |     <div column="b" class="cell">{{ total.b | currency}}</div>
-          |   </div>
-          | </div>
 
 block append scripts
   script
