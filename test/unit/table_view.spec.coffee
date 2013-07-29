@@ -164,6 +164,11 @@ describe "Table Data", ->
         table.load "body", [{first_name: "Mick", last_name: "Jagger", age: 30}]
         expect(table.sections.body.rows.length).toBe 1
 
+      it "can clear a section", ->
+        table = @scope.table
+        table.clear "body"
+        expect(table.sections.body.rows.length).toBe 0
+
     describe "Dynamic Table", ->
       beforeEach inject ($rootScope, Table, TableSectionController) ->
         # Our custom header controller, we'll use this later
@@ -342,6 +347,12 @@ describe "Table View", ->
 
         it "Should use the values in the section controller", ->
           expect(element.find("[mac-table-section=body] [mac-table-row]:first [mac-cell-template]:first").text()).toBe "Paul McCartney"
+
+        it "Should only have a single row in the header and footer if the columns change", ->
+          scope.$apply ->
+            scope.tableColumns = ["first_name"]
+          expect(element.find("[mac-table-section=header] [mac-table-row]").length).toBe 1
+          expect(element.find("[mac-table-section=footer] [mac-table-row]").length).toBe 1
 
       describe "Table helper attributes", ->
 

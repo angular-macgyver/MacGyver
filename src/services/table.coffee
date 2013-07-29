@@ -157,6 +157,10 @@ angular.module("Mac").factory "TableRowsController", [
         remove: (sectionName, index) ->
           section = @table.sections[sectionName]
           return section.rows.splice(index, 1)
+
+        clear: (sectionName) ->
+          section      = @table.sections[sectionName]
+          section.rows = []
 ]
 
 angular.module("Mac").factory "Table", [
@@ -234,6 +238,9 @@ angular.module("Mac").factory "Table", [
 
         remove: (sectionName, index = 0) ->
           @rowsCtrl.remove sectionName, index
+
+        clear: (sectionName) ->
+          @rowsCtrl.clear sectionName
 
         blankRow: ->
           @columnsCtrl.blank()

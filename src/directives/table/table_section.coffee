@@ -73,6 +73,11 @@ angular.module("Mac").directive "macTableSectionBlankRow", ->
         killWatcher()
 
         @scope.$watch "table.columnsOrder", =>
+          # If this section has already been created, clear it so multiple rows
+          # aren't inserted
+          if sectionName of @scope.table.sections
+            @scope.table.clear  sectionName
+
           # We do this in two steps to avoid clobbering our columns when
           # the table has dynamic columns
           @scope.table.load   sectionName
