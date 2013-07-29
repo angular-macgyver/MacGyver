@@ -133,9 +133,8 @@ angular.module("Mac").factory "TableRowsController", [
           row
 
         set: (sectionName, models, sectionController) ->
-          @table.sections[sectionName] = section =
-            tableComponents.sectionFactory(
-                @table, sectionName, sectionController)
+          # Get our section
+          section = @table.sections[sectionName]
 
           # Don't continue if no models
           return unless models?.length?
@@ -158,14 +157,20 @@ angular.module("Mac").factory "TableRowsController", [
         remove: (sectionName, index) ->
           section = @table.sections[sectionName]
           return section.rows.splice(index, 1)
+
+        clear: (sectionName) ->
+          section      = @table.sections[sectionName]
+          section.rows = []
 ]
 
 angular.module("Mac").factory "Table", [
     "TableColumnsController"
     "TableRowsController"
+    "tableComponents"
     (
         TableColumnsController
         TableRowsController
+        tableComponents
     ) ->
       # Helper functions
       convertObjectModelsToArray = (models) ->
@@ -183,7 +188,18 @@ angular.module("Mac").factory "Table", [
             @columnsCtrl.set(columns)
           return
 
-        load: (sectionName, models, sectionController) ->
+        makeSection: (sectionName) ->
+          @sections[sectionName] =
+            tableComponents.sectionFactory(this, sectionName)
+
+        load: (sectionName, models, controller) ->
+          if not @sections[sectionName]
+            @makeSection sectionName
+
+          @loadController sectionName, controller if controller
+          @loadModels     sectionName, models     if models
+
+        loadModels: (sectionName, models) ->
           models = convertObjectModelsToArray models
 
           # Check if we're working with an existing section, if so we want to
@@ -210,19 +226,21 @@ angular.module("Mac").factory "Table", [
 
             @insert.apply this, args for args in toBeInserted
 
-            # If we're passed a section controller, set it for this section
-            if sectionController
-              @sections[sectionName].setController sectionController
-
           # New or empty section, load using set which will also create a section
           else
-            @rowsCtrl.set sectionName, models, sectionController
+            @rowsCtrl.set sectionName, models
+
+        loadController: (sectionName, sectionController) ->
+          @sections[sectionName].setController sectionController if sectionController
 
         insert: (sectionName, model, index = 0) ->
           @rowsCtrl.insert sectionName, model, index
 
         remove: (sectionName, index = 0) ->
           @rowsCtrl.remove sectionName, index
+
+        clear: (sectionName) ->
+          @rowsCtrl.clear sectionName
 
         blankRow: ->
           @columnsCtrl.blank()
