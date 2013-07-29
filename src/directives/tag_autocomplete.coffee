@@ -6,7 +6,8 @@
 A directive for generating tag input with autocomplete support on text input
 
 @dependencies
-- jQuery UI autocomplete
+- mac-autocomplete
+- mac-menu
 
 @param {String} mac-tag-autocomplete-url          Url to fetch autocomplete dropdown list data
 @param {String} mac-tag-autocomplete-value        The value to be sent back upon selection (default "id")
@@ -137,7 +138,9 @@ angular.module("Mac").directive "macTagAutocomplete", [
             item = $scope.onEnter {item}
 
           $scope.selected.push item if item?
-          $scope.textInput = ""
+          setTimeout ->
+            $scope.$apply -> $scope.textInput = ""
+          , 0
 
         $scope.$on "mac-tag-autocomplete-clear-input", ->
           $scope.textInput = ""

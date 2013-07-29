@@ -6,6 +6,7 @@ describe "Mac tag autocomplete", ->
   beforeEach module("Mac")
   beforeEach module("template/tag_autocomplete.html")
   beforeEach module("template/autocomplete.html")
+  beforeEach module("template/menu.html")
 
   beforeEach inject (_$compile_, _$rootScope_, _keys_) ->
     $compile   = _$compile_

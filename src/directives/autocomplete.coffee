@@ -6,7 +6,7 @@
 A directive for providing suggestions while typing into the field
 
 @dependencies
-- jQuery UI autocomplete
+- mac-menu
 
 @param {String} ng-model Assignable angular expression to data-bind to
 @param {String} mac-placeholder Placeholder text
@@ -30,33 +30,53 @@ A directive for providing suggestions while typing into the field
 
 angular.module("Mac").directive "macAutocomplete", [
   "$http"
-  "$parse"
   "$filter"
-  ($http, $parse, $filter) ->
+  "$compile"
+  "$timeout"
+  "$parse"
+  "$rootScope"
+  "keys"
+  ($http, $filter, $compile, $timeout, $parse, $rootScope, keys) ->
     restrict:    "E"
     templateUrl: "template/autocomplete.html"
     replace:     true
-    require:     "?ngModel"
+    require:     "ngModel"
 
     link: ($scope, element, attrs, ctrl) ->
       labelKey = attrs.macAutocompleteLabel  or "name"
       queryKey = attrs.macAutocompleteQuery  or "q"
-      delay    = +attrs.macAutocompleteDelay or 800
+      delay    = +(attrs.macAutocompleteDelay or 800)
+      inside   = attrs.macAutocompleteInside?
 
-      autocompleteUrl     = $parse attrs.macAutocompleteUrl
-      onSelect            = $parse attrs.macAutocompleteOnSelect
-      onSuccess           = $parse attrs.macAutocompleteOnSuccess
-      onError             = $parse attrs.macAutocompleteOnError
-      source              = $parse attrs.macAutocompleteSource
+      autocompleteUrl = $parse attrs.macAutocompleteUrl
+      onSelect        = $parse attrs.macAutocompleteOnSelect
+      onSuccess       = $parse attrs.macAutocompleteOnSuccess
+      onError         = $parse attrs.macAutocompleteOnError
+      source          = $parse attrs.macAutocompleteSource
+      disabled        = $parse attrs.macAutocompleteDisabled
+
       currentAutocomplete = []
+      timeoutId           = null
 
-      # HACK: setTimeout is added to make sure value wont' change afterwards
-      if ctrl?
-        $scope.$watch attrs.ngModel, (value) ->
-          setTimeout ->
-            ctrl.$setViewValue value
-            ctrl.$render()
-          , 0
+      $menuScope       = $rootScope.$new()
+      $menuScope.items = []
+      $menuScope.index = 0
+
+      $scope.$watch attrs.ngModel, (value) ->
+        ctrl.$setViewValue value
+        ctrl.$render()
+
+      ctrl.$parsers.push (value) ->
+        if value and not disabled($scope)
+          if delay > 0
+            $timeout.cancel timeoutId if timeoutId?
+            timeoutId = $timeout ->
+              queryData value
+            , delay
+          else
+            queryData value
+
+        return value
 
       #
       # @function
@@ -64,34 +84,43 @@ angular.module("Mac").directive "macAutocomplete", [
       # @description
       # Resetting autocomplete
       #
-      reset = -> currentAutocomplete = []
+      reset = ->
+        $menuScope.items = []
+        $menuScope.index = 0
 
       #
       # @function
-      # @name updateList
+      # @name positionMenu
       # @description
-      # Convert given data to the format used by autocomplete
-      # @param {Array} data Raw data
+      # Calculate the style include position and width for menu
       #
-      updateList = (data = []) ->
-        # store the current data for revert lookup
+      positionMenu = ->
+        $menuScope.style       = element.offset()
+        $menuScope.style.top  += element.outerHeight()
+        $menuScope.style.width = element.outerWidth()
+
+      #
+      # @function
+      # @name updateItem
+      # @description
+      # Update list of items getting passed to menu
+      # @param {Array} data Array of data
+      #
+      updateItem = (data = []) ->
         currentAutocomplete = data
-
-        # convert tags to jquery ui autocomplete format
-        _(data).map (item) ->
-          label = value = if item[labelKey]? then item[labelKey] else item
-          return {label, value}
+        $menuScope.items    =
+          _(data).map (item) ->
+            label = value = item[labelKey] or item
+            return {label, value}
 
       #
       # @function
-      # @name sourceFn
+      # @name queryData
       # @description
-      # Used by jQuery UI autocomplete to populate options
-      # The list of objects will be populated through the response function
-      # @param {Request Object} req Request object from jQuery UI
-      # @param {Response function} resp Response callback function for jQuery UI
+      # Used for querying data
+      # @param {String} query Search query
       #
-      sourceFn = (req, resp) ->
+      queryData = (query) ->
         url = autocompleteUrl $scope
 
         if url
@@ -99,35 +128,63 @@ angular.module("Mac").directive "macAutocomplete", [
             method: "GET"
             url:    url
             params: {}
-          options.params[queryKey] = req.term
+          options.params[queryKey] = query
 
           $http(options)
             .success (data, status, headers, config) ->
-              fetchedList  = onSuccess? $scope, {data, status, headers}
-              fetchedList ?= data.data
+              dataList  = onSuccess $scope, {data, status, headers}
+              dataList ?= data.data
 
-              resp updateList fetchedList
+              updateItem dataList
+              positionMenu()
             .error (data, status, headers, config) ->
-              onError? $scope, {data, status, headers}
+              onError $scope, {data, status, headers}
         else
-          list = updateList(source($scope) or [])
-          resp $filter("filter") list, req.term
+          updateItem $filter("filter")(source($scope), query)
+          positionMenu()
 
-      element.autocomplete
-        delay:     delay
-        autoFocus: true
-        source:    sourceFn
+      $menuScope.select = (index) ->
+        selected = currentAutocomplete[index]
+        onSelect $scope, {selected}
 
-        select: (event, ui) ->
-          $scope.$apply ->
-            selected = _(currentAutocomplete).find (item) ->
-              (item[labelKey] or item) is ui.item.label
-            onSelect $scope, {selected} if onSelect?
+        label = $menuScope.items[index].label or ""
+        if attrs.ngModel?
+          ctrl.$setViewValue label
+          ctrl.$render()
 
-      if attrs.macAutocompleteDisabled?
-        $scope.$watch attrs.macAutocompleteDisabled, (value) ->
-          action = if value then "disable" else "enable"
-          element.autocomplete action
+        reset()
+
+      element.on "keydown", (event) ->
+        switch event.which
+          when keys.DOWN
+            $scope.$apply ->
+              $menuScope.index = ($menuScope.index + 1) % $menuScope.items.length
+          when keys.UP
+            $scope.$apply ->
+              $menuScope.index = (if $menuScope.index then $menuScope.index else $menuScope.items.length) - 1
+          when keys.ENTER
+            $scope.$apply ->
+              if $menuScope.items.length > 0
+                $menuScope.select $menuScope.index
+          when keys.ESCAPE
+            $scope.$apply -> reset()
+
+        return true
+
+      $(document).on "click", (event) ->
+        if $menuScope.items.length > 0
+          $scope.$apply -> reset()
+
+      menuEl = angular.element("<mac-menu></mac-menu>")
+      menuEl.attr
+        "mac-menu-items":  "items"
+        "mac-menu-style":  "style"
+        "mac-menu-select": "select(index)"
+        "mac-menu-index":  "index"
+      if inside
+        element.after $compile(menuEl) $menuScope
+      else
+        $(document.body).append $compile(menuEl) $menuScope
 
       #
       # @event
