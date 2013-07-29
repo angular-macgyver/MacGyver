@@ -1635,6 +1635,12 @@ table.mac-table-default thead th,table.mac-table-default tbody th,table.mac-tabl
 table.mac-table-default th,table.mac-table-default td{padding:0;}
 table.mac-table-default th .cell-wrapper,table.mac-table-default td .cell-wrapper{box-sizing:border-box;padding:8px}
 
+.mac-menu{position:absolute;top:0;left:0;width:200px;background:#fff;box-shadow:0 3px 6px rgba(0,0,0,0.2);border:1px solid #d1d3d8;box-sizing:border-box;max-height:325px;overflow-y:auto;opacity:0;visibility:hidden;transition:opacity .1s ease-out,visibility .1s ease-out;}
+.mac-menu.visible{visibility:visible;opacity:1}
+.mac-menu ul{list-style:none;margin:0;}
+.mac-menu ul .mac-menu-item{display:block;padding:5px 10px;transition:background .1s ease-out;color:#000;cursor:pointer;}
+.mac-menu ul .mac-menu-item.active{background:#e0e8fb;transition:0;text-decoration:none}
+
 .modal-overlay{background-color:rgba(245,246,250,0.75);position:fixed;top:0;left:0;right:0;bottom:0;opacity:0;filter:alpha(opacity=0);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";visibility:hidden;-webkit-transition:all .2s ease-out;-moz-transition:all .2s ease-out;-o-transition:all .2s ease-out;-ms-transition:all .2s ease-out;transition:all .2s ease-out;overflow-y:auto;z-index:3;}
 .modal-overlay.visible{visibility:visible;opacity:1;-ms-filter:none;filter:none;}
 .modal-overlay.visible .modal{top:50%}

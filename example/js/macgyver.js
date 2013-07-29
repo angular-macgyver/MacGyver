@@ -11019,6 +11019,45 @@ angular.module("Mac").factory("keys", function() {
   };
 });
 
+/*
+@chalk overview
+@name Menu
+
+@description
+A directive for creating a menu with multiple items
+
+@param {Expression} mac-menu-item
+@param {Function} mac-menu-select Callback on select
+@param {Object} mac-menu-style Styles apply to the menu
+@param {Expression} mac-menu-index Index of selected item
+*/
+
+angular.module("Mac").directive("macMenu", [
+  "$parse", function($parse) {
+    return {
+      restrict: "EA",
+      replace: true,
+      templateUrl: "template/menu.html",
+      scope: {
+        items: "=macMenuItems",
+        style: "=macMenuStyle",
+        index: "=macMenuIndex",
+        select: "&macMenuSelect"
+      },
+      link: function($scope, element, attrs, ctrls) {
+        $scope.selectItem = function(index) {
+          return $scope.select({
+            index: index
+          });
+        };
+        return $scope.setIndex = function(index) {
+          return $scope.index = index;
+        };
+      }
+    };
+  }
+]);
+
 angular.module("Mac").directive("macModal", [
   "$rootScope", "$parse", "modal", "util", "keys", function($rootScope, $parse, modal, util, keys) {
     return {
@@ -11559,6 +11598,9 @@ angular.module("Mac").directive("macTableSectionBlankRow", function() {
         }
         killWatcher();
         return _this.scope.$watch("table.columnsOrder", function() {
+          if (sectionName in _this.scope.table.sections) {
+            _this.scope.table.clear(sectionName);
+          }
           _this.scope.table.load(sectionName);
           return _this.scope.table.insert(sectionName, _this.scope.table.blankRow());
         });
@@ -13021,6 +13063,12 @@ angular.module("Mac").factory("TableRowsController", [
         return section.rows.splice(index, 1);
       };
 
+      RowsController.prototype.clear = function(sectionName) {
+        var section;
+        section = this.table.sections[sectionName];
+        return section.rows = [];
+      };
+
       return RowsController;
 
     })();
@@ -13125,6 +13173,10 @@ angular.module("Mac").factory("Table", [
           index = 0;
         }
         return this.rowsCtrl.remove(sectionName, index);
+      };
+
+      Table.prototype.clear = function(sectionName) {
+        return this.rowsCtrl.clear(sectionName);
       };
 
       Table.prototype.blankRow = function() {
