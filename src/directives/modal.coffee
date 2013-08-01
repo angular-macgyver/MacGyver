@@ -84,11 +84,10 @@ directive "macModal", [
   ($parse, modal) ->
     restrict: "A"
     link: ($scope, element, attrs) ->
-      attrs.$observe "macModal", (value) ->
-        if value? and value
-          element.bind "click", ->
-            modal.show value,
-              data: $parse(attrs.macModalContent) $scope
+      if attrs.macModal
+        element.bind "click", ->
+          modal.show attrs.macModal,
+            data: $parse(attrs.macModalContent) $scope
       return
 ]
 

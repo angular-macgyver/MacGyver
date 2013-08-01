@@ -8492,15 +8492,13 @@ angular.module("Mac").directive("macModal", [
     return {
       restrict: "A",
       link: function($scope, element, attrs) {
-        attrs.$observe("macModal", function(value) {
-          if ((value != null) && value) {
-            return element.bind("click", function() {
-              return modal.show(value, {
-                data: $parse(attrs.macModalContent)($scope)
-              });
+        if (attrs.macModal) {
+          element.bind("click", function() {
+            return modal.show(attrs.macModal, {
+              data: $parse(attrs.macModalContent)($scope)
             });
-          }
-        });
+          });
+        }
       }
     };
   }
