@@ -1,4 +1,4 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><title>MacGyver Example</title><link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css" rel="stylesheet"><link href="css/vendor.css" rel="stylesheet"><link href="css/MacGyver.css" rel="stylesheet"></head><body ng-app="Mac" data-spy="scroll" data-target="#nav" data-offset="54"><div id="top-nav"><div class="container"><div class="row"><div class="offset3 span6"><ul class="nav nav-pills"><li id="directives-nav"><a href="index.html">Directives</a></li><li id="tableview-nav"><a href="tableview.html">Table View</a></li><li id="filters-nav"><a href="filters.html">Filters</a></li><li id="events-nav"><a href="events.html">Events</a></li><li id="utils-nav"><a href="util.html">Utilities</a></li></ul></div></div></div></div><div class="container"><div class="row content"><div id="nav" class="span3"><ul data-spy="affix" data-offset-top="0" data-offset-bottom="100" class="nav nav-list docs-sidenav"><li><a href="#modal"><i class="icon-chevron-right"></i>Modal</a></li><li><a href="#tooltip"><i class="icon-chevron-right"></i>Tooltip</a></li><li><a href="#autocomplete"><i class="icon-chevron-right"></i>Autocomplete</a></li><li><a href="#tag-autocomplete"><i class="icon-chevron-right"></i>Tag Autocomplete</a></li><li><a href="#datepicker"><i class="icon-chevron-right"></i>Date Picker</a></li><li><a href="#time-input"><i class="icon-chevron-right"></i>Time Input</a></li><li><a href="#tag-input"><i class="icon-chevron-right"></i>Tag Input</a></li><li><a href="#spinner"><i class="icon-chevron-right"></i>Spinner</a></li><li><a href="#file-upload"><i class="icon-chevron-right"></i>File Upload</a></li><li><a href="#placeholder"><i class="icon-chevron-right"></i>Placeholder</a></li></ul></div><div id="example" ng-controller="ExampleController" class="span9"><section id="modal"><h1>Modal Service</h1>
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>MacGyver Example</title><link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css" rel="stylesheet"><link href="css/vendor.css" rel="stylesheet"><link href="css/MacGyver.css" rel="stylesheet"></head><body ng-app="Mac" data-spy="scroll" data-target="#nav" data-offset="54"><div id="top-nav"><div class="container"><div class="row"><div class="offset3 span6"><ul class="nav nav-pills"><li id="directives-nav"><a href="index.html">Directives</a></li><li id="tableview-nav"><a href="tableview.html">Table View</a></li><li id="filters-nav"><a href="filters.html">Filters</a></li><li id="events-nav"><a href="events.html">Events</a></li><li id="utils-nav"><a href="util.html">Utilities</a></li></ul></div></div></div></div><div class="container"><div class="row content"><div id="nav" class="span3"><ul data-spy="affix" data-offset-top="0" data-offset-bottom="100" class="nav nav-list docs-sidenav"><li><a href="#modal"><i class="icon-chevron-right"></i>Modal</a></li><li><a href="#tooltip"><i class="icon-chevron-right"></i>Tooltip</a></li><li><a href="#menu"><i class="icon-chevron-right"></i>Menu</a></li><li><a href="#autocomplete"><i class="icon-chevron-right"></i>Autocomplete</a></li><li><a href="#tag-autocomplete"><i class="icon-chevron-right"></i>Tag Autocomplete</a></li><li><a href="#datepicker"><i class="icon-chevron-right"></i>Date Picker</a></li><li><a href="#time-input"><i class="icon-chevron-right"></i>Time Input</a></li><li><a href="#tag-input"><i class="icon-chevron-right"></i>Tag Input</a></li><li><a href="#spinner"><i class="icon-chevron-right"></i>Spinner</a></li><li><a href="#file-upload"><i class="icon-chevron-right"></i>File Upload</a></li><li><a href="#placeholder"><i class="icon-chevron-right"></i>Placeholder</a></li></ul></div><div id="example" ng-controller="ExampleController" class="span9"><section id="modal"><h1>Modal Service</h1>
 <p>There are multiple components used by modal.<br>- A modal service is used to keep state of modal opened in the applications.<br>- A modal element directive to define the modal dialog box<br>- A modal attribute directive as a modal trigger  </p>
 <h3>Parameters</h3>
 <p><strong>show</strong><br>Type: <code>Function</code><br>Show a modal based on the modal id<br>- {String} id The id of the modal to open<br>- {Object} triggerOptions Additional options to open modal  </p>
@@ -33,11 +33,17 @@
 <p><strong>mac-tooltip-direction</strong><br>Type: <code>String</code><br>Direction of tooltip (default &#39;top&#39;)  </p>
 <p><strong>mac-tooltip-trigger</strong><br>Type: <code>String</code><br>How tooltip is triggered (default &#39;hover&#39;)  </p>
 <p><strong>mac-tooltip-inside</strong><br>Type: <code>Boolean</code><br>Should the tooltip be appended inside element (default false)  </p>
-<h3>Example</h3><div class="docs-example"><ul class="nav nav-pills"><li><a href="#" mac-tooltip="Tooltip on top">Tooltip on top</a></li><li><a href="#" mac-tooltip="Tooltip on bottom" mac-tooltip-direction="bottom">Tooltip on bottom</a></li><li><a href="#" mac-tooltip="Tooltip on left" mac-tooltip-direction="left">Tooltip on left</a></li><li><a href="#" mac-tooltip="Tooltip on right" mac-tooltip-direction="right">Tooltip on right</a></li></ul></div><pre ng-non-bindable class="prettyprint linenums">&lt;a href=&quot;#&quot; mac-tooltip=&quot;Tooltip on bottom&quot; mac-tooltip-direction=&quot;bottom&quot;&gt;Tooltip on bottom&lt;/a&gt;</pre></section><section id="autocomplete"><h1>Autocomplete</h1>
+<h3>Example</h3><div class="docs-example"><ul class="nav nav-pills"><li><a href="#" mac-tooltip="Tooltip on top">Tooltip on top</a></li><li><a href="#" mac-tooltip="Tooltip on bottom" mac-tooltip-direction="bottom">Tooltip on bottom</a></li><li><a href="#" mac-tooltip="Tooltip on left" mac-tooltip-direction="left">Tooltip on left</a></li><li><a href="#" mac-tooltip="Tooltip on right" mac-tooltip-direction="right">Tooltip on right</a></li></ul></div><pre ng-non-bindable class="prettyprint linenums">&lt;a href=&quot;#&quot; mac-tooltip=&quot;Tooltip on bottom&quot; mac-tooltip-direction=&quot;bottom&quot;&gt;Tooltip on bottom&lt;/a&gt;</pre></section><section id="menu"><h1>Menu</h1>
+<p>A directive for creating a menu with multiple items  </p>
+<h3>Parameters</h3>
+<p><strong>mac-menu-item</strong><br>Type: <code>Expression</code><br><strong>mac-menu-select</strong><br>Type: <code>Function</code><br>Callback on select  </p>
+<p><strong>mac-menu-style</strong><br>Type: <code>Object</code><br>Styles apply to the menu  </p>
+<p><strong>mac-menu-index</strong><br>Type: <code>Expression</code><br>Index of selected item  </p>
+<h3>Example</h3><div class="docs-example"><mac-menu></mac-menu></div></section><section id="autocomplete"><h1>Autocomplete</h1>
 <p>A directive for providing suggestions while typing into the field  </p>
 <h3>Dependencies</h3>
 <ul>
-<li>jQuery UI autocomplete  </li>
+<li>mac-menu  </li>
 </ul>
 <h3>Parameters</h3>
 <p><strong>ng-model</strong><br>Type: <code>String</code><br>Assignable angular expression to data-bind to  </p>
@@ -63,13 +69,14 @@
 <p>A directive for generating tag input with autocomplete support on text input  </p>
 <h3>Dependencies</h3>
 <ul>
-<li>jQuery UI autocomplete  </li>
+<li>mac-autocomplete  </li>
+<li>mac-menu  </li>
 </ul>
 <h3>Parameters</h3>
 <p><strong>mac-tag-autocomplete-url</strong><br>Type: <code>String</code><br>Url to fetch autocomplete dropdown list data  </p>
 <p><strong>mac-tag-autocomplete-value</strong><br>Type: <code>String</code><br>The value to be sent back upon selection (default &quot;id&quot;)  </p>
 <p><strong>mac-tag-autocomplete-label</strong><br>Type: <code>String</code><br>The label to display to the users (default &quot;name&quot;)  </p>
-<p><strong>mac-tag-autocomplete-full-object</strong><br>Type: <code>Boolean</code><br>Push the full object into the selected array (default false)  </p>
+<p><strong>mac-tag-autocomplete-model</strong><br>Type: <code>Expression</code><br>Model for autocomplete  </p>
 <p><strong>mac-tag-autocomplete-selected</strong><br>Type: <code>Array</code><br>The list of elements selected by the user  </p>
 <p><strong>mac-tag-autocomplete-query</strong><br>Type: <code>String</code><br>The query parameter on GET command (defualt &quot;q&quot;)  </p>
 <p><strong>mac-tag-autocomplete-delay</strong><br>Type: <code>Integer</code><br>Time delayed on fetching autocomplete data after keyup  (default 800)  </p>
@@ -79,18 +86,19 @@
 <p><strong>mac-tag-autocomplete-events</strong><br>Type: <code>String</code><br>a CSV list of events to attach functions to  </p>
 <p><strong>mac-tag-autocomplete-on-</strong><br>Type: <code>Expression</code><br>The function to be called when specified event is fired<br>- <code>event</code> - {Object} jQuery event<br>- <code>value</code> - {String} Value in the input text  </p>
 <p><strong>mac-tag-autocomplete-clear-input</strong><br>Type: <code>Event</code><br>$broadcast message; clears text input when received  </p>
-<h3>Example</h3><div class="docs-example"><mac-tag-autocomplete mac-tag-autocomplete-url="autocompleteUrl" mac-tag-autocomplete-query="q" mac-tag-autocomplete-selected="tagAutocompleteSelected" mac-tag-autocomplete-value="id" mac-tag-autocomplete-label="name" mac-tag-autocomplete-placeholder="tagAutocompletePlaceholder"></mac-tag-autocomplete></div><pre ng-non-bindable class="prettyprint linenums">&lt;mac-autocomplete
+<h3>Example</h3><div class="docs-example"><mac-tag-autocomplete mac-tag-autocomplete-url="autocompleteUrl" mac-tag-autocomplete-query="q" mac-tag-autocomplete-selected="tagAutocompleteSelected" mac-tag-autocomplete-value="id" mac-tag-autocomplete-label="name" mac-tag-autocomplete-placeholder="tagAutocompletePlaceholder" mac-tag-autocomplete-model="tagAutocompleteModel"></mac-tag-autocomplete></div><pre ng-non-bindable class="prettyprint linenums">&lt;mac-autocomplete
   mac-autocomplete-url=&quot;autocompleteUrl&quot;
   mac-autocomplete-query=&quot;q&quot;
   mac-autocomplete-on-success=&quot;onSuccess(data)&quot;
-  mac-autocomplete-placeholder=&quot;'Autocomplete'&quot;&gt;
-&lt;/mac-autocomplete&gt;</pre><h3>Example with autocomplete disabled</h3><div class="docs-example"><mac-tag-autocomplete mac-tag-autocomplete-selected="tagAutocompleteDisabledSelected" mac-tag-autocomplete-placeholder="tagAutocompletePlaceholder" mac-tag-autocomplete-value="" mac-tag-autocomplete-label="" mac-tag-autocomplete-disabled></mac-tag-autocomplete></div><pre ng-non-bindable class="prettyprint linenums">&lt;mac-tag-autocomplete
+  mac-autocomplete-placeholder=&quot;'Autocomplete'&quot;
+  mac-autocomplete-model=&quot;tagAutocompleteModel&quot;&gt;
+&lt;/mac-autocomplete&gt;</pre><h3>Example with autocomplete disabled</h3><div class="docs-example"><mac-tag-autocomplete mac-tag-autocomplete-selected="tagAutocompleteDisabledSelected" mac-tag-autocomplete-placeholder="tagAutocompletePlaceholder" mac-tag-autocomplete-value="" mac-tag-autocomplete-label="" mac-tag-autocomplete-disabled="true"></mac-tag-autocomplete></div><pre ng-non-bindable class="prettyprint linenums">&lt;mac-tag-autocomplete
   mac-tag-autocomplete-selected=&quot;tagAutocompleteDisabledSelected&quot;
   mac-tag-autocomplete-placeholder=&quot;tagAutocompletePlaceholder&quot;
   mac-tag-autocomplete-value=&quot;&quot;
   mac-tag-autocomplete-label=&quot;&quot;
-  mac-tag-autocomplete-disabled=&quot;mac-tag-autocomplete-disabled&quot;&gt;
-&lt;/mac-tag-autocomplete&gt;</pre><h3>Example with custom actions on events</h3><div class="docs-example"><mac-tag-autocomplete mac-tag-autocomplete-selected="tagAutocompleteEvents" mac-tag-autocomplete-placeholder="tagAutocompletePlaceholder" mac-tag-autocomplete-value="key" mac-tag-autocomplete-label="key" mac-tag-autocomplete-on-enter="tagAutocompleteOnSelected(item)" mac-tag-autocomplete-events="blur,keyup" mac-tag-autocomplete-on-blur="tagAutocompleteOnBlur($event, item)" mac-tag-autocomplete-on-keyup="tagAutocompleteOnKeyup()" mac-tag-autocomplete-disabled></mac-tag-autocomplete></div><pre ng-non-bindable class="prettyprint linenums">&lt;mac-tag-autocomplete
+  mac-tag-autocomplete-disabled=&quot;true&quot;&gt;
+&lt;/mac-tag-autocomplete&gt;</pre><h3>Example with custom actions on events</h3><div class="docs-example"><mac-tag-autocomplete mac-tag-autocomplete-selected="tagAutocompleteEvents" mac-tag-autocomplete-placeholder="tagAutocompletePlaceholder" mac-tag-autocomplete-value="key" mac-tag-autocomplete-label="key" mac-tag-autocomplete-on-enter="tagAutocompleteOnSelected(item)" mac-tag-autocomplete-events="blur,keyup" mac-tag-autocomplete-on-blur="tagAutocompleteOnBlur($event, item)" mac-tag-autocomplete-on-keyup="tagAutocompleteOnKeyup()" mac-tag-autocomplete-disabled="true" mac-tag-autocomplete-model="tagAutocompleteModel"></mac-tag-autocomplete></div><pre ng-non-bindable class="prettyprint linenums">&lt;mac-tag-autocomplete
   mac-tag-autocomplete-selected=&quot;tagAutocompleteEvents&quot;
   mac-tag-autocomplete-placeholder=&quot;tagAutocompletePlaceholder&quot;
   mac-tag-autocomplete-value=&quot;key&quot;
@@ -99,8 +107,9 @@
   mac-tag-autocomplete-events=&quot;blur,keyup&quot;
   mac-tag-autocomplete-on-blur=&quot;tagAutocompleteOnBlur($event, item)&quot;
   mac-tag-autocomplete-on-keyup=&quot;tagAutocompleteOnKeyup()&quot;
-  mac-tag-autocomplete-disabled=&quot;mac-tag-autocomplete-disabled&quot;&gt;
-&lt;/mac-tag-autocomplete&gt;</pre><button ng-click="tagAutocompleteClearText()">Clear Text Input</button></section><section id="datepicker"><h1>Datepicker</h1>
+  mac-tag-autocomplete-disabled=&quot;true&quot;
+  mac-tag-autocomplete-model=&quot;tagAutocompleteModel&quot;&gt;
+&lt;/mac-tag-autocomplete&gt;</pre></section><section id="datepicker"><h1>Datepicker</h1>
 <p>A directive for creating a datepicker on text input using jquery ui  </p>
 <h3>Dependencies</h3>
 <ul>
@@ -110,8 +119,8 @@
 <h3>Parameters</h3>
 <p><strong>mac-datepicker-id</strong><br>Type: <code>String</code><br>The id of the text input field  </p>
 <p><strong>mac-datepicker-model</strong><br>Type: <code>String</code><br>The model to store the selected date  </p>
-<p><strong>mac-datepicker-on-before-select</strong><br>Type: <code>Function</code><br>Function called before setting the value to the model<br>- <code>date</code> - {String} Selected date from the datepicker  </p>
-<p><strong>mac-datepicker-on-before-close</strong><br>Type: <code>String</code><br>Function called before closing datepicker<br>- <code>date</code> - {String} Selected date from the datepicker<br>- <code>instance</code> - {Object} Datepicker instance  </p>
+<p><strong>mac-datepicker-on-select</strong><br>Type: <code>Function</code><br>Function called before setting the value to the model<br>- <code>date</code> - {String} Selected date from the datepicker<br>- <code>instance</code> - {Object} Datepicker instance  </p>
+<p><strong>mac-datepicker-on-close</strong><br>Type: <code>String</code><br>Function called before closing datepicker<br>- <code>date</code> - {String} Selected date from the datepicker<br>- <code>instance</code> - {Object} Datepicker instance  </p>
 <p><strong>mac-datepicker-append-text</strong><br>Type: <code>String</code><br>The text to display after each date field  </p>
 <p><strong>mac-datepicker-auto-size</strong><br>Type: <code>Boolean</code><br>Automatically resize the input to accommodate dates in the current dateFormat  </p>
 <p><strong>mac-datepicker-change-month</strong><br>Type: <code>Boolean</code><br>Whether the month should be rendered as a dropdown instead of text  </p>

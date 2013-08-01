@@ -1,25 +1,20 @@
 angular.module("Mac", ["Mac.Util"]);
 
-/*! jQuery UI - v1.10.1 - 2013-03-05
+/*! jQuery UI - v1.10.3 - 2013-07-27
 * http://jqueryui.com
-* Includes: jquery.ui.core.js, jquery.ui.widget.js, jquery.ui.mouse.js, jquery.ui.position.js, jquery.ui.draggable.js, jquery.ui.droppable.js, jquery.ui.resizable.js, jquery.ui.selectable.js, jquery.ui.sortable.js, jquery.ui.autocomplete.js, jquery.ui.datepicker.js, jquery.ui.menu.js
-* Copyright (c) 2013 jQuery Foundation and other contributors Licensed MIT */
+* Includes: jquery.ui.core.js, jquery.ui.widget.js, jquery.ui.mouse.js, jquery.ui.position.js, jquery.ui.resizable.js, jquery.ui.sortable.js, jquery.ui.datepicker.js
+* Copyright 2013 jQuery Foundation and other contributors Licensed MIT */
 
 (function( $, undefined ) {
 
 var uuid = 0,
 	runiqueId = /^ui-id-\d+$/;
 
-// prevent duplicate loading
-// this is only a problem because we proxy existing functions
-// and we don't want to double proxy them
+// $.ui might exist from components with no dependencies, e.g., $.ui.position
 $.ui = $.ui || {};
-if ( $.ui.version ) {
-	return;
-}
 
 $.extend( $.ui, {
-	version: "1.10.1",
+	version: "1.10.3",
 
 	keyCode: {
 		BACKSPACE: 8,
@@ -49,20 +44,21 @@ $.extend( $.ui, {
 
 // plugins
 $.fn.extend({
-	_focus: $.fn.focus,
-	focus: function( delay, fn ) {
-		return typeof delay === "number" ?
-			this.each(function() {
-				var elem = this;
-				setTimeout(function() {
-					$( elem ).focus();
-					if ( fn ) {
-						fn.call( elem );
-					}
-				}, delay );
-			}) :
-			this._focus.apply( this, arguments );
-	},
+	focus: (function( orig ) {
+		return function( delay, fn ) {
+			return typeof delay === "number" ?
+				this.each(function() {
+					var elem = this;
+					setTimeout(function() {
+						$( elem ).focus();
+						if ( fn ) {
+							fn.call( elem );
+						}
+					}, delay );
+				}) :
+				orig.apply( this, arguments );
+		};
+	})( $.fn.focus ),
 
 	scrollParent: function() {
 		var scrollParent;
@@ -268,7 +264,7 @@ $.fn.extend({
 });
 
 $.extend( $.ui, {
-	// $.ui.plugin is deprecated.  Use the proxy pattern instead.
+	// $.ui.plugin is deprecated. Use $.widget() extensions instead.
 	plugin: {
 		add: function( module, option, set ) {
 			var i,
@@ -838,7 +834,7 @@ $( document ).mouseup( function() {
 });
 
 $.widget("ui.mouse", {
-	version: "1.10.1",
+	version: "1.10.3",
 	options: {
 		cancel: "input,textarea,button,select,option",
 		distance: 1,
@@ -1073,8 +1069,8 @@ $.position = {
 			hasOverflowY = overflowY === "scroll" ||
 				( overflowY === "auto" && within.height < within.element[0].scrollHeight );
 		return {
-			width: hasOverflowX ? $.position.scrollbarWidth() : 0,
-			height: hasOverflowY ? $.position.scrollbarWidth() : 0
+			width: hasOverflowY ? $.position.scrollbarWidth() : 0,
+			height: hasOverflowX ? $.position.scrollbarWidth() : 0
 		};
 	},
 	getWithinInfo: function( element ) {
@@ -1475,1289 +1471,6 @@ $.ui.position = {
 }( jQuery ) );
 (function( $, undefined ) {
 
-$.widget("ui.draggable", $.ui.mouse, {
-	version: "1.10.1",
-	widgetEventPrefix: "drag",
-	options: {
-		addClasses: true,
-		appendTo: "parent",
-		axis: false,
-		connectToSortable: false,
-		containment: false,
-		cursor: "auto",
-		cursorAt: false,
-		grid: false,
-		handle: false,
-		helper: "original",
-		iframeFix: false,
-		opacity: false,
-		refreshPositions: false,
-		revert: false,
-		revertDuration: 500,
-		scope: "default",
-		scroll: true,
-		scrollSensitivity: 20,
-		scrollSpeed: 20,
-		snap: false,
-		snapMode: "both",
-		snapTolerance: 20,
-		stack: false,
-		zIndex: false,
-
-		// callbacks
-		drag: null,
-		start: null,
-		stop: null
-	},
-	_create: function() {
-
-		if (this.options.helper === "original" && !(/^(?:r|a|f)/).test(this.element.css("position"))) {
-			this.element[0].style.position = "relative";
-		}
-		if (this.options.addClasses){
-			this.element.addClass("ui-draggable");
-		}
-		if (this.options.disabled){
-			this.element.addClass("ui-draggable-disabled");
-		}
-
-		this._mouseInit();
-
-	},
-
-	_destroy: function() {
-		this.element.removeClass( "ui-draggable ui-draggable-dragging ui-draggable-disabled" );
-		this._mouseDestroy();
-	},
-
-	_mouseCapture: function(event) {
-
-		var o = this.options;
-
-		// among others, prevent a drag on a resizable-handle
-		if (this.helper || o.disabled || $(event.target).closest(".ui-resizable-handle").length > 0) {
-			return false;
-		}
-
-		//Quit if we're not on a valid handle
-		this.handle = this._getHandle(event);
-		if (!this.handle) {
-			return false;
-		}
-
-		$(o.iframeFix === true ? "iframe" : o.iframeFix).each(function() {
-			$("<div class='ui-draggable-iframeFix' style='background: #fff;'></div>")
-			.css({
-				width: this.offsetWidth+"px", height: this.offsetHeight+"px",
-				position: "absolute", opacity: "0.001", zIndex: 1000
-			})
-			.css($(this).offset())
-			.appendTo("body");
-		});
-
-		return true;
-
-	},
-
-	_mouseStart: function(event) {
-
-		var o = this.options;
-
-		//Create and append the visible helper
-		this.helper = this._createHelper(event);
-
-		this.helper.addClass("ui-draggable-dragging");
-
-		//Cache the helper size
-		this._cacheHelperProportions();
-
-		//If ddmanager is used for droppables, set the global draggable
-		if($.ui.ddmanager) {
-			$.ui.ddmanager.current = this;
-		}
-
-		/*
-		 * - Position generation -
-		 * This block generates everything position related - it's the core of draggables.
-		 */
-
-		//Cache the margins of the original element
-		this._cacheMargins();
-
-		//Store the helper's css position
-		this.cssPosition = this.helper.css("position");
-		this.scrollParent = this.helper.scrollParent();
-
-		//The element's absolute position on the page minus margins
-		this.offset = this.positionAbs = this.element.offset();
-		this.offset = {
-			top: this.offset.top - this.margins.top,
-			left: this.offset.left - this.margins.left
-		};
-
-		$.extend(this.offset, {
-			click: { //Where the click happened, relative to the element
-				left: event.pageX - this.offset.left,
-				top: event.pageY - this.offset.top
-			},
-			parent: this._getParentOffset(),
-			relative: this._getRelativeOffset() //This is a relative to absolute position minus the actual position calculation - only used for relative positioned helper
-		});
-
-		//Generate the original position
-		this.originalPosition = this.position = this._generatePosition(event);
-		this.originalPageX = event.pageX;
-		this.originalPageY = event.pageY;
-
-		//Adjust the mouse offset relative to the helper if "cursorAt" is supplied
-		(o.cursorAt && this._adjustOffsetFromHelper(o.cursorAt));
-
-		//Set a containment if given in the options
-		if(o.containment) {
-			this._setContainment();
-		}
-
-		//Trigger event + callbacks
-		if(this._trigger("start", event) === false) {
-			this._clear();
-			return false;
-		}
-
-		//Recache the helper size
-		this._cacheHelperProportions();
-
-		//Prepare the droppable offsets
-		if ($.ui.ddmanager && !o.dropBehaviour) {
-			$.ui.ddmanager.prepareOffsets(this, event);
-		}
-
-
-		this._mouseDrag(event, true); //Execute the drag once - this causes the helper not to be visible before getting its correct position
-
-		//If the ddmanager is used for droppables, inform the manager that dragging has started (see #5003)
-		if ( $.ui.ddmanager ) {
-			$.ui.ddmanager.dragStart(this, event);
-		}
-
-		return true;
-	},
-
-	_mouseDrag: function(event, noPropagation) {
-
-		//Compute the helpers position
-		this.position = this._generatePosition(event);
-		this.positionAbs = this._convertPositionTo("absolute");
-
-		//Call plugins and callbacks and use the resulting position if something is returned
-		if (!noPropagation) {
-			var ui = this._uiHash();
-			if(this._trigger("drag", event, ui) === false) {
-				this._mouseUp({});
-				return false;
-			}
-			this.position = ui.position;
-		}
-
-		if(!this.options.axis || this.options.axis !== "y") {
-			this.helper[0].style.left = this.position.left+"px";
-		}
-		if(!this.options.axis || this.options.axis !== "x") {
-			this.helper[0].style.top = this.position.top+"px";
-		}
-		if($.ui.ddmanager) {
-			$.ui.ddmanager.drag(this, event);
-		}
-
-		return false;
-	},
-
-	_mouseStop: function(event) {
-
-		//If we are using droppables, inform the manager about the drop
-		var element,
-			that = this,
-			elementInDom = false,
-			dropped = false;
-		if ($.ui.ddmanager && !this.options.dropBehaviour) {
-			dropped = $.ui.ddmanager.drop(this, event);
-		}
-
-		//if a drop comes from outside (a sortable)
-		if(this.dropped) {
-			dropped = this.dropped;
-			this.dropped = false;
-		}
-
-		//if the original element is no longer in the DOM don't bother to continue (see #8269)
-		element = this.element[0];
-		while ( element && (element = element.parentNode) ) {
-			if (element === document ) {
-				elementInDom = true;
-			}
-		}
-		if ( !elementInDom && this.options.helper === "original" ) {
-			return false;
-		}
-
-		if((this.options.revert === "invalid" && !dropped) || (this.options.revert === "valid" && dropped) || this.options.revert === true || ($.isFunction(this.options.revert) && this.options.revert.call(this.element, dropped))) {
-			$(this.helper).animate(this.originalPosition, parseInt(this.options.revertDuration, 10), function() {
-				if(that._trigger("stop", event) !== false) {
-					that._clear();
-				}
-			});
-		} else {
-			if(this._trigger("stop", event) !== false) {
-				this._clear();
-			}
-		}
-
-		return false;
-	},
-
-	_mouseUp: function(event) {
-		//Remove frame helpers
-		$("div.ui-draggable-iframeFix").each(function() {
-			this.parentNode.removeChild(this);
-		});
-
-		//If the ddmanager is used for droppables, inform the manager that dragging has stopped (see #5003)
-		if( $.ui.ddmanager ) {
-			$.ui.ddmanager.dragStop(this, event);
-		}
-
-		return $.ui.mouse.prototype._mouseUp.call(this, event);
-	},
-
-	cancel: function() {
-
-		if(this.helper.is(".ui-draggable-dragging")) {
-			this._mouseUp({});
-		} else {
-			this._clear();
-		}
-
-		return this;
-
-	},
-
-	_getHandle: function(event) {
-
-		var handle = !this.options.handle || !$(this.options.handle, this.element).length ? true : false;
-		$(this.options.handle, this.element)
-			.find("*")
-			.addBack()
-			.each(function() {
-				if(this === event.target) {
-					handle = true;
-				}
-			});
-
-		return handle;
-
-	},
-
-	_createHelper: function(event) {
-
-		var o = this.options,
-			helper = $.isFunction(o.helper) ? $(o.helper.apply(this.element[0], [event])) : (o.helper === "clone" ? this.element.clone().removeAttr("id") : this.element);
-
-		if(!helper.parents("body").length) {
-			helper.appendTo((o.appendTo === "parent" ? this.element[0].parentNode : o.appendTo));
-		}
-
-		if(helper[0] !== this.element[0] && !(/(fixed|absolute)/).test(helper.css("position"))) {
-			helper.css("position", "absolute");
-		}
-
-		return helper;
-
-	},
-
-	_adjustOffsetFromHelper: function(obj) {
-		if (typeof obj === "string") {
-			obj = obj.split(" ");
-		}
-		if ($.isArray(obj)) {
-			obj = {left: +obj[0], top: +obj[1] || 0};
-		}
-		if ("left" in obj) {
-			this.offset.click.left = obj.left + this.margins.left;
-		}
-		if ("right" in obj) {
-			this.offset.click.left = this.helperProportions.width - obj.right + this.margins.left;
-		}
-		if ("top" in obj) {
-			this.offset.click.top = obj.top + this.margins.top;
-		}
-		if ("bottom" in obj) {
-			this.offset.click.top = this.helperProportions.height - obj.bottom + this.margins.top;
-		}
-	},
-
-	_getParentOffset: function() {
-
-		//Get the offsetParent and cache its position
-		this.offsetParent = this.helper.offsetParent();
-		var po = this.offsetParent.offset();
-
-		// This is a special case where we need to modify a offset calculated on start, since the following happened:
-		// 1. The position of the helper is absolute, so it's position is calculated based on the next positioned parent
-		// 2. The actual offset parent is a child of the scroll parent, and the scroll parent isn't the document, which means that
-		//    the scroll is included in the initial calculation of the offset of the parent, and never recalculated upon drag
-		if(this.cssPosition === "absolute" && this.scrollParent[0] !== document && $.contains(this.scrollParent[0], this.offsetParent[0])) {
-			po.left += this.scrollParent.scrollLeft();
-			po.top += this.scrollParent.scrollTop();
-		}
-
-		//This needs to be actually done for all browsers, since pageX/pageY includes this information
-		//Ugly IE fix
-		if((this.offsetParent[0] === document.body) ||
-			(this.offsetParent[0].tagName && this.offsetParent[0].tagName.toLowerCase() === "html" && $.ui.ie)) {
-			po = { top: 0, left: 0 };
-		}
-
-		return {
-			top: po.top + (parseInt(this.offsetParent.css("borderTopWidth"),10) || 0),
-			left: po.left + (parseInt(this.offsetParent.css("borderLeftWidth"),10) || 0)
-		};
-
-	},
-
-	_getRelativeOffset: function() {
-
-		if(this.cssPosition === "relative") {
-			var p = this.element.position();
-			return {
-				top: p.top - (parseInt(this.helper.css("top"),10) || 0) + this.scrollParent.scrollTop(),
-				left: p.left - (parseInt(this.helper.css("left"),10) || 0) + this.scrollParent.scrollLeft()
-			};
-		} else {
-			return { top: 0, left: 0 };
-		}
-
-	},
-
-	_cacheMargins: function() {
-		this.margins = {
-			left: (parseInt(this.element.css("marginLeft"),10) || 0),
-			top: (parseInt(this.element.css("marginTop"),10) || 0),
-			right: (parseInt(this.element.css("marginRight"),10) || 0),
-			bottom: (parseInt(this.element.css("marginBottom"),10) || 0)
-		};
-	},
-
-	_cacheHelperProportions: function() {
-		this.helperProportions = {
-			width: this.helper.outerWidth(),
-			height: this.helper.outerHeight()
-		};
-	},
-
-	_setContainment: function() {
-
-		var over, c, ce,
-			o = this.options;
-
-		if(o.containment === "parent") {
-			o.containment = this.helper[0].parentNode;
-		}
-		if(o.containment === "document" || o.containment === "window") {
-			this.containment = [
-				o.containment === "document" ? 0 : $(window).scrollLeft() - this.offset.relative.left - this.offset.parent.left,
-				o.containment === "document" ? 0 : $(window).scrollTop() - this.offset.relative.top - this.offset.parent.top,
-				(o.containment === "document" ? 0 : $(window).scrollLeft()) + $(o.containment === "document" ? document : window).width() - this.helperProportions.width - this.margins.left,
-				(o.containment === "document" ? 0 : $(window).scrollTop()) + ($(o.containment === "document" ? document : window).height() || document.body.parentNode.scrollHeight) - this.helperProportions.height - this.margins.top
-			];
-		}
-
-		if(!(/^(document|window|parent)$/).test(o.containment) && o.containment.constructor !== Array) {
-			c = $(o.containment);
-			ce = c[0];
-
-			if(!ce) {
-				return;
-			}
-
-			over = ($(ce).css("overflow") !== "hidden");
-
-			this.containment = [
-				(parseInt($(ce).css("borderLeftWidth"),10) || 0) + (parseInt($(ce).css("paddingLeft"),10) || 0),
-				(parseInt($(ce).css("borderTopWidth"),10) || 0) + (parseInt($(ce).css("paddingTop"),10) || 0),
-				(over ? Math.max(ce.scrollWidth,ce.offsetWidth) : ce.offsetWidth) - (parseInt($(ce).css("borderLeftWidth"),10) || 0) - (parseInt($(ce).css("paddingRight"),10) || 0) - this.helperProportions.width - this.margins.left - this.margins.right,
-				(over ? Math.max(ce.scrollHeight,ce.offsetHeight) : ce.offsetHeight) - (parseInt($(ce).css("borderTopWidth"),10) || 0) - (parseInt($(ce).css("paddingBottom"),10) || 0) - this.helperProportions.height - this.margins.top  - this.margins.bottom
-			];
-			this.relative_container = c;
-
-		} else if(o.containment.constructor === Array) {
-			this.containment = o.containment;
-		}
-
-	},
-
-	_convertPositionTo: function(d, pos) {
-
-		if(!pos) {
-			pos = this.position;
-		}
-
-		var mod = d === "absolute" ? 1 : -1,
-			scroll = this.cssPosition === "absolute" && !(this.scrollParent[0] !== document && $.contains(this.scrollParent[0], this.offsetParent[0])) ? this.offsetParent : this.scrollParent, scrollIsRootNode = (/(html|body)/i).test(scroll[0].tagName);
-
-		return {
-			top: (
-				pos.top	+																// The absolute mouse position
-				this.offset.relative.top * mod +										// Only for relative positioned nodes: Relative offset from element to offset parent
-				this.offset.parent.top * mod -										// The offsetParent's offset without borders (offset + border)
-				( ( this.cssPosition === "fixed" ? -this.scrollParent.scrollTop() : ( scrollIsRootNode ? 0 : scroll.scrollTop() ) ) * mod)
-			),
-			left: (
-				pos.left +																// The absolute mouse position
-				this.offset.relative.left * mod +										// Only for relative positioned nodes: Relative offset from element to offset parent
-				this.offset.parent.left * mod	-										// The offsetParent's offset without borders (offset + border)
-				( ( this.cssPosition === "fixed" ? -this.scrollParent.scrollLeft() : scrollIsRootNode ? 0 : scroll.scrollLeft() ) * mod)
-			)
-		};
-
-	},
-
-	_generatePosition: function(event) {
-
-		var containment, co, top, left,
-			o = this.options,
-			scroll = this.cssPosition === "absolute" && !(this.scrollParent[0] !== document && $.contains(this.scrollParent[0], this.offsetParent[0])) ? this.offsetParent : this.scrollParent,
-			scrollIsRootNode = (/(html|body)/i).test(scroll[0].tagName),
-			pageX = event.pageX,
-			pageY = event.pageY;
-
-		/*
-		 * - Position constraining -
-		 * Constrain the position to a mix of grid, containment.
-		 */
-
-		if(this.originalPosition) { //If we are not dragging yet, we won't check for options
-			if(this.containment) {
-			if (this.relative_container){
-				co = this.relative_container.offset();
-				containment = [ this.containment[0] + co.left,
-					this.containment[1] + co.top,
-					this.containment[2] + co.left,
-					this.containment[3] + co.top ];
-			}
-			else {
-				containment = this.containment;
-			}
-
-				if(event.pageX - this.offset.click.left < containment[0]) {
-					pageX = containment[0] + this.offset.click.left;
-				}
-				if(event.pageY - this.offset.click.top < containment[1]) {
-					pageY = containment[1] + this.offset.click.top;
-				}
-				if(event.pageX - this.offset.click.left > containment[2]) {
-					pageX = containment[2] + this.offset.click.left;
-				}
-				if(event.pageY - this.offset.click.top > containment[3]) {
-					pageY = containment[3] + this.offset.click.top;
-				}
-			}
-
-			if(o.grid) {
-				//Check for grid elements set to 0 to prevent divide by 0 error causing invalid argument errors in IE (see ticket #6950)
-				top = o.grid[1] ? this.originalPageY + Math.round((pageY - this.originalPageY) / o.grid[1]) * o.grid[1] : this.originalPageY;
-				pageY = containment ? ((top - this.offset.click.top >= containment[1] || top - this.offset.click.top > containment[3]) ? top : ((top - this.offset.click.top >= containment[1]) ? top - o.grid[1] : top + o.grid[1])) : top;
-
-				left = o.grid[0] ? this.originalPageX + Math.round((pageX - this.originalPageX) / o.grid[0]) * o.grid[0] : this.originalPageX;
-				pageX = containment ? ((left - this.offset.click.left >= containment[0] || left - this.offset.click.left > containment[2]) ? left : ((left - this.offset.click.left >= containment[0]) ? left - o.grid[0] : left + o.grid[0])) : left;
-			}
-
-		}
-
-		return {
-			top: (
-				pageY -																	// The absolute mouse position
-				this.offset.click.top	-												// Click offset (relative to the element)
-				this.offset.relative.top -												// Only for relative positioned nodes: Relative offset from element to offset parent
-				this.offset.parent.top +												// The offsetParent's offset without borders (offset + border)
-				( ( this.cssPosition === "fixed" ? -this.scrollParent.scrollTop() : ( scrollIsRootNode ? 0 : scroll.scrollTop() ) ))
-			),
-			left: (
-				pageX -																	// The absolute mouse position
-				this.offset.click.left -												// Click offset (relative to the element)
-				this.offset.relative.left -												// Only for relative positioned nodes: Relative offset from element to offset parent
-				this.offset.parent.left +												// The offsetParent's offset without borders (offset + border)
-				( ( this.cssPosition === "fixed" ? -this.scrollParent.scrollLeft() : scrollIsRootNode ? 0 : scroll.scrollLeft() ))
-			)
-		};
-
-	},
-
-	_clear: function() {
-		this.helper.removeClass("ui-draggable-dragging");
-		if(this.helper[0] !== this.element[0] && !this.cancelHelperRemoval) {
-			this.helper.remove();
-		}
-		this.helper = null;
-		this.cancelHelperRemoval = false;
-	},
-
-	// From now on bulk stuff - mainly helpers
-
-	_trigger: function(type, event, ui) {
-		ui = ui || this._uiHash();
-		$.ui.plugin.call(this, type, [event, ui]);
-		//The absolute position has to be recalculated after plugins
-		if(type === "drag") {
-			this.positionAbs = this._convertPositionTo("absolute");
-		}
-		return $.Widget.prototype._trigger.call(this, type, event, ui);
-	},
-
-	plugins: {},
-
-	_uiHash: function() {
-		return {
-			helper: this.helper,
-			position: this.position,
-			originalPosition: this.originalPosition,
-			offset: this.positionAbs
-		};
-	}
-
-});
-
-$.ui.plugin.add("draggable", "connectToSortable", {
-	start: function(event, ui) {
-
-		var inst = $(this).data("ui-draggable"), o = inst.options,
-			uiSortable = $.extend({}, ui, { item: inst.element });
-		inst.sortables = [];
-		$(o.connectToSortable).each(function() {
-			var sortable = $.data(this, "ui-sortable");
-			if (sortable && !sortable.options.disabled) {
-				inst.sortables.push({
-					instance: sortable,
-					shouldRevert: sortable.options.revert
-				});
-				sortable.refreshPositions();	// Call the sortable's refreshPositions at drag start to refresh the containerCache since the sortable container cache is used in drag and needs to be up to date (this will ensure it's initialised as well as being kept in step with any changes that might have happened on the page).
-				sortable._trigger("activate", event, uiSortable);
-			}
-		});
-
-	},
-	stop: function(event, ui) {
-
-		//If we are still over the sortable, we fake the stop event of the sortable, but also remove helper
-		var inst = $(this).data("ui-draggable"),
-			uiSortable = $.extend({}, ui, { item: inst.element });
-
-		$.each(inst.sortables, function() {
-			if(this.instance.isOver) {
-
-				this.instance.isOver = 0;
-
-				inst.cancelHelperRemoval = true; //Don't remove the helper in the draggable instance
-				this.instance.cancelHelperRemoval = false; //Remove it in the sortable instance (so sortable plugins like revert still work)
-
-				//The sortable revert is supported, and we have to set a temporary dropped variable on the draggable to support revert: "valid/invalid"
-				if(this.shouldRevert) {
-					this.instance.options.revert = true;
-				}
-
-				//Trigger the stop of the sortable
-				this.instance._mouseStop(event);
-
-				this.instance.options.helper = this.instance.options._helper;
-
-				//If the helper has been the original item, restore properties in the sortable
-				if(inst.options.helper === "original") {
-					this.instance.currentItem.css({ top: "auto", left: "auto" });
-				}
-
-			} else {
-				this.instance.cancelHelperRemoval = false; //Remove the helper in the sortable instance
-				this.instance._trigger("deactivate", event, uiSortable);
-			}
-
-		});
-
-	},
-	drag: function(event, ui) {
-
-		var inst = $(this).data("ui-draggable"), that = this;
-
-		$.each(inst.sortables, function() {
-
-			var innermostIntersecting = false,
-				thisSortable = this;
-
-			//Copy over some variables to allow calling the sortable's native _intersectsWith
-			this.instance.positionAbs = inst.positionAbs;
-			this.instance.helperProportions = inst.helperProportions;
-			this.instance.offset.click = inst.offset.click;
-
-			if(this.instance._intersectsWith(this.instance.containerCache)) {
-				innermostIntersecting = true;
-				$.each(inst.sortables, function () {
-					this.instance.positionAbs = inst.positionAbs;
-					this.instance.helperProportions = inst.helperProportions;
-					this.instance.offset.click = inst.offset.click;
-					if (this !== thisSortable &&
-						this.instance._intersectsWith(this.instance.containerCache) &&
-						$.contains(thisSortable.instance.element[0], this.instance.element[0])
-					) {
-						innermostIntersecting = false;
-					}
-					return innermostIntersecting;
-				});
-			}
-
-
-			if(innermostIntersecting) {
-				//If it intersects, we use a little isOver variable and set it once, so our move-in stuff gets fired only once
-				if(!this.instance.isOver) {
-
-					this.instance.isOver = 1;
-					//Now we fake the start of dragging for the sortable instance,
-					//by cloning the list group item, appending it to the sortable and using it as inst.currentItem
-					//We can then fire the start event of the sortable with our passed browser event, and our own helper (so it doesn't create a new one)
-					this.instance.currentItem = $(that).clone().removeAttr("id").appendTo(this.instance.element).data("ui-sortable-item", true);
-					this.instance.options._helper = this.instance.options.helper; //Store helper option to later restore it
-					this.instance.options.helper = function() { return ui.helper[0]; };
-
-					event.target = this.instance.currentItem[0];
-					this.instance._mouseCapture(event, true);
-					this.instance._mouseStart(event, true, true);
-
-					//Because the browser event is way off the new appended portlet, we modify a couple of variables to reflect the changes
-					this.instance.offset.click.top = inst.offset.click.top;
-					this.instance.offset.click.left = inst.offset.click.left;
-					this.instance.offset.parent.left -= inst.offset.parent.left - this.instance.offset.parent.left;
-					this.instance.offset.parent.top -= inst.offset.parent.top - this.instance.offset.parent.top;
-
-					inst._trigger("toSortable", event);
-					inst.dropped = this.instance.element; //draggable revert needs that
-					//hack so receive/update callbacks work (mostly)
-					inst.currentItem = inst.element;
-					this.instance.fromOutside = inst;
-
-				}
-
-				//Provided we did all the previous steps, we can fire the drag event of the sortable on every draggable drag, when it intersects with the sortable
-				if(this.instance.currentItem) {
-					this.instance._mouseDrag(event);
-				}
-
-			} else {
-
-				//If it doesn't intersect with the sortable, and it intersected before,
-				//we fake the drag stop of the sortable, but make sure it doesn't remove the helper by using cancelHelperRemoval
-				if(this.instance.isOver) {
-
-					this.instance.isOver = 0;
-					this.instance.cancelHelperRemoval = true;
-
-					//Prevent reverting on this forced stop
-					this.instance.options.revert = false;
-
-					// The out event needs to be triggered independently
-					this.instance._trigger("out", event, this.instance._uiHash(this.instance));
-
-					this.instance._mouseStop(event, true);
-					this.instance.options.helper = this.instance.options._helper;
-
-					//Now we remove our currentItem, the list group clone again, and the placeholder, and animate the helper back to it's original size
-					this.instance.currentItem.remove();
-					if(this.instance.placeholder) {
-						this.instance.placeholder.remove();
-					}
-
-					inst._trigger("fromSortable", event);
-					inst.dropped = false; //draggable revert needs that
-				}
-
-			}
-
-		});
-
-	}
-});
-
-$.ui.plugin.add("draggable", "cursor", {
-	start: function() {
-		var t = $("body"), o = $(this).data("ui-draggable").options;
-		if (t.css("cursor")) {
-			o._cursor = t.css("cursor");
-		}
-		t.css("cursor", o.cursor);
-	},
-	stop: function() {
-		var o = $(this).data("ui-draggable").options;
-		if (o._cursor) {
-			$("body").css("cursor", o._cursor);
-		}
-	}
-});
-
-$.ui.plugin.add("draggable", "opacity", {
-	start: function(event, ui) {
-		var t = $(ui.helper), o = $(this).data("ui-draggable").options;
-		if(t.css("opacity")) {
-			o._opacity = t.css("opacity");
-		}
-		t.css("opacity", o.opacity);
-	},
-	stop: function(event, ui) {
-		var o = $(this).data("ui-draggable").options;
-		if(o._opacity) {
-			$(ui.helper).css("opacity", o._opacity);
-		}
-	}
-});
-
-$.ui.plugin.add("draggable", "scroll", {
-	start: function() {
-		var i = $(this).data("ui-draggable");
-		if(i.scrollParent[0] !== document && i.scrollParent[0].tagName !== "HTML") {
-			i.overflowOffset = i.scrollParent.offset();
-		}
-	},
-	drag: function( event ) {
-
-		var i = $(this).data("ui-draggable"), o = i.options, scrolled = false;
-
-		if(i.scrollParent[0] !== document && i.scrollParent[0].tagName !== "HTML") {
-
-			if(!o.axis || o.axis !== "x") {
-				if((i.overflowOffset.top + i.scrollParent[0].offsetHeight) - event.pageY < o.scrollSensitivity) {
-					i.scrollParent[0].scrollTop = scrolled = i.scrollParent[0].scrollTop + o.scrollSpeed;
-				} else if(event.pageY - i.overflowOffset.top < o.scrollSensitivity) {
-					i.scrollParent[0].scrollTop = scrolled = i.scrollParent[0].scrollTop - o.scrollSpeed;
-				}
-			}
-
-			if(!o.axis || o.axis !== "y") {
-				if((i.overflowOffset.left + i.scrollParent[0].offsetWidth) - event.pageX < o.scrollSensitivity) {
-					i.scrollParent[0].scrollLeft = scrolled = i.scrollParent[0].scrollLeft + o.scrollSpeed;
-				} else if(event.pageX - i.overflowOffset.left < o.scrollSensitivity) {
-					i.scrollParent[0].scrollLeft = scrolled = i.scrollParent[0].scrollLeft - o.scrollSpeed;
-				}
-			}
-
-		} else {
-
-			if(!o.axis || o.axis !== "x") {
-				if(event.pageY - $(document).scrollTop() < o.scrollSensitivity) {
-					scrolled = $(document).scrollTop($(document).scrollTop() - o.scrollSpeed);
-				} else if($(window).height() - (event.pageY - $(document).scrollTop()) < o.scrollSensitivity) {
-					scrolled = $(document).scrollTop($(document).scrollTop() + o.scrollSpeed);
-				}
-			}
-
-			if(!o.axis || o.axis !== "y") {
-				if(event.pageX - $(document).scrollLeft() < o.scrollSensitivity) {
-					scrolled = $(document).scrollLeft($(document).scrollLeft() - o.scrollSpeed);
-				} else if($(window).width() - (event.pageX - $(document).scrollLeft()) < o.scrollSensitivity) {
-					scrolled = $(document).scrollLeft($(document).scrollLeft() + o.scrollSpeed);
-				}
-			}
-
-		}
-
-		if(scrolled !== false && $.ui.ddmanager && !o.dropBehaviour) {
-			$.ui.ddmanager.prepareOffsets(i, event);
-		}
-
-	}
-});
-
-$.ui.plugin.add("draggable", "snap", {
-	start: function() {
-
-		var i = $(this).data("ui-draggable"),
-			o = i.options;
-
-		i.snapElements = [];
-
-		$(o.snap.constructor !== String ? ( o.snap.items || ":data(ui-draggable)" ) : o.snap).each(function() {
-			var $t = $(this),
-				$o = $t.offset();
-			if(this !== i.element[0]) {
-				i.snapElements.push({
-					item: this,
-					width: $t.outerWidth(), height: $t.outerHeight(),
-					top: $o.top, left: $o.left
-				});
-			}
-		});
-
-	},
-	drag: function(event, ui) {
-
-		var ts, bs, ls, rs, l, r, t, b, i, first,
-			inst = $(this).data("ui-draggable"),
-			o = inst.options,
-			d = o.snapTolerance,
-			x1 = ui.offset.left, x2 = x1 + inst.helperProportions.width,
-			y1 = ui.offset.top, y2 = y1 + inst.helperProportions.height;
-
-		for (i = inst.snapElements.length - 1; i >= 0; i--){
-
-			l = inst.snapElements[i].left;
-			r = l + inst.snapElements[i].width;
-			t = inst.snapElements[i].top;
-			b = t + inst.snapElements[i].height;
-
-			//Yes, I know, this is insane ;)
-			if(!((l-d < x1 && x1 < r+d && t-d < y1 && y1 < b+d) || (l-d < x1 && x1 < r+d && t-d < y2 && y2 < b+d) || (l-d < x2 && x2 < r+d && t-d < y1 && y1 < b+d) || (l-d < x2 && x2 < r+d && t-d < y2 && y2 < b+d))) {
-				if(inst.snapElements[i].snapping) {
-					(inst.options.snap.release && inst.options.snap.release.call(inst.element, event, $.extend(inst._uiHash(), { snapItem: inst.snapElements[i].item })));
-				}
-				inst.snapElements[i].snapping = false;
-				continue;
-			}
-
-			if(o.snapMode !== "inner") {
-				ts = Math.abs(t - y2) <= d;
-				bs = Math.abs(b - y1) <= d;
-				ls = Math.abs(l - x2) <= d;
-				rs = Math.abs(r - x1) <= d;
-				if(ts) {
-					ui.position.top = inst._convertPositionTo("relative", { top: t - inst.helperProportions.height, left: 0 }).top - inst.margins.top;
-				}
-				if(bs) {
-					ui.position.top = inst._convertPositionTo("relative", { top: b, left: 0 }).top - inst.margins.top;
-				}
-				if(ls) {
-					ui.position.left = inst._convertPositionTo("relative", { top: 0, left: l - inst.helperProportions.width }).left - inst.margins.left;
-				}
-				if(rs) {
-					ui.position.left = inst._convertPositionTo("relative", { top: 0, left: r }).left - inst.margins.left;
-				}
-			}
-
-			first = (ts || bs || ls || rs);
-
-			if(o.snapMode !== "outer") {
-				ts = Math.abs(t - y1) <= d;
-				bs = Math.abs(b - y2) <= d;
-				ls = Math.abs(l - x1) <= d;
-				rs = Math.abs(r - x2) <= d;
-				if(ts) {
-					ui.position.top = inst._convertPositionTo("relative", { top: t, left: 0 }).top - inst.margins.top;
-				}
-				if(bs) {
-					ui.position.top = inst._convertPositionTo("relative", { top: b - inst.helperProportions.height, left: 0 }).top - inst.margins.top;
-				}
-				if(ls) {
-					ui.position.left = inst._convertPositionTo("relative", { top: 0, left: l }).left - inst.margins.left;
-				}
-				if(rs) {
-					ui.position.left = inst._convertPositionTo("relative", { top: 0, left: r - inst.helperProportions.width }).left - inst.margins.left;
-				}
-			}
-
-			if(!inst.snapElements[i].snapping && (ts || bs || ls || rs || first)) {
-				(inst.options.snap.snap && inst.options.snap.snap.call(inst.element, event, $.extend(inst._uiHash(), { snapItem: inst.snapElements[i].item })));
-			}
-			inst.snapElements[i].snapping = (ts || bs || ls || rs || first);
-
-		}
-
-	}
-});
-
-$.ui.plugin.add("draggable", "stack", {
-	start: function() {
-		var min,
-			o = this.data("ui-draggable").options,
-			group = $.makeArray($(o.stack)).sort(function(a,b) {
-				return (parseInt($(a).css("zIndex"),10) || 0) - (parseInt($(b).css("zIndex"),10) || 0);
-			});
-
-		if (!group.length) { return; }
-
-		min = parseInt($(group[0]).css("zIndex"), 10) || 0;
-		$(group).each(function(i) {
-			$(this).css("zIndex", min + i);
-		});
-		this.css("zIndex", (min + group.length));
-	}
-});
-
-$.ui.plugin.add("draggable", "zIndex", {
-	start: function(event, ui) {
-		var t = $(ui.helper), o = $(this).data("ui-draggable").options;
-		if(t.css("zIndex")) {
-			o._zIndex = t.css("zIndex");
-		}
-		t.css("zIndex", o.zIndex);
-	},
-	stop: function(event, ui) {
-		var o = $(this).data("ui-draggable").options;
-		if(o._zIndex) {
-			$(ui.helper).css("zIndex", o._zIndex);
-		}
-	}
-});
-
-})(jQuery);
-(function( $, undefined ) {
-
-function isOverAxis( x, reference, size ) {
-	return ( x > reference ) && ( x < ( reference + size ) );
-}
-
-$.widget("ui.droppable", {
-	version: "1.10.1",
-	widgetEventPrefix: "drop",
-	options: {
-		accept: "*",
-		activeClass: false,
-		addClasses: true,
-		greedy: false,
-		hoverClass: false,
-		scope: "default",
-		tolerance: "intersect",
-
-		// callbacks
-		activate: null,
-		deactivate: null,
-		drop: null,
-		out: null,
-		over: null
-	},
-	_create: function() {
-
-		var o = this.options,
-			accept = o.accept;
-
-		this.isover = false;
-		this.isout = true;
-
-		this.accept = $.isFunction(accept) ? accept : function(d) {
-			return d.is(accept);
-		};
-
-		//Store the droppable's proportions
-		this.proportions = { width: this.element[0].offsetWidth, height: this.element[0].offsetHeight };
-
-		// Add the reference and positions to the manager
-		$.ui.ddmanager.droppables[o.scope] = $.ui.ddmanager.droppables[o.scope] || [];
-		$.ui.ddmanager.droppables[o.scope].push(this);
-
-		(o.addClasses && this.element.addClass("ui-droppable"));
-
-	},
-
-	_destroy: function() {
-		var i = 0,
-			drop = $.ui.ddmanager.droppables[this.options.scope];
-
-		for ( ; i < drop.length; i++ ) {
-			if ( drop[i] === this ) {
-				drop.splice(i, 1);
-			}
-		}
-
-		this.element.removeClass("ui-droppable ui-droppable-disabled");
-	},
-
-	_setOption: function(key, value) {
-
-		if(key === "accept") {
-			this.accept = $.isFunction(value) ? value : function(d) {
-				return d.is(value);
-			};
-		}
-		$.Widget.prototype._setOption.apply(this, arguments);
-	},
-
-	_activate: function(event) {
-		var draggable = $.ui.ddmanager.current;
-		if(this.options.activeClass) {
-			this.element.addClass(this.options.activeClass);
-		}
-		if(draggable){
-			this._trigger("activate", event, this.ui(draggable));
-		}
-	},
-
-	_deactivate: function(event) {
-		var draggable = $.ui.ddmanager.current;
-		if(this.options.activeClass) {
-			this.element.removeClass(this.options.activeClass);
-		}
-		if(draggable){
-			this._trigger("deactivate", event, this.ui(draggable));
-		}
-	},
-
-	_over: function(event) {
-
-		var draggable = $.ui.ddmanager.current;
-
-		// Bail if draggable and droppable are same element
-		if (!draggable || (draggable.currentItem || draggable.element)[0] === this.element[0]) {
-			return;
-		}
-
-		if (this.accept.call(this.element[0],(draggable.currentItem || draggable.element))) {
-			if(this.options.hoverClass) {
-				this.element.addClass(this.options.hoverClass);
-			}
-			this._trigger("over", event, this.ui(draggable));
-		}
-
-	},
-
-	_out: function(event) {
-
-		var draggable = $.ui.ddmanager.current;
-
-		// Bail if draggable and droppable are same element
-		if (!draggable || (draggable.currentItem || draggable.element)[0] === this.element[0]) {
-			return;
-		}
-
-		if (this.accept.call(this.element[0],(draggable.currentItem || draggable.element))) {
-			if(this.options.hoverClass) {
-				this.element.removeClass(this.options.hoverClass);
-			}
-			this._trigger("out", event, this.ui(draggable));
-		}
-
-	},
-
-	_drop: function(event,custom) {
-
-		var draggable = custom || $.ui.ddmanager.current,
-			childrenIntersection = false;
-
-		// Bail if draggable and droppable are same element
-		if (!draggable || (draggable.currentItem || draggable.element)[0] === this.element[0]) {
-			return false;
-		}
-
-		this.element.find(":data(ui-droppable)").not(".ui-draggable-dragging").each(function() {
-			var inst = $.data(this, "ui-droppable");
-			if(
-				inst.options.greedy &&
-				!inst.options.disabled &&
-				inst.options.scope === draggable.options.scope &&
-				inst.accept.call(inst.element[0], (draggable.currentItem || draggable.element)) &&
-				$.ui.intersect(draggable, $.extend(inst, { offset: inst.element.offset() }), inst.options.tolerance)
-			) { childrenIntersection = true; return false; }
-		});
-		if(childrenIntersection) {
-			return false;
-		}
-
-		if(this.accept.call(this.element[0],(draggable.currentItem || draggable.element))) {
-			if(this.options.activeClass) {
-				this.element.removeClass(this.options.activeClass);
-			}
-			if(this.options.hoverClass) {
-				this.element.removeClass(this.options.hoverClass);
-			}
-			this._trigger("drop", event, this.ui(draggable));
-			return this.element;
-		}
-
-		return false;
-
-	},
-
-	ui: function(c) {
-		return {
-			draggable: (c.currentItem || c.element),
-			helper: c.helper,
-			position: c.position,
-			offset: c.positionAbs
-		};
-	}
-
-});
-
-$.ui.intersect = function(draggable, droppable, toleranceMode) {
-
-	if (!droppable.offset) {
-		return false;
-	}
-
-	var draggableLeft, draggableTop,
-		x1 = (draggable.positionAbs || draggable.position.absolute).left, x2 = x1 + draggable.helperProportions.width,
-		y1 = (draggable.positionAbs || draggable.position.absolute).top, y2 = y1 + draggable.helperProportions.height,
-		l = droppable.offset.left, r = l + droppable.proportions.width,
-		t = droppable.offset.top, b = t + droppable.proportions.height;
-
-	switch (toleranceMode) {
-		case "fit":
-			return (l <= x1 && x2 <= r && t <= y1 && y2 <= b);
-		case "intersect":
-			return (l < x1 + (draggable.helperProportions.width / 2) && // Right Half
-				x2 - (draggable.helperProportions.width / 2) < r && // Left Half
-				t < y1 + (draggable.helperProportions.height / 2) && // Bottom Half
-				y2 - (draggable.helperProportions.height / 2) < b ); // Top Half
-		case "pointer":
-			draggableLeft = ((draggable.positionAbs || draggable.position.absolute).left + (draggable.clickOffset || draggable.offset.click).left);
-			draggableTop = ((draggable.positionAbs || draggable.position.absolute).top + (draggable.clickOffset || draggable.offset.click).top);
-			return isOverAxis( draggableTop, t, droppable.proportions.height ) && isOverAxis( draggableLeft, l, droppable.proportions.width );
-		case "touch":
-			return (
-				(y1 >= t && y1 <= b) ||	// Top edge touching
-				(y2 >= t && y2 <= b) ||	// Bottom edge touching
-				(y1 < t && y2 > b)		// Surrounded vertically
-			) && (
-				(x1 >= l && x1 <= r) ||	// Left edge touching
-				(x2 >= l && x2 <= r) ||	// Right edge touching
-				(x1 < l && x2 > r)		// Surrounded horizontally
-			);
-		default:
-			return false;
-		}
-
-};
-
-/*
-	This manager tracks offsets of draggables and droppables
-*/
-$.ui.ddmanager = {
-	current: null,
-	droppables: { "default": [] },
-	prepareOffsets: function(t, event) {
-
-		var i, j,
-			m = $.ui.ddmanager.droppables[t.options.scope] || [],
-			type = event ? event.type : null, // workaround for #2317
-			list = (t.currentItem || t.element).find(":data(ui-droppable)").addBack();
-
-		droppablesLoop: for (i = 0; i < m.length; i++) {
-
-			//No disabled and non-accepted
-			if(m[i].options.disabled || (t && !m[i].accept.call(m[i].element[0],(t.currentItem || t.element)))) {
-				continue;
-			}
-
-			// Filter out elements in the current dragged item
-			for (j=0; j < list.length; j++) {
-				if(list[j] === m[i].element[0]) {
-					m[i].proportions.height = 0;
-					continue droppablesLoop;
-				}
-			}
-
-			m[i].visible = m[i].element.css("display") !== "none";
-			if(!m[i].visible) {
-				continue;
-			}
-
-			//Activate the droppable if used directly from draggables
-			if(type === "mousedown") {
-				m[i]._activate.call(m[i], event);
-			}
-
-			m[i].offset = m[i].element.offset();
-			m[i].proportions = { width: m[i].element[0].offsetWidth, height: m[i].element[0].offsetHeight };
-
-		}
-
-	},
-	drop: function(draggable, event) {
-
-		var dropped = false;
-		$.each($.ui.ddmanager.droppables[draggable.options.scope] || [], function() {
-
-			if(!this.options) {
-				return;
-			}
-			if (!this.options.disabled && this.visible && $.ui.intersect(draggable, this, this.options.tolerance)) {
-				dropped = this._drop.call(this, event) || dropped;
-			}
-
-			if (!this.options.disabled && this.visible && this.accept.call(this.element[0],(draggable.currentItem || draggable.element))) {
-				this.isout = true;
-				this.isover = false;
-				this._deactivate.call(this, event);
-			}
-
-		});
-		return dropped;
-
-	},
-	dragStart: function( draggable, event ) {
-		//Listen for scrolling so that if the dragging causes scrolling the position of the droppables can be recalculated (see #5003)
-		draggable.element.parentsUntil( "body" ).bind( "scroll.droppable", function() {
-			if( !draggable.options.refreshPositions ) {
-				$.ui.ddmanager.prepareOffsets( draggable, event );
-			}
-		});
-	},
-	drag: function(draggable, event) {
-
-		//If you have a highly dynamic page, you might try this option. It renders positions every time you move the mouse.
-		if(draggable.options.refreshPositions) {
-			$.ui.ddmanager.prepareOffsets(draggable, event);
-		}
-
-		//Run through all droppables and check their positions based on specific tolerance options
-		$.each($.ui.ddmanager.droppables[draggable.options.scope] || [], function() {
-
-			if(this.options.disabled || this.greedyChild || !this.visible) {
-				return;
-			}
-
-			var parentInstance, scope, parent,
-				intersects = $.ui.intersect(draggable, this, this.options.tolerance),
-				c = !intersects && this.isover ? "isout" : (intersects && !this.isover ? "isover" : null);
-			if(!c) {
-				return;
-			}
-
-			if (this.options.greedy) {
-				// find droppable parents with same scope
-				scope = this.options.scope;
-				parent = this.element.parents(":data(ui-droppable)").filter(function () {
-					return $.data(this, "ui-droppable").options.scope === scope;
-				});
-
-				if (parent.length) {
-					parentInstance = $.data(parent[0], "ui-droppable");
-					parentInstance.greedyChild = (c === "isover");
-				}
-			}
-
-			// we just moved into a greedy child
-			if (parentInstance && c === "isover") {
-				parentInstance.isover = false;
-				parentInstance.isout = true;
-				parentInstance._out.call(parentInstance, event);
-			}
-
-			this[c] = true;
-			this[c === "isout" ? "isover" : "isout"] = false;
-			this[c === "isover" ? "_over" : "_out"].call(this, event);
-
-			// we just moved out of a greedy child
-			if (parentInstance && c === "isout") {
-				parentInstance.isout = false;
-				parentInstance.isover = true;
-				parentInstance._over.call(parentInstance, event);
-			}
-		});
-
-	},
-	dragStop: function( draggable, event ) {
-		draggable.element.parentsUntil( "body" ).unbind( "scroll.droppable" );
-		//Call prepareOffsets one final time since IE does not fire return scroll events when overflow was caused by drag (see #5003)
-		if( !draggable.options.refreshPositions ) {
-			$.ui.ddmanager.prepareOffsets( draggable, event );
-		}
-	}
-};
-
-})(jQuery);
-(function( $, undefined ) {
-
 function num(v) {
 	return parseInt(v, 10) || 0;
 }
@@ -2767,7 +1480,7 @@ function isNumber(value) {
 }
 
 $.widget("ui.resizable", $.ui.mouse, {
-	version: "1.10.1",
+	version: "1.10.3",
 	widgetEventPrefix: "resize",
 	options: {
 		alsoResize: false,
@@ -3711,276 +2424,18 @@ $.ui.plugin.add("resizable", "grid", {
 })(jQuery);
 (function( $, undefined ) {
 
-$.widget("ui.selectable", $.ui.mouse, {
-	version: "1.10.1",
-	options: {
-		appendTo: "body",
-		autoRefresh: true,
-		distance: 0,
-		filter: "*",
-		tolerance: "touch",
-
-		// callbacks
-		selected: null,
-		selecting: null,
-		start: null,
-		stop: null,
-		unselected: null,
-		unselecting: null
-	},
-	_create: function() {
-		var selectees,
-			that = this;
-
-		this.element.addClass("ui-selectable");
-
-		this.dragged = false;
-
-		// cache selectee children based on filter
-		this.refresh = function() {
-			selectees = $(that.options.filter, that.element[0]);
-			selectees.addClass("ui-selectee");
-			selectees.each(function() {
-				var $this = $(this),
-					pos = $this.offset();
-				$.data(this, "selectable-item", {
-					element: this,
-					$element: $this,
-					left: pos.left,
-					top: pos.top,
-					right: pos.left + $this.outerWidth(),
-					bottom: pos.top + $this.outerHeight(),
-					startselected: false,
-					selected: $this.hasClass("ui-selected"),
-					selecting: $this.hasClass("ui-selecting"),
-					unselecting: $this.hasClass("ui-unselecting")
-				});
-			});
-		};
-		this.refresh();
-
-		this.selectees = selectees.addClass("ui-selectee");
-
-		this._mouseInit();
-
-		this.helper = $("<div class='ui-selectable-helper'></div>");
-	},
-
-	_destroy: function() {
-		this.selectees
-			.removeClass("ui-selectee")
-			.removeData("selectable-item");
-		this.element
-			.removeClass("ui-selectable ui-selectable-disabled");
-		this._mouseDestroy();
-	},
-
-	_mouseStart: function(event) {
-		var that = this,
-			options = this.options;
-
-		this.opos = [event.pageX, event.pageY];
-
-		if (this.options.disabled) {
-			return;
-		}
-
-		this.selectees = $(options.filter, this.element[0]);
-
-		this._trigger("start", event);
-
-		$(options.appendTo).append(this.helper);
-		// position helper (lasso)
-		this.helper.css({
-			"left": event.pageX,
-			"top": event.pageY,
-			"width": 0,
-			"height": 0
-		});
-
-		if (options.autoRefresh) {
-			this.refresh();
-		}
-
-		this.selectees.filter(".ui-selected").each(function() {
-			var selectee = $.data(this, "selectable-item");
-			selectee.startselected = true;
-			if (!event.metaKey && !event.ctrlKey) {
-				selectee.$element.removeClass("ui-selected");
-				selectee.selected = false;
-				selectee.$element.addClass("ui-unselecting");
-				selectee.unselecting = true;
-				// selectable UNSELECTING callback
-				that._trigger("unselecting", event, {
-					unselecting: selectee.element
-				});
-			}
-		});
-
-		$(event.target).parents().addBack().each(function() {
-			var doSelect,
-				selectee = $.data(this, "selectable-item");
-			if (selectee) {
-				doSelect = (!event.metaKey && !event.ctrlKey) || !selectee.$element.hasClass("ui-selected");
-				selectee.$element
-					.removeClass(doSelect ? "ui-unselecting" : "ui-selected")
-					.addClass(doSelect ? "ui-selecting" : "ui-unselecting");
-				selectee.unselecting = !doSelect;
-				selectee.selecting = doSelect;
-				selectee.selected = doSelect;
-				// selectable (UN)SELECTING callback
-				if (doSelect) {
-					that._trigger("selecting", event, {
-						selecting: selectee.element
-					});
-				} else {
-					that._trigger("unselecting", event, {
-						unselecting: selectee.element
-					});
-				}
-				return false;
-			}
-		});
-
-	},
-
-	_mouseDrag: function(event) {
-
-		this.dragged = true;
-
-		if (this.options.disabled) {
-			return;
-		}
-
-		var tmp,
-			that = this,
-			options = this.options,
-			x1 = this.opos[0],
-			y1 = this.opos[1],
-			x2 = event.pageX,
-			y2 = event.pageY;
-
-		if (x1 > x2) { tmp = x2; x2 = x1; x1 = tmp; }
-		if (y1 > y2) { tmp = y2; y2 = y1; y1 = tmp; }
-		this.helper.css({left: x1, top: y1, width: x2-x1, height: y2-y1});
-
-		this.selectees.each(function() {
-			var selectee = $.data(this, "selectable-item"),
-				hit = false;
-
-			//prevent helper from being selected if appendTo: selectable
-			if (!selectee || selectee.element === that.element[0]) {
-				return;
-			}
-
-			if (options.tolerance === "touch") {
-				hit = ( !(selectee.left > x2 || selectee.right < x1 || selectee.top > y2 || selectee.bottom < y1) );
-			} else if (options.tolerance === "fit") {
-				hit = (selectee.left > x1 && selectee.right < x2 && selectee.top > y1 && selectee.bottom < y2);
-			}
-
-			if (hit) {
-				// SELECT
-				if (selectee.selected) {
-					selectee.$element.removeClass("ui-selected");
-					selectee.selected = false;
-				}
-				if (selectee.unselecting) {
-					selectee.$element.removeClass("ui-unselecting");
-					selectee.unselecting = false;
-				}
-				if (!selectee.selecting) {
-					selectee.$element.addClass("ui-selecting");
-					selectee.selecting = true;
-					// selectable SELECTING callback
-					that._trigger("selecting", event, {
-						selecting: selectee.element
-					});
-				}
-			} else {
-				// UNSELECT
-				if (selectee.selecting) {
-					if ((event.metaKey || event.ctrlKey) && selectee.startselected) {
-						selectee.$element.removeClass("ui-selecting");
-						selectee.selecting = false;
-						selectee.$element.addClass("ui-selected");
-						selectee.selected = true;
-					} else {
-						selectee.$element.removeClass("ui-selecting");
-						selectee.selecting = false;
-						if (selectee.startselected) {
-							selectee.$element.addClass("ui-unselecting");
-							selectee.unselecting = true;
-						}
-						// selectable UNSELECTING callback
-						that._trigger("unselecting", event, {
-							unselecting: selectee.element
-						});
-					}
-				}
-				if (selectee.selected) {
-					if (!event.metaKey && !event.ctrlKey && !selectee.startselected) {
-						selectee.$element.removeClass("ui-selected");
-						selectee.selected = false;
-
-						selectee.$element.addClass("ui-unselecting");
-						selectee.unselecting = true;
-						// selectable UNSELECTING callback
-						that._trigger("unselecting", event, {
-							unselecting: selectee.element
-						});
-					}
-				}
-			}
-		});
-
-		return false;
-	},
-
-	_mouseStop: function(event) {
-		var that = this;
-
-		this.dragged = false;
-
-		$(".ui-unselecting", this.element[0]).each(function() {
-			var selectee = $.data(this, "selectable-item");
-			selectee.$element.removeClass("ui-unselecting");
-			selectee.unselecting = false;
-			selectee.startselected = false;
-			that._trigger("unselected", event, {
-				unselected: selectee.element
-			});
-		});
-		$(".ui-selecting", this.element[0]).each(function() {
-			var selectee = $.data(this, "selectable-item");
-			selectee.$element.removeClass("ui-selecting").addClass("ui-selected");
-			selectee.selecting = false;
-			selectee.selected = true;
-			selectee.startselected = true;
-			that._trigger("selected", event, {
-				selected: selectee.element
-			});
-		});
-		this._trigger("stop", event);
-
-		this.helper.remove();
-
-		return false;
-	}
-
-});
-
-})(jQuery);
-(function( $, undefined ) {
-
 /*jshint loopfunc: true */
 
 function isOverAxis( x, reference, size ) {
 	return ( x > reference ) && ( x < ( reference + size ) );
 }
 
+function isFloating(item) {
+	return (/left|right/).test(item.css("float")) || (/inline|table-cell/).test(item.css("display"));
+}
+
 $.widget("ui.sortable", $.ui.mouse, {
-	version: "1.10.1",
+	version: "1.10.3",
 	widgetEventPrefix: "sort",
 	ready: false,
 	options: {
@@ -4031,7 +2486,7 @@ $.widget("ui.sortable", $.ui.mouse, {
 		this.refresh();
 
 		//Let's determine if the items are being displayed horizontally
-		this.floating = this.items.length ? o.axis === "x" || (/left|right/).test(this.items[0].item.css("float")) || (/inline|table-cell/).test(this.items[0].item.css("display")) : false;
+		this.floating = this.items.length ? o.axis === "x" || isFloating(this.items[0].item) : false;
 
 		//Let's determine the parent's offset
 		this.offset = this.element.offset();
@@ -4116,7 +2571,7 @@ $.widget("ui.sortable", $.ui.mouse, {
 
 	_mouseStart: function(event, overrideHandle, noActivation) {
 
-		var i,
+		var i, body,
 			o = this.options;
 
 		this.currentContainer = this;
@@ -4186,11 +2641,14 @@ $.widget("ui.sortable", $.ui.mouse, {
 			this._setContainment();
 		}
 
-		if(o.cursor) { // cursor option
-			if ($("body").css("cursor")) {
-				this._storedCursor = $("body").css("cursor");
-			}
-			$("body").css("cursor", o.cursor);
+		if( o.cursor && o.cursor !== "auto" ) { // cursor option
+			body = this.document.find( "body" );
+
+			// support: IE
+			this.storedCursor = body.css( "cursor" );
+			body.css( "cursor", o.cursor );
+
+			this.storedStylesheet = $( "<style>*{ cursor: "+o.cursor+" !important; }</style>" ).appendTo( body );
 		}
 
 		if(o.opacity) { // opacity option
@@ -4379,14 +2837,18 @@ $.widget("ui.sortable", $.ui.mouse, {
 
 		if(this.options.revert) {
 			var that = this,
-				cur = this.placeholder.offset();
+				cur = this.placeholder.offset(),
+				axis = this.options.axis,
+				animation = {};
 
+			if ( !axis || axis === "x" ) {
+				animation.left = cur.left - this.offset.parent.left - this.margins.left + (this.offsetParent[0] === document.body ? 0 : this.offsetParent[0].scrollLeft);
+			}
+			if ( !axis || axis === "y" ) {
+				animation.top = cur.top - this.offset.parent.top - this.margins.top + (this.offsetParent[0] === document.body ? 0 : this.offsetParent[0].scrollTop);
+			}
 			this.reverting = true;
-
-			$(this.helper).animate({
-				left: cur.left - this.offset.parent.left - this.margins.left + (this.offsetParent[0] === document.body ? 0 : this.offsetParent[0].scrollLeft),
-				top: cur.top - this.offset.parent.top - this.margins.top + (this.offsetParent[0] === document.body ? 0 : this.offsetParent[0].scrollTop)
-			}, parseInt(this.options.revert, 10) || 500, function() {
+			$(this.helper).animate( animation, parseInt(this.options.revert, 10) || 500, function() {
 				that._clear(event);
 			});
 		} else {
@@ -4493,7 +2955,9 @@ $.widget("ui.sortable", $.ui.mouse, {
 			b = t + item.height,
 			dyClick = this.offset.click.top,
 			dxClick = this.offset.click.left,
-			isOverElement = (y1 + dyClick) > t && (y1 + dyClick) < b && (x1 + dxClick) > l && (x1 + dxClick) < r;
+			isOverElementHeight = ( this.options.axis === "x" ) || ( ( y1 + dyClick ) > t && ( y1 + dyClick ) < b ),
+			isOverElementWidth = ( this.options.axis === "y" ) || ( ( x1 + dxClick ) > l && ( x1 + dxClick ) < r ),
+			isOverElement = isOverElementHeight && isOverElementWidth;
 
 		if ( this.options.tolerance === "pointer" ||
 			this.options.forcePointerForContainers ||
@@ -4707,15 +3171,26 @@ $.widget("ui.sortable", $.ui.mouse, {
 			o.placeholder = {
 				element: function() {
 
-					var el = $(document.createElement(that.currentItem[0].nodeName))
-						.addClass(className || that.currentItem[0].className+" ui-sortable-placeholder")
-						.removeClass("ui-sortable-helper")[0];
+					var nodeName = that.currentItem[0].nodeName.toLowerCase(),
+						element = $( "<" + nodeName + ">", that.document[0] )
+							.addClass(className || that.currentItem[0].className+" ui-sortable-placeholder")
+							.removeClass("ui-sortable-helper");
 
-					if(!className) {
-						el.style.visibility = "hidden";
+					if ( nodeName === "tr" ) {
+						that.currentItem.children().each(function() {
+							$( "<td>&#160;</td>", that.document[0] )
+								.attr( "colspan", $( this ).attr( "colspan" ) || 1 )
+								.appendTo( element );
+						});
+					} else if ( nodeName === "img" ) {
+						element.attr( "src", that.currentItem.attr( "src" ) );
 					}
 
-					return el;
+					if ( !className ) {
+						element.css( "visibility", "hidden" );
+					}
+
+					return element;
 				},
 				update: function(container, p) {
 
@@ -4744,7 +3219,7 @@ $.widget("ui.sortable", $.ui.mouse, {
 	},
 
 	_contactContainers: function(event) {
-		var i, j, dist, itemWithLeastDistance, posProperty, sizeProperty, base, cur, nearBottom,
+		var i, j, dist, itemWithLeastDistance, posProperty, sizeProperty, base, cur, nearBottom, floating,
 			innermostContainer = null,
 			innermostIndex = null;
 
@@ -4783,21 +3258,27 @@ $.widget("ui.sortable", $.ui.mouse, {
 
 		// move the item into the container if it's not there already
 		if(this.containers.length === 1) {
-			this.containers[innermostIndex]._trigger("over", event, this._uiHash(this));
-			this.containers[innermostIndex].containerCache.over = 1;
+			if (!this.containers[innermostIndex].containerCache.over) {
+				this.containers[innermostIndex]._trigger("over", event, this._uiHash(this));
+				this.containers[innermostIndex].containerCache.over = 1;
+			}
 		} else {
 
 			//When entering a new container, we will find the item with the least distance and append our item near it
 			dist = 10000;
 			itemWithLeastDistance = null;
-			posProperty = this.containers[innermostIndex].floating ? "left" : "top";
-			sizeProperty = this.containers[innermostIndex].floating ? "width" : "height";
+			floating = innermostContainer.floating || isFloating(this.currentItem);
+			posProperty = floating ? "left" : "top";
+			sizeProperty = floating ? "width" : "height";
 			base = this.positionAbs[posProperty] + this.offset.click[posProperty];
 			for (j = this.items.length - 1; j >= 0; j--) {
 				if(!$.contains(this.containers[innermostIndex].element[0], this.items[j].item[0])) {
 					continue;
 				}
 				if(this.items[j].item[0] === this.currentItem[0]) {
+					continue;
+				}
+				if (floating && !isOverAxis(this.positionAbs.top + this.offset.click.top, this.items[j].top, this.items[j].height)) {
 					continue;
 				}
 				cur = this.items[j].item.offset()[posProperty];
@@ -4818,10 +3299,14 @@ $.widget("ui.sortable", $.ui.mouse, {
 				return;
 			}
 
-			this.currentContainer = this.containers[innermostIndex];
+			if(this.currentContainer === this.containers[innermostIndex]) {
+				return;
+			}
+
 			itemWithLeastDistance ? this._rearrange(event, itemWithLeastDistance, null, true) : this._rearrange(event, null, this.containers[innermostIndex].element, true);
 			this._trigger("change", event, this._uiHash());
 			this.containers[innermostIndex]._trigger("change", event, this._uiHash(this));
+			this.currentContainer = this.containers[innermostIndex];
 
 			//Update the placeholder
 			this.options.placeholder.update(this.currentContainer, this.placeholder);
@@ -5136,8 +3621,9 @@ $.widget("ui.sortable", $.ui.mouse, {
 		}
 
 		//Do what was originally in plugins
-		if(this._storedCursor) {
-			$("body").css("cursor", this._storedCursor);
+		if ( this.storedCursor ) {
+			this.document.find( "body" ).css( "cursor", this.storedCursor );
+			this.storedStylesheet.remove();
 		}
 		if(this._storedOpacity) {
 			this.helper.css("opacity", this._storedOpacity);
@@ -5208,602 +3694,9 @@ $.widget("ui.sortable", $.ui.mouse, {
 })(jQuery);
 (function( $, undefined ) {
 
-// used to prevent race conditions with remote data sources
-var requestIndex = 0;
-
-$.widget( "ui.autocomplete", {
-	version: "1.10.1",
-	defaultElement: "<input>",
-	options: {
-		appendTo: null,
-		autoFocus: false,
-		delay: 300,
-		minLength: 1,
-		position: {
-			my: "left top",
-			at: "left bottom",
-			collision: "none"
-		},
-		source: null,
-
-		// callbacks
-		change: null,
-		close: null,
-		focus: null,
-		open: null,
-		response: null,
-		search: null,
-		select: null
-	},
-
-	pending: 0,
-
-	_create: function() {
-		// Some browsers only repeat keydown events, not keypress events,
-		// so we use the suppressKeyPress flag to determine if we've already
-		// handled the keydown event. #7269
-		// Unfortunately the code for & in keypress is the same as the up arrow,
-		// so we use the suppressKeyPressRepeat flag to avoid handling keypress
-		// events when we know the keydown event was used to modify the
-		// search term. #7799
-		var suppressKeyPress, suppressKeyPressRepeat, suppressInput,
-			nodeName = this.element[0].nodeName.toLowerCase(),
-			isTextarea = nodeName === "textarea",
-			isInput = nodeName === "input";
-
-		this.isMultiLine =
-			// Textareas are always multi-line
-			isTextarea ? true :
-			// Inputs are always single-line, even if inside a contentEditable element
-			// IE also treats inputs as contentEditable
-			isInput ? false :
-			// All other element types are determined by whether or not they're contentEditable
-			this.element.prop( "isContentEditable" );
-
-		this.valueMethod = this.element[ isTextarea || isInput ? "val" : "text" ];
-		this.isNewMenu = true;
-
-		this.element
-			.addClass( "ui-autocomplete-input" )
-			.attr( "autocomplete", "off" );
-
-		this._on( this.element, {
-			keydown: function( event ) {
-				/*jshint maxcomplexity:15*/
-				if ( this.element.prop( "readOnly" ) ) {
-					suppressKeyPress = true;
-					suppressInput = true;
-					suppressKeyPressRepeat = true;
-					return;
-				}
-
-				suppressKeyPress = false;
-				suppressInput = false;
-				suppressKeyPressRepeat = false;
-				var keyCode = $.ui.keyCode;
-				switch( event.keyCode ) {
-				case keyCode.PAGE_UP:
-					suppressKeyPress = true;
-					this._move( "previousPage", event );
-					break;
-				case keyCode.PAGE_DOWN:
-					suppressKeyPress = true;
-					this._move( "nextPage", event );
-					break;
-				case keyCode.UP:
-					suppressKeyPress = true;
-					this._keyEvent( "previous", event );
-					break;
-				case keyCode.DOWN:
-					suppressKeyPress = true;
-					this._keyEvent( "next", event );
-					break;
-				case keyCode.ENTER:
-				case keyCode.NUMPAD_ENTER:
-					// when menu is open and has focus
-					if ( this.menu.active ) {
-						// #6055 - Opera still allows the keypress to occur
-						// which causes forms to submit
-						suppressKeyPress = true;
-						event.preventDefault();
-						this.menu.select( event );
-					}
-					break;
-				case keyCode.TAB:
-					if ( this.menu.active ) {
-						this.menu.select( event );
-					}
-					break;
-				case keyCode.ESCAPE:
-					if ( this.menu.element.is( ":visible" ) ) {
-						this._value( this.term );
-						this.close( event );
-						// Different browsers have different default behavior for escape
-						// Single press can mean undo or clear
-						// Double press in IE means clear the whole form
-						event.preventDefault();
-					}
-					break;
-				default:
-					suppressKeyPressRepeat = true;
-					// search timeout should be triggered before the input value is changed
-					this._searchTimeout( event );
-					break;
-				}
-			},
-			keypress: function( event ) {
-				if ( suppressKeyPress ) {
-					suppressKeyPress = false;
-					event.preventDefault();
-					return;
-				}
-				if ( suppressKeyPressRepeat ) {
-					return;
-				}
-
-				// replicate some key handlers to allow them to repeat in Firefox and Opera
-				var keyCode = $.ui.keyCode;
-				switch( event.keyCode ) {
-				case keyCode.PAGE_UP:
-					this._move( "previousPage", event );
-					break;
-				case keyCode.PAGE_DOWN:
-					this._move( "nextPage", event );
-					break;
-				case keyCode.UP:
-					this._keyEvent( "previous", event );
-					break;
-				case keyCode.DOWN:
-					this._keyEvent( "next", event );
-					break;
-				}
-			},
-			input: function( event ) {
-				if ( suppressInput ) {
-					suppressInput = false;
-					event.preventDefault();
-					return;
-				}
-				this._searchTimeout( event );
-			},
-			focus: function() {
-				this.selectedItem = null;
-				this.previous = this._value();
-			},
-			blur: function( event ) {
-				if ( this.cancelBlur ) {
-					delete this.cancelBlur;
-					return;
-				}
-
-				clearTimeout( this.searching );
-				this.close( event );
-				this._change( event );
-			}
-		});
-
-		this._initSource();
-		this.menu = $( "<ul>" )
-			.addClass( "ui-autocomplete ui-front" )
-			.appendTo( this._appendTo() )
-			.menu({
-				// custom key handling for now
-				input: $(),
-				// disable ARIA support, the live region takes care of that
-				role: null
-			})
-			.hide()
-			.data( "ui-menu" );
-
-		this._on( this.menu.element, {
-			mousedown: function( event ) {
-				// prevent moving focus out of the text field
-				event.preventDefault();
-
-				// IE doesn't prevent moving focus even with event.preventDefault()
-				// so we set a flag to know when we should ignore the blur event
-				this.cancelBlur = true;
-				this._delay(function() {
-					delete this.cancelBlur;
-				});
-
-				// clicking on the scrollbar causes focus to shift to the body
-				// but we can't detect a mouseup or a click immediately afterward
-				// so we have to track the next mousedown and close the menu if
-				// the user clicks somewhere outside of the autocomplete
-				var menuElement = this.menu.element[ 0 ];
-				if ( !$( event.target ).closest( ".ui-menu-item" ).length ) {
-					this._delay(function() {
-						var that = this;
-						this.document.one( "mousedown", function( event ) {
-							if ( event.target !== that.element[ 0 ] &&
-									event.target !== menuElement &&
-									!$.contains( menuElement, event.target ) ) {
-								that.close();
-							}
-						});
-					});
-				}
-			},
-			menufocus: function( event, ui ) {
-				// #7024 - Prevent accidental activation of menu items in Firefox
-				if ( this.isNewMenu ) {
-					this.isNewMenu = false;
-					if ( event.originalEvent && /^mouse/.test( event.originalEvent.type ) ) {
-						this.menu.blur();
-
-						this.document.one( "mousemove", function() {
-							$( event.target ).trigger( event.originalEvent );
-						});
-
-						return;
-					}
-				}
-
-				var item = ui.item.data( "ui-autocomplete-item" );
-				if ( false !== this._trigger( "focus", event, { item: item } ) ) {
-					// use value to match what will end up in the input, if it was a key event
-					if ( event.originalEvent && /^key/.test( event.originalEvent.type ) ) {
-						this._value( item.value );
-					}
-				} else {
-					// Normally the input is populated with the item's value as the
-					// menu is navigated, causing screen readers to notice a change and
-					// announce the item. Since the focus event was canceled, this doesn't
-					// happen, so we update the live region so that screen readers can
-					// still notice the change and announce it.
-					this.liveRegion.text( item.value );
-				}
-			},
-			menuselect: function( event, ui ) {
-				var item = ui.item.data( "ui-autocomplete-item" ),
-					previous = this.previous;
-
-				// only trigger when focus was lost (click on menu)
-				if ( this.element[0] !== this.document[0].activeElement ) {
-					this.element.focus();
-					this.previous = previous;
-					// #6109 - IE triggers two focus events and the second
-					// is asynchronous, so we need to reset the previous
-					// term synchronously and asynchronously :-(
-					this._delay(function() {
-						this.previous = previous;
-						this.selectedItem = item;
-					});
-				}
-
-				if ( false !== this._trigger( "select", event, { item: item } ) ) {
-					this._value( item.value );
-				}
-				// reset the term after the select event
-				// this allows custom select handling to work properly
-				this.term = this._value();
-
-				this.close( event );
-				this.selectedItem = item;
-			}
-		});
-
-		this.liveRegion = $( "<span>", {
-				role: "status",
-				"aria-live": "polite"
-			})
-			.addClass( "ui-helper-hidden-accessible" )
-			.insertAfter( this.element );
-
-		// turning off autocomplete prevents the browser from remembering the
-		// value when navigating through history, so we re-enable autocomplete
-		// if the page is unloaded before the widget is destroyed. #7790
-		this._on( this.window, {
-			beforeunload: function() {
-				this.element.removeAttr( "autocomplete" );
-			}
-		});
-	},
-
-	_destroy: function() {
-		clearTimeout( this.searching );
-		this.element
-			.removeClass( "ui-autocomplete-input" )
-			.removeAttr( "autocomplete" );
-		this.menu.element.remove();
-		this.liveRegion.remove();
-	},
-
-	_setOption: function( key, value ) {
-		this._super( key, value );
-		if ( key === "source" ) {
-			this._initSource();
-		}
-		if ( key === "appendTo" ) {
-			this.menu.element.appendTo( this._appendTo() );
-		}
-		if ( key === "disabled" && value && this.xhr ) {
-			this.xhr.abort();
-		}
-	},
-
-	_appendTo: function() {
-		var element = this.options.appendTo;
-
-		if ( element ) {
-			element = element.jquery || element.nodeType ?
-				$( element ) :
-				this.document.find( element ).eq( 0 );
-		}
-
-		if ( !element ) {
-			element = this.element.closest( ".ui-front" );
-		}
-
-		if ( !element.length ) {
-			element = this.document[0].body;
-		}
-
-		return element;
-	},
-
-	_initSource: function() {
-		var array, url,
-			that = this;
-		if ( $.isArray(this.options.source) ) {
-			array = this.options.source;
-			this.source = function( request, response ) {
-				response( $.ui.autocomplete.filter( array, request.term ) );
-			};
-		} else if ( typeof this.options.source === "string" ) {
-			url = this.options.source;
-			this.source = function( request, response ) {
-				if ( that.xhr ) {
-					that.xhr.abort();
-				}
-				that.xhr = $.ajax({
-					url: url,
-					data: request,
-					dataType: "json",
-					success: function( data ) {
-						response( data );
-					},
-					error: function() {
-						response( [] );
-					}
-				});
-			};
-		} else {
-			this.source = this.options.source;
-		}
-	},
-
-	_searchTimeout: function( event ) {
-		clearTimeout( this.searching );
-		this.searching = this._delay(function() {
-			// only search if the value has changed
-			if ( this.term !== this._value() ) {
-				this.selectedItem = null;
-				this.search( null, event );
-			}
-		}, this.options.delay );
-	},
-
-	search: function( value, event ) {
-		value = value != null ? value : this._value();
-
-		// always save the actual value, not the one passed as an argument
-		this.term = this._value();
-
-		if ( value.length < this.options.minLength ) {
-			return this.close( event );
-		}
-
-		if ( this._trigger( "search", event ) === false ) {
-			return;
-		}
-
-		return this._search( value );
-	},
-
-	_search: function( value ) {
-		this.pending++;
-		this.element.addClass( "ui-autocomplete-loading" );
-		this.cancelSearch = false;
-
-		this.source( { term: value }, this._response() );
-	},
-
-	_response: function() {
-		var that = this,
-			index = ++requestIndex;
-
-		return function( content ) {
-			if ( index === requestIndex ) {
-				that.__response( content );
-			}
-
-			that.pending--;
-			if ( !that.pending ) {
-				that.element.removeClass( "ui-autocomplete-loading" );
-			}
-		};
-	},
-
-	__response: function( content ) {
-		if ( content ) {
-			content = this._normalize( content );
-		}
-		this._trigger( "response", null, { content: content } );
-		if ( !this.options.disabled && content && content.length && !this.cancelSearch ) {
-			this._suggest( content );
-			this._trigger( "open" );
-		} else {
-			// use ._close() instead of .close() so we don't cancel future searches
-			this._close();
-		}
-	},
-
-	close: function( event ) {
-		this.cancelSearch = true;
-		this._close( event );
-	},
-
-	_close: function( event ) {
-		if ( this.menu.element.is( ":visible" ) ) {
-			this.menu.element.hide();
-			this.menu.blur();
-			this.isNewMenu = true;
-			this._trigger( "close", event );
-		}
-	},
-
-	_change: function( event ) {
-		if ( this.previous !== this._value() ) {
-			this._trigger( "change", event, { item: this.selectedItem } );
-		}
-	},
-
-	_normalize: function( items ) {
-		// assume all items have the right format when the first item is complete
-		if ( items.length && items[0].label && items[0].value ) {
-			return items;
-		}
-		return $.map( items, function( item ) {
-			if ( typeof item === "string" ) {
-				return {
-					label: item,
-					value: item
-				};
-			}
-			return $.extend({
-				label: item.label || item.value,
-				value: item.value || item.label
-			}, item );
-		});
-	},
-
-	_suggest: function( items ) {
-		var ul = this.menu.element.empty();
-		this._renderMenu( ul, items );
-		this.menu.refresh();
-
-		// size and position menu
-		ul.show();
-		this._resizeMenu();
-		ul.position( $.extend({
-			of: this.element
-		}, this.options.position ));
-
-		if ( this.options.autoFocus ) {
-			this.menu.next();
-		}
-	},
-
-	_resizeMenu: function() {
-		var ul = this.menu.element;
-		ul.outerWidth( Math.max(
-			// Firefox wraps long text (possibly a rounding bug)
-			// so we add 1px to avoid the wrapping (#7513)
-			ul.width( "" ).outerWidth() + 1,
-			this.element.outerWidth()
-		) );
-	},
-
-	_renderMenu: function( ul, items ) {
-		var that = this;
-		$.each( items, function( index, item ) {
-			that._renderItemData( ul, item );
-		});
-	},
-
-	_renderItemData: function( ul, item ) {
-		return this._renderItem( ul, item ).data( "ui-autocomplete-item", item );
-	},
-
-	_renderItem: function( ul, item ) {
-		return $( "<li>" )
-			.append( $( "<a>" ).text( item.label ) )
-			.appendTo( ul );
-	},
-
-	_move: function( direction, event ) {
-		if ( !this.menu.element.is( ":visible" ) ) {
-			this.search( null, event );
-			return;
-		}
-		if ( this.menu.isFirstItem() && /^previous/.test( direction ) ||
-				this.menu.isLastItem() && /^next/.test( direction ) ) {
-			this._value( this.term );
-			this.menu.blur();
-			return;
-		}
-		this.menu[ direction ]( event );
-	},
-
-	widget: function() {
-		return this.menu.element;
-	},
-
-	_value: function() {
-		return this.valueMethod.apply( this.element, arguments );
-	},
-
-	_keyEvent: function( keyEvent, event ) {
-		if ( !this.isMultiLine || this.menu.element.is( ":visible" ) ) {
-			this._move( keyEvent, event );
-
-			// prevents moving cursor to beginning/end of the text field in some browsers
-			event.preventDefault();
-		}
-	}
-});
-
-$.extend( $.ui.autocomplete, {
-	escapeRegex: function( value ) {
-		return value.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&");
-	},
-	filter: function(array, term) {
-		var matcher = new RegExp( $.ui.autocomplete.escapeRegex(term), "i" );
-		return $.grep( array, function(value) {
-			return matcher.test( value.label || value.value || value );
-		});
-	}
-});
-
-
-// live region extension, adding a `messages` option
-// NOTE: This is an experimental API. We are still investigating
-// a full solution for string manipulation and internationalization.
-$.widget( "ui.autocomplete", $.ui.autocomplete, {
-	options: {
-		messages: {
-			noResults: "No search results.",
-			results: function( amount ) {
-				return amount + ( amount > 1 ? " results are" : " result is" ) +
-					" available, use up and down arrow keys to navigate.";
-			}
-		}
-	},
-
-	__response: function( content ) {
-		var message;
-		this._superApply( arguments );
-		if ( this.options.disabled || this.cancelSearch ) {
-			return;
-		}
-		if ( content && content.length ) {
-			message = this.options.messages.results( content.length );
-		} else {
-			message = this.options.messages.noResults;
-		}
-		this.liveRegion.text( message );
-	}
-});
-
-}( jQuery ));
-(function( $, undefined ) {
-
-$.extend($.ui, { datepicker: { version: "1.10.1" } });
+$.extend($.ui, { datepicker: { version: "1.10.3" } });
 
 var PROP_NAME = "datepicker",
-	dpuuid = new Date().getTime(),
 	instActive;
 
 /* Date picker manager.
@@ -6540,9 +4433,10 @@ $.extend(Datepicker.prototype, {
 				inst.dpDiv[showAnim || "show"](showAnim ? duration : null);
 			}
 
-			if (inst.input.is(":visible") && !inst.input.is(":disabled")) {
+			if ( $.datepicker._shouldFocusInput( inst ) ) {
 				inst.input.focus();
 			}
+
 			$.datepicker._curInst = inst;
 		}
 	},
@@ -6569,10 +4463,7 @@ $.extend(Datepicker.prototype, {
 		inst.dpDiv[(this._get(inst, "isRTL") ? "add" : "remove") +
 			"Class"]("ui-datepicker-rtl");
 
-		// #6694 - don't focus the input if it's already focused
-		// this breaks the change event in IE
-		if (inst === $.datepicker._curInst && $.datepicker._datepickerShowing && inst.input &&
-			inst.input.is(":visible") && !inst.input.is(":disabled") && inst.input[0] !== document.activeElement) {
+		if (inst === $.datepicker._curInst && $.datepicker._datepickerShowing && $.datepicker._shouldFocusInput( inst ) ) {
 			inst.input.focus();
 		}
 
@@ -6589,16 +4480,11 @@ $.extend(Datepicker.prototype, {
 		}
 	},
 
-	/* Retrieve the size of left and top borders for an element.
-	 * @param  elem  (jQuery object) the element of interest
-	 * @return  (number[2]) the left and top borders
-	 */
-	_getBorders: function(elem) {
-		var convert = function(value) {
-			return {thin: 1, medium: 2, thick: 3}[value] || value;
-		};
-		return [parseFloat(convert(elem.css("border-left-width"))),
-			parseFloat(convert(elem.css("border-top-width")))];
+	// #6694 - don't focus the input if it's already focused
+	// this breaks the change event in IE
+	// Support: IE and jQuery <1.9
+	_shouldFocusInput: function( inst ) {
+		return inst.input && inst.input.is( ":visible" ) && !inst.input.is( ":disabled" ) && !inst.input.is( ":focus" );
 	},
 
 	/* Check positioning to remain on screen. */
@@ -7345,27 +5231,27 @@ $.extend(Datepicker.prototype, {
 		inst.dpDiv.find("[data-handler]").map(function () {
 			var handler = {
 				prev: function () {
-					window["DP_jQuery_" + dpuuid].datepicker._adjustDate(id, -stepMonths, "M");
+					$.datepicker._adjustDate(id, -stepMonths, "M");
 				},
 				next: function () {
-					window["DP_jQuery_" + dpuuid].datepicker._adjustDate(id, +stepMonths, "M");
+					$.datepicker._adjustDate(id, +stepMonths, "M");
 				},
 				hide: function () {
-					window["DP_jQuery_" + dpuuid].datepicker._hideDatepicker();
+					$.datepicker._hideDatepicker();
 				},
 				today: function () {
-					window["DP_jQuery_" + dpuuid].datepicker._gotoToday(id);
+					$.datepicker._gotoToday(id);
 				},
 				selectDay: function () {
-					window["DP_jQuery_" + dpuuid].datepicker._selectDay(id, +this.getAttribute("data-month"), +this.getAttribute("data-year"), this);
+					$.datepicker._selectDay(id, +this.getAttribute("data-month"), +this.getAttribute("data-year"), this);
 					return false;
 				},
 				selectMonth: function () {
-					window["DP_jQuery_" + dpuuid].datepicker._selectMonthYear(id, this, "M");
+					$.datepicker._selectMonthYear(id, this, "M");
 					return false;
 				},
 				selectYear: function () {
-					window["DP_jQuery_" + dpuuid].datepicker._selectMonthYear(id, this, "Y");
+					$.datepicker._selectMonthYear(id, this, "Y");
 					return false;
 				}
 			};
@@ -7828,619 +5714,9 @@ $.fn.datepicker = function(options){
 $.datepicker = new Datepicker(); // singleton instance
 $.datepicker.initialized = false;
 $.datepicker.uuid = new Date().getTime();
-$.datepicker.version = "1.10.1";
-
-// Workaround for #4055
-// Add another global to avoid noConflict issues with inline event handlers
-window["DP_jQuery_" + dpuuid] = $;
+$.datepicker.version = "1.10.3";
 
 })(jQuery);
-(function( $, undefined ) {
-
-$.widget( "ui.menu", {
-	version: "1.10.1",
-	defaultElement: "<ul>",
-	delay: 300,
-	options: {
-		icons: {
-			submenu: "ui-icon-carat-1-e"
-		},
-		menus: "ul",
-		position: {
-			my: "left top",
-			at: "right top"
-		},
-		role: "menu",
-
-		// callbacks
-		blur: null,
-		focus: null,
-		select: null
-	},
-
-	_create: function() {
-		this.activeMenu = this.element;
-		// flag used to prevent firing of the click handler
-		// as the event bubbles up through nested menus
-		this.mouseHandled = false;
-		this.element
-			.uniqueId()
-			.addClass( "ui-menu ui-widget ui-widget-content ui-corner-all" )
-			.toggleClass( "ui-menu-icons", !!this.element.find( ".ui-icon" ).length )
-			.attr({
-				role: this.options.role,
-				tabIndex: 0
-			})
-			// need to catch all clicks on disabled menu
-			// not possible through _on
-			.bind( "click" + this.eventNamespace, $.proxy(function( event ) {
-				if ( this.options.disabled ) {
-					event.preventDefault();
-				}
-			}, this ));
-
-		if ( this.options.disabled ) {
-			this.element
-				.addClass( "ui-state-disabled" )
-				.attr( "aria-disabled", "true" );
-		}
-
-		this._on({
-			// Prevent focus from sticking to links inside menu after clicking
-			// them (focus should always stay on UL during navigation).
-			"mousedown .ui-menu-item > a": function( event ) {
-				event.preventDefault();
-			},
-			"click .ui-state-disabled > a": function( event ) {
-				event.preventDefault();
-			},
-			"click .ui-menu-item:has(a)": function( event ) {
-				var target = $( event.target ).closest( ".ui-menu-item" );
-				if ( !this.mouseHandled && target.not( ".ui-state-disabled" ).length ) {
-					this.mouseHandled = true;
-
-					this.select( event );
-					// Open submenu on click
-					if ( target.has( ".ui-menu" ).length ) {
-						this.expand( event );
-					} else if ( !this.element.is( ":focus" ) ) {
-						// Redirect focus to the menu
-						this.element.trigger( "focus", [ true ] );
-
-						// If the active item is on the top level, let it stay active.
-						// Otherwise, blur the active item since it is no longer visible.
-						if ( this.active && this.active.parents( ".ui-menu" ).length === 1 ) {
-							clearTimeout( this.timer );
-						}
-					}
-				}
-			},
-			"mouseenter .ui-menu-item": function( event ) {
-				var target = $( event.currentTarget );
-				// Remove ui-state-active class from siblings of the newly focused menu item
-				// to avoid a jump caused by adjacent elements both having a class with a border
-				target.siblings().children( ".ui-state-active" ).removeClass( "ui-state-active" );
-				this.focus( event, target );
-			},
-			mouseleave: "collapseAll",
-			"mouseleave .ui-menu": "collapseAll",
-			focus: function( event, keepActiveItem ) {
-				// If there's already an active item, keep it active
-				// If not, activate the first item
-				var item = this.active || this.element.children( ".ui-menu-item" ).eq( 0 );
-
-				if ( !keepActiveItem ) {
-					this.focus( event, item );
-				}
-			},
-			blur: function( event ) {
-				this._delay(function() {
-					if ( !$.contains( this.element[0], this.document[0].activeElement ) ) {
-						this.collapseAll( event );
-					}
-				});
-			},
-			keydown: "_keydown"
-		});
-
-		this.refresh();
-
-		// Clicks outside of a menu collapse any open menus
-		this._on( this.document, {
-			click: function( event ) {
-				if ( !$( event.target ).closest( ".ui-menu" ).length ) {
-					this.collapseAll( event );
-				}
-
-				// Reset the mouseHandled flag
-				this.mouseHandled = false;
-			}
-		});
-	},
-
-	_destroy: function() {
-		// Destroy (sub)menus
-		this.element
-			.removeAttr( "aria-activedescendant" )
-			.find( ".ui-menu" ).addBack()
-				.removeClass( "ui-menu ui-widget ui-widget-content ui-corner-all ui-menu-icons" )
-				.removeAttr( "role" )
-				.removeAttr( "tabIndex" )
-				.removeAttr( "aria-labelledby" )
-				.removeAttr( "aria-expanded" )
-				.removeAttr( "aria-hidden" )
-				.removeAttr( "aria-disabled" )
-				.removeUniqueId()
-				.show();
-
-		// Destroy menu items
-		this.element.find( ".ui-menu-item" )
-			.removeClass( "ui-menu-item" )
-			.removeAttr( "role" )
-			.removeAttr( "aria-disabled" )
-			.children( "a" )
-				.removeUniqueId()
-				.removeClass( "ui-corner-all ui-state-hover" )
-				.removeAttr( "tabIndex" )
-				.removeAttr( "role" )
-				.removeAttr( "aria-haspopup" )
-				.children().each( function() {
-					var elem = $( this );
-					if ( elem.data( "ui-menu-submenu-carat" ) ) {
-						elem.remove();
-					}
-				});
-
-		// Destroy menu dividers
-		this.element.find( ".ui-menu-divider" ).removeClass( "ui-menu-divider ui-widget-content" );
-	},
-
-	_keydown: function( event ) {
-		/*jshint maxcomplexity:20*/
-		var match, prev, character, skip, regex,
-			preventDefault = true;
-
-		function escape( value ) {
-			return value.replace( /[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&" );
-		}
-
-		switch ( event.keyCode ) {
-		case $.ui.keyCode.PAGE_UP:
-			this.previousPage( event );
-			break;
-		case $.ui.keyCode.PAGE_DOWN:
-			this.nextPage( event );
-			break;
-		case $.ui.keyCode.HOME:
-			this._move( "first", "first", event );
-			break;
-		case $.ui.keyCode.END:
-			this._move( "last", "last", event );
-			break;
-		case $.ui.keyCode.UP:
-			this.previous( event );
-			break;
-		case $.ui.keyCode.DOWN:
-			this.next( event );
-			break;
-		case $.ui.keyCode.LEFT:
-			this.collapse( event );
-			break;
-		case $.ui.keyCode.RIGHT:
-			if ( this.active && !this.active.is( ".ui-state-disabled" ) ) {
-				this.expand( event );
-			}
-			break;
-		case $.ui.keyCode.ENTER:
-		case $.ui.keyCode.SPACE:
-			this._activate( event );
-			break;
-		case $.ui.keyCode.ESCAPE:
-			this.collapse( event );
-			break;
-		default:
-			preventDefault = false;
-			prev = this.previousFilter || "";
-			character = String.fromCharCode( event.keyCode );
-			skip = false;
-
-			clearTimeout( this.filterTimer );
-
-			if ( character === prev ) {
-				skip = true;
-			} else {
-				character = prev + character;
-			}
-
-			regex = new RegExp( "^" + escape( character ), "i" );
-			match = this.activeMenu.children( ".ui-menu-item" ).filter(function() {
-				return regex.test( $( this ).children( "a" ).text() );
-			});
-			match = skip && match.index( this.active.next() ) !== -1 ?
-				this.active.nextAll( ".ui-menu-item" ) :
-				match;
-
-			// If no matches on the current filter, reset to the last character pressed
-			// to move down the menu to the first item that starts with that character
-			if ( !match.length ) {
-				character = String.fromCharCode( event.keyCode );
-				regex = new RegExp( "^" + escape( character ), "i" );
-				match = this.activeMenu.children( ".ui-menu-item" ).filter(function() {
-					return regex.test( $( this ).children( "a" ).text() );
-				});
-			}
-
-			if ( match.length ) {
-				this.focus( event, match );
-				if ( match.length > 1 ) {
-					this.previousFilter = character;
-					this.filterTimer = this._delay(function() {
-						delete this.previousFilter;
-					}, 1000 );
-				} else {
-					delete this.previousFilter;
-				}
-			} else {
-				delete this.previousFilter;
-			}
-		}
-
-		if ( preventDefault ) {
-			event.preventDefault();
-		}
-	},
-
-	_activate: function( event ) {
-		if ( !this.active.is( ".ui-state-disabled" ) ) {
-			if ( this.active.children( "a[aria-haspopup='true']" ).length ) {
-				this.expand( event );
-			} else {
-				this.select( event );
-			}
-		}
-	},
-
-	refresh: function() {
-		var menus,
-			icon = this.options.icons.submenu,
-			submenus = this.element.find( this.options.menus );
-
-		// Initialize nested menus
-		submenus.filter( ":not(.ui-menu)" )
-			.addClass( "ui-menu ui-widget ui-widget-content ui-corner-all" )
-			.hide()
-			.attr({
-				role: this.options.role,
-				"aria-hidden": "true",
-				"aria-expanded": "false"
-			})
-			.each(function() {
-				var menu = $( this ),
-					item = menu.prev( "a" ),
-					submenuCarat = $( "<span>" )
-						.addClass( "ui-menu-icon ui-icon " + icon )
-						.data( "ui-menu-submenu-carat", true );
-
-				item
-					.attr( "aria-haspopup", "true" )
-					.prepend( submenuCarat );
-				menu.attr( "aria-labelledby", item.attr( "id" ) );
-			});
-
-		menus = submenus.add( this.element );
-
-		// Don't refresh list items that are already adapted
-		menus.children( ":not(.ui-menu-item):has(a)" )
-			.addClass( "ui-menu-item" )
-			.attr( "role", "presentation" )
-			.children( "a" )
-				.uniqueId()
-				.addClass( "ui-corner-all" )
-				.attr({
-					tabIndex: -1,
-					role: this._itemRole()
-				});
-
-		// Initialize unlinked menu-items containing spaces and/or dashes only as dividers
-		menus.children( ":not(.ui-menu-item)" ).each(function() {
-			var item = $( this );
-			// hyphen, em dash, en dash
-			if ( !/[^\-\u2014\u2013\s]/.test( item.text() ) ) {
-				item.addClass( "ui-widget-content ui-menu-divider" );
-			}
-		});
-
-		// Add aria-disabled attribute to any disabled menu item
-		menus.children( ".ui-state-disabled" ).attr( "aria-disabled", "true" );
-
-		// If the active item has been removed, blur the menu
-		if ( this.active && !$.contains( this.element[ 0 ], this.active[ 0 ] ) ) {
-			this.blur();
-		}
-	},
-
-	_itemRole: function() {
-		return {
-			menu: "menuitem",
-			listbox: "option"
-		}[ this.options.role ];
-	},
-
-	_setOption: function( key, value ) {
-		if ( key === "icons" ) {
-			this.element.find( ".ui-menu-icon" )
-				.removeClass( this.options.icons.submenu )
-				.addClass( value.submenu );
-		}
-		this._super( key, value );
-	},
-
-	focus: function( event, item ) {
-		var nested, focused;
-		this.blur( event, event && event.type === "focus" );
-
-		this._scrollIntoView( item );
-
-		this.active = item.first();
-		focused = this.active.children( "a" ).addClass( "ui-state-focus" );
-		// Only update aria-activedescendant if there's a role
-		// otherwise we assume focus is managed elsewhere
-		if ( this.options.role ) {
-			this.element.attr( "aria-activedescendant", focused.attr( "id" ) );
-		}
-
-		// Highlight active parent menu item, if any
-		this.active
-			.parent()
-			.closest( ".ui-menu-item" )
-			.children( "a:first" )
-			.addClass( "ui-state-active" );
-
-		if ( event && event.type === "keydown" ) {
-			this._close();
-		} else {
-			this.timer = this._delay(function() {
-				this._close();
-			}, this.delay );
-		}
-
-		nested = item.children( ".ui-menu" );
-		if ( nested.length && ( /^mouse/.test( event.type ) ) ) {
-			this._startOpening(nested);
-		}
-		this.activeMenu = item.parent();
-
-		this._trigger( "focus", event, { item: item } );
-	},
-
-	_scrollIntoView: function( item ) {
-		var borderTop, paddingTop, offset, scroll, elementHeight, itemHeight;
-		if ( this._hasScroll() ) {
-			borderTop = parseFloat( $.css( this.activeMenu[0], "borderTopWidth" ) ) || 0;
-			paddingTop = parseFloat( $.css( this.activeMenu[0], "paddingTop" ) ) || 0;
-			offset = item.offset().top - this.activeMenu.offset().top - borderTop - paddingTop;
-			scroll = this.activeMenu.scrollTop();
-			elementHeight = this.activeMenu.height();
-			itemHeight = item.height();
-
-			if ( offset < 0 ) {
-				this.activeMenu.scrollTop( scroll + offset );
-			} else if ( offset + itemHeight > elementHeight ) {
-				this.activeMenu.scrollTop( scroll + offset - elementHeight + itemHeight );
-			}
-		}
-	},
-
-	blur: function( event, fromFocus ) {
-		if ( !fromFocus ) {
-			clearTimeout( this.timer );
-		}
-
-		if ( !this.active ) {
-			return;
-		}
-
-		this.active.children( "a" ).removeClass( "ui-state-focus" );
-		this.active = null;
-
-		this._trigger( "blur", event, { item: this.active } );
-	},
-
-	_startOpening: function( submenu ) {
-		clearTimeout( this.timer );
-
-		// Don't open if already open fixes a Firefox bug that caused a .5 pixel
-		// shift in the submenu position when mousing over the carat icon
-		if ( submenu.attr( "aria-hidden" ) !== "true" ) {
-			return;
-		}
-
-		this.timer = this._delay(function() {
-			this._close();
-			this._open( submenu );
-		}, this.delay );
-	},
-
-	_open: function( submenu ) {
-		var position = $.extend({
-			of: this.active
-		}, this.options.position );
-
-		clearTimeout( this.timer );
-		this.element.find( ".ui-menu" ).not( submenu.parents( ".ui-menu" ) )
-			.hide()
-			.attr( "aria-hidden", "true" );
-
-		submenu
-			.show()
-			.removeAttr( "aria-hidden" )
-			.attr( "aria-expanded", "true" )
-			.position( position );
-	},
-
-	collapseAll: function( event, all ) {
-		clearTimeout( this.timer );
-		this.timer = this._delay(function() {
-			// If we were passed an event, look for the submenu that contains the event
-			var currentMenu = all ? this.element :
-				$( event && event.target ).closest( this.element.find( ".ui-menu" ) );
-
-			// If we found no valid submenu ancestor, use the main menu to close all sub menus anyway
-			if ( !currentMenu.length ) {
-				currentMenu = this.element;
-			}
-
-			this._close( currentMenu );
-
-			this.blur( event );
-			this.activeMenu = currentMenu;
-		}, this.delay );
-	},
-
-	// With no arguments, closes the currently active menu - if nothing is active
-	// it closes all menus.  If passed an argument, it will search for menus BELOW
-	_close: function( startMenu ) {
-		if ( !startMenu ) {
-			startMenu = this.active ? this.active.parent() : this.element;
-		}
-
-		startMenu
-			.find( ".ui-menu" )
-				.hide()
-				.attr( "aria-hidden", "true" )
-				.attr( "aria-expanded", "false" )
-			.end()
-			.find( "a.ui-state-active" )
-				.removeClass( "ui-state-active" );
-	},
-
-	collapse: function( event ) {
-		var newItem = this.active &&
-			this.active.parent().closest( ".ui-menu-item", this.element );
-		if ( newItem && newItem.length ) {
-			this._close();
-			this.focus( event, newItem );
-		}
-	},
-
-	expand: function( event ) {
-		var newItem = this.active &&
-			this.active
-				.children( ".ui-menu " )
-				.children( ".ui-menu-item" )
-				.first();
-
-		if ( newItem && newItem.length ) {
-			this._open( newItem.parent() );
-
-			// Delay so Firefox will not hide activedescendant change in expanding submenu from AT
-			this._delay(function() {
-				this.focus( event, newItem );
-			});
-		}
-	},
-
-	next: function( event ) {
-		this._move( "next", "first", event );
-	},
-
-	previous: function( event ) {
-		this._move( "prev", "last", event );
-	},
-
-	isFirstItem: function() {
-		return this.active && !this.active.prevAll( ".ui-menu-item" ).length;
-	},
-
-	isLastItem: function() {
-		return this.active && !this.active.nextAll( ".ui-menu-item" ).length;
-	},
-
-	_move: function( direction, filter, event ) {
-		var next;
-		if ( this.active ) {
-			if ( direction === "first" || direction === "last" ) {
-				next = this.active
-					[ direction === "first" ? "prevAll" : "nextAll" ]( ".ui-menu-item" )
-					.eq( -1 );
-			} else {
-				next = this.active
-					[ direction + "All" ]( ".ui-menu-item" )
-					.eq( 0 );
-			}
-		}
-		if ( !next || !next.length || !this.active ) {
-			next = this.activeMenu.children( ".ui-menu-item" )[ filter ]();
-		}
-
-		this.focus( event, next );
-	},
-
-	nextPage: function( event ) {
-		var item, base, height;
-
-		if ( !this.active ) {
-			this.next( event );
-			return;
-		}
-		if ( this.isLastItem() ) {
-			return;
-		}
-		if ( this._hasScroll() ) {
-			base = this.active.offset().top;
-			height = this.element.height();
-			this.active.nextAll( ".ui-menu-item" ).each(function() {
-				item = $( this );
-				return item.offset().top - base - height < 0;
-			});
-
-			this.focus( event, item );
-		} else {
-			this.focus( event, this.activeMenu.children( ".ui-menu-item" )
-				[ !this.active ? "first" : "last" ]() );
-		}
-	},
-
-	previousPage: function( event ) {
-		var item, base, height;
-		if ( !this.active ) {
-			this.next( event );
-			return;
-		}
-		if ( this.isFirstItem() ) {
-			return;
-		}
-		if ( this._hasScroll() ) {
-			base = this.active.offset().top;
-			height = this.element.height();
-			this.active.prevAll( ".ui-menu-item" ).each(function() {
-				item = $( this );
-				return item.offset().top - base + height > 0;
-			});
-
-			this.focus( event, item );
-		} else {
-			this.focus( event, this.activeMenu.children( ".ui-menu-item" ).first() );
-		}
-	},
-
-	_hasScroll: function() {
-		return this.element.outerHeight() < this.element.prop( "scrollHeight" );
-	},
-
-	select: function( event ) {
-		// TODO: It should never be possible to not have an active item at this
-		// point, but the tests don't trigger mouseenter before click.
-		this.active = this.active || $( event.target ).closest( ".ui-menu-item" );
-		var ui = { item: this.active };
-		if ( !this.active.has( ".ui-menu" ).length ) {
-			this.collapseAll( event, true );
-		}
-		this._trigger( "select", event, ui );
-	}
-});
-
-}( jQuery ));
 
 /*
  * jQuery File Upload Plugin 5.21
@@ -10260,7 +7536,7 @@ $.widget( "ui.menu", {
 A directive for providing suggestions while typing into the field
 
 @dependencies
-- jQuery UI autocomplete
+- mac-menu
 
 @param {String} ng-model Assignable angular expression to data-bind to
 @param {String} mac-placeholder Placeholder text
@@ -10282,52 +7558,79 @@ A directive for providing suggestions while typing into the field
 @param {Integer} mac-autocomplete-delay Delay on fetching autocomplete data after keyup (default 800)
 */
 angular.module("Mac").directive("macAutocomplete", [
-  "$http", "$parse", "$filter", function($http, $parse, $filter) {
+  "$http", "$filter", "$compile", "$timeout", "$parse", "$rootScope", "keys", function($http, $filter, $compile, $timeout, $parse, $rootScope, keys) {
     return {
       restrict: "E",
       templateUrl: "template/autocomplete.html",
       replace: true,
-      require: "?ngModel",
+      require: "ngModel",
       link: function($scope, element, attrs, ctrl) {
-        var autocompleteUrl, currentAutocomplete, delay, labelKey, onError, onSelect, onSuccess, queryKey, reset, source, sourceFn, updateList;
+        var $menuScope, autocompleteUrl, currentAutocomplete, delay, disabled, inside, labelKey, menuEl, onError, onSelect, onSuccess, positionMenu, queryData, queryKey, reset, source, timeoutId, updateItem;
 
         labelKey = attrs.macAutocompleteLabel || "name";
         queryKey = attrs.macAutocompleteQuery || "q";
-        delay = +attrs.macAutocompleteDelay || 800;
+        delay = +(attrs.macAutocompleteDelay || 800);
+        inside = attrs.macAutocompleteInside != null;
         autocompleteUrl = $parse(attrs.macAutocompleteUrl);
         onSelect = $parse(attrs.macAutocompleteOnSelect);
         onSuccess = $parse(attrs.macAutocompleteOnSuccess);
         onError = $parse(attrs.macAutocompleteOnError);
         source = $parse(attrs.macAutocompleteSource);
+        disabled = $parse(attrs.macAutocompleteDisabled);
         currentAutocomplete = [];
-        if (ctrl != null) {
-          $scope.$watch(attrs.ngModel, function(value) {
-            return setTimeout(function() {
-              ctrl.$setViewValue(value);
-              return ctrl.$render();
-            }, 0);
-          });
-        }
+        timeoutId = null;
+        $menuScope = $rootScope.$new();
+        $menuScope.items = [];
+        $menuScope.index = 0;
+        $scope.$watch(attrs.ngModel, function(value) {
+          ctrl.$setViewValue(value);
+          return ctrl.$render();
+        });
+        ctrl.$parsers.push(function(value) {
+          if (value && !disabled($scope)) {
+            if (delay > 0) {
+              if (timeoutId != null) {
+                $timeout.cancel(timeoutId);
+              }
+              timeoutId = $timeout(function() {
+                return queryData(value);
+              }, delay);
+            } else {
+              queryData(value);
+            }
+          }
+          return value;
+        });
         reset = function() {
-          return currentAutocomplete = [];
+          $menuScope.items = [];
+          return $menuScope.index = 0;
         };
-        updateList = function(data) {
+        positionMenu = function() {
+          $menuScope.style = element.offset();
+          $menuScope.style.top += element.outerHeight();
+          return $menuScope.style.width = element.outerWidth();
+        };
+        updateItem = function(data) {
+          var item, label, value, _i, _len, _results;
+
           if (data == null) {
             data = [];
           }
           currentAutocomplete = data;
-          return _(data).map(function(item) {
-            var label, value;
-
-            label = value = item[labelKey] != null ? item[labelKey] : item;
-            return {
+          $menuScope.items = [];
+          _results = [];
+          for (_i = 0, _len = data.length; _i < _len; _i++) {
+            item = data[_i];
+            label = value = item[labelKey] || item;
+            _results.push($menuScope.items.push({
               label: label,
               value: value
-            };
-          });
+            }));
+          }
+          return _results;
         };
-        sourceFn = function(req, resp) {
-          var list, options, url;
+        queryData = function(query) {
+          var options, url;
 
           url = autocompleteUrl($scope);
           if (url) {
@@ -10336,57 +7639,90 @@ angular.module("Mac").directive("macAutocomplete", [
               url: url,
               params: {}
             };
-            options.params[queryKey] = req.term;
+            options.params[queryKey] = query;
             return $http(options).success(function(data, status, headers, config) {
-              var fetchedList;
+              var dataList;
 
-              fetchedList = typeof onSuccess === "function" ? onSuccess($scope, {
+              dataList = onSuccess($scope, {
                 data: data,
                 status: status,
                 headers: headers
-              }) : void 0;
-              if (fetchedList == null) {
-                fetchedList = data.data;
+              });
+              if (dataList == null) {
+                dataList = data.data;
               }
-              return resp(updateList(fetchedList));
+              updateItem(dataList);
+              return positionMenu();
             }).error(function(data, status, headers, config) {
-              return typeof onError === "function" ? onError($scope, {
+              return onError($scope, {
                 data: data,
                 status: status,
                 headers: headers
-              }) : void 0;
+              });
             });
           } else {
-            list = updateList(source($scope) || []);
-            return resp($filter("filter")(list, req.term));
+            updateItem($filter("filter")(source($scope), query));
+            return positionMenu();
           }
         };
-        element.autocomplete({
-          delay: delay,
-          autoFocus: true,
-          source: sourceFn,
-          select: function(event, ui) {
-            return $scope.$apply(function() {
-              var selected;
+        $menuScope.select = function(index) {
+          var label, selected;
 
-              selected = _(currentAutocomplete).find(function(item) {
-                return (item[labelKey] || item) === ui.item.label;
+          selected = currentAutocomplete[index];
+          onSelect($scope, {
+            selected: selected
+          });
+          label = $menuScope.items[index].label || "";
+          if (attrs.ngModel != null) {
+            ctrl.$setViewValue(label);
+            ctrl.$render();
+          }
+          return reset();
+        };
+        element.on("keydown", function(event) {
+          switch (event.which) {
+            case keys.DOWN:
+              $scope.$apply(function() {
+                return $menuScope.index = ($menuScope.index + 1) % $menuScope.items.length;
               });
-              if (onSelect != null) {
-                return onSelect($scope, {
-                  selected: selected
-                });
-              }
+              break;
+            case keys.UP:
+              $scope.$apply(function() {
+                return $menuScope.index = ($menuScope.index ? $menuScope.index : $menuScope.items.length) - 1;
+              });
+              break;
+            case keys.ENTER:
+              $scope.$apply(function() {
+                if ($menuScope.items.length > 0) {
+                  return $menuScope.select($menuScope.index);
+                }
+              });
+              break;
+            case keys.ESCAPE:
+              $scope.$apply(function() {
+                return reset();
+              });
+          }
+          return true;
+        });
+        $(document).on("click", function(event) {
+          if ($menuScope.items.length > 0) {
+            return $scope.$apply(function() {
+              return reset();
             });
           }
         });
-        if (attrs.macAutocompleteDisabled != null) {
-          $scope.$watch(attrs.macAutocompleteDisabled, function(value) {
-            var action;
-
-            action = value ? "disable" : "enable";
-            return element.autocomplete(action);
-          });
+        menuEl = angular.element("<mac-menu></mac-menu>");
+        menuEl.attr({
+          "mac-menu-items": "items",
+          "mac-menu-style": "style",
+          "mac-menu-select": "select(index)",
+          "mac-menu-index": "index"
+        });
+        if (inside) {
+          element.after($compile(menuEl)($menuScope));
+        } else {
+          $(document.body).append($compile(menuEl)($menuScope));
         }
         return $scope.$on("resetAutocomplete", function() {
           return reset();
@@ -10406,11 +7742,12 @@ A directive for creating a datepicker on text input using jquery ui
 - jQuery
 - jQuery datepicker
 
-@param {String}     mac-datepicker-id               The id of the text input field
-@param {String}     mac-datepicker-model            The model to store the selected date
-@param {Function}   mac-datepicker-on-before-select Function called before setting the value to the model
+@param {String}     mac-datepicker-id        The id of the text input field
+@param {String}     mac-datepicker-model     The model to store the selected date
+@param {Function}   mac-datepicker-on-select Function called before setting the value to the model
   - `date` - {String} Selected date from the datepicker
-@param {String}     mac-datepicker-on-before-close Function called before closing datepicker
+  - `instance` - {Object} Datepicker instance
+@param {String}     mac-datepicker-on-close Function called before closing datepicker
   - `date` - {String} Selected date from the datepicker
   - `instance` - {Object} Datepicker instance
 @param {String}     mac-datepicker-append-text          The text to display after each date field
@@ -10461,13 +7798,15 @@ angular.module("Mac").directive("macDatepicker", [
         inputAttrs = {
           "mac-id": opts.id
         };
-        inputAttrs["ng-disabled"] = attrs.macDatepickerDisabled || "";
+        if (attrs.macDatepickerDisabled != null) {
+          inputAttrs["ng-disabled"] = attrs.macDatepickerDisabled;
+        }
         inputElement = $("input", element).attr(inputAttrs);
         return function($scope, element, attrs) {
-          var initialized, model, onBeforeClose, onBeforeSelect, setOptions;
+          var initialized, model, onClose, onSelect, setOptions;
 
-          onBeforeSelect = $parse(attrs.macDatepickerOnBeforeSelect);
-          onBeforeClose = $parse(attrs.macDatepickerOnBeforeClose);
+          onSelect = $parse(attrs.macDatepickerOnSelect);
+          onClose = $parse(attrs.macDatepickerOnClose);
           model = $parse(attrs.macDatepickerModel);
           initialized = false;
           setOptions = function(name, value) {
@@ -10494,19 +7833,18 @@ angular.module("Mac").directive("macDatepicker", [
           });
           opts.onSelect = function(date, instance) {
             return $scope.$apply(function() {
-              var _base;
-
-              date = (typeof (_base = onBeforeSelect($scope)) === "function" ? _base({
-                date: date
-              }) : void 0) || date;
-              return model.assign($scope, date);
+              if (typeof onSelect === "function") {
+                onSelect($scope, {
+                  date: date,
+                  instance: instance
+                });
+              }
+              return typeof model.assign === "function" ? model.assign($scope, date) : void 0;
             });
           };
           opts.onClose = function(date, instance) {
             return $scope.$apply(function() {
-              var _base;
-
-              return typeof (_base = onBeforeClose($scope)) === "function" ? _base({
+              return typeof onClose === "function" ? onClose($scope, {
                 date: date,
                 instance: instance
               }) : void 0;
@@ -10520,7 +7858,7 @@ angular.module("Mac").directive("macDatepicker", [
   }
 ]);
 
-var event, key, _fn, _fn1, _i, _j, _len, _len1, _ref, _ref1;
+var event, _fn, _i, _len, _ref;
 
 _ref = ["Blur", "Focus", "Keydown", "Keyup", "Mouseenter", "Mouseleave"];
 _fn = function(event) {
@@ -10550,8 +7888,10 @@ for (_i = 0, _len = _ref.length; _i < _len; _i++) {
   _fn(event);
 }
 
-_ref1 = ["Enter", "Escape", "Space", "Left", "Up", "Right", "Down"];
-_fn1 = function(key) {
+var key, _fn, _i, _len, _ref;
+
+_ref = ["Enter", "Escape", "Space", "Left", "Up", "Right", "Down"];
+_fn = function(key) {
   return angular.module("Mac").directive("macKeydown" + key, [
     "$parse", "keys", function($parse, keys) {
       return {
@@ -10575,9 +7915,9 @@ _fn1 = function(key) {
     }
   ]);
 };
-for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-  key = _ref1[_j];
-  _fn1(key);
+for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+  key = _ref[_i];
+  _fn(key);
 }
 
 angular.module("Mac").directive("macPauseTyping", [
@@ -10603,7 +7943,9 @@ angular.module("Mac").directive("macPauseTyping", [
       }
     };
   }
-]).directive("macWindowResize", [
+]);
+
+angular.module("Mac").directive("macWindowResize", [
   "$parse", "$window", function($parse, $window) {
     return {
       restrict: "A",
@@ -10757,6 +8099,7 @@ angular.module("Mac").directive("macUpload", [
           });
         }
         options.dropZone = dropZone || $();
+        options.pasteZone = null;
         if (opts.options) {
           extraOptions = $scope.$eval(opts.options) || {};
           angular.extend(options, extraOptions);
@@ -10894,7 +8237,8 @@ angular.module("Mac").directive("macUpload", [
 @description
 Scroll window to the element and focus on the element
 
-@param {String} mac-focus-on-event Event to focus on element
+@param {String}  mac-focus-on-event Event to focus on element
+@param {Boolean} mac-focus-on-event-scroll Scroll to element location or not
 */
 angular.module("Mac").directive("macFocusOnEvent", function() {
   return function(scope, element, attributes) {
@@ -10902,10 +8246,12 @@ angular.module("Mac").directive("macFocusOnEvent", function() {
       return setTimeout((function() {
         var x, y;
 
-        x = window.scrollX;
-        y = window.scrollY;
         element.focus();
-        return window.scrollTo(x, y);
+        if (attributes.macFocusOnEventScroll) {
+          x = window.scrollX;
+          y = window.scrollY;
+          return window.scrollTo(x, y);
+        }
       }), 0);
     });
   };
@@ -11031,100 +8377,38 @@ angular.module("Mac").factory("keys", function() {
   };
 });
 
-angular.module("Mac").factory("macColumnsController", function() {
-  var MacColumnsController;
+/*
+@chalk overview
+@name Menu
 
-  return MacColumnsController = (function() {
-    function MacColumnsController(scope, element, attrs) {
-      this.scope = scope;
-      this.element = element;
-      this.attrs = attrs;
-      this.trackedColumns = {};
-    }
+@description
+A directive for creating a menu with multiple items
 
-    MacColumnsController.prototype.getSiblingScopes = function(siblings) {
-      var el, li, siblingScope, _i, _len;
-
-      li = [];
-      for (_i = 0, _len = siblings.length; _i < _len; _i++) {
-        el = siblings[_i];
-        siblingScope = angular.element(el).scope();
-        if (this.trackedColumns[siblingScope.$id] != null) {
-          li.push(siblingScope);
-        }
-      }
-      return li;
-    };
-
-    MacColumnsController.prototype.recalculateWidths = function(event, id, newValue, oldValue) {
-      var cElement, cScope, nextSiblings, nextSiblingsWidthMap, prevSiblings, scale, siblingScope, siblingsTotalWidth, width, _i, _j, _len, _len1, _ref, _results;
-
-      if (!(!isNaN(newValue) && !isNaN(oldValue))) {
-        return;
-      }
-      _ref = this.trackedColumns[id], cScope = _ref[0], cElement = _ref[1];
-      nextSiblings = this.getSiblingScopes(cElement.nextAll());
-      scale = (oldValue - newValue) / nextSiblings.length;
-      nextSiblingsWidthMap = {};
-      siblingsTotalWidth = 0;
-      for (_i = 0, _len = nextSiblings.length; _i < _len; _i++) {
-        siblingScope = nextSiblings[_i];
-        width = +siblingScope.cell.column.width + scale;
-        if (width < 5) {
-          width = 5;
-        }
-        nextSiblingsWidthMap[siblingScope.$id] = width;
-        siblingsTotalWidth += width;
-      }
-      prevSiblings = this.getSiblingScopes(cElement.prevAll());
-      siblingsTotalWidth += prevSiblings.reduce(function(m, v) {
-        return +v.cell.column.width + m;
-      }, 0);
-      if (!((siblingsTotalWidth + newValue) <= 100)) {
-        return;
-      }
-      cScope.cell.column.width = newValue;
-      _results = [];
-      for (_j = 0, _len1 = nextSiblings.length; _j < _len1; _j++) {
-        siblingScope = nextSiblings[_j];
-        _results.push(siblingScope.cell.column.width = nextSiblingsWidthMap[siblingScope.$id]);
-      }
-      return _results;
-    };
-
-    return MacColumnsController;
-
-  })();
-});
-
-angular.module("Mac").directive("macColumns", [
-  "macColumnsController", function(macColumnsController) {
+@param {Expression} mac-menu-item
+@param {Function} mac-menu-select Callback on select
+@param {Object} mac-menu-style Styles apply to the menu
+@param {Expression} mac-menu-index Index of selected item
+*/
+angular.module("Mac").directive("macMenu", [
+  "$parse", function($parse) {
     return {
-      require: ["^macTableV2", "^tableSection", "tableRow", "macColumns"],
-      controller: ["$scope", "$element", "$attrs", macColumnsController],
-      link: function($scope, $element, $attrs, controllers) {
-        return $scope.$on("mac-columns-" + $scope.$id + "-changed", function(event, id, newValue, oldValue) {
-          return controllers[3].recalculateWidths.apply(controllers[3], arguments);
-        });
-      }
-    };
-  }
-]);
-
-angular.module("Mac").directive("initialWidth", [
-  function() {
-    return {
-      require: ["^macTableV2", "^tableSection", "^tableRow", "^macColumns"],
-      priority: 500,
-      compile: function(element, attr) {
-        return function($scope, $element, $attrs, controllers) {
-          controllers[3].trackedColumns[$scope.$id] = [$scope, $element];
-          return $attrs.$observe("initialWidth", function(value) {
-            if ($scope.cell.column.width) {
-              return;
-            }
-            return $scope.cell.column.width = +value.replace("%", "");
+      restrict: "EA",
+      replace: true,
+      templateUrl: "template/menu.html",
+      scope: {
+        items: "=macMenuItems",
+        style: "=macMenuStyle",
+        index: "=macMenuIndex",
+        select: "&macMenuSelect"
+      },
+      link: function($scope, element, attrs, ctrls) {
+        $scope.selectItem = function(index) {
+          return $scope.select({
+            index: index
           });
+        };
+        return $scope.setIndex = function(index) {
+          return $scope.index = index;
         };
       }
     };
@@ -11268,7 +8552,7 @@ angular.module("Mac").directive("macReorderable", [
 angular.module("Mac").directive("macReorderableColumns", [
   function() {
     return {
-      require: ["^macTableV2", "macReorderable"],
+      require: ["^macTable", "macReorderable"],
       link: function($scope, $element, $attr, controllers) {
         return controllers[1].registerCallback(function(event, ui, columnElements) {
           var changedElement, columnsOrder;
@@ -11276,7 +8560,7 @@ angular.module("Mac").directive("macReorderableColumns", [
           columnsOrder = [];
           changedElement = $(ui.item);
           columnElements.each(function() {
-            return columnsOrder.push($(this).scope().cell.colName);
+            return columnsOrder.push($(this).scope().cell.column.colName);
           });
           return $scope.$apply(function() {
             controllers[0].table.columnsOrder = columnsOrder;
@@ -11378,767 +8662,109 @@ angular.module("Mac").directive("macSpinner", function() {
   };
 });
 
-angular.module("Mac").directive("macTable", [
-  "$compile", "$filter", "util", function($compile, $filter, util) {
+/*
+@chalk overview
+@name Columns
+@description
+Directive that keeps track of the widths of the columns in the table.
+This directive is automatically added to any row whose cells use `mac-columns-width`.
+
+@dependencies
+macTable, macTableSection, macTableRow
+*/
+angular.module("Mac").factory("macColumnsController", function() {
+  var MacColumnsController;
+
+  return MacColumnsController = (function() {
+    function MacColumnsController(scope, element, attrs) {
+      this.scope = scope;
+      this.element = element;
+      this.attrs = attrs;
+      this.trackedColumns = {};
+    }
+
+    MacColumnsController.prototype.getSiblingScopes = function(siblings) {
+      var el, li, siblingScope, _i, _len;
+
+      li = [];
+      for (_i = 0, _len = siblings.length; _i < _len; _i++) {
+        el = siblings[_i];
+        siblingScope = angular.element(el).scope();
+        if (this.trackedColumns[siblingScope.$id] != null) {
+          li.push(siblingScope);
+        }
+      }
+      return li;
+    };
+
+    MacColumnsController.prototype.recalculateWidths = function(event, id, newValue, oldValue) {
+      var cElement, cScope, nextSiblings, nextSiblingsWidthMap, prevSiblings, scale, siblingScope, siblingsTotalWidth, width, _i, _j, _len, _len1, _ref, _results;
+
+      if (!(!isNaN(newValue) && !isNaN(oldValue))) {
+        return;
+      }
+      _ref = this.trackedColumns[id], cScope = _ref[0], cElement = _ref[1];
+      nextSiblings = this.getSiblingScopes(cElement.nextAll());
+      scale = (oldValue - newValue) / nextSiblings.length;
+      nextSiblingsWidthMap = {};
+      siblingsTotalWidth = 0;
+      for (_i = 0, _len = nextSiblings.length; _i < _len; _i++) {
+        siblingScope = nextSiblings[_i];
+        width = +siblingScope.cell.column.width + scale;
+        if (width < 5) {
+          width = 5;
+        }
+        nextSiblingsWidthMap[siblingScope.$id] = width;
+        siblingsTotalWidth += width;
+      }
+      prevSiblings = this.getSiblingScopes(cElement.prevAll());
+      siblingsTotalWidth += prevSiblings.reduce(function(m, v) {
+        return +v.cell.column.width + m;
+      }, 0);
+      if (!((siblingsTotalWidth + newValue) <= 100)) {
+        return;
+      }
+      cScope.cell.column.width = newValue;
+      _results = [];
+      for (_j = 0, _len1 = nextSiblings.length; _j < _len1; _j++) {
+        siblingScope = nextSiblings[_j];
+        _results.push(siblingScope.cell.column.width = nextSiblingsWidthMap[siblingScope.$id]);
+      }
+      return _results;
+    };
+
+    return MacColumnsController;
+
+  })();
+});
+
+angular.module("Mac").directive("macColumns", [
+  "macColumnsController", function(macColumnsController) {
     return {
-      restrict: "EA",
-      scope: {
-        data: "=macTableData",
-        totalData: "=macTableTotalData",
-        columns: "=macTableColumns",
-        loading: "=macTableLoading"
-      },
-      replace: true,
-      transclude: true,
-      templateUrl: "template/table_view.html",
-      compile: function(element, attrs, transclude) {
-        var bodyBlock, bodyHeightBlock, bodyWrapperBlock, cellOuterHeight, customFooterRow, defaults, emptyCell, firstColumn, footerBlock, headerBlock, headerRow, opts, totalRow, transcludedBlock;
-
-        defaults = {
-          hasHeader: true,
-          hasTotalFooter: false,
-          hasFooter: false,
-          width: 800,
-          columnWidth: 140,
-          headerHeight: 20,
-          totalFooterHeight: 20,
-          footerHeight: 20,
-          rowHeight: 20,
-          numDisplayRows: 10,
-          cellPadding: 8,
-          borderWidth: 1,
-          bottomBorder: true,
-          sortable: false,
-          resizable: false,
-          lockFirstColumn: false,
-          allowReorder: true,
-          objectPrefix: "",
-          calculateTotalLocally: false,
-          fluidWidth: false,
-          autoHeight: true,
-          showLoader: true,
-          rowAutoHeight: false
-        };
-        transcludedBlock = $(".mac-table-transclude", element);
-        headerBlock = $(".mac-table-header", element);
-        headerRow = $(".mac-table-row", headerBlock);
-        bodyWrapperBlock = $(".mac-table-body-wrapper", element);
-        firstColumn = $(".mac-title-column", bodyWrapperBlock);
-        bodyBlock = $(".mac-table-body", element);
-        bodyHeightBlock = $(".mac-table-body-height", element);
-        footerBlock = $(".mac-table-footer", element);
-        totalRow = $(".total-footer-row", footerBlock);
-        customFooterRow = $(".custom-footer-row", footerBlock);
-        emptyCell = $("<div>").addClass("mac-cell");
-        opts = util.extendAttributes("macTable", defaults, attrs);
-        if (opts.rowAutoHeight) {
-          opts.lockFirstColumn = false;
-        }
-        if (attrs.macTableHeaderHeight == null) {
-          opts.headerHeight = opts.rowHeight;
-        }
-        if (attrs.macTableTotalFooterHeight == null) {
-          opts.totalFooterHeight = opts.rowHeight;
-        }
-        if (attrs.macTableFooterHeight == null) {
-          opts.footerHeight = opts.rowHeight;
-        }
-        if (opts.calculateTotalLocally) {
-          opts.hasTotalFooter = opts.calculateTotalLocally;
-        }
-        cellOuterHeight = opts.rowHeight + opts.cellPadding * 2;
-        cellOuterHeight += opts.borderWidth * opts.bottomBorder;
-        return function($scope, element, attrs) {
-          var bodyColumns, bodyTemplateCells, calculateColumnCss, calculateRowCss, createCellTemplate, createHeaderCellTemplate, createRowTemplate, getTemplateCell, reOrderingRows, render, updateDisplayRows;
-
-          bodyTemplateCells = $(".table-body-template .cell", transcludedBlock);
-          if (bodyTemplateCells.length === 0) {
-            throw "Missing cell templates";
-          }
-          bodyColumns = bodyTemplateCells.map(function(i, item) {
-            return $(item).attr("column");
-          });
-          render = function() {
-            if (($scope.data != null) && $scope.tableInitialized) {
-              reOrderingRows();
-              updateDisplayRows();
-              if (opts.calculateTotalLocally) {
-                $scope.calculateTotal();
-              }
-              return $scope.calculateBodyDimension();
-            }
-          };
-          $scope.$watch("data", render);
-          $scope.$watch("data.length", render);
-          $scope.$watch("columns", function(value) {
-            if ((value != null) && util.isArray(value)) {
-              if (!_($scope.columns).every()) {
-                return;
-              }
-              if (!$scope.tableInitialized) {
-                $scope.renderTable();
-              }
-              return calculateRowCss();
-            } else if (!util.isArray(value)) {
-              throw "Mac table columns require an array";
-            }
-          });
-          $scope.$watch("predicate", function(value) {
-            if (value != null) {
-              return reOrderingRows();
-            }
-          });
-          $scope.$watch("reverse", function(value) {
-            if (value != null) {
-              return reOrderingRows();
-            }
-          });
-          Object.defineProperty($scope, "total", {
-            get: function() {
-              var totalKey;
-
-              totalKey = opts.calculateTotalLocally ? "localTotal" : "totalData";
-              return $scope[totalKey];
-            }
-          });
-          reOrderingRows = function() {
-            var data;
-
-            data = $scope.data || [];
-            $scope.orderedRows = opts.allowReorder ? $filter("orderBy")(data, $scope.predicate, $scope.reverse) : data;
-            return updateDisplayRows();
-          };
-          updateDisplayRows = function(scroll) {
-            var buffer, data, endIndex, index, parent, scrollTop, start;
-
-            if (scroll == null) {
-              scroll = false;
-            }
-            data = $scope.orderedRows || [];
-            scrollTop = bodyWrapperBlock.scrollTop();
-            buffer = Math.floor(opts.numDisplayRows / 2);
-            buffer += buffer % 2;
-            index = Math.floor(scrollTop / cellOuterHeight);
-            start = Math.max(0, index - buffer);
-            if (scroll && (Math.abs($scope.index - index) < buffer || ((0 <= index && index < buffer) && $scope.index < buffer))) {
-              return -1;
-            }
-            $scope.index = index;
-            endIndex = index + opts.numDisplayRows - 1 + buffer;
-            parent = $scope.$parent;
-            $scope.displayRows = _(data.slice(start, +endIndex + 1 || 9e9)).map(function(value) {
-              return {
-                value: value,
-                parent: parent
-              };
-            });
-            return start * cellOuterHeight;
-          };
-          calculateColumnCss = function() {
-            var bodyCell, calculatedWidth, column, columnCss, numColumns, setWidth, unit, width, widthMatch, _i, _len;
-
-            for (_i = 0, _len = bodyColumns.length; _i < _len; _i++) {
-              column = bodyColumns[_i];
-              bodyCell = getTemplateCell("body", column);
-              setWidth = bodyCell.css("width");
-              if ((widthMatch = /(\d+)(px|%)?/.exec(setWidth)) != null) {
-                setWidth = +widthMatch[1];
-                unit = widthMatch[2];
-              }
-              if (setWidth == null) {
-                setWidth = 0;
-              }
-              if (setWidth === 0) {
-                numColumns = $scope.columns.length;
-                calculatedWidth = (opts.width / numColumns) - opts.cellPadding * 2 - opts.borderWidth;
-                width = Math.max(calculatedWidth, opts.columnWidth);
-              } else {
-                if (unit === "%") {
-                  setWidth = element.width() * (setWidth / 100);
-                }
-                width = setWidth;
-              }
-              columnCss = {
-                width: width,
-                padding: opts.cellPadding,
-                lineHeight: "" + opts.rowHeight + "px"
-              };
-              if (opts.rowAutoHeight) {
-                columnCss["min-height"] = opts.rowHeight;
-              } else {
-                columnCss.height = opts.rowHeight;
-              }
-              $scope.columnsCss[column] = columnCss;
-            }
-            return true;
-          };
-          calculateRowCss = function() {
-            var calculateRowWidth, cellWidth, column, startIndex, _i, _len, _ref;
-
-            calculateRowWidth = 0;
-            startIndex = opts.lockFirstColumn ? 1 : 0;
-            _ref = $scope.columns.slice(startIndex);
-            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-              column = _ref[_i];
-              if (!column) {
-                continue;
-              }
-              if ($scope.columnsCss[column] == null) {
-                throw "Missing body template for cell '" + column + "'";
-              }
-              calculateRowWidth += $scope.columnsCss[column].width + opts.cellPadding * 2 + opts.borderWidth;
-            }
-            $scope.rowCss = {
-              width: calculateRowWidth
-            };
-            if (opts.lockFirstColumn) {
-              cellWidth = $scope.getColumnCss($scope.columns[0], "header").width || 0;
-              if (cellWidth > 0) {
-                cellWidth += 2 * opts.cellPadding;
-              }
-              headerRow.css("margin-left", cellWidth);
-            }
-            return true;
-          };
-          getTemplateCell = function(section, column) {
-            var selected, templateSelector;
-
-            if (section == null) {
-              section = "";
-            }
-            if (column == null) {
-              column = "";
-            }
-            templateSelector = ".table-" + section + "-template .cell[column=\"" + column + "\"]";
-            selected = $(templateSelector, transcludedBlock);
-            if (selected.length > 1) {
-              throw "More than 1 definition of '" + column + "' in '" + section + "' section";
-              selected = selected.first();
-            }
-            return selected;
-          };
-          createCellTemplate = function(section, column) {
-            var cell, width;
-
-            if (section == null) {
-              section = "";
-            }
-            if (column == null) {
-              column = "";
-            }
-            if (!column) {
-              return {
-                cell: $("<div>"),
-                width: 0
-              };
-            }
-            cell = getTemplateCell(section, column).clone();
-            if (cell.length === 0) {
-              cell = emptyCell.clone();
-            }
-            cell.prop("column", column).addClass("mac-cell");
-            if (!(($scope.columnsCss[column] != null) && (cell != null))) {
-              throw "Missing body template for cell '" + column + "'";
-            }
-            width = $scope.columnsCss[column].width + 2 * opts.cellPadding + opts.borderWidth;
-            return {
-              cell: cell,
-              width: width
-            };
-          };
-          createHeaderCellTemplate = function(column, firstColumn) {
-            var cell, cellClass, contextText, parentScope, sortBy, width, _ref;
-
-            if (column == null) {
-              column = "";
-            }
-            if (firstColumn == null) {
-              firstColumn = false;
-            }
-            _ref = createCellTemplate("header", column), cell = _ref.cell, width = _ref.width;
-            contextText = cell.html();
-            parentScope = firstColumn ? "" : "$parent.$parent.";
-            sortBy = cell.attr("sort-by");
-            if (sortBy == null) {
-              sortBy = column.toLowerCase();
-            }
-            cellClass = "mac-table-caret {{" + parentScope + "reverse | boolean:\"up\":\"down\"}} ";
-            cellClass += "{{" + parentScope + "predicate == \"" + sortBy + "\" | false:'hide'}}";
-            if (contextText.length === 0) {
-              cell.text(column);
-            }
-            if (opts.allowReorder) {
-              cell.attr("ng-click", "orderBy('" + sortBy + "')");
-              cell.addClass("reorderable");
-            }
-            cell.attr("for", column).append($("<span>").attr("class", cellClass));
-            return {
-              cell: cell,
-              width: width
-            };
-          };
-          createRowTemplate = function(section, isFirst) {
-            var cell, column, cssClass, row, rowWidth, startIndex, width, _i, _len, _ref;
-
-            if (section == null) {
-              section = "";
-            }
-            if (isFirst == null) {
-              isFirst = false;
-            }
-            rowWidth = 0;
-            startIndex = opts.lockFirstColumn ? 1 : 0;
-            cssClass = "mac-table-" + section + "-cell";
-            if (section !== "header") {
-              cssClass += " mac-table-cell";
-            }
-            if (isFirst) {
-              row = $("<div>").attr({
-                "ng-switch": "columns[0]",
-                "ng-style": "getColumnCss(columns[0], '" + section + "')",
-                "data-column": "{{columns[0]}}"
-              });
-            } else {
-              row = $("<div>").attr({
-                "ng-switch": "column",
-                "ng-repeat": "column in columns.slice(" + startIndex + ")",
-                "ng-style": "getColumnCss(column, '" + section + "')",
-                "data-column": "{{column}}"
-              });
-            }
-            row.addClass(cssClass);
-            for (_i = 0, _len = bodyColumns.length; _i < _len; _i++) {
-              column = bodyColumns[_i];
-              _ref = section === "header" ? createHeaderCellTemplate(column) : createCellTemplate(section, column), cell = _ref.cell, width = _ref.width;
-              cell.attr("ng-switch-when", column);
-              row.append(cell);
-              rowWidth += width;
-            }
-            return {
-              row: row,
-              width: rowWidth
-            };
-          };
-          $scope.getColumnCss = function(column, section, attribute) {
-            var css, key, newCss, _i, _len;
-
-            if (!(column && (column != null))) {
-              return {};
-            }
-            if ($scope.columnsCss[column] == null) {
-              return {};
-            }
-            css = angular.copy($scope.columnsCss[column]);
-            css.height = (function() {
-              switch (section) {
-                case "header":
-                  return opts.headerHeight;
-                case "total-footer":
-                  return opts.totalFooterHeight;
-                case "footer":
-                  return opts.footerHeight;
-                default:
-                  return css.height;
-              }
-            })();
-            css.lineHeight = "" + css.height + "px";
-            if (attribute != null) {
-              newCss = {};
-              if (typeof attribute === "string") {
-                newCss[attribute] = css[attribute];
-              } else if (util.isArray(attribute)) {
-                for (_i = 0, _len = attribute.length; _i < _len; _i++) {
-                  key = attribute[_i];
-                  if (css[key] != null) {
-                    newCss[key] = css[key];
-                  }
-                }
-              }
-              return newCss;
-            } else {
-              return css;
-            }
-          };
-          $scope.getBodyBlockCss = function(section) {
-            var isFirst, width;
-
-            if (section == null) {
-              section = "body";
-            }
-            if (util.isArray($scope.columns) && $scope.columns.length > 0) {
-              width = $scope.getColumnCss($scope.columns[0], "body").width || 0;
-              if (width > 0) {
-                width += 2 * opts.cellPadding;
-              }
-              isFirst = opts.lockFirstColumn;
-              if (isFirst && (width != null)) {
-                switch (section) {
-                  case "total-footer":
-                    return {
-                      "padding-left": width
-                    };
-                  default:
-                    return {
-                      "margin-left": width,
-                      width: element.width() - width
-                    };
-                }
-              } else {
-                return {};
-              }
-            } else {
-              return {};
-            }
-          };
-          $scope.getTableCss = function() {
-            var dataLength, elementHeight, paddings, width, _ref;
-
-            dataLength = ((_ref = $scope.data) != null ? _ref.length : void 0) || 0;
-            paddings = 2 * opts.cellPadding;
-            elementHeight = bodyWrapperBlock.outerHeight();
-            elementHeight += opts.hasFooter * (opts.footerHeight + paddings);
-            elementHeight += opts.hasTotalFooter * (opts.totalFooterHeight + paddings);
-            elementHeight += opts.hasHeader * (opts.headerHeight + paddings + opts.borderWidth);
-            elementHeight += 2 * opts.borderWidth;
-            width = opts.fluidWidth ? "100%" : opts.width - 2 * opts.borderWidth;
-            return {
-              height: elementHeight,
-              width: width
-            };
-          };
-          $scope.orderBy = function(column) {
-            var columnTitle;
-
-            columnTitle = column.toLowerCase();
-            if (opts.objectPrefix) {
-              columnTitle = opts.objectPrefix + "." + columnTitle;
-            }
-            if (columnTitle === $scope.predicate) {
-              return $scope.reverse = !$scope.reverse;
-            } else {
-              $scope.predicate = columnTitle;
-              return $scope.reverse = false;
-            }
-          };
-          $scope.calculateTotal = function() {
-            return $scope.localTotal = _($scope.data).reduce(function(memo, row) {
-              var key, value, _ref;
-
-              if (opts.objectPrefix) {
-                row = row[opts.objectPrefix];
-              }
-              for (key in row) {
-                value = row[key];
-                if ((_ref = memo[key]) == null) {
-                  memo[key] = 0;
-                }
-                memo[key] += isNaN(value) ? 0 : +value;
-              }
-              return memo;
-            }, {});
-          };
-          $scope.drawHeader = function() {
-            var row, width, _ref, _ref1;
-
-            _ref = createRowTemplate("header"), row = _ref.row, width = _ref.width;
-            headerRow.append(row).attr({
-              "ng-style": "rowCss"
-            });
-            $compile(headerRow)($scope);
-            if (opts.lockFirstColumn) {
-              _ref1 = createRowTemplate("header", true), row = _ref1.row, width = _ref1.width;
-              row.addClass("mac-cell mac-table-locked-cell mac-table-header-cell").attr({
-                "ng-style": "getColumnCss(columns[0], 'header')"
-              });
-              headerBlock.append(row);
-              $compile(headerBlock)($scope);
-            }
-            if (opts.sortable) {
-              headerRow.sortable({
-                items: "> .mac-table-header-cell",
-                cursor: "move",
-                opacity: 0.8,
-                tolerance: "pointer",
-                update: function(event, ui) {
-                  var newOrder;
-
-                  newOrder = [];
-                  $(".mac-table-header-cell", headerRow).each(function(i, e) {
-                    return newOrder.push($(e).data("column"));
-                  });
-                  if (opts.lockFirstColumn && $scope.columns.length > 0) {
-                    newOrder.unshift($scope.columns[0]);
-                  }
-                  $scope.$apply(function() {
-                    return $scope.columns = newOrder;
-                  });
-                  return setTimeout((function() {
-                    return bodyBlock.scrollLeft(headerBlock.scrollLeft());
-                  }), 0);
-                }
-              });
-            }
-            if (opts.resizable) {
-              return setTimeout(function() {
-                return $(".mac-table-header-cell", headerBlock).resizable({
-                  axis: "x",
-                  containment: "parent",
-                  handles: "e",
-                  resize: function(event, ui) {
-                    var column, newWidth;
-
-                    column = ui.element.data("column");
-                    newWidth = ui.size.width;
-                    return $scope.$apply(function() {
-                      $scope.columnsCss[column].width = newWidth;
-                      return calculateRowCss();
-                    });
-                  }
-                }).addClass("resizable");
-              }, 0);
-            }
-          };
-          $scope.drawTotalFooter = function() {
-            var row, width, _ref, _ref1;
-
-            _ref = createRowTemplate("total-footer"), row = _ref.row, width = _ref.width;
-            totalRow.append(row).attr("ng-style", "rowCss");
-            if (opts.lockFirstColumn) {
-              _ref1 = createRowTemplate("total-footer", true), row = _ref1.row, width = _ref1.width;
-              row.addClass("mac-cell mac-table-locked-cell").attr({
-                "ng-style": "getColumnCss(columns[0], 'total-footer')"
-              });
-              totalRow.prepend(row);
-            }
-            return $compile(totalRow)($scope);
-          };
-          $scope.drawFooter = function() {
-            var footerTemplate;
-
-            footerTemplate = $(".table-footer-template", transcludedBlock);
-            customFooterRow.html(footerTemplate.html()).css({
-              "height": opts.rowHeight,
-              "padding": opts.cellPadding
-            });
-            return $compile(customFooterRow)($scope);
-          };
-          $scope.calculateBodyDimension = function() {
-            var data;
-
-            data = $scope.data || [];
-            bodyHeightBlock.height(data.length * cellOuterHeight);
-            return setTimeout((function() {
-              var dataLength, nFirstRows, numRows, wrapperHeight, _ref;
-
-              dataLength = ((_ref = $scope.data) != null ? _ref.length : void 0) || 0;
-              numRows = dataLength === 0 || !opts.autoHeight ? opts.numDisplayRows : Math.min(dataLength, opts.numDisplayRows);
-              if (opts.rowAutoHeight) {
-                nFirstRows = $(".mac-table-row", bodyBlock).slice(0, +numRows + 1 || 9e9);
-                wrapperHeight = _(nFirstRows).reduce((function(memo, el) {
-                  return memo += $(el).outerHeight();
-                }), 0);
-              } else {
-                wrapperHeight = numRows * cellOuterHeight;
-              }
-              if (bodyBlock[0].scrollWidth > bodyBlock.width()) {
-                wrapperHeight += 10;
-                element.height(element.height() + 10 - 2 * opts.borderWidth);
-              }
-              bodyWrapperBlock.height(wrapperHeight);
-              if (opts.lockFirstColumn) {
-                return firstColumn.height(wrapperHeight);
-              }
-            }), 0);
-          };
-          $scope.drawBody = function() {
-            var data, extraClasses, fcTableRow, origClasses, row, rowTemplate, rowTemplates, tableRow, width, _ref, _ref1;
-
-            data = $scope.orderedRows || [];
-            extraClasses = "";
-            rowTemplates = $(".table-body-template .mac-table-row", transcludedBlock);
-            if (rowTemplates.length > 0) {
-              rowTemplate = $(rowTemplates[0]).removeClass("mac-table-row");
-              extraClasses = rowTemplate.attr("class");
-            }
-            tableRow = $("<div>").addClass("mac-table-row {{$index % 2 | boolean:'odd':'even'}}");
-            if (opts.bottomBorder) {
-              tableRow.addClass("bottom-bordered");
-            }
-            tableRow.attr({
-              "ng-repeat": "row in displayRows",
-              "ng-cloak": "ng-cloak"
-            });
-            _ref = createRowTemplate("body"), row = _ref.row, width = _ref.width;
-            tableRow.append(row).attr("ng-style", "rowCss");
-            origClasses = tableRow.attr("class");
-            tableRow.attr("class", [origClasses, extraClasses].join(" "));
-            bodyBlock.append(tableRow);
-            $compile(bodyBlock)($scope);
-            if (opts.lockFirstColumn) {
-              fcTableRow = $(".mac-table-row", firstColumn);
-              _ref1 = createRowTemplate("body", true), row = _ref1.row, width = _ref1.width;
-              fcTableRow.attr("ng-repeat", "row in displayRows").addClass("{{$index % 2 | boolean:'odd':'even'}}").append(row);
-              if (opts.bottomBorder) {
-                fcTableRow.addClass("bottom-bordered");
-              }
-              origClasses = fcTableRow.attr("class");
-              fcTableRow.attr("class", [origClasses, extraClasses].join(" "));
-              return $compile(firstColumn)($scope);
-            }
-          };
-          bodyWrapperBlock.scroll(function() {
-            var $this, scrollTop;
-
-            $this = $(this);
-            scrollTop = $this.scrollTop();
-            return $scope.$apply(function() {
-              var upperBuffer;
-
-              upperBuffer = updateDisplayRows(true);
-              if (upperBuffer !== -1) {
-                bodyBlock.css("top", upperBuffer);
-                if (opts.lockFirstColumn) {
-                  return firstColumn.css("top", upperBuffer);
-                }
-              }
-            });
-          });
-          bodyBlock.scroll(function() {
-            var $this, scrollLeft;
-
-            $this = $(this);
-            scrollLeft = $this.scrollLeft();
-            if (opts.hasHeader) {
-              headerBlock.scrollLeft(scrollLeft);
-            }
-            if (opts.hasFooter || opts.hasTotalFooter) {
-              return footerBlock.scrollLeft(scrollLeft);
-            }
-          });
-          $scope.renderTable = function() {
-            var objectPrefix, _ref;
-
-            objectPrefix = opts.objectPrefix ? "" + opts.objectPrefix + "." : "";
-            $scope.predicate = ((_ref = $scope.columns) != null ? _ref.length : void 0) > 0 ? "" + objectPrefix + ($scope.columns[0].toLowerCase()) : "";
-            $scope.orderedRows = $scope.data;
-            calculateColumnCss();
-            if (opts.hasHeader) {
-              $scope.drawHeader();
-            }
-            $scope.drawBody();
-            if (opts.calculateTotalLocally) {
-              $scope.calculateTotal();
-            }
-            if (opts.hasTotalFooter) {
-              $scope.drawTotalFooter();
-            }
-            if (opts.hasFooter) {
-              $scope.drawFooter();
-            }
-            $scope.calculateBodyDimension();
-            if (opts.fluidWidth) {
-              if ($scope.bodyBlockTimeout != null) {
-                clearTimeout($scope.bodyBlockTimeout);
-              }
-              $scope.bodyBlockTimeout = setInterval((function() {
-                var leftMargin;
-
-                leftMargin = bodyBlock.css("margin-left");
-                return bodyBlock.width(element.width() - parseInt(leftMargin));
-              }), 500);
-            }
-            updateDisplayRows();
-            $scope.tableInitialized = true;
-            return true;
-          };
-          $scope.reset = function() {
-            $scope.orderedRows = [];
-            $scope.displayRows = [];
-            $scope.index = 0;
-            $scope.columnsCss = {};
-            $scope.bodyBlockTimeout = null;
-            $scope.opts = opts;
-            $scope.rowCss = {};
-            $scope.tableInitialized = false;
-            $scope.predicate = "";
-            return $scope.reverse = false;
-          };
-          return $scope.reset();
-        };
+      require: ["^macTable", "^macTableSection", "macTableRow", "macColumns"],
+      controller: ["$scope", "$element", "$attrs", macColumnsController],
+      link: function($scope, $element, $attrs, controllers) {
+        return $scope.$on("mac-columns-" + $scope.$id + "-changed", function(event, id, newValue, oldValue) {
+          return controllers[3].recalculateWidths.apply(controllers[3], arguments);
+        });
       }
     };
   }
 ]);
 
-angular.module("Mac").directive("tableSection", [
-  "directiveHelpers", function(directiveHelpers) {
+angular.module("Mac").directive("macColumnWidth", [
+  function() {
     return {
-      require: ["^macTableV2", "tableSection"],
-      scope: true,
-      controller: [
-        "$scope", "$parse", function($scope, $parse) {
-          this.directive = "table-section";
-          this.cellTemplates = {};
-          this.watchModels = function(modelsExp, controller) {
-            var _this = this;
-
-            return $scope.$watch("" + modelsExp + ".length", function(modelsLength) {
-              var models;
-
-              models = $parse(modelsExp)($scope);
-              if (!models) {
-                return;
-              }
-              _this.models = models;
-              if (controller != null) {
-                return $scope.table.load(_this.name, models, controller);
-              } else {
-                return $scope.table.load(_this.name, models);
-              }
-            });
-          };
-          this.watchTable = function(callback) {
-            return $scope.$watch("table", callback);
-          };
-        }
-      ],
-      compile: function(element, attr, linker) {
-        return function($scope, $element, $attr, controllers) {
-          return $attr.$observe("tableSection", function(sectionName) {
-            if (!sectionName) {
+      require: ["^macTable", "^macTableSection", "^macTableRow", "^macColumns"],
+      priority: 500,
+      compile: function(element, attr) {
+        return function($scope, $element, $attrs, controllers) {
+          controllers[3].trackedColumns[$scope.$id] = [$scope, $element];
+          return $attrs.$observe("macColumnWidth", function(value) {
+            if ($scope.cell.column.width) {
               return;
             }
-            controllers[1].name = sectionName;
-            $scope.$watch("table", function(table) {
-              if (!table) {
-                return;
-              }
-              if ($attr.models == null) {
-                $scope.$watch("table.section.body.rows.length", function(rows) {
-                  table.load(sectionName);
-                  return table.insert(sectionName, table.blankRow());
-                }, true);
-              }
-              return $scope.$watch("table.sections." + sectionName, function(section) {
-                return $scope.section = controllers[1].section = $scope.table.sections[sectionName];
-              });
-            });
-            return $attr.$observe("models", function(modelsExp) {
-              return $scope.$watch("table", function(table) {
-                if (!table) {
-                  return;
-                }
-                if ($attr.controller != null) {
-                  return $attr.$observe("controller", function(controllerExp) {
-                    return $scope.$watch(controllerExp, function(controller) {
-                      return controllers[1].watchModels(modelsExp, controller);
-                    });
-                  });
-                } else {
-                  return controllers[1].watchModels(modelsExp);
-                }
-              });
-            });
+            return $scope.cell.column.width = +value.replace("%", "");
           });
         };
       }
@@ -12146,39 +8772,82 @@ angular.module("Mac").directive("tableSection", [
   }
 ]);
 
-angular.module("Mac").directive("tableRow", [
-  "directiveHelpers", function(directiveHelpers) {
+/*
+@chalk overview
+@name Cell Template
+@description
+Directive for assigning cell templates to table columns
+
+@dependencies
+macTable, macTableSection, macTableRow
+
+@param {String}     mac-cell-template     Space-delimited column names specifying when to show this template
+*/
+angular.module("Mac").directive("macCellTemplate", [
+  function() {
     return {
-      require: ["^macTableV2", "^tableSection", "tableRow"],
-      controller: function() {
-        this.directive = "table-row";
-        this.repeatCells = function(cells, rowElement, sectionController) {
-          var afterElement, beforeElement, cellMarker, linkerFactory,
-            _this = this;
+      transclude: "element",
+      priority: 1000,
+      require: ["^macTable", "^macTableSection", "^macTableRow"],
+      compile: function(element, attr, linker) {
+        return function($scope, $element, $attr, controllers) {
+          var templateName, templateNames, _i, _len, _results;
 
-          rowElement.find("[cell-template]").remove();
-          beforeElement = rowElement.find("[before-templates]:last");
-          afterElement = rowElement.find("[after-templates]:first");
-          if (beforeElement.length) {
-            cellMarker = beforeElement;
-          } else if (afterElement.length) {
-            cellMarker = angular.element("<!-- cells: " + sectionController.section.name + " -->");
-            afterElement.before(cellMarker);
-          } else {
-            cellMarker = angular.element("<!-- cells: " + sectionController.section.name + " -->");
-            rowElement.append(cellMarker);
+          templateNames = $attr.macCellTemplate ? $attr.macCellTemplate.split(" ") : ["?"];
+          _results = [];
+          for (_i = 0, _len = templateNames.length; _i < _len; _i++) {
+            templateName = templateNames[_i];
+            _results.push(controllers[1].cellTemplates[templateName] = [$element, linker, $attr]);
           }
-          linkerFactory = function(cell) {
-            var template, templateName;
-
-            templateName = cell.colName in sectionController.cellTemplates && cell.colName || "?";
-            if (template = sectionController.cellTemplates[templateName]) {
-              return template[1];
-            }
-          };
-          return directiveHelpers.repeater(cells, "cell", rowElement.scope(), cellMarker, linkerFactory);
+          return _results;
         };
-      },
+      }
+    };
+  }
+]);
+
+/*
+@chalk overview
+@name Table Row
+@description
+Directive initializing a table row for cell templates to be registered under
+
+@dependencies
+macTable, macTableSection
+*/
+angular.module("Mac").factory("MacTableRowController", [
+  "directiveHelpers", function(directiveHelpers) {
+    var MacTableRowController;
+
+    return MacTableRowController = (function() {
+      function MacTableRowController() {}
+
+      MacTableRowController.prototype.repeatCells = function(cells, rowElement, sectionController) {
+        var linkerFactory;
+
+        rowElement.children().remove();
+        linkerFactory = function(cell) {
+          var template, templateName;
+
+          templateName = cell.column.colName in sectionController.cellTemplates ? cell.column.colName : "?";
+          if (template = sectionController.cellTemplates[templateName]) {
+            return template[1];
+          }
+        };
+        return directiveHelpers.repeater(cells, "cell", rowElement.scope(), rowElement, linkerFactory);
+      };
+
+      return MacTableRowController;
+
+    })();
+  }
+]);
+
+angular.module("Mac").directive("macTableRow", [
+  "MacTableRowController", function(MacTableRowController) {
+    return {
+      require: ["^macTable", "^macTableSection", "macTableRow"],
+      controller: MacTableRowController,
       compile: function(element, attr) {
         return function($scope, $element, $attr, controllers) {
           return $scope.$watch("row.cells", function(cells) {
@@ -12195,63 +8864,292 @@ angular.module("Mac").directive("tableRow", [
   }
 ]);
 
-angular.module("Mac").directive("cellTemplate", [
-  function() {
-    return {
-      transclude: "element",
-      priority: 1000,
-      require: ["^macTableV2", "^tableSection", "^tableRow"],
-      compile: function(element, attr, linker) {
-        return function($scope, $element, $attr, controllers) {
-          var templateName;
+/*
+@chalk overview
+@name Table Section 
+@description
+Main directive for registering table sections. Can optionally have 
+macTableSectionModels, macTableSectionController, or macTableSectionBlankRow.
 
-          templateName = $attr["for"] || $attr.cellTemplate || "?";
-          return controllers[1].cellTemplates[templateName] = [$element, linker, $attr];
-        };
+@dependencies
+macTable
+*/
+angular.module("Mac").directive("macTableSection", function() {
+  var MacTableSectionController;
+
+  MacTableSectionController = (function() {
+    function MacTableSectionController(scope, attrs) {
+      this.scope = scope;
+      this.attrs = attrs;
+      this.name = null;
+      this.section = null;
+      this.cellTemplates = {};
+      this.watchers = {};
+    }
+
+    MacTableSectionController.prototype.registerWatcher = function(directiveName, controller) {
+      return this.watchers[directiveName] = controller;
+    };
+
+    MacTableSectionController.prototype.applyWatchers = function() {
+      var controller, directiveName, _ref, _results,
+        _this = this;
+
+      _ref = this.watchers;
+      _results = [];
+      for (directiveName in _ref) {
+        controller = _ref[directiveName];
+        _results.push((function(directiveName, controller) {
+          return _this.attrs.$observe(directiveName, function(expression) {
+            return controller.watch(expression, _this.name);
+          });
+        })(directiveName, controller));
+      }
+      return _results;
+    };
+
+    return MacTableSectionController;
+
+  })();
+  return {
+    require: ["^macTable", "macTableSection"],
+    scope: true,
+    controller: ["$scope", "$attrs", MacTableSectionController],
+    compile: function(element, attr, linker) {
+      return function($scope, $element, $attr, controllers) {
+        return $attr.$observe("macTableSection", function(sectionName) {
+          if (!sectionName) {
+            return;
+          }
+          controllers[1].name = sectionName;
+          return $scope.$watch("table", function(table) {
+            if (!table) {
+              return;
+            }
+            $scope.$watch("table.sections." + sectionName, function(section) {
+              return $scope.section = controllers[1].section = $scope.table.sections[sectionName];
+            });
+            return controllers[1].applyWatchers();
+          });
+        });
+      };
+    }
+  };
+});
+
+/*
+@chalk overview
+@name Table Section Blank Row
+@description
+Inserts a blank row with keys matching those of the tables columns.
+
+@dependencies
+macTable, macTableSection
+*/
+
+
+angular.module("Mac").directive("macTableSectionBlankRow", function() {
+  var MacTableSectionBlankRowCtrl;
+
+  MacTableSectionBlankRowCtrl = (function() {
+    function MacTableSectionBlankRowCtrl(scope) {
+      this.scope = scope;
+    }
+
+    MacTableSectionBlankRowCtrl.prototype.watch = function(expression, sectionName) {
+      var killWatcher, sectionToWaitOn,
+        _this = this;
+
+      sectionToWaitOn = expression || "body";
+      return killWatcher = this.scope.$watch("table.sections." + sectionToWaitOn + ".rows", function(rows) {
+        if (!rows) {
+          return;
+        }
+        killWatcher();
+        return _this.scope.$watch("table.columnsOrder", function() {
+          if (sectionName in _this.scope.table.sections) {
+            _this.scope.table.clear(sectionName);
+          }
+          _this.scope.table.load(sectionName);
+          return _this.scope.table.insert(sectionName, _this.scope.table.blankRow());
+        });
+      });
+    };
+
+    return MacTableSectionBlankRowCtrl;
+
+  })();
+  return {
+    require: ["^macTable", "macTableSection", "macTableSectionBlankRow"],
+    controller: ["$scope", MacTableSectionBlankRowCtrl],
+    link: function($scope, $element, $attrs, controllers) {
+      return controllers[1].registerWatcher("macTableSectionBlankRow", controllers[2]);
+    }
+  };
+});
+
+/*
+@chalk overview
+@name Table Section Models
+@description
+Watches a models expression and loads them into the section
+
+@dependencies
+macTable, macTableSection
+*/
+
+
+angular.module("Mac").directive("macTableSectionModels", [
+  "$parse", function($parse) {
+    var MacTableSectionModelsCtrl;
+
+    MacTableSectionModelsCtrl = (function() {
+      function MacTableSectionModelsCtrl(scope) {
+        this.scope = scope;
+      }
+
+      MacTableSectionModelsCtrl.prototype.watch = function(expression, sectionName) {
+        var lastStringified,
+          _this = this;
+
+        lastStringified = "";
+        return this.scope.$watch(function() {
+          var currStringified, models;
+
+          models = $parse(expression)(_this.scope);
+          if (!angular.isArray(models)) {
+            return;
+          }
+          currStringified = JSON.stringify(models);
+          if (currStringified !== lastStringified) {
+            lastStringified = currStringified;
+            _this.models = models;
+            _this.scope.table.load(sectionName, models);
+            return currStringified;
+          }
+        });
+      };
+
+      return MacTableSectionModelsCtrl;
+
+    })();
+    return {
+      require: ["^macTable", "macTableSection", "macTableSectionModels"],
+      controller: ["$scope", MacTableSectionModelsCtrl],
+      link: function($scope, $element, $attrs, controllers) {
+        return controllers[1].registerWatcher("macTableSectionModels", controllers[2]);
       }
     };
   }
 ]);
 
-angular.module("Mac").directive("macTableV2", [
-  "Table", function(Table) {
-    return {
-      require: "macTableV2",
-      scope: true,
-      controller: [
-        "$scope", function($scope) {
-          this.directive = "mac-table";
-          this.makeTable = function(columns) {
-            return this.table = $scope.table = new Table(columns);
-          };
+/*
+@chalk overview
+@name Table Section Controller
+@description
+Watches a controller expression and loads the controller into the section
+
+@dependencies
+macTable, macTableSection
+*/
+
+
+angular.module("Mac").directive("macTableSectionController", function() {
+  var MacTableSectionControllerCtrl;
+
+  MacTableSectionControllerCtrl = (function() {
+    function MacTableSectionControllerCtrl(scope) {
+      this.scope = scope;
+    }
+
+    MacTableSectionControllerCtrl.prototype.watch = function(expression, sectionName) {
+      var _this = this;
+
+      return this.scope.$watch(expression, function(controller) {
+        if (!controller) {
+          return;
         }
-      ],
+        _this.controller = controller;
+        return _this.scope.table.load(sectionName, null, controller);
+      });
+    };
+
+    return MacTableSectionControllerCtrl;
+
+  })();
+  return {
+    require: ["^macTable", "macTableSection", "macTableSectionController"],
+    controller: ["$scope", MacTableSectionControllerCtrl],
+    link: function($scope, $element, $attrs, controllers) {
+      return controllers[1].registerWatcher("macTableSectionController", controllers[2]);
+    }
+  };
+});
+
+/*
+@chalk overview
+@name Table 
+@description
+Directive for displaying tabluar data
+
+@param {None}       mac-table-resizable-columns     Convenience param to add macResizableColumn and dependent directives to template elements
+@param {None}       mac-table-reorderable-columns   Convenience param to add macReorderableColumn and dependent directives to template elements
+*/
+angular.module("Mac").factory("MacTableController", [
+  "Table", function(Table) {
+    var MacTableController;
+
+    return MacTableController = (function() {
+      function MacTableController(scope) {
+        this.scope = scope;
+      }
+
+      MacTableController.prototype.hasResizableColumns = false;
+
+      MacTableController.prototype.hasReorderableColumns = false;
+
+      MacTableController.prototype.makeTable = function(columns) {
+        return this.table = this.scope.table = new Table(columns);
+      };
+
+      return MacTableController;
+
+    })();
+  }
+]);
+
+angular.module("Mac").directive("macTable", [
+  "MacTableController", function(MacTableController) {
+    return {
+      require: "macTable",
+      scope: true,
+      controller: ["$scope", MacTableController],
       compile: function(element, attr) {
         var autoWidthTemplates, headerSectionElement, initialWidthExp, remainingPercent, siblingTemplates;
 
-        headerSectionElement = element.find("[table-section=header]");
-        element.find("[initial-width]").attr("width", "{{cell.width}}%").parents("[table-row]").attr("mac-columns", "");
-        element.find("[cell-template]").wrapInner("<div class='cell-wrapper' />").attr("data-column-name", "{{cell.colName}}");
-        if (attr.resizableColumns != null) {
-          headerSectionElement.find("[cell-template]").find(".cell-wrapper").attr("mac-resizable-column", "").attr("mac-resizable", "").attr("mac-resizable-containment", "document");
+        headerSectionElement = element.find("[mac-table-section=header]");
+        element.find("[mac-column-width]").attr("width", "{{cell.column.width}}%").parents("[mac-table-row]").attr("mac-columns", "");
+        element.find("[mac-cell-template]").wrapInner("<div class='cell-wrapper' />").attr("data-column-name", "{{cell.column.colName}}");
+        if (attr.macTableResizableColumns != null) {
+          headerSectionElement.find("[mac-cell-template]").find(".cell-wrapper").attr("mac-resizable-column", "").attr("mac-resizable", "").attr("mac-resizable-containment", "document");
         }
-        if (attr.reorderableColumns != null) {
-          headerSectionElement.find("[table-row]").attr("mac-reorderable", "[cell-template]").attr("mac-reorderable-columns", "");
+        if (attr.macTableReorderableColumns != null) {
+          headerSectionElement.find("[mac-table-row]").attr("mac-reorderable", "[mac-cell-template]").attr("mac-reorderable-columns", "");
         }
-        element.find("[table-row]").not("[table-row][ng-repeat]").attr("ng-repeat", "row in section.rows");
-        autoWidthTemplates = headerSectionElement.find("[initial-width=auto]");
+        element.find("[mac-table-row]").not("[mac-table-row][ng-repeat]").attr("ng-repeat", "row in section.rows");
+        autoWidthTemplates = headerSectionElement.find("[mac-column-width=auto]");
         if (autoWidthTemplates.length) {
-          siblingTemplates = headerSectionElement.find("[initial-width]").not("[initial-width = auto]");
+          siblingTemplates = headerSectionElement.find("[mac-column-width]").not("[mac-column-width=auto]");
           remainingPercent = 100;
           siblingTemplates.each(function() {
-            return remainingPercent -= +$(this).attr('initial-width').replace("%", "");
+            return remainingPercent -= +$(this).attr('mac-column-width').replace("%", "");
           });
           initialWidthExp = "{{" + remainingPercent + " / (table.columns.length - " + siblingTemplates.length + ")}}%";
-          autoWidthTemplates.attr("initial-width", initialWidthExp);
+          autoWidthTemplates.attr("mac-column-width", initialWidthExp);
         }
         return function($scope, $element, $attr, controller) {
           controller.$element = $element;
-          return $attr.$observe("columns", function(columnsExp) {
+          return $attr.$observe("macTableColumns", function(columnsExp) {
             if (columnsExp === "dynamic") {
               return controller.makeTable("dynamic");
             } else {
@@ -12274,17 +9172,18 @@ angular.module("Mac").directive("macTableV2", [
 A directive for generating tag input with autocomplete support on text input
 
 @dependencies
-- jQuery UI autocomplete
+- mac-autocomplete
+- mac-menu
 
-@param {String} mac-tag-autocomplete-url Url to fetch autocomplete dropdown list data
-@param {String} mac-tag-autocomplete-value The value to be sent back upon selection (default "id")
-@param {String} mac-tag-autocomplete-label The label to display to the users (default "name")
-@param {Boolean} mac-tag-autocomplete-full-object Push the full object into the selected array (default false)
-@param {Array} mac-tag-autocomplete-selected The list of elements selected by the user
-@param {String} mac-tag-autocomplete-query The query parameter on GET command (defualt "q")
-@param {Integer} mac-tag-autocomplete-delay Time delayed on fetching autocomplete data after keyup  (default 800)
-@param {String} mac-tag-autocomplete-placeholder Placeholder text of the text input (default "")
-@param {Boolean} mac-tag-autocomplete-disabled If autocomplete is enabled or disabled (default false)
+@param {String} mac-tag-autocomplete-url          Url to fetch autocomplete dropdown list data
+@param {String} mac-tag-autocomplete-value        The value to be sent back upon selection (default "id")
+@param {String} mac-tag-autocomplete-label        The label to display to the users (default "name")
+@param {Expression} mac-tag-autocomplete-model    Model for autocomplete
+@param {Array} mac-tag-autocomplete-selected      The list of elements selected by the user
+@param {String} mac-tag-autocomplete-query        The query parameter on GET command (defualt "q")
+@param {Integer} mac-tag-autocomplete-delay       Time delayed on fetching autocomplete data after keyup  (default 800)
+@param {String} mac-tag-autocomplete-placeholder  Placeholder text of the text input (default "")
+@param {Boolean} mac-tag-autocomplete-disabled    If autocomplete is enabled or disabled (default false)
 @param {Expression} mac-tag-autocomplete-on-enter When autocomplete is disabled, this function is called on enter, Should return either string, object or boolean. If false, item is not added
         - `item` - {String} User input
 @param {String} mac-tag-autocomplete-events a CSV list of events to attach functions to
@@ -12298,26 +9197,23 @@ A directive for generating tag input with autocomplete support on text input
 var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 angular.module("Mac").directive("macTagAutocomplete", [
-  "$parse", "$http", "keys", function($parse, $http, keys) {
+  "$parse", "keys", function($parse, keys) {
     return {
       restrict: "E",
       templateUrl: "template/tag_autocomplete.html",
       replace: true,
       scope: {
-        autocompleteUrl: "=macTagAutocompleteUrl",
-        autocompleteValue: "=macTagAutocompleteValue",
-        autocompleteLabel: "=macTagAutocompleteLabel",
-        autocompleteQuery: "=macTagAutocompleteQuery",
-        autocompleteDelay: "=macTagAutocompleteDelay",
+        url: "=macTagAutocompleteUrl",
         placeholder: "=macTagAutocompletePlaceholder",
-        autocompleteOnEnter: "&macTagAutocompleteOnEnter",
-        events: "@macTagAutocompleteEvents",
         selected: "=macTagAutocompleteSelected",
         source: "=macTagAutocompleteSource",
-        fullObject: "&macTagAutocompleteFullObject"
+        disabled: "=macTagAutocompleteDisabled",
+        model: "=macTagAutocompleteModel",
+        onEnter: "&macTagAutocompleteOnEnter",
+        onKeydown: "&macTagAutocompleteOnKeydown"
       },
       compile: function(element, attrs) {
-        var attrsObject, delay, disabled, events, eventsList, labelKey, queryKey, selectedExp, tagLabelKey, textInput, valueKey;
+        var attrEvent, attrsObject, delay, events, eventsList, item, labelKey, queryKey, tagLabelKey, textInput, valueKey, _i, _len, _ref;
 
         valueKey = attrs.macTagAutocompleteValue;
         if (valueKey == null) {
@@ -12329,47 +9225,55 @@ angular.module("Mac").directive("macTagAutocomplete", [
         }
         queryKey = attrs.macTagAutocompleteQuery || "q";
         delay = +attrs.macTagAutocompleteDelay || 800;
-        selectedExp = attrs.macTagAutocompleteSelected;
         events = attrs.macTagAutocompleteEvents || "";
-        disabled = attrs.macTagAutocompleteDisabled != null;
-        eventsList = _(events.split(",")).map(function(item) {
-          var attrEvent;
-
-          attrEvent = _.string.capitalize(item);
-          return {
-            name: item,
-            capitalized: attrEvent,
-            eventFn: attrs["macTagAutocompleteOn" + attrEvent]
-          };
-        });
-        tagLabelKey = labelKey === "" ? labelKey : "." + labelKey;
+        eventsList = [];
+        if (events) {
+          _ref = events.split(",");
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            item = _ref[_i];
+            attrEvent = _.string.capitalize(item);
+            eventsList.push({
+              name: item,
+              capitalized: attrEvent,
+              eventFn: attrs["macTagAutocompleteOn" + attrEvent]
+            });
+          }
+        }
+        tagLabelKey = labelKey ? "." + labelKey : labelKey;
         $(".tag-label", element).text("{{tag" + tagLabelKey + "}}");
         textInput = $(".mac-autocomplete", element);
         attrsObject = {
           "mac-autocomplete-value": valueKey,
           "mac-autocomplete-label": labelKey,
           "mac-autocomplete-query": queryKey,
-          "mac-autocomplete-delay": delay,
-          "mac-autocomplete-events": events
+          "mac-autocomplete-delay": delay
         };
         if (attrs.macTagAutocompleteUrl != null) {
-          attrsObject["mac-autocomplete-url"] = "autocompleteUrl";
-        } else {
+          attrsObject["mac-autocomplete-url"] = "url";
+        } else if (attrs.macTagAutocompleteSource != null) {
           attrsObject["mac-autocomplete-source"] = "autocompleteSource";
         }
         textInput.attr(attrsObject);
         return function($scope, element, attrs) {
-          $scope.disabled = disabled;
           $scope.textInput = "";
+          if (attrs.macTagAutocompleteModel != null) {
+            $scope.$watch("textInput", function(value) {
+              return $scope.model = value;
+            });
+            $scope.$watch("model", function(value) {
+              return $scope.textInput = value;
+            });
+          }
           element.click(function() {
             return $(".text-input", element).focus();
           });
-          $scope.$watch("disabled", function(value) {
-            var event, _i, _len, _results;
+          $scope.eventsList = eventsList;
+          $scope.$watch("eventsList", function(value) {
+            var event, _j, _len1, _results;
 
             _results = [];
-            for (_i = 0, _len = eventsList.length; _i < _len; _i++) {
-              event = eventsList[_i];
+            for (_j = 0, _len1 = eventsList.length; _j < _len1; _j++) {
+              event = eventsList[_j];
               if (!(event.eventFn && event.name !== "keydown")) {
                 continue;
               }
@@ -12381,7 +9285,7 @@ angular.module("Mac").directive("macTagAutocomplete", [
                   return $scope.$apply(function() {
                     return expression($scope.$parent, {
                       $event: $event,
-                      item: $(".text-input", element).val()
+                      item: $scope.textInput
                     });
                   });
                 });
@@ -12390,43 +9294,66 @@ angular.module("Mac").directive("macTagAutocomplete", [
             return _results;
           });
           $scope.$watch("selected.length", function(length) {
-            return $scope.updateSource();
-          });
-          $scope.pushToSelected = function(item) {
-            var output;
-
-            output = {};
-            if (labelKey) {
-              output[labelKey] = item[labelKey];
-            }
-            if (valueKey) {
-              output[valueKey] = item[valueKey];
-            }
-            if ($scope.fullObject || (!labelKey && !valueKey)) {
-              output = item;
-            }
-            return $scope.selected.push(output);
-          };
-          $scope.updateSource = function() {
             var difference, selectedValues, sourceValues;
 
-            sourceValues = _($scope.source || []).pluck(valueKey);
-            selectedValues = _($scope.selected || []).pluck(valueKey);
-            difference = _(sourceValues).difference(selectedValues);
-            return $scope.autocompleteSource = _($scope.source).filter(function(item) {
-              var _ref;
+            sourceValues = (function() {
+              var _j, _len1, _ref1, _results;
 
-              return _ref = item[valueKey], __indexOf.call(difference, _ref) >= 0;
-            });
-          };
+              _ref1 = $scope.source || [];
+              _results = [];
+              for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+                item = _ref1[_j];
+                _results.push(item[valueKey]);
+              }
+              return _results;
+            })();
+            selectedValues = (function() {
+              var _j, _len1, _ref1, _results;
+
+              _ref1 = $scope.selected || [];
+              _results = [];
+              for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+                item = _ref1[_j];
+                _results.push(item[valueKey]);
+              }
+              return _results;
+            })();
+            difference = (function() {
+              var _j, _len1, _results;
+
+              _results = [];
+              for (_j = 0, _len1 = sourceValues.length; _j < _len1; _j++) {
+                item = sourceValues[_j];
+                if (__indexOf.call(selectedValues, item) < 0) {
+                  _results.push(item);
+                }
+              }
+              return _results;
+            })();
+            return $scope.autocompleteSource = (function() {
+              var _j, _len1, _ref1, _ref2, _results;
+
+              _ref1 = $scope.source || [];
+              _results = [];
+              for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+                item = _ref1[_j];
+                if (_ref2 = item[valueKey], __indexOf.call(difference, _ref2) >= 0) {
+                  _results.push(item);
+                }
+              }
+              return _results;
+            })();
+          });
           $scope.onKeyDown = function($event) {
-            var expression, stroke;
+            var stroke, _base;
 
             stroke = $event.which || $event.keyCode;
             switch (stroke) {
               case keys.BACKSPACE:
-                if ($scope.textInput.length === 0) {
-                  $scope.selected.pop();
+                if (!$scope.textInput) {
+                  if (typeof (_base = $scope.selected).pop === "function") {
+                    _base.pop();
+                  }
                 }
                 break;
               case keys.ENTER:
@@ -12435,38 +9362,57 @@ angular.module("Mac").directive("macTagAutocomplete", [
                 }
             }
             if (attrs.macTagAutocompleteOnKeydown != null) {
-              expression = $parse(attrs.macTagAutocompleteOnKeydown);
-              expression($scope.$parent, {
-                $event: $event,
-                item: value
-              });
+              if (typeof $scope.onKeydown === "function") {
+                $scope.onKeydown({
+                  $event: $event,
+                  value: $scope.textInput
+                });
+              }
             }
             return true;
           };
           $scope.onSuccess = function(data) {
             var existingValues;
 
-            existingValues = _($scope.selected).pluck(valueKey);
-            return _(data.data).reject(function(item) {
-              var _ref;
+            existingValues = (function() {
+              var _j, _len1, _ref1, _results;
 
-              return _ref = item[valueKey] || item, __indexOf.call(existingValues, _ref) >= 0;
-            });
+              _ref1 = $scope.selected || [];
+              _results = [];
+              for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+                item = _ref1[_j];
+                _results.push(item[valueKey]);
+              }
+              return _results;
+            })();
+            return (function() {
+              var _j, _len1, _ref1, _ref2, _results;
+
+              _ref1 = data.data;
+              _results = [];
+              for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+                item = _ref1[_j];
+                if (_ref2 = item[valueKey] || item, __indexOf.call(existingValues, _ref2) < 0) {
+                  _results.push(item);
+                }
+              }
+              return _results;
+            })();
           };
           $scope.onSelect = function(item) {
             if (attrs.macTagAutocompleteOnEnter != null) {
-              item = $scope.autocompleteOnEnter({
+              item = $scope.onEnter({
                 item: item
               });
             }
-            if (item) {
-              $scope.pushToSelected(item);
+            if (item != null) {
+              $scope.selected.push(item);
             }
-            return $scope.textInput = "";
-          };
-          $scope.reset = function() {
-            $scope.textInput = "";
-            return $scope.updateSource();
+            return setTimeout(function() {
+              return $scope.$apply(function() {
+                return $scope.textInput = "";
+              });
+            }, 0);
           };
           return $scope.$on("mac-tag-autocomplete-clear-input", function() {
             return $scope.textInput = "";
@@ -12830,188 +9776,26 @@ module.controller("modalController", [
 
 module.controller("ExampleController", [
   "$scope", "$timeout", "Table", function($scope, $timeout, Table) {
-    $scope.data = [];
-    $scope.loading = true;
-    setTimeout((function() {
-      var i, obj, _i;
+    $scope.loadDataIntoTable = function(x) {
+      var i, _i, _results;
 
-      for (i = _i = 1; _i <= 23; i = ++_i) {
-        obj = {
-          name: "Test " + i,
-          a: Math.random() * 100000,
-          b: Math.random() * 10000,
-          c: Math.random(),
-          d: Math.random(),
-          created: (new Date()).getTime(),
-          attributes: {
-            name: "Test " + i,
-            abc: Math.random() * 1000
-          }
-        };
-        $scope.data.push(obj);
+      if (x == null) {
+        x = 3000;
       }
-      $scope.loading = false;
-      return $scope.$digest();
-    }), 2500);
-    $scope.createRow = function(event) {
-      event.stopPropagation();
-      return console.log("Creating row");
-    };
-    $scope.loadMoreRows = function() {
-      event.stopPropagation();
-      return alert("Loading 20 more rows");
-    };
-    $scope.columnOrder = ["Name", "anotherName", "d", "c", "b", "Created"];
-    $scope.maGyverSeasonOne = [
-      {
-        'No.': '1',
-        'Title': '"Pilot"',
-        'Directed by': 'Jerrold Freedman',
-        'Written by': 'Thackary Pallor',
-        'Original air date': 'September 29, 1985'
-      }, {
-        'No.': '2',
-        'Title': '"The Golden Triangle"',
-        'Directed by': 'Paul Stanley & Donald Petrie',
-        'Written by': 'Dennis R. Foley & Terry Nation',
-        'Original air date': 'October 6, 1985'
-      }, {
-        'No.': '3',
-        'Title': '"Thief of Budapest"',
-        'Directed by': 'Lee H. Katzin & John Patterson',
-        'Written by': 'Terry Nation & Stephen Downing & Joe Viola',
-        'Original air date': 'October 13, 1985'
-      }, {
-        'No.': '4',
-        'Title': '"The Gauntlet"',
-        'Directed by': 'Lee H. Katzin',
-        'Written by': 'Stephen Kandel',
-        'Original air date': 'October 20, 1985'
-      }, {
-        'No.': '5',
-        'Title': '"The Heist"',
-        'Directed by': 'Alan Smithee',
-        'Written by': 'Larry Alexander & James Schmerer',
-        'Original air date': 'November 3, 1985'
-      }, {
-        'No.': '6',
-        'Title': '"Trumbo\'s World"',
-        'Directed by': 'Donald Petrie & Lee H. Katzin',
-        'Written by': 'Stephen Kandel',
-        'Original air date': 'November 10, 1985'
-      }, {
-        'No.': '7',
-        'Title': '"Last Stand"',
-        'Directed by': 'John Florea',
-        'Written by': 'Judy Burns',
-        'Original air date': 'November 17, 1985'
-      }, {
-        'No.': '8',
-        'Title': '"Hellfire"',
-        'Directed by': 'Richard Colla',
-        'Written by': 'Story by: Douglas Brooks West',
-        'Original air date': 'November 24, 1985'
-      }, {
-        'No.': '9',
-        'Title': '"The Prodigal"',
-        'Directed by': 'Alexander Singer',
-        'Written by': 'Story by: David Abramowitz & Paul Savage',
-        'Original air date': 'December 8, 1985'
-      }, {
-        'No.': '10',
-        'Title': '"Target MacGyver"',
-        'Directed by': 'Lee H. Katzin & Ernest Pintoff',
-        'Written by': 'Story by: Mike Marvin',
-        'Original air date': 'December 22, 1985'
-      }, {
-        'No.': '11',
-        'Title': '"Nightmares"',
-        'Directed by': 'Cliff Bole',
-        'Written by': 'James Schmerer',
-        'Original air date': 'January 15, 1986'
-      }, {
-        'No.': '12',
-        'Title': '"Deathlock"',
-        'Directed by': 'Cliff Bole & Alexander Singer',
-        'Written by': 'Jerry Ludwig & Stephen Kandel',
-        'Original air date': 'January 22, 1986'
-      }, {
-        'No.': '13',
-        'Title': '"Flame\'s End"',
-        'Directed by': 'Bruce Seth Green',
-        'Written by': 'Story by: Hannah Louise Shearer',
-        'Original air date': 'January 29, 1986'
-      }, {
-        'No.': '14',
-        'Title': '"Countdown"',
-        'Directed by': 'Stan Jolley',
-        'Written by': 'Tony DiMarco & David Ketchum',
-        'Original air date': 'February 5, 1986'
-      }, {
-        'No.': '15',
-        'Title': '"The Enemy Within"',
-        'Directed by': 'Cliff Bole',
-        'Written by': 'David Abramowitz',
-        'Original air date': 'February 12, 1986'
-      }, {
-        'No.': '16',
-        'Title': '"Every Time She Smiles"',
-        'Directed by': 'Charlie Correll',
-        'Written by': 'James Schmerer',
-        'Original air date': 'February 19, 1986'
-      }, {
-        'No.': '17',
-        'Title': '"To Be a Man"',
-        'Directed by': 'Cliff Bole',
-        'Written by': 'Don Mankiewicz',
-        'Original air date': 'March 5, 1986'
-      }, {
-        'No.': '18',
-        'Title': '"Ugly Duckling"',
-        'Directed by': 'Charlie Correll',
-        'Written by': 'Larry Gross',
-        'Original air date': 'March 12, 1986'
-      }, {
-        'No.': '19',
-        'Title': '"Slow Death"',
-        'Directed by': 'Don Weis',
-        'Written by': 'Stephen Kandel',
-        'Original air date': 'April 2, 1986'
-      }, {
-        'No.': '20',
-        'Title': '"The Escape"',
-        'Directed by': 'Don Chaffey',
-        'Written by': 'Stephen Kandel',
-        'Original air date': 'April 16, 1986'
-      }, {
-        'No.': '21',
-        'Title': '"A Prisoner of Conscience"',
-        'Directed by': 'Cliff Bole',
-        'Written by': 'Stephen Kandel',
-        'Original air date': 'April 30, 1986'
-      }, {
-        'No.': '22',
-        'Title': '"The Assassin"',
-        'Directed by': 'Charlie Correll',
-        'Written by': 'James Schmerer',
-        'Original air date': 'May 7, 1986'
+      $scope.macGyverSeasonOne = [];
+      _results = [];
+      for (i = _i = 1; 1 <= x ? _i <= x : _i >= x; i = 1 <= x ? ++_i : --_i) {
+        _results.push($scope.macGyverSeasonOne.push({
+          'No.': '1',
+          'Title': '"Pilot"',
+          'Directed by': 'Jerrold Freedman',
+          'Written by': 'Thackary Pallor',
+          'Original air date': 'September 29, 1985'
+        }));
       }
-    ];
-    $scope.reverse = false;
-    $scope.genPredicate = function(colName) {
-      return function(row) {
-        return row.cellsMap[colName].value();
-      };
+      return _results;
     };
-    $scope.genSearchPredicate = function(colName, value) {
-      return function(row) {
-        var cellValue;
-
-        cellValue = String(row.cellsMap[colName].value()).toLowerCase();
-        value = String(value).toLowerCase();
-        return cellValue.indexOf(value) !== -1;
-      };
-    };
+    $scope.loadDataIntoTable(1000);
     $scope.editableTest = "Hello";
     $scope.getDisplayText = function() {
       return $scope.editableTest;
@@ -13049,24 +9833,23 @@ module.controller("ExampleController", [
     $scope.tagAutocompleteDisabledSelected = [];
     $scope.tagAutocompleteEvents = [];
     $scope.tagAutocompletePlaceholder = "Hello";
+    $scope.tagAutocompleteModel = "";
     $scope.tagAutocompleteOnSelected = function(item) {
       return {
         key: item
       };
     };
     $scope.tagAutocompleteOnBlur = function(event, item) {
-      return $scope.tagAutocompleteEvents.push({
+      if (!item) {
+        return;
+      }
+      $scope.tagAutocompleteEvents.push({
         key: item
       });
+      return $scope.tagAutocompleteModel = "";
     };
     $scope.tagAutocompleteOnKeyup = function(event, item) {
       return console.debug("You just typed something");
-    };
-    $scope.tagAutocompleteClearText = function() {
-      return $scope.$broadcast("mac-tag-autocomplete-clear-input");
-    };
-    $scope.onTextBlur = function() {
-      return alert("You just blurred out of text input");
     };
     $scope.extraTagInputs = [
       {
@@ -13275,10 +10058,11 @@ angular.module("Mac").factory("directiveHelpers", [
   function() {
     return {
       repeater: function(iterator, keyName, $scope, $element, linkerFactory, postClone) {
-        var clonedElement, cursor, item, linkerFn, nScope, _i, _len, _results,
-          _this = this;
+        var clonedElement, item, linkerFn, nScope, _i, _len, _results;
 
-        cursor = $element;
+        if (!$element.length) {
+          return;
+        }
         _results = [];
         for (_i = 0, _len = iterator.length; _i < _len; _i++) {
           item = iterator[_i];
@@ -13286,8 +10070,7 @@ angular.module("Mac").factory("directiveHelpers", [
           nScope[keyName] = item;
           if (linkerFn = linkerFactory(item)) {
             clonedElement = linkerFn(nScope, function(clone) {
-              cursor.after(clone);
-              return cursor = clone;
+              return $element[0].appendChild(clone[0]);
             });
             _results.push(postClone && postClone(item, clonedElement));
           } else {
@@ -13397,7 +10180,7 @@ angular.module("Mac").factory("modal", [
         } else {
           return this.waiting = {
             id: id,
-            options: options
+            options: triggerOptions
           };
         }
       },
@@ -13430,8 +10213,8 @@ angular.module("Mac").factory("modal", [
           return;
         }
         id = this.opened.id;
-        this.opened.element.removeClass("visible");
         opened = this.opened.element;
+        opened.removeClass("visible");
         setTimeout(function() {
           return opened.addClass("hide");
         }, 250);
@@ -13466,7 +10249,9 @@ angular.module("Mac").factory("modal", [
         return delete this.registered[id];
       },
       clearWaiting: function(id) {
-        if ((id != null) && this.waiting.id !== id) {
+        var _ref;
+
+        if ((id != null) && ((_ref = this.waiting) != null ? _ref.id : void 0) !== id) {
           return;
         }
         return this.waiting = null;
@@ -13476,19 +10261,6 @@ angular.module("Mac").factory("modal", [
 ]);
 
 var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
-
-angular.module("Mac").factory("TableBaseColumn", [
-  function() {
-    var TableBaseColumn;
-
-    return TableBaseColumn = (function() {
-      function TableBaseColumn() {}
-
-      return TableBaseColumn;
-
-    })();
-  }
-]);
 
 angular.module("Mac").factory("TableSectionController", [
   function() {
@@ -13513,80 +10285,93 @@ angular.module("Mac").factory("TableSectionController", [
   }
 ]);
 
-angular.module("Mac").factory("SectionController", [
-  "TableSectionController", function(TableSectionController) {
-    return TableSectionController;
-  }
-]);
+angular.module("Mac").factory("TableRow", function() {
+  var TableRow;
 
-angular.module("Mac").factory("TableRow", [
-  function() {
-    var TableRow;
+  return TableRow = (function() {
+    function TableRow(section, model, cells, cellsMap) {
+      this.section = section;
+      this.model = model;
+      this.cells = cells != null ? cells : [];
+      this.cellsMap = cellsMap != null ? cellsMap : {};
+    }
 
-    return TableRow = (function() {
-      function TableRow(section, model, cells, cellsMap) {
-        this.section = section;
-        this.model = model;
-        this.cells = cells != null ? cells : [];
-        this.cellsMap = cellsMap != null ? cellsMap : {};
-      }
-
-      TableRow.prototype.toJSON = function() {
-        return {
-          cells: this.cells
-        };
+    TableRow.prototype.toJSON = function() {
+      return {
+        cells: this.cells
       };
+    };
 
-      return TableRow;
+    return TableRow;
 
-    })();
-  }
-]);
+  })();
+});
 
-angular.module("Mac").factory("TableSection", [
-  function() {
-    var TableSection;
+angular.module("Mac").factory("TableSection", function() {
+  var TableSection;
 
-    return TableSection = (function() {
-      function TableSection(controller, table, name, rows) {
-        this.table = table;
-        this.name = name;
-        this.rows = rows != null ? rows : [];
-        this.setController(controller);
-      }
+  return TableSection = (function() {
+    function TableSection(controller, table, name, rows) {
+      this.table = table;
+      this.name = name;
+      this.rows = rows != null ? rows : [];
+      this.setController(controller);
+    }
 
-      TableSection.prototype.setController = function(controller) {
-        return this.ctrl = new controller(this);
+    TableSection.prototype.setController = function(controller) {
+      return this.ctrl = new controller(this);
+    };
+
+    TableSection.prototype.toJSON = function() {
+      return {
+        rows: this.rows
       };
+    };
 
-      TableSection.prototype.toJSON = function() {
-        return {
-          rows: this.rows
-        };
+    return TableSection;
+
+  })();
+});
+
+angular.module("Mac").factory("TableCell", function() {
+  var Cell;
+
+  return Cell = (function() {
+    function Cell(row, column) {
+      this.row = row;
+      this.column = column;
+    }
+
+    Cell.prototype.value = function() {
+      var _ref, _ref1;
+
+      return (_ref = this.row) != null ? (_ref1 = _ref.section) != null ? _ref1.ctrl.cellValue(this.row, this.column.colName) : void 0 : void 0;
+    };
+
+    Cell.prototype.toJSON = function() {
+      return {
+        value: this.value(),
+        column: this.column.colName
       };
+    };
 
-      return TableSection;
+    return Cell;
 
-    })();
-  }
-]);
+  })();
+});
 
 angular.module("Mac").factory("tableComponents", [
-  "TableSectionController", "TableRow", "TableSection", function(TableSectionController, TableRow, TableSection) {
+  "TableSectionController", "TableRow", "TableSection", "TableCell", function(TableSectionController, TableRow, TableSection, TableCell) {
     return {
       rowFactory: function(section, model) {
         return new TableRow(section, model);
       },
-      columnFactory: function(colName, proto) {
+      columnFactory: function(colName) {
         var Column;
 
-        if (proto == null) {
-          proto = {};
-        }
         Column = function(colName) {
           this.colName = colName;
         };
-        Column.prototype = proto;
         return new Column(colName);
       },
       sectionFactory: function(table, sectionName, controller) {
@@ -13595,34 +10380,11 @@ angular.module("Mac").factory("tableComponents", [
         }
         return new TableSection(controller, table, sectionName);
       },
-      cellFactory: function(row, proto) {
-        var Cell;
-
-        if (proto == null) {
-          proto = {};
+      cellFactory: function(row, column) {
+        if (column == null) {
+          column = {};
         }
-        Cell = function(row, column) {
-          this.row = row;
-          this.column = column;
-          this.value = function() {
-            var _ref, _ref1;
-
-            return (_ref = this.row) != null ? (_ref1 = _ref.section) != null ? _ref1.ctrl.cellValue(this.row, this.colName) : void 0 : void 0;
-          };
-          this.get = function(name) {
-            var _base, _ref, _ref1;
-
-            return (_ref = this.row) != null ? (_ref1 = _ref.section) != null ? typeof (_base = _ref1.ctrl)[name] === "function" ? _base[name](this.row, this.colName) : void 0 : void 0 : void 0;
-          };
-          this.toJSON = function() {
-            return {
-              value: this.value(),
-              column: this.column.colName
-            };
-          };
-        };
-        Cell.prototype = proto;
-        return new Cell(row, proto);
+        return new TableCell(row, column);
       }
     };
   }
@@ -13684,7 +10446,7 @@ angular.module("Mac").factory("TableColumnsController", [
         _results = [];
         for (_i = 0, _len = columns.length; _i < _len; _i++) {
           colName = columns[_i];
-          column = tableComponents.columnFactory(colName, this.table.baseColumn);
+          column = tableComponents.columnFactory(colName);
           this.table.columnsMap[colName] = column;
           _results.push(this.table.columns.push(column));
         }
@@ -13750,7 +10512,7 @@ angular.module("Mac").factory("TableRowsController", [
       RowsController.prototype.set = function(sectionName, models, sectionController) {
         var model, rows, section, _i, _len;
 
-        this.table.sections[sectionName] = section = tableComponents.sectionFactory(this.table, sectionName, sectionController);
+        section = this.table.sections[sectionName];
         if ((models != null ? models.length : void 0) == null) {
           return;
         }
@@ -13781,6 +10543,13 @@ angular.module("Mac").factory("TableRowsController", [
         return section.rows.splice(index, 1);
       };
 
+      RowsController.prototype.clear = function(sectionName) {
+        var section;
+
+        section = this.table.sections[sectionName];
+        return section.rows = [];
+      };
+
       return RowsController;
 
     })();
@@ -13788,7 +10557,7 @@ angular.module("Mac").factory("TableRowsController", [
 ]);
 
 angular.module("Mac").factory("Table", [
-  "TableBaseColumn", "TableColumnsController", "TableRowsController", function(TableBaseColumn, TableColumnsController, TableRowsController) {
+  "TableColumnsController", "TableRowsController", "tableComponents", function(TableColumnsController, TableRowsController, tableComponents) {
     var Table, convertObjectModelsToArray;
 
     convertObjectModelsToArray = function(models) {
@@ -13799,11 +10568,10 @@ angular.module("Mac").factory("Table", [
       }
     };
     return Table = (function() {
-      function Table(columns, baseColumn) {
+      function Table(columns) {
         if (columns == null) {
           columns = [];
         }
-        this.baseColumn = baseColumn != null ? baseColumn : new TableBaseColumn();
         this.sections = {};
         this.columns = [];
         this.columnsCtrl = new TableColumnsController(this);
@@ -13815,8 +10583,24 @@ angular.module("Mac").factory("Table", [
         return;
       }
 
-      Table.prototype.load = function(sectionName, models, sectionController) {
-        var args, index, model, row, tableModels, toBeInserted, toBeRemoved, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2;
+      Table.prototype.makeSection = function(sectionName) {
+        return this.sections[sectionName] = tableComponents.sectionFactory(this, sectionName);
+      };
+
+      Table.prototype.load = function(sectionName, models, controller) {
+        if (!this.sections[sectionName]) {
+          this.makeSection(sectionName);
+        }
+        if (controller) {
+          this.loadController(sectionName, controller);
+        }
+        if (models) {
+          return this.loadModels(sectionName, models);
+        }
+      };
+
+      Table.prototype.loadModels = function(sectionName, models) {
+        var args, index, model, row, tableModels, toBeInserted, toBeRemoved, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _results;
 
         models = convertObjectModelsToArray(models);
         if ((_ref = this.sections[sectionName]) != null ? _ref.rows.length : void 0) {
@@ -13843,15 +10627,20 @@ angular.module("Mac").factory("Table", [
               toBeInserted.push([sectionName, model, index]);
             }
           }
+          _results = [];
           for (_l = 0, _len3 = toBeInserted.length; _l < _len3; _l++) {
             args = toBeInserted[_l];
-            this.insert.apply(this, args);
+            _results.push(this.insert.apply(this, args));
           }
-          if (sectionController) {
-            return this.sections[sectionName].setController(sectionController);
-          }
+          return _results;
         } else {
-          return this.rowsCtrl.set(sectionName, models, sectionController);
+          return this.rowsCtrl.set(sectionName, models);
+        }
+      };
+
+      Table.prototype.loadController = function(sectionName, sectionController) {
+        if (sectionController) {
+          return this.sections[sectionName].setController(sectionController);
         }
       };
 
@@ -13867,6 +10656,10 @@ angular.module("Mac").factory("Table", [
           index = 0;
         }
         return this.rowsCtrl.remove(sectionName, index);
+      };
+
+      Table.prototype.clear = function(sectionName) {
+        return this.rowsCtrl.clear(sectionName);
       };
 
       Table.prototype.blankRow = function() {
