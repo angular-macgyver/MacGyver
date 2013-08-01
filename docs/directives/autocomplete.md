@@ -4,7 +4,7 @@ Autocomplete
 A directive for providing suggestions while typing into the field  
   
 ### Dependencies
-- jQuery UI autocomplete  
+- mac-menu  
 
 ### Parameters
 **ng-model**  

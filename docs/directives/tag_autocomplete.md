@@ -4,7 +4,8 @@ Tag Autocomplete
 A directive for generating tag input with autocomplete support on text input  
   
 ### Dependencies
-- jQuery UI autocomplete  
+- mac-autocomplete  
+- mac-menu  
 
 ### Parameters
 **mac-tag-autocomplete-url**  
