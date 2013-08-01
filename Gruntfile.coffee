@@ -121,8 +121,8 @@ module.exports = (grunt) ->
         files: [
           expand:  true
           flatten: true
-          src:     ["example/img/**"]
-          dest:    "lib/img"
+          src:     ["example/img/**/*.png"]
+          dest:    "lib/img/"
         ]
 
       public:
@@ -289,7 +289,12 @@ module.exports = (grunt) ->
     fs.readFile componentFile, "utf8", (err, data) ->
       throw err if err?
 
-      fileList = _(fileList).map (file) -> path.join "lib", file
+      fileList = _(fileList).map (file) ->
+        if file.indexOf(".DS_Store") is -1
+          path.join "lib", file
+        else
+          ""
+      fileList = _(fileList).compact()
 
       newArray = JSON.stringify fileList
       data     = data.replace /"main": \[[^\]]+]/, "\"main\": #{newArray}"
