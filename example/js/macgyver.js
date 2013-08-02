@@ -8422,68 +8422,74 @@ angular.module("Mac").directive("macModal", [
       templateUrl: "template/modal.html",
       replace: true,
       transclude: true,
-      link: function($scope, element, attrs) {
-        var bindingEvents, defaults, elementId, escapeKeyHandler, opts, registerModal, resizeHandler;
+      compile: function(element, attrs, transclude) {
+        return function($scope, element, attrs) {
+          var bindingEvents, defaults, elementId, escapeKeyHandler, opts, registerModal, resizeHandler;
 
-        defaults = {
-          keyboard: false,
-          overlayClose: false,
-          resize: true,
-          open: null,
-          topOffset: 20
-        };
-        opts = util.extendAttributes("macModal", defaults, attrs);
-        elementId = attrs.id;
-        escapeKeyHandler = function(event) {
-          if (event.which === keys.ESCAPE) {
-            return modal.hide();
+          defaults = {
+            keyboard: false,
+            overlayClose: false,
+            resize: true,
+            open: null,
+            topOffset: 20
+          };
+          opts = util.extendAttributes("macModal", defaults, attrs);
+          elementId = attrs.id;
+          escapeKeyHandler = function(event) {
+            if (event.which === keys.ESCAPE) {
+              return modal.hide();
+            }
+          };
+          resizeHandler = function(event) {
+            return modal.resize();
+          };
+          bindingEvents = function(action) {
+            if (action == null) {
+              action = "bind";
+            }
+            if (action !== "bind" && action !== "unbind") {
+              return;
+            }
+            if (opts.keyboard) {
+              $(document)[action]("keydown", escapeKeyHandler);
+            }
+            if (opts.resize) {
+              return $(window)[action]("resize", resizeHandler);
+            }
+          };
+          registerModal = function(id) {
+            if ((id != null) && id) {
+              opts.callback = function() {
+                bindingEvents();
+                if (opts.open != null) {
+                  return $parse(opts.open)($scope);
+                }
+              };
+              return modal.register(id, element, opts, function() {
+                return transclude($scope, function(clone) {
+                  return $(".modal-content-wrapper", element).append(clone);
+                });
+              });
+            }
+          };
+          $scope.closeOverlay = function($event) {
+            if (opts.overlayClose && $($event.target).is(".modal-overlay")) {
+              return $scope.closeModal();
+            }
+          };
+          $scope.closeModal = function($event) {
+            return modal.hide(function() {
+              return bindingEvents("unbind");
+            });
+          };
+          if (elementId) {
+            return registerModal(elementId);
+          } else {
+            return attrs.$observe("macModal", function(id) {
+              return registerModal(id);
+            });
           }
         };
-        resizeHandler = function(event) {
-          return modal.resize();
-        };
-        bindingEvents = function(action) {
-          if (action == null) {
-            action = "bind";
-          }
-          if (action !== "bind" && action !== "unbind") {
-            return;
-          }
-          if (opts.keyboard) {
-            $(document)[action]("keydown", escapeKeyHandler);
-          }
-          if (opts.resize) {
-            return $(window)[action]("resize", resizeHandler);
-          }
-        };
-        registerModal = function(id) {
-          if ((id != null) && id) {
-            opts.callback = function() {
-              bindingEvents();
-              if (opts.open != null) {
-                return $parse(opts.open)($scope);
-              }
-            };
-            return modal.register(id, element, opts);
-          }
-        };
-        $scope.closeOverlay = function($event) {
-          if (opts.overlayClose && $($event.target).is(".modal-overlay")) {
-            return $scope.closeModal();
-          }
-        };
-        $scope.closeModal = function($event) {
-          return modal.hide(function() {
-            return bindingEvents("unbind");
-          });
-        };
-        if (elementId) {
-          return registerModal(elementId);
-        } else {
-          return attrs.$observe("macModal", function(id) {
-            return registerModal(id);
-          });
-        }
       }
     };
   }
@@ -10146,21 +10152,22 @@ There are multiple components used by modal.
 - {String} id ID of the modal
 */
 angular.module("Mac").factory("modal", [
-  "$rootScope", function($rootScope) {
+  "$rootScope", "$timeout", function($rootScope, $timeout) {
     return {
       registered: {},
       waiting: null,
       opened: null,
       show: function(id, triggerOptions) {
-        var element, options, _ref;
+        var element, options, transclude, _ref;
 
         if (triggerOptions == null) {
           triggerOptions = {};
         }
         if (this.registered[id] != null) {
-          _ref = this.registered[id], element = _ref.element, options = _ref.options;
+          _ref = this.registered[id], element = _ref.element, options = _ref.options, transclude = _ref.transclude;
+          transclude.apply(this);
           element.removeClass("hide");
-          setTimeout(function() {
+          $timeout(function() {
             return element.addClass("visible");
           }, 0);
           angular.extend(options, triggerOptions);
@@ -10213,7 +10220,8 @@ angular.module("Mac").factory("modal", [
         id = this.opened.id;
         opened = this.opened.element;
         opened.removeClass("visible");
-        setTimeout(function() {
+        $(".modal-content-wrapper", opened).empty();
+        $timeout(function() {
           return opened.addClass("hide");
         }, 250);
         this.opened = null;
@@ -10222,13 +10230,14 @@ angular.module("Mac").factory("modal", [
         }
         return $rootScope.$broadcast("modalWasHidden", id);
       },
-      register: function(id, element, options) {
+      register: function(id, element, options, transclude) {
         if (this.registered[id] != null) {
           throw new Error("Modal " + modalId + " already registered");
         }
         this.registered[id] = {
           element: element,
-          options: options
+          options: options,
+          transclude: transclude
         };
         if ((this.waiting != null) && this.waiting.id === id) {
           return this.show(id, this.waiting.options);
