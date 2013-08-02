@@ -11,11 +11,14 @@ Angular helpers for all your friends!
  - Datepicker
  - Events
  - File Uplaod
+ - Menu
+ - Modal
  - Spinner
  - Table
  - Tag Autocomplete
  - Tag Input
  - Time input
+ - Tooltip
 
 ### Filters ###
  - Boolean
@@ -27,33 +30,21 @@ Angular helpers for all your friends!
  - Underscore
  - jQuery
  - jQuery UI
- - Spin.js
 
 ## Get Started ##
-MacGyver requires a few node modules for developer environment.
+MacGyver requires a few node modules for development environment.
 
 ### Install all through npm ###
 
-  `npm install -d`
-
-### Install manually ###
-Install each package one by one
-
-#### Install Coffeescript ####
-
-  `sudo npm -g install coffee-script`
-
-#### Install Grunt CLI ####
-
-  `sudo npm -g install grunt-cli`
-
-#### Install testacular ####
-
-  `sudo npm -g install testacular`
+  `npm install`
 
 #### Install bower ####
 
   `sudo npm -g install bower`
+
+#### Install Grunt ####
+
+  `sudo npm -g install grunt-cli`
 
 #### Other dependencies ####
   Includes [underscore](https://npmjs.org/package/underscore),
@@ -66,19 +57,21 @@ Install each package one by one
 ## Grunt tasks ##
 
 ```
+       chalkboard  A simple grunt task to make documentation easier. *
+            clean  Clean files and folders. *
            coffee  Compile CoffeeScript files into JavaScript *
            concat  Concatenate files. *
-           stylus  Compile Stylus files into CSS *
-             jade  Compile Jade templates into HTML. *
              copy  Copy files. *
-            clean  Clean files and folders. *
-            watch  Run predefined tasks whenever watched files change.
+             jade  Compile jade templates. *
+           stylus  Compile Stylus files into CSS *
            uglify  Minify files with UglifyJS. *
-       embed:html  Replace templateUrl with actual html
- update:component  Update component.json for bower
+            watch  Run predefined tasks whenever watched files change.
+            karma  run karma. *
+    embedtemplate  Replace templateUrl with actual html *
+           marked  Convert markdown to html *
+ update:component  Update bower.json
            deploy  Build and copy to lib/
           compile  Compile files
-             test  Run testacular for unit tests
               run  Watch src and run test server
            server  Run test server
 ```
