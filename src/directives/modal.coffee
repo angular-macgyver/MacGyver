@@ -31,6 +31,7 @@ angular.module("Mac").directive("macModal", [
           resize:       true
           open:         null
           topOffset:    20
+          preRendered:  false
 
         opts = util.extendAttributes "macModal", defaults, attrs
 
@@ -56,9 +57,12 @@ angular.module("Mac").directive("macModal", [
               bindingEvents()
               $parse(opts.open) $scope if opts.open?
 
-            modal.register id, element, opts, ->
+            transcluding = ->
               transclude $scope, (clone) ->
                 $(".modal-content-wrapper", element).append clone
+
+            modal.register id, element, opts, transcluding
+            transcluding() if opts.preRendered
 
         $scope.closeOverlay = ($event) ->
           if opts.overlayClose and $($event.target).is(".modal-overlay")

@@ -55,7 +55,8 @@ angular.module("Mac").factory("modal", [
         {element, options, transclude} = @registered[id]
 
         # Transclude the content into the content wrapper
-        transclude.apply this
+        unless options.preRendered
+          transclude.apply this
 
         element.removeClass "hide"
         $timeout ->
@@ -111,13 +112,15 @@ angular.module("Mac").factory("modal", [
     hide: (callback) ->
       return unless @opened?
 
-      id = @opened.id
+      {id, options, element} = @opened
 
-      opened = @opened.element
-      opened.removeClass "visible"
-      $(".modal-content-wrapper", opened).empty()
+      element.removeClass "visible"
+
+      unless options.preRendered
+        $(".modal-content-wrapper", element).empty()
+
       $timeout ->
-        opened.addClass "hide"
+        element.addClass "hide"
       , 250
       @opened = null
       callback?()

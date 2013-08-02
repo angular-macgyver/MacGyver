@@ -133,7 +133,6 @@ describe "Mac modal", ->
       expect(opened).toBe true
 
     it "should close the modal clicking on the close button", ->
-      opened       = false
       modalElement = $compile("<mac-modal id='test-modal'></mac-modal>") $rootScope
       $rootScope.$digest()
 
@@ -142,6 +141,31 @@ describe "Mac modal", ->
 
       $(".close-modal", modalElement).click()
       expect(modalElement.hasClass("visible")).toBe false
+
+    it "should not transclude into content", ->
+      modalElement = $compile("<mac-modal id='test-modal'>Content</mac-modal>") $rootScope
+      $rootScope.$digest()
+
+      expect($(".modal-content-wrapper", modalElement).text()).toBe ""
+
+    it "should transclude the content on compile", ->
+      modalElement = $compile("<mac-modal id='test-modal' mac-modal-pre-rendered>Content</mac-modal>") $rootScope
+      $rootScope.$digest()
+
+      expect($(".modal-content-wrapper", modalElement).text()).toBe "Content"
+
+    it "should transclude on open and clear on hide", ->
+      modalElement = $compile("<mac-modal id='test-modal'>Content</mac-modal>") $rootScope
+      $rootScope.$digest()
+
+      modal.show "test-modal"
+      $timeout.flush()
+
+      expect($(".modal-content-wrapper", modalElement).text()).toBe "Content"
+
+      modal.hide()
+
+      expect($(".modal-content-wrapper", modalElement).text()).toBe ""
 
   describe "modal trigger", ->
     it "should bind a click event to trigger a modal", ->
