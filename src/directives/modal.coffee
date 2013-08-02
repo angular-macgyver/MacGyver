@@ -23,51 +23,54 @@ angular.module("Mac").directive("macModal", [
     replace:     true
     transclude:  true
 
-    link: ($scope, element, attrs) ->
-      defaults =
-        keyboard:     false
-        overlayClose: false
-        resize:       true
-        open:         null
-        topOffset:    20
+    compile: (element, attrs, transclude) ->
+      ($scope, element, attrs) ->
+        defaults =
+          keyboard:     false
+          overlayClose: false
+          resize:       true
+          open:         null
+          topOffset:    20
 
-      opts = util.extendAttributes "macModal", defaults, attrs
+        opts = util.extendAttributes "macModal", defaults, attrs
 
-      elementId = attrs.id
+        elementId = attrs.id
 
-      escapeKeyHandler = (event) ->
-        modal.hide() if event.which is keys.ESCAPE
+        escapeKeyHandler = (event) ->
+          modal.hide() if event.which is keys.ESCAPE
 
-      resizeHandler = (event) -> modal.resize()
+        resizeHandler = (event) -> modal.resize()
 
-      bindingEvents = (action = "bind") ->
-        return unless action in ["bind", "unbind"]
+        bindingEvents = (action = "bind") ->
+          return unless action in ["bind", "unbind"]
 
-        if opts.keyboard
-          $(document)[action] "keydown", escapeKeyHandler
+          if opts.keyboard
+            $(document)[action] "keydown", escapeKeyHandler
 
-        if opts.resize
-          $(window)[action] "resize", resizeHandler
+          if opts.resize
+            $(window)[action] "resize", resizeHandler
 
-      registerModal = (id) ->
-        if id? and id
-          opts.callback = ->
-            bindingEvents()
-            $parse(opts.open) $scope if opts.open?
+        registerModal = (id) ->
+          if id? and id
+            opts.callback = ->
+              bindingEvents()
+              $parse(opts.open) $scope if opts.open?
 
-          modal.register id, element, opts
+            modal.register id, element, opts, ->
+              transclude $scope, (clone) ->
+                $(".modal-content-wrapper", element).append clone
 
-      $scope.closeOverlay = ($event) ->
-        if opts.overlayClose and $($event.target).is(".modal-overlay")
-          $scope.closeModal()
+        $scope.closeOverlay = ($event) ->
+          if opts.overlayClose and $($event.target).is(".modal-overlay")
+            $scope.closeModal()
 
-      $scope.closeModal = ($event) ->
-        modal.hide -> bindingEvents "unbind"
+        $scope.closeModal = ($event) ->
+          modal.hide -> bindingEvents "unbind"
 
-      if elementId
-        registerModal elementId
-      else
-        attrs.$observe "macModal", (id) -> registerModal id
+        if elementId
+          registerModal elementId
+        else
+          attrs.$observe "macModal", (id) -> registerModal id
 ]).
 
 #

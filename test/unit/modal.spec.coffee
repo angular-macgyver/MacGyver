@@ -2,17 +2,19 @@ describe "Mac modal", ->
   $compile       = null
   $rootScope     = null
   $templateCache = null
+  $timeout       = null
   modal          = null
   keys           = null
 
   beforeEach module("Mac")
   beforeEach module("template/modal.html")
-  beforeEach inject (_$compile_, _$rootScope_, _modal_, _$templateCache_, _keys_) ->
+  beforeEach inject (_$compile_, _$rootScope_, _modal_, _$templateCache_, _keys_, _$timeout_) ->
     $compile       = _$compile_
     $rootScope     = _$rootScope_
     modal          = _modal_
     $templateCache = _$templateCache_
     keys           = _keys_
+    $timeout       = _$timeout_
 
   describe "modal service", ->
     it "should register a modal element", ->
@@ -27,23 +29,14 @@ describe "Mac modal", ->
       expect(modal.registered["test-modal"]).not.toBeDefined()
 
     it "should show the registered modal", ->
-      called  = false
       element = $("<div></div>")
-      modal.register "test-modal", element, {}
+      modal.register "test-modal", element, {}, angular.noop
 
-      runs ->
-        modal.show "test-modal"
-        setTimeout ->
-          called = true
-        , 0
+      modal.show "test-modal"
+      $timeout.flush()
 
-      waitsFor ->
-        return called
-      , "set visible", 100
-
-      runs ->
-        expect(element.hasClass "visible").toBe true
-        expect(modal.opened.id).toBe "test-modal"
+      expect(element.hasClass "visible").toBe true
+      expect(modal.opened.id).toBe "test-modal"
 
     it "should update the waiting object", ->
       modal.show "test-modal"
@@ -55,7 +48,7 @@ describe "Mac modal", ->
       element = $("<div></div>")
       element.append $templateCache.get("template/modal.html")
 
-      modal.register "test-modal", element, {}
+      modal.register "test-modal", element, {}, angular.noop
       modal.show "test-modal"
 
       modalElement = $(".modal", element)
@@ -67,25 +60,19 @@ describe "Mac modal", ->
       element  = $("<div></div>")
       element.append $templateCache.get("template/modal.html")
 
-      modal.register "test-modal", element, {}
+      modal.register "test-modal", element, {}, angular.noop
 
       $rootScope.$on "modalWasShown", (event, id) ->
         openedId = id
         called   = true
 
-      runs ->
-        $rootScope.$apply -> modal.show "test-modal"
+      $rootScope.$apply -> modal.show "test-modal"
 
-      waitsFor ->
-        return called
-      , "reciving message 'modalWasShown'", 500
+      $timeout.flush()
 
-      runs ->
-        expect(openedId).toBe "test-modal"
+      expect(openedId).toBe "test-modal"
 
     it "should hide the modal", ->
-      opened   = false
-      called   = false
       closedId = ""
       element  = $("<div></div>")
       element.append $templateCache.get("template/modal.html")
@@ -93,32 +80,17 @@ describe "Mac modal", ->
       $rootScope.$on "modalWasHidden", (event, id) ->
         closedId = id
 
-      modal.register "test-modal", element, {}
-      runs ->
-        modal.show "test-modal"
-        setTimeout ->
-          opened = true
-        , 100
+      modal.register "test-modal", element, {}, angular.noop
+      modal.show "test-modal"
+      $timeout.flush()
 
-      waitsFor ->
-        return opened
-      , "modal to be opened", 120
+      modal.hide()
+      $timeout.flush()
 
-      runs ->
-        modal.hide()
-        setTimeout ->
-          called = true
-        , 350
-
-      waitsFor ->
-        return called
-      , "modal to be hidden", 400
-
-      runs ->
-        expect(element.hasClass("visible")).toBe false
-        expect(element.hasClass("hide")).toBe true
-        expect(modal.opened).toBe null
-        expect(closedId).toBe "test-modal"
+      expect(element.hasClass("visible")).toBe false
+      expect(element.hasClass("hide")).toBe true
+      expect(modal.opened).toBe null
+      expect(closedId).toBe "test-modal"
 
   describe "initializing a modal", ->
     it "should register the modal", ->
@@ -132,38 +104,22 @@ describe "Mac modal", ->
       modalElement = $compile("<mac-modal id='test-modal' mac-modal-keyboard></mac-modal>") $rootScope
       $rootScope.$digest()
 
-      runs ->
-        modal.show "test-modal"
-        setTimeout ->
-          opened = true
-        , 100
+      modal.show "test-modal"
+      $timeout.flush()
 
-      waitsFor ->
-        return opened
-      , "modal to be opened", 120
-
-      runs ->
-        $(document).trigger $.Event("keydown", {which: keys.ESCAPE})
-        expect(modalElement.hasClass("visible")).toBe false
+      $(document).trigger $.Event("keydown", {which: keys.ESCAPE})
+      expect(modalElement.hasClass("visible")).toBe false
 
     it "should close the modal after clicking on overlay", ->
       opened       = false
       modalElement = $compile("<mac-modal id='test-modal' mac-modal-overlay-close></mac-modal>") $rootScope
       $rootScope.$digest()
 
-      runs ->
-        modal.show "test-modal"
-        setTimeout ->
-          opened = true
-        , 100
+      modal.show "test-modal"
+      $timeout.flush()
 
-      waitsFor ->
-        return opened
-      , "modal to be opened", 120
-
-      runs ->
-        modalElement.click()
-        expect(modalElement.hasClass("visible")).toBe false
+      modalElement.click()
+      expect(modalElement.hasClass("visible")).toBe false
 
     it "should execute callback when opening the modal", ->
       opened            = false
@@ -171,34 +127,21 @@ describe "Mac modal", ->
       modalElement      = $compile("<mac-modal id='test-modal' mac-modal-open='opened()'></mac-modal>") $rootScope
       $rootScope.$digest()
 
-      runs ->
-        modal.show "test-modal"
+      modal.show "test-modal"
+      $timeout.flush()
 
-      waitsFor ->
-        return opened
-      , "modal to be opened", 100
-
-      runs ->
-        expect(opened).toBe true
+      expect(opened).toBe true
 
     it "should close the modal clicking on the close button", ->
       opened       = false
       modalElement = $compile("<mac-modal id='test-modal'></mac-modal>") $rootScope
       $rootScope.$digest()
 
-      runs ->
-        modal.show "test-modal"
-        setTimeout ->
-          opened = true
-        , 100
+      modal.show "test-modal"
+      $timeout.flush()
 
-      waitsFor ->
-        return opened
-      , "modal to be opened", 100
-
-      runs ->
-        $(".close-modal", modalElement).click()
-        expect(modalElement.hasClass("visible")).toBe false
+      $(".close-modal", modalElement).click()
+      expect(modalElement.hasClass("visible")).toBe false
 
   describe "modal trigger", ->
     it "should bind a click event to trigger a modal", ->

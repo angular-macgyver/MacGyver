@@ -32,7 +32,8 @@ There are multiple components used by modal.
 
 angular.module("Mac").factory("modal", [
   "$rootScope"
-  ($rootScope) ->
+  "$timeout"
+  ($rootScope, $timeout) ->
     # Dictionary of registered modal
     registered: {}
 
@@ -51,10 +52,13 @@ angular.module("Mac").factory("modal", [
     #
     show: (id, triggerOptions = {}) ->
       if @registered[id]?
-        {element, options} = @registered[id]
+        {element, options, transclude} = @registered[id]
+
+        # Transclude the content into the content wrapper
+        transclude.apply this
 
         element.removeClass "hide"
-        setTimeout ->
+        $timeout ->
           element.addClass "visible"
         , 0
 
@@ -111,7 +115,8 @@ angular.module("Mac").factory("modal", [
 
       opened = @opened.element
       opened.removeClass "visible"
-      setTimeout ->
+      $(".modal-content-wrapper", opened).empty()
+      $timeout ->
         opened.addClass "hide"
       , 250
       @opened = null
@@ -127,11 +132,11 @@ angular.module("Mac").factory("modal", [
     # @param {DOM element} element The modal element
     # @param {Object} options Additional options for the modal
     #
-    register: (id, element, options) ->
+    register: (id, element, options, transclude) ->
       if @registered[id]?
         throw new Error "Modal #{modalId} already registered"
 
-      @registered[id] = {element, options}
+      @registered[id] = {element, options, transclude}
 
       if @waiting? and @waiting.id is id
         @show id, @waiting.options
