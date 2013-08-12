@@ -8431,7 +8431,8 @@ angular.module("Mac").directive("macModal", [
             overlayClose: false,
             resize: true,
             open: null,
-            topOffset: 20
+            topOffset: 20,
+            preRendered: false
           };
           opts = util.extendAttributes("macModal", defaults, attrs);
           elementId = attrs.id;
@@ -8458,6 +8459,8 @@ angular.module("Mac").directive("macModal", [
             }
           };
           registerModal = function(id) {
+            var transcluding;
+
             if ((id != null) && id) {
               opts.callback = function() {
                 bindingEvents();
@@ -8465,11 +8468,15 @@ angular.module("Mac").directive("macModal", [
                   return $parse(opts.open)($scope);
                 }
               };
-              return modal.register(id, element, opts, function() {
+              transcluding = function() {
                 return transclude($scope, function(clone) {
                   return $(".modal-content-wrapper", element).append(clone);
                 });
-              });
+              };
+              modal.register(id, element, opts, transcluding);
+              if (opts.preRendered) {
+                return transcluding();
+              }
             }
           };
           $scope.closeOverlay = function($event) {
@@ -9659,17 +9666,19 @@ Tooltip directive
 @param {String}  mac-tooltip-direction Direction of tooltip (default 'top')
 @param {String}  mac-tooltip-trigger   How tooltip is triggered (default 'hover')
 @param {Boolean} mac-tooltip-inside    Should the tooltip be appended inside element (default false)
+@param {Expr}    mac-tooltip-disabled  Disable and enable tooltip
 */
 angular.module("Mac").directive("macTooltip", [
   "util", function(util) {
     return {
       restrict: "A",
       link: function(scope, element, attrs) {
-        var defaults, enabled, opts, removeTip, showTip, text, toggle, tooltip;
+        var defaults, disabled, enabled, opts, removeTip, showTip, text, toggle, tooltip;
 
         tooltip = null;
         text = "";
         enabled = false;
+        disabled = false;
         defaults = {
           direction: "top",
           trigger: "hover",
@@ -9679,6 +9688,9 @@ angular.module("Mac").directive("macTooltip", [
         showTip = function(event) {
           var elementSize, offset, tip, tooltipSize;
 
+          if (disabled) {
+            return;
+          }
           tip = opts.inside ? element : $(document.body);
           tooltip = $("<div class=\"tooltip " + opts.direction + "\"><div class=\"tooltip-message\">" + text + "</div></div>");
           tip.append(tooltip);
@@ -9753,6 +9765,9 @@ angular.module("Mac").directive("macTooltip", [
               return enabled = true;
             }
           }
+        });
+        scope.$watch(attrs.macTooltipDisabled, function(value) {
+          return disabled = value;
         });
         return scope.$on("$destroy", function() {
           if (tooltip != null) {
@@ -10165,7 +10180,9 @@ angular.module("Mac").factory("modal", [
         }
         if (this.registered[id] != null) {
           _ref = this.registered[id], element = _ref.element, options = _ref.options, transclude = _ref.transclude;
-          transclude.apply(this);
+          if (!options.preRendered) {
+            transclude.apply(this);
+          }
           element.removeClass("hide");
           $timeout(function() {
             return element.addClass("visible");
@@ -10212,17 +10229,18 @@ angular.module("Mac").factory("modal", [
         return modal.css(css);
       },
       hide: function(callback) {
-        var id, opened;
+        var element, id, options, _ref;
 
         if (this.opened == null) {
           return;
         }
-        id = this.opened.id;
-        opened = this.opened.element;
-        opened.removeClass("visible");
-        $(".modal-content-wrapper", opened).empty();
+        _ref = this.opened, id = _ref.id, options = _ref.options, element = _ref.element;
+        element.removeClass("visible");
+        if (!options.preRendered) {
+          $(".modal-content-wrapper", element).empty();
+        }
         $timeout(function() {
-          return opened.addClass("hide");
+          return element.addClass("hide");
         }, 250);
         this.opened = null;
         if (typeof callback === "function") {

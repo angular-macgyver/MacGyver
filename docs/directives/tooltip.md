@@ -20,4 +20,8 @@ How tooltip is triggered (default 'hover')
 Type: `Boolean`  
 Should the tooltip be appended inside element (default false)  
   
+**mac-tooltip-disabled**  
+Type: `Expr`  
+Disable and enable tooltip  
+  
 
