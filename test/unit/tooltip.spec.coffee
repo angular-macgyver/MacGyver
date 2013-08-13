@@ -1,16 +1,18 @@
 describe "Mac Tooltip", ->
+  $compile   = null
+  $rootScope = null
+  $timeout   = null
+
   beforeEach module("Mac")
+  beforeEach inject (_$compile_, _$rootScope_, _$timeout_) ->
+    $compile   = _$compile_
+    $rootScope = _$rootScope_
+    $timeout   = _$timeout_
+
+  afterEach ->
+    $(".tooltip").remove()
 
   describe "Basic Initialization", ->
-    $compile   = null
-    $rootScope = null
-
-    beforeEach inject (_$compile_, _$rootScope_) ->
-      $compile   = _$compile_
-      $rootScope = _$rootScope_
-
-    afterEach ->
-      $(".tooltip").remove()
 
     it "should append to body on mouseenter", ->
       tip = $compile("<div mac-tooltip='hello world'></div>") $rootScope
@@ -27,54 +29,31 @@ describe "Mac Tooltip", ->
       expect($(".tooltip-message").text()).toBe "hello world"
 
   describe "Trigger", ->
-    $compile   = null
-    $rootScope = null
-
-    beforeEach inject (_$compile_, _$rootScope_) ->
-      $compile   = _$compile_
-      $rootScope = _$rootScope_
-
-    afterEach ->
-      $(".tooltip").remove()
 
     it "should remove tooltip on mouseleave", ->
-      called = false
-      tip    = $compile("<div mac-tooltip='hello world'></div>") $rootScope
+      tip = $compile("<div mac-tooltip='hello world'></div>") $rootScope
       $rootScope.$digest()
       tip.trigger "mouseenter"
 
       expect($(".tooltip").length).toBe 1
 
-      # Add 150ms delay as tooltip is removed after 100ms
-      runs ->
-        tip.trigger "mouseleave"
-        setTimeout (-> called = true), 150
+      tip.trigger "mouseleave"
+      $timeout.flush()
 
-      waitsFor ->
-        return called
-      , "Tooltip should be removed", 750
-
-      runs ->
-        expect($(".tooltip").length).toBe 0
+      expect($(".tooltip").length).toBe 0
 
     it "should show and hide on click", ->
-      called = false
-      tip    = $compile("<div mac-tooltip='test' mac-tooltip-trigger='click'></div>") $rootScope
+      tip = $compile("<div mac-tooltip='test' mac-tooltip-trigger='click'></div>") $rootScope
       $rootScope.$digest()
       # show
       tip.trigger "click"
       expect($(".tooltip").length).toBe 1
+
       # hide
-      runs ->
-        tip.trigger "click"
-        setTimeout (-> called = true), 150
+      tip.trigger "click"
+      $timeout.flush()
 
-      waitsFor ->
-        return called
-      , "Tooltip should be removed", 750
-
-      runs ->
-        expect($(".tooltip").length).toBe 0
+      expect($(".tooltip").length).toBe 0
 
     it "should throw an error with invalid trigger", ->
       compile = ->
@@ -83,15 +62,6 @@ describe "Mac Tooltip", ->
       expect(compile).toThrow()
 
   describe "Direction", ->
-    $compile   = null
-    $rootScope = null
-
-    beforeEach inject (_$compile_, _$rootScope_) ->
-      $compile   = _$compile_
-      $rootScope = _$rootScope_
-
-    afterEach ->
-      $(".tooltip").remove()
 
     it "should set direction to top as default", ->
       tip = $compile("<div mac-tooltip='test'></div>") $rootScope
@@ -109,16 +79,23 @@ describe "Mac Tooltip", ->
 
       expect($(".tooltip").hasClass "bottom").toBe true
 
+  describe "disabled", ->
+
+    it "should not create a tooltip", ->
+      tip = $compile("<div mac-tooltip='test' mac-tooltip-disabled='true'></div>") $rootScope
+      $rootScope.$digest()
+
+      tip.trigger "mouseenter"
+      expect($(".tooltip").length).toBe 0
+
+    it "should create a tooltip", ->
+      tip = $compile("<div mac-tooltip='test' mac-tooltip-disabled='false'></div>") $rootScope
+      $rootScope.$digest()
+
+      tip.trigger "mouseenter"
+      expect($(".tooltip").length).toBe 1
+
   describe "Inside", ->
-    $compile   = null
-    $rootScope = null
-
-    beforeEach inject (_$compile_, _$rootScope_) ->
-      $compile   = _$compile_
-      $rootScope = _$rootScope_
-
-    afterEach ->
-      $(".tooltip").remove()
 
     it "should append tooltip inside of trigger", ->
       tip = $compile("<div mac-tooltip='test' mac-tooltip-inside></div>") $rootScope
