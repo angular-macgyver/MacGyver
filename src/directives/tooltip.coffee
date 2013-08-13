@@ -13,8 +13,9 @@ Tooltip directive
 ###
 
 angular.module("Mac").directive "macTooltip", [
+  "$timeout"
   "util"
-  (util) ->
+  ($timeout, util) ->
     restrict: "A"
 
     link: (scope, element, attrs) ->
@@ -70,7 +71,7 @@ angular.module("Mac").directive "macTooltip", [
 
       removeTip = (event) ->
         tooltip.removeClass "visible"
-        setTimeout ->
+        $timeout ->
           tooltip.remove()
         , 100
 
