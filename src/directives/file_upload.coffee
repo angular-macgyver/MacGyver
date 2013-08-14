@@ -20,7 +20,7 @@ Directive for proxying jQuery file upload
 ###
 
 angular.module("Mac").
-directive("macUpload", ["$rootScope", "$parse", "util", ($rootScope, $parse, util) ->
+directive("macUpload", ["$rootScope", "$parse", "$timeout", "util", ($rootScope, $parse, $timeout, util) ->
   require:    ["macUpload", "?macUploadPreviews"]
   controller: ["$scope", ->]
   link:       ($scope, element, attrs, ctrls) ->
@@ -85,13 +85,13 @@ directive("macUpload", ["$rootScope", "$parse", "util", ($rootScope, $parse, uti
       dropZone        = element.parents opts.dropZone
 
       $(document).bind "dragover", (event) ->
-        clearTimeout(dragoverTimeout) if dragoverTimeout?
+        $timeout.cancel dragoverTimeout if dragoverTimeout?
 
         node   = $(event.target).parents opts.dropZone
         method = if node.length then "addClass" else "removeClass"
         dropZone[method] "droppable"
 
-        dragoverTimeout = setTimeout ->
+        dragoverTimeout = $timeout ->
           clearTimeout(dragoverTimeout) if dragoverTimeout?
           dropZone.removeClass "droppable"
         , 250
