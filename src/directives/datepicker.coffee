@@ -36,8 +36,9 @@ A directive for creating a datepicker on text input using jquery ui
 
 angular.module("Mac").directive "macDatepicker", [
   "$parse"
+  "$timeout"
   "util"
-  ($parse, util) ->
+  ($parse, $timeout, util) ->
     restrict:    "E"
     replace:     true
     templateUrl: "template/datepicker.html"
@@ -81,7 +82,7 @@ angular.module("Mac").directive "macDatepicker", [
 
         $scope.$watch attrs.macDatepickerModel, (value) ->
           if initialized and value?
-            setTimeout ->
+            $timeout ->
               inputElement.datepicker "setDate", value
             , 0
 
