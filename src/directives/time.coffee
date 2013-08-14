@@ -13,9 +13,10 @@ A directive for creating a time input field
 
 angular.module("Mac").directive "macTime", [
   "$filter"
+  "$timeout"
   "util"
   "keys"
-  ($filter, util, keys) ->
+  ($filter, $timeout, util, keys) ->
     restrict: "E"
     scope:
       model:    "=macTimeModel"
@@ -99,9 +100,9 @@ angular.module("Mac").directive "macTime", [
           $scope.model = $filter("date") $scope.time.getTime(), "hh:mm a"
 
           # Highlight hour on activating the time input
-          setTimeout (->
+          $timeout ->
             inputSelectAction start, end, highlighActions
-          ), 0
+          , 0
 
         #
         # @name $scope.updateScopeTime
