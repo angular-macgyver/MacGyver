@@ -30,8 +30,9 @@ A directive for generating tag input with autocomplete support on text input
 
 angular.module("Mac").directive "macTagAutocomplete", [
   "$parse",
+  "$timeout"
   "keys",
-  ($parse, keys) ->
+  ($parse, $timeout, keys) ->
     restrict:    "E"
     templateUrl: "template/tag_autocomplete.html"
     replace:     true
@@ -138,7 +139,7 @@ angular.module("Mac").directive "macTagAutocomplete", [
             item = $scope.onEnter {item}
 
           $scope.selected.push item if item?
-          setTimeout ->
+          $timeout ->
             $scope.$apply -> $scope.textInput = ""
           , 0
 
