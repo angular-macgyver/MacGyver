@@ -9,11 +9,10 @@
     "url": "git@github.com:StartTheShift/MacGyver.git"
   },
   "engines": {
-    "node": "~0.6.10 || 0.8 || 0.9"
+    "node": "0.8 || 0.9"
   },
   "scripts": {
-    "start": "node_modules/.bin/brunch build",
-    "test": "brunch test"
+    "test": "grunt karma"
   },
   "dependencies": {},
   "devDependencies": {
@@ -30,7 +29,7 @@
     "grunt-contrib-stylus": "~0.5.0",
     "grunt-contrib-uglify": "~0.2.0",
     "grunt-contrib-watch": "~0.2.0",
-    "grunt-karma": "~0.3.0",
+    "grunt-karma": "~0.6.1",
     "http-proxy": "~0.8.5",
     "marked": "~0.2.9",
     "matchdep": "~0.1.2",
@@ -40,7 +39,14 @@
     "stylus": "~0.32.0",
     "underscore": ">= 1.4.0 < 1.5",
     "wrench": "1.5.1",
-    "karma-coffee-preprocessor": "0.0.2",
-    "karma-ng-html2js-preprocessor": "0.0.2"
+    "karma-script-launcher": "~0.1.0",
+    "karma-chrome-launcher": "~0.1.0",
+    "karma-firefox-launcher": "~0.1.0",
+    "karma-jasmine": "~0.1.0",
+    "karma-requirejs": "~0.1.0",
+    "karma-coffee-preprocessor": "~0.1.0",
+    "karma-phantomjs-launcher": "~0.1.0",
+    "karma": "~0.10.1",
+    "karma-ng-html2js-preprocessor": "~0.1.0"
   }
 }
