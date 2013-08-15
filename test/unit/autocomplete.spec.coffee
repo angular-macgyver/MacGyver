@@ -107,55 +107,34 @@ describe "Mac autocomplete", ->
       $timeout = _$timeout_
 
     it "should use default delay - 800ms", ->
-      called            = false
       $rootScope.source = data
 
       element = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-source='source'></mac-autocomplete>") $rootScope
       $rootScope.$digest()
 
-      runs ->
-        expect($(".mac-menu").hasClass "visible").toBe false
+      expect($(".mac-menu").hasClass "visible").toBe false
 
-        changeInputValue element, "f"
-        $rootScope.$digest()
+      changeInputValue element, "f"
+      $rootScope.$digest()
 
-        setTimeout ->
-          $timeout.flush()
-          called = true
-        , 900
+      $timeout.flush()
 
-      waitsFor ->
-        return called
-
-      , "Menu delay", 950
-
-      runs ->
-        expect($(".mac-menu").hasClass "visible").toBe true
+      expect($(".mac-menu").hasClass "visible").toBe true
 
     it "should delay for 200ms", ->
-      called            = false
       $rootScope.source = data
 
       element = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-source='source' mac-autocomplete-delay='200'></mac-autocomplete>") $rootScope
       $rootScope.$digest()
 
-      runs ->
-        expect($(".mac-menu").hasClass "visible").toBe false
+      expect($(".mac-menu").hasClass "visible").toBe false
 
-        changeInputValue element, "f"
-        $rootScope.$digest()
+      changeInputValue element, "f"
+      $rootScope.$digest()
 
-        setTimeout ->
-          $timeout.flush()
-          called = true
-        , 250
+      $timeout.flush()
 
-      waitsFor ->
-        return called
-      , "Menu delay for 200ms", 250
-
-      runs ->
-        expect($(".mac-menu").hasClass "visible").toBe true
+      expect($(".mac-menu").hasClass "visible").toBe true
 
     it "should disable autocomplete", ->
       $rootScope.disabled = true
