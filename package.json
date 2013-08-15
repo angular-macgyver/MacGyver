@@ -9,7 +9,7 @@
     "url": "git@github.com:StartTheShift/MacGyver.git"
   },
   "engines": {
-    "node": "0.8 || 0.9"
+    "node": "0.8 || 0.10"
   },
   "scripts": {
     "test": "grunt karma"
