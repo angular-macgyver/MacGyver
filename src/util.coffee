@@ -51,6 +51,17 @@ util.factory "util", [
         [/$/,                        "s"      ]
       ]
 
+    ###
+    @name pluralize
+    @description
+    Pluralize string based on the count
+
+    @param {String}  string       String to pluralize
+    @param {Integer} count        Object counts
+    @param {Boolean} includeCount Include the number or not (default false)
+
+    @returns {String} Pluralized string based on the count
+    ###
     pluralize: (string, count, includeCount = false) ->
       # If our string has no length, return without further processing
       return string unless string?.trim().length > 0
@@ -84,10 +95,19 @@ util.factory "util", [
       pluralizedString  = string[0...-word.length] + pluralizedWord
       if includeCount then "#{$filter("number") count} #{pluralizedString}" else pluralizedString
 
-    capitalize:   (string) -> _.string.capitalize string
-    uncapitalize: (string) -> string[0].toLowerCase() + string[1..]
-    toCamelCase:  (string) -> _.string.camelize string
-    toSnakeCase:  (string) -> _.string.underscored string
+    capitalize: (string) ->
+      str = String(string) or ""
+      return str.charAt(0).toUpperCase() + str[1..]
+    uncapitalize: (string) ->
+      str = String(string) or ""
+      return str.charAt(0).toLowerCase() + str[1..]
+    toCamelCase: (string) ->
+      string.trim().replace /[-_\s]+(.)?/g, (match, c) -> c.toUpperCase()
+    toSnakeCase: (string) ->
+      string.trim().
+        replace(/([a-z\d])([A-Z]+)/g, "$1_$2").
+        replace(/[-\s]+/g, "_").
+        toLowerCase()
 
     convertKeysToCamelCase: (object) ->
       result = {}
@@ -145,12 +165,12 @@ util.factory "util", [
       urlComponents  = fullPath.split "?"
       pathComponents = urlComponents[0].split("/")
       path           = pathComponents[0...pathComponents.length-1].join("/")
-      verb           = _.last pathComponents
+      verb           = pathComponents[pathComponents.length-1]
       queries        = {}
 
       # Check if querystring exists
       if urlComponents.length > 1
-        queryStrings = _.last urlComponents
+        queryStrings = urlComponents[urlComponents.length-1]
         for queryString in queryStrings.split("&")
           values = queryString.split "="
           queries[values[0]] = if values[1]? then values[1] else ""

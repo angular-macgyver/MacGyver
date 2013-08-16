@@ -29,10 +29,11 @@ A directive for generating tag input with autocomplete support on text input
 ###
 
 angular.module("Mac").directive "macTagAutocomplete", [
-  "$parse",
+  "$parse"
   "$timeout"
-  "keys",
-  ($parse, $timeout, keys) ->
+  "keys"
+  "util"
+  ($parse, $timeout, keys, util) ->
     restrict:    "E"
     templateUrl: "template/tag_autocomplete.html"
     replace:     true
@@ -57,7 +58,7 @@ angular.module("Mac").directive "macTagAutocomplete", [
       eventsList  = []
       if events
         for item in events.split(",")
-          attrEvent = _.string.capitalize item
+          attrEvent = util.capitalize item
           eventsList.push
             name:        item
             capitalized: attrEvent
