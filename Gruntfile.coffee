@@ -90,12 +90,12 @@ module.exports = (grunt) ->
     stylus:
       compile:
         options:
-          use: [require "nib"]
+          use: ["nib"]
         files:
           "tmp/app.css": ["src/css/*.styl"]
       vendor:
         options:
-          use: [require "nib"]
+          use: ["nib"]
         files:
           "tmp/vendor.css": "vendor/vendor.styl"
 
