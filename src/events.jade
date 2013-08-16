@@ -15,9 +15,9 @@ block append content
         .docs-example
           input(type="text", mac-blur="onTextBlur()")
         pre.prettyprint.linenums(ng-non-bindable)
-          | <input type="text" mac-blur="onTextBlur()"/>
+          = '<input type="text" mac-blur="onTextBlur()"/>'
 
 block append scripts
-  script
+  script.
     $("#top-nav li").removeClass("active");
     $("#events-nav").addClass("active");

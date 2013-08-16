@@ -23,7 +23,7 @@ block append content
           p {{ "Truncating: lorem ipsum dolor sit amet, consectetur adipiscing elit." | underscoreString: "truncate": 42 }}
           p {{ "Pruning: lorem ipsum dolor sit amet, consectetur adipiscing elit." | underscoreString: "prune": 42: "... (show more)" }}
         pre.prettyprint.linenums(ng-non-bindable)
-          | <p>{{ "this_Is_aTestFor_Underscore_string" | underscoreString: "humanize" }}</p>
+          = '<p>{{ "this_Is_aTestFor_Underscore_string" | underscoreString: "humanize" }}</p>'
 
       section#pluralize-filter
         @@include("docs/html/filters/pluralize.html")
@@ -35,7 +35,7 @@ block append content
             dt Multiple
             dd {{"person" | pluralize:1500}}
         pre.prettyprint.linenums(ng-non-bindable)
-          | {{"person" | pluralize:1500}}
+          = '{{"person" | pluralize:1500}}'
 
       section#timestamp-filter
         @@include("docs/html/filters/timestamp.html")
@@ -49,9 +49,9 @@ block append content
             dt Now - 3 days
             dd {{ threeDaysAgo | timestamp }}
         pre.prettyprint.linenums(ng-non-bindable)
-          | {{ fiveMinAgo | timestamp }}
+          = '{{ fiveMinAgo | timestamp }}'
 
 block append scripts
-  script
+  script.
     $("#top-nav li").removeClass("active");
     $("#filters-nav").addClass("active");

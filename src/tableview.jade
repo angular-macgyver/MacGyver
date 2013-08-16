@@ -28,22 +28,22 @@ block append content
                   span {{cell.value()}}
 
         pre.prettyprint.linenums(ng-non-bindable)
-          | <table mac-table  mac-table-columns="dynamic" class="table mac-table-default">
-          |   <thead mac-table-section="header" mac-table-section-blank-row>
-          |     <tr mac-table-row>
-          |       <th mac-cell-template="No." mac-column-width="5%"><span>{{cell.colName}}</span></th>
-          |       <th mac-cell-template="Title" mac-column-width="35%"><span>{{cell.colName}}</span></th>
-          |       <th mac-cell-template="" mac-column-width="auto"><span>{{cell.colName}}</span></th>
-          |     </tr>
-          |   </thead>
-          |   <tbody mac-table-section="body" mac-table-section-models="macGyverSeasonOne">
-          |     <tr table-row>
-          |       <td mac-cell-template=""><span>{{cell.value()}}</span></td>
-          |     </tr>
-          |   </tbody>
-          | </table>
+          = '<table mac-table  mac-table-columns="dynamic" class="table mac-table-default">\n'
+          = '  <thead mac-table-section="header" mac-table-section-blank-row>\n'
+          = '    <tr mac-table-row>\n'
+          = '      <th mac-cell-template="No." mac-column-width="5%"><span>{{cell.colName}}</span></th>\n'
+          = '      <th mac-cell-template="Title" mac-column-width="35%"><span>{{cell.colName}}</span></th>\n'
+          = '      <th mac-cell-template="" mac-column-width="auto"><span>{{cell.colName}}</span></th>\n'
+          = '    </tr>\n'
+          = '  </thead>\n'
+          = '  <tbody mac-table-section="body" mac-table-section-models="macGyverSeasonOne">\n'
+          = '    <tr table-row>\n'
+          = '      <td mac-cell-template=""><span>{{cell.value()}}</span></td>\n'
+          = '    </tr>\n'
+          = '  </tbody>\n'
+          = '</table>\n'
 
 block append scripts
-  script
+  script.
     $("#top-nav li").removeClass("active");
     $("#tableview-nav").addClass("active");

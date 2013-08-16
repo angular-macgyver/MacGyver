@@ -1,6 +1,5 @@
 fs        = require "fs"
 express   = require "express"
-httpProxy = require "http-proxy"
 
 exports.startServer = (port, publicPath, callback) ->
   server = express()

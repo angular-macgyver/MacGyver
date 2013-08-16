@@ -14,7 +14,7 @@ module.controller "ExampleController", ["$scope", "$timeout", "Table", ($scope, 
     for i in [1..x]
       $scope.macGyverSeasonOne.push {'No.': '1', 'Title': '"Pilot"', 'Directed by': 'Jerrold Freedman', 'Written by': 'Thackary Pallor', 'Original air date': 'September 29, 1985'}
 
-  $scope.loadDataIntoTable(1000)
+  $scope.loadDataIntoTable(100)
 
   # Editable
   $scope.editableTest = "Hello"
