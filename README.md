@@ -27,6 +27,8 @@ Duct Tape and a Swiss Army Knife. Angular helpers for all your friends!
 ## 3rd party libraries dependencies ##
  - jQuery
  - jQuery UI (datepicker and table)
+ - jQuery File Upload (file upload directive)
+ - Underscore String (Underscore string filter)
 
 ## Get Started ##
 MacGyver requires a few node modules for development environment.
