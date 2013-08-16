@@ -176,6 +176,10 @@ module.exports = (grunt) ->
       unit:
         configFile: "test/karma.conf.js"
         autoWatch: true
+      travis:
+        configFile: "test/karma.conf.js"
+        autoWatch: false
+        singleRun: true
 
     #
     # chalkboard section
@@ -340,7 +344,7 @@ module.exports = (grunt) ->
     spawn args: ["compile"], ->
       spawn args: ["watch"]
       spawn args: ["server"]
-      spawn args: ["karma"]
+      spawn args: ["karma:unit"]
 
   grunt.registerTask "server", "Run test server", ->
     @async()

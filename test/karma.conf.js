@@ -61,7 +61,7 @@ module.exports = function(config) {
     // - PhantomJS
     // - IE (only Windows)
     // CLI --browsers Chrome,Firefox,Safari
-    browsers: [process.env.TRAVIS ? 'Firefox' : 'Chrome', 'PhantomJS'],
+    browsers: [process.env.TRAVIS ? 'PhantomJS' : 'Chrome'],
 
     // If browser does not capture in given timeout [ms], kill it
     // CLI --capture-timeout 5000

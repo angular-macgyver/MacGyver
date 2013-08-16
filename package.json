@@ -12,7 +12,7 @@
     "node": "0.8 || 0.10"
   },
   "scripts": {
-    "test": "grunt karma"
+    "test": "grunt karma:travis"
   },
   "dependencies": {},
   "devDependencies": {
