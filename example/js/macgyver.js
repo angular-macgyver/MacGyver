@@ -7853,6 +7853,22 @@ angular.module("Mac").directive("macDatepicker", [
   }
 ]);
 
+/*
+@chalk overview
+@name Events
+
+@description
+A directive for handling basic html events (e.g., blur, keyup, focus, etc.)
+Currently MacGyver has blur, focus, keydown, keyup, mouseenter and mouseleave
+
+@param {Expression} mac-blur       Expression to evaulate on blur
+@param {Expression} mac-focus      Expression to evulate on focus
+@param {Expression} mac-keydown    Expression to evulate on keydown
+@param {Expression} mac-keyup      Expression to evulate on keyup
+@param {Expression} mac-mouseenter Expression to evulate on mouseenter
+@param {Expression} mac-mouseleave Expression to evulate on mouseleave
+*/
+
 var event, _fn, _i, _len, _ref;
 
 _ref = ["Blur", "Focus", "Keydown", "Keyup", "Mouseenter", "Mouseleave"];
@@ -7864,10 +7880,10 @@ _fn = function(event) {
         link: function(scope, element, attributes) {
           var expression;
           expression = $parse(attributes["mac" + event]);
-          return element.on(event.toLowerCase(), function(event) {
+          return element.on(event.toLowerCase(), function($event) {
             scope.$apply(function() {
               return expression(scope, {
-                $event: event
+                $event: $event
               });
             });
             return true;
@@ -7882,6 +7898,23 @@ for (_i = 0, _len = _ref.length; _i < _len; _i++) {
   _fn(event);
 }
 
+/*
+@chalk overview
+@name Keydown events
+
+@description
+A directive for handling certain keys on keydown event
+Currently MacGyver supports enter, escape, space, left, up, right and down
+
+@param {Expression} mac-keydown-enter  Expression to evaulate on hitting enter
+@param {Expression} mac-keydown-escape Expression to evaulate on hitting escape
+@param {Expression} mac-keydown-space  Expression to evaulate on hitting space
+@param {Expression} mac-keydown-left   Expression to evaulate on hitting left
+@param {Expression} mac-keydown-up     Expression to evaulate on hitting up
+@param {Expression} mac-keydown-right  Expression to evaulate on hitting right
+@param {Expression} mac-keydown-down   Expression to evaulate on hitting down
+*/
+
 var key, _fn, _i, _len, _ref;
 
 _ref = ["Enter", "Escape", "Space", "Left", "Up", "Right", "Down"];
@@ -7893,12 +7926,12 @@ _fn = function(key) {
         link: function(scope, element, attributes) {
           var expression;
           expression = $parse(attributes["macKeydown" + key]);
-          return element.on("keydown", function(event) {
+          return element.on("keydown", function($event) {
             if (event.which === keys["" + (key.toUpperCase())]) {
               event.preventDefault();
               return scope.$apply(function() {
                 return expression(scope, {
-                  $event: event
+                  $event: $event
                 });
               });
             }
@@ -7912,6 +7945,17 @@ for (_i = 0, _len = _ref.length; _i < _len; _i++) {
   key = _ref[_i];
   _fn(key);
 }
+
+/*
+@chalk overview
+@name Pause Typing
+
+@description
+macPauseTyping directive allow user to specify custom behavior after user stops typing for more than (delay) milliseconds
+
+@param {Expression} mac-pause-typing       Expression to evaluate after delay
+@param {Expression} mac-pause-typing-delay Delay value to evaluate expression (default 800)
+*/
 
 angular.module("Mac").directive("macPauseTyping", [
   "$parse", "$timeout", function($parse, $timeout) {
@@ -7937,20 +7981,35 @@ angular.module("Mac").directive("macPauseTyping", [
   }
 ]);
 
+/*
+@chalk overview
+@name Windows Resize
+
+@description
+Binding custom behavior on window resize event
+
+@param {Expression} mac-window-resize Expression to evaulate on window resize
+*/
+
 angular.module("Mac").directive("macWindowResize", [
   "$parse", "$window", function($parse, $window) {
     return {
       restrict: "A",
       link: function($scope, element, attrs) {
-        var callbackFn;
-        callbackFn = $parse(attrs.macWindowResize);
-        return $($window).bind("resize", function($event) {
+        var handler;
+        handler = function($event) {
+          var callbackFn;
+          callbackFn = $parse(attrs.macWindowResize);
           $scope.$apply(function() {
             return callbackFn($scope, {
               $event: $event
             });
           });
           return true;
+        };
+        angular.element($window).bind("resize", handler);
+        return $scope.$on("destroy", function() {
+          return angular.element($window).unbind("resize", handler);
         });
       }
     };
@@ -9171,7 +9230,7 @@ A directive for generating tag input with autocomplete support on text input
 var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 angular.module("Mac").directive("macTagAutocomplete", [
-  "$parse", "$timeout", "keys", function($parse, $timeout, keys) {
+  "$parse", "$timeout", "keys", "util", function($parse, $timeout, keys, util) {
     return {
       restrict: "E",
       templateUrl: "template/tag_autocomplete.html",
@@ -9204,7 +9263,7 @@ angular.module("Mac").directive("macTagAutocomplete", [
           _ref = events.split(",");
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             item = _ref[_i];
-            attrEvent = _.string.capitalize(item);
+            attrEvent = util.capitalize(item);
             eventsList.push({
               name: item,
               capitalized: attrEvent,
@@ -9738,7 +9797,7 @@ module.controller("modalController", [
 ]);
 
 module.controller("ExampleController", [
-  "$scope", "$timeout", "Table", function($scope, $timeout, Table) {
+  "$scope", "$timeout", "$window", "Table", function($scope, $timeout, $window, Table) {
     $scope.loadDataIntoTable = function(x) {
       var i, _i, _results;
       if (x == null) {
@@ -9856,7 +9915,13 @@ module.controller("ExampleController", [
     $scope.startTime = "04:42 PM";
     $scope.fiveMinAgo = Math.round(Date.now() / 1000) - 5 * 60;
     $scope.oneDayAgo = Math.round(Date.now() / 1000) - 24 * 60 * 60;
-    return $scope.threeDaysAgo = Math.round(Date.now() / 1000) - 72 * 60 * 60;
+    $scope.threeDaysAgo = Math.round(Date.now() / 1000) - 72 * 60 * 60;
+    $scope.afterPausing = function($event) {
+      return $scope.pauseTypingModel = angular.element($event.target).val();
+    };
+    return $scope.windowResizing = function($event) {
+      return $scope.windowWidth = angular.element($event.target).width();
+    };
   }
 ]);
 
@@ -10643,6 +10708,18 @@ util.factory("util", [
         },
         pluralizers: [[/(quiz)$/i, "$1zes"], [/([m|l])ouse$/i, "$1ice"], [/(matr|vert|ind)(ix|ex)$/i, "$1ices"], [/(x|ch|ss|sh)$/i, "$1es"], [/([^aeiouy]|qu)y$/i, "$1ies"], [/(?:([^f])fe|([lr])f)$/i, "$1$2ves"], [/sis$/i, "ses"], [/([ti])um$/i, "$1a"], [/(buffal|tomat)o$/i, "$1oes"], [/(bu)s$/i, "$1ses"], [/(alias|status)$/i, "$1es"], [/(octop|vir)us$/i, "$1i"], [/(ax|test)is$/i, "$1es"], [/x$/i, "xes"], [/s$/i, "s"], [/$/, "s"]]
       },
+      /*
+      @name pluralize
+      @description
+      Pluralize string based on the count
+      
+      @param {String}  string       String to pluralize
+      @param {Integer} count        Object counts
+      @param {Boolean} includeCount Include the number or not (default false)
+      
+      @returns {String} Pluralized string based on the count
+      */
+
       pluralize: function(string, count, includeCount) {
         var irregulars, isUppercase, lowercaseWord, pluralizedString, pluralizedWord, pluralizer, pluralizers, uncountables, word, _i, _len, _ref;
         if (includeCount == null) {
@@ -10689,16 +10766,22 @@ util.factory("util", [
         }
       },
       capitalize: function(string) {
-        return _.string.capitalize(string);
+        var str;
+        str = String(string) || "";
+        return str.charAt(0).toUpperCase() + str.slice(1);
       },
       uncapitalize: function(string) {
-        return string[0].toLowerCase() + string.slice(1);
+        var str;
+        str = String(string) || "";
+        return str.charAt(0).toLowerCase() + str.slice(1);
       },
       toCamelCase: function(string) {
-        return _.string.camelize(string);
+        return string.trim().replace(/[-_\s]+(.)?/g, function(match, c) {
+          return c.toUpperCase();
+        });
       },
       toSnakeCase: function(string) {
-        return _.string.underscored(string);
+        return string.trim().replace(/([a-z\d])([A-Z]+)/g, "$1_$2").replace(/[-\s]+/g, "_").toLowerCase();
       },
       convertKeysToCamelCase: function(object) {
         var key, result, value;
@@ -10774,10 +10857,10 @@ util.factory("util", [
         urlComponents = fullPath.split("?");
         pathComponents = urlComponents[0].split("/");
         path = pathComponents.slice(0, pathComponents.length - 1).join("/");
-        verb = _.last(pathComponents);
+        verb = pathComponents[pathComponents.length - 1];
         queries = {};
         if (urlComponents.length > 1) {
-          queryStrings = _.last(urlComponents);
+          queryStrings = urlComponents[urlComponents.length - 1];
           _ref = queryStrings.split("&");
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             queryString = _ref[_i];
