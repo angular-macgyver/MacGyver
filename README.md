@@ -1,4 +1,4 @@
-# MacGyver #
+# MacGyver [![Build Status](https://travis-ci.org/StartTheShift/MacGyver.png?branch=master)](https://travis-ci.org/StartTheShift/MacGyver)
 
 Duct Tape and a Swiss Army Knife. Angular helpers for all your friends!
 
