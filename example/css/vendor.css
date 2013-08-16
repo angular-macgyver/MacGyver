@@ -12,6 +12,11 @@ section h1{padding-bottom:9px;margin:20px 0 30px;border-bottom:1px solid #eee}
 .docs-sidenav li:last-child a{-webkit-border-radius:0 0 6px 6px;border-radius:0 0 6px 6px}
 .docs-sidenav li .icon-chevron-right{float:right;margin-top:2px;margin-right:-6px;opacity:.25;-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=25)";filter:alpha(opacity=25)}
 .docs-sidenav .active a{position:relative;z-index:2;padding:9px 15px;border:0;text-shadow:0 1px 0 rgba(0,0,0,0.15);-webkit-box-shadow:inset 1px 0 0 rgba(0,0,0,0.1),inset -1px 0 0 rgba(0,0,0,0.1);box-shadow:inset 1px 0 0 rgba(0,0,0,0.1),inset -1px 0 0 rgba(0,0,0,0.1)}
+.footer{text-align:center;padding:30px 0;margin-top:70px;border-top:1px solid #e5e5e5;background-color:#f5f5f5;}
+.footer p{margin-bottom:0;color:#777}
+.footer .footer-links{margin:10px 0;}
+.footer .footer-links li{display:inline;padding:0 2px;}
+.footer .footer-links li:first-child{padding-left:0}
 .com{color:#93a1a1}
 .lit{color:#195f91}
 .pun,.opn,.clo{color:#93a1a1}
