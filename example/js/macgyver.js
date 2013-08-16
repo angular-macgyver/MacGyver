@@ -7557,6 +7557,7 @@ A directive for providing suggestions while typing into the field
 @param {String}  mac-autocomplete-query The query parameter on GET command              (default "q")
 @param {Integer} mac-autocomplete-delay Delay on fetching autocomplete data after keyup (default 800)
 */
+
 angular.module("Mac").directive("macAutocomplete", [
   "$http", "$filter", "$compile", "$timeout", "$parse", "$rootScope", "keys", function($http, $filter, $compile, $timeout, $parse, $rootScope, keys) {
     return {
@@ -7566,7 +7567,6 @@ angular.module("Mac").directive("macAutocomplete", [
       require: "ngModel",
       link: function($scope, element, attrs, ctrl) {
         var $menuScope, autocompleteUrl, currentAutocomplete, delay, disabled, inside, labelKey, menuEl, onError, onSelect, onSuccess, positionMenu, queryData, queryKey, reset, source, timeoutId, updateItem;
-
         labelKey = attrs.macAutocompleteLabel || "name";
         queryKey = attrs.macAutocompleteQuery || "q";
         delay = +(attrs.macAutocompleteDelay || 800);
@@ -7612,7 +7612,6 @@ angular.module("Mac").directive("macAutocomplete", [
         };
         updateItem = function(data) {
           var item, label, value, _i, _len, _results;
-
           if (data == null) {
             data = [];
           }
@@ -7631,7 +7630,6 @@ angular.module("Mac").directive("macAutocomplete", [
         };
         queryData = function(query) {
           var options, url;
-
           url = autocompleteUrl($scope);
           if (url) {
             options = {
@@ -7642,7 +7640,6 @@ angular.module("Mac").directive("macAutocomplete", [
             options.params[queryKey] = query;
             return $http(options).success(function(data, status, headers, config) {
               var dataList;
-
               dataList = onSuccess($scope, {
                 data: data,
                 status: status,
@@ -7667,7 +7664,6 @@ angular.module("Mac").directive("macAutocomplete", [
         };
         $menuScope.select = function(index) {
           var label, selected;
-
           selected = currentAutocomplete[index];
           onSelect($scope, {
             selected: selected
@@ -7767,15 +7763,15 @@ A directive for creating a datepicker on text input using jquery ui
 @param {Integer}    mac-datepicker-year-range           The range of years displayed in the year drop-down
 @param {Boolean}    mac-datepicker-disabled             Enable or disable datepicker
 */
+
 angular.module("Mac").directive("macDatepicker", [
-  "$parse", "util", function($parse, util) {
+  "$parse", "$timeout", "util", function($parse, $timeout, util) {
     return {
       restrict: "E",
       replace: true,
       templateUrl: "template/datepicker.html",
       compile: function(element, attrs) {
         var defaults, inputAttrs, inputElement, opts;
-
         defaults = {
           id: "input-date",
           appendText: "",
@@ -7804,7 +7800,6 @@ angular.module("Mac").directive("macDatepicker", [
         inputElement = $("input", element).attr(inputAttrs);
         return function($scope, element, attrs) {
           var initialized, model, onClose, onSelect, setOptions;
-
           onSelect = $parse(attrs.macDatepickerOnSelect);
           onClose = $parse(attrs.macDatepickerOnClose);
           model = $parse(attrs.macDatepickerModel);
@@ -7817,7 +7812,7 @@ angular.module("Mac").directive("macDatepicker", [
           };
           $scope.$watch(attrs.macDatepickerModel, function(value) {
             if (initialized && (value != null)) {
-              return setTimeout(function() {
+              return $timeout(function() {
                 return inputElement.datepicker("setDate", value);
               }, 0);
             }
@@ -7868,7 +7863,6 @@ _fn = function(event) {
         restrict: "A",
         link: function(scope, element, attributes) {
           var expression;
-
           expression = $parse(attributes["mac" + event]);
           return element.on(event.toLowerCase(), function(event) {
             scope.$apply(function() {
@@ -7898,7 +7892,6 @@ _fn = function(key) {
         restrict: "A",
         link: function(scope, element, attributes) {
           var expression;
-
           expression = $parse(attributes["macKeydown" + key]);
           return element.on("keydown", function(event) {
             if (event.which === keys["" + (key.toUpperCase())]) {
@@ -7921,24 +7914,23 @@ for (_i = 0, _len = _ref.length; _i < _len; _i++) {
 }
 
 angular.module("Mac").directive("macPauseTyping", [
-  "$parse", function($parse) {
+  "$parse", "$timeout", function($parse, $timeout) {
     return {
       restrict: "A",
       link: function(scope, element, attributes) {
         var delay, expression, keyupTimer;
-
         expression = $parse(attributes["macPauseTyping"]);
         delay = scope.$eval(attributes["macPauseTypingDelay"]) || 800;
-        keyupTimer = "";
-        return element.on("keyup", function(event) {
-          clearTimeout(keyupTimer);
-          return keyupTimer = setTimeout((function() {
-            return scope.$apply(function() {
-              return expression(scope, {
-                $event: event
-              });
+        keyupTimer = null;
+        return element.on("keyup", function($event) {
+          if (keyupTimer != null) {
+            $timeout.cancel(keyupTimer);
+          }
+          return keyupTimer = $timeout(function() {
+            return expression(scope, {
+              $event: $event
             });
-          }), delay);
+          }, delay);
         });
       }
     };
@@ -7951,7 +7943,6 @@ angular.module("Mac").directive("macWindowResize", [
       restrict: "A",
       link: function($scope, element, attrs) {
         var callbackFn;
-
         callbackFn = $parse(attrs.macWindowResize);
         return $($window).bind("resize", function($event) {
           $scope.$apply(function() {
@@ -7986,14 +7977,14 @@ Directive for proxying jQuery file upload
 @param {Expression} mac-upload-form-data  Additional form data {Array|Object|Function|FormData}
 @param {Expression} mac-upload-options    Additional options to pass to jquery fileupload
 */
+
 angular.module("Mac").directive("macUpload", [
-  "$rootScope", "$parse", "util", function($rootScope, $parse, util) {
+  "$rootScope", "$parse", "$timeout", "util", function($rootScope, $parse, $timeout, util) {
     return {
       require: ["macUpload", "?macUploadPreviews"],
       controller: ["$scope", function() {}],
       link: function($scope, element, attrs, ctrls) {
         var applyCallback, defaults, dragoverTimeout, dropZone, extraOptions, options, opts, previewCtrl, setOptions, uploadCtrl;
-
         uploadCtrl = ctrls[0];
         previewCtrl = ctrls[1];
         defaults = {
@@ -8015,12 +8006,10 @@ angular.module("Mac").directive("macUpload", [
         };
         applyCallback = function(action, $event, $data) {
           var callbackFn;
-
           callbackFn = $parse(opts[action]);
           if (callbackFn != null) {
             return $scope.$apply(function() {
               var $response, $status, $xhr, args, err, responseText, _ref, _ref1;
-
               $xhr = $data.jqXHR;
               $status = (_ref = $data.jqXHR) != null ? _ref.status : void 0;
               responseText = ((_ref1 = $data.jqXHR) != null ? _ref1.responseText : void 0) || "";
@@ -8046,7 +8035,6 @@ angular.module("Mac").directive("macUpload", [
           replaceFileInput: false,
           submit: function($event, $data) {
             var submitEvent;
-
             submitEvent = function() {
               return applyCallback("submit", $event, $data);
             };
@@ -8083,14 +8071,13 @@ angular.module("Mac").directive("macUpload", [
           dropZone = element.parents(opts.dropZone);
           $(document).bind("dragover", function(event) {
             var method, node;
-
             if (dragoverTimeout != null) {
-              clearTimeout(dragoverTimeout);
+              $timeout.cancel(dragoverTimeout);
             }
             node = $(event.target).parents(opts.dropZone);
             method = node.length ? "addClass" : "removeClass";
             dropZone[method]("droppable");
-            return dragoverTimeout = setTimeout(function() {
+            return dragoverTimeout = $timeout(function() {
               if (dragoverTimeout != null) {
                 clearTimeout(dragoverTimeout);
               }
@@ -8128,7 +8115,6 @@ angular.module("Mac").directive("macUpload", [
         "$scope", "$attrs", "$parse", function($scope, $attrs, $parse) {
           this.previews = function(value) {
             var previewsGet, previewsSet;
-
             previewsGet = $parse($attrs.macUploadPreviews);
             previewsSet = previewsGet.assign;
             if (value != null) {
@@ -8139,7 +8125,6 @@ angular.module("Mac").directive("macUpload", [
           };
           this.getByFilename = function(filename) {
             var i, preview, previews, _i, _ref;
-
             previews = this.previews() || [];
             for (i = _i = _ref = previews.length - 1; _i >= 0; i = _i += -1) {
               preview = previews[i];
@@ -8151,7 +8136,6 @@ angular.module("Mac").directive("macUpload", [
           this.add = function(files, callback) {
             var file, pushToPreviews, reader, _i, _len, _ref, _results,
               _this = this;
-
             if (files == null) {
               files = [];
             }
@@ -8160,7 +8144,6 @@ angular.module("Mac").directive("macUpload", [
               file = files[_i];
               pushToPreviews = function(event) {
                 var newFile, previews;
-
                 previews = this.previews();
                 if (previews != null) {
                   newFile = {
@@ -8192,7 +8175,6 @@ angular.module("Mac").directive("macUpload", [
       ],
       link: function($scope, element, attrs, ctrls) {
         var previewCtrl;
-
         return previewCtrl = ctrls[0];
       }
     };
@@ -8205,10 +8187,8 @@ angular.module("Mac").directive("macUpload", [
       controller: [
         "$scope", function($scope) {
           var updateProgress;
-
           updateProgress = function(data) {
             var preview;
-
             preview = this.getByFilename(data.files[0].name);
             return preview != null ? preview.progress = parseInt(data.loaded / data.total * 100, 10) : void 0;
           };
@@ -8219,7 +8199,6 @@ angular.module("Mac").directive("macUpload", [
       ],
       link: function($scope, element, attrs, ctrls) {
         var previewsCtrl, progressCtrl;
-
         progressCtrl = ctrls[0];
         previewsCtrl = ctrls[1];
         if ((progressCtrl != null) && (typeof previewCtrl !== "undefined" && previewCtrl !== null)) {
@@ -8240,22 +8219,24 @@ Scroll window to the element and focus on the element
 @param {String}  mac-focus-on-event Event to focus on element
 @param {Boolean} mac-focus-on-event-scroll Scroll to element location or not
 */
-angular.module("Mac").directive("macFocusOnEvent", function() {
-  return function(scope, element, attributes) {
-    return scope.$on(attributes.macFocusOnEvent, function() {
-      return setTimeout((function() {
-        var x, y;
 
-        element.focus();
-        if (attributes.macFocusOnEventScroll) {
-          x = window.scrollX;
-          y = window.scrollY;
-          return window.scrollTo(x, y);
-        }
-      }), 0);
-    });
-  };
-});
+angular.module("Mac").directive("macFocusOnEvent", [
+  "$timeout", function($timeout) {
+    return function(scope, element, attributes) {
+      return scope.$on(attributes.macFocusOnEvent, function() {
+        return $timeout(function() {
+          var x, y;
+          element.focus();
+          if (attributes.macFocusOnEventScroll) {
+            x = window.scrollX;
+            y = window.scrollY;
+            return window.scrollTo(x, y);
+          }
+        }, 0);
+      });
+    };
+  }
+]);
 
 angular.module("Mac").factory("keys", function() {
   return {
@@ -8389,6 +8370,7 @@ A directive for creating a menu with multiple items
 @param {Object} mac-menu-style Styles apply to the menu
 @param {Expression} mac-menu-index Index of selected item
 */
+
 angular.module("Mac").directive("macMenu", [
   "$parse", function($parse) {
     return {
@@ -8422,68 +8404,79 @@ angular.module("Mac").directive("macModal", [
       templateUrl: "template/modal.html",
       replace: true,
       transclude: true,
-      link: function($scope, element, attrs) {
-        var bindingEvents, defaults, elementId, escapeKeyHandler, opts, registerModal, resizeHandler;
-
-        defaults = {
-          keyboard: false,
-          overlayClose: false,
-          resize: true,
-          open: null,
-          topOffset: 20
-        };
-        opts = util.extendAttributes("macModal", defaults, attrs);
-        elementId = attrs.id;
-        escapeKeyHandler = function(event) {
-          if (event.which === keys.ESCAPE) {
-            return modal.hide();
-          }
-        };
-        resizeHandler = function(event) {
-          return modal.resize();
-        };
-        bindingEvents = function(action) {
-          if (action == null) {
-            action = "bind";
-          }
-          if (action !== "bind" && action !== "unbind") {
-            return;
-          }
-          if (opts.keyboard) {
-            $(document)[action]("keydown", escapeKeyHandler);
-          }
-          if (opts.resize) {
-            return $(window)[action]("resize", resizeHandler);
-          }
-        };
-        registerModal = function(id) {
-          if ((id != null) && id) {
-            opts.callback = function() {
-              bindingEvents();
-              if (opts.open != null) {
-                return $parse(opts.open)($scope);
+      compile: function(element, attrs, transclude) {
+        return function($scope, element, attrs) {
+          var bindingEvents, defaults, elementId, escapeKeyHandler, opts, registerModal, resizeHandler;
+          defaults = {
+            keyboard: false,
+            overlayClose: false,
+            resize: true,
+            open: null,
+            topOffset: 20,
+            preRendered: false
+          };
+          opts = util.extendAttributes("macModal", defaults, attrs);
+          elementId = attrs.id;
+          escapeKeyHandler = function(event) {
+            if (event.which === keys.ESCAPE) {
+              return modal.hide();
+            }
+          };
+          resizeHandler = function(event) {
+            return modal.resize();
+          };
+          bindingEvents = function(action) {
+            if (action == null) {
+              action = "bind";
+            }
+            if (action !== "bind" && action !== "unbind") {
+              return;
+            }
+            if (opts.keyboard) {
+              $(document)[action]("keydown", escapeKeyHandler);
+            }
+            if (opts.resize) {
+              return $(window)[action]("resize", resizeHandler);
+            }
+          };
+          registerModal = function(id) {
+            var transcluding;
+            if ((id != null) && id) {
+              opts.callback = function() {
+                bindingEvents();
+                if (opts.open != null) {
+                  return $parse(opts.open)($scope);
+                }
+              };
+              transcluding = function() {
+                return transclude($scope, function(clone) {
+                  return $(".modal-content-wrapper", element).append(clone);
+                });
+              };
+              modal.register(id, element, opts, transcluding);
+              if (opts.preRendered) {
+                return transcluding();
               }
-            };
-            return modal.register(id, element, opts);
+            }
+          };
+          $scope.closeOverlay = function($event) {
+            if (opts.overlayClose && $($event.target).is(".modal-overlay")) {
+              return $scope.closeModal();
+            }
+          };
+          $scope.closeModal = function($event) {
+            return modal.hide(function() {
+              return bindingEvents("unbind");
+            });
+          };
+          if (elementId) {
+            return registerModal(elementId);
+          } else {
+            return attrs.$observe("macModal", function(id) {
+              return registerModal(id);
+            });
           }
         };
-        $scope.closeOverlay = function($event) {
-          if (opts.overlayClose && $($event.target).is(".modal-overlay")) {
-            return $scope.closeModal();
-          }
-        };
-        $scope.closeModal = function($event) {
-          return modal.hide(function() {
-            return bindingEvents("unbind");
-          });
-        };
-        if (elementId) {
-          return registerModal(elementId);
-        } else {
-          return attrs.$observe("macModal", function(id) {
-            return registerModal(id);
-          });
-        }
       }
     };
   }
@@ -8492,15 +8485,13 @@ angular.module("Mac").directive("macModal", [
     return {
       restrict: "A",
       link: function($scope, element, attrs) {
-        attrs.$observe("macModal", function(value) {
-          if ((value != null) && value) {
-            return element.bind("click", function() {
-              return modal.show(value, {
-                data: $parse(attrs.macModalContent)($scope)
-              });
+        if (attrs.macModal) {
+          element.bind("click", function() {
+            return modal.show(attrs.macModal, {
+              data: $parse(attrs.macModalContent)($scope)
             });
-          }
-        });
+          });
+        }
       }
     };
   }
@@ -8515,6 +8506,7 @@ Dynamically fill out the placeholder text of input
 
 @param {String} mac-placeholder Variable that contains the placeholder text
 */
+
 angular.module("Mac").directive("macPlaceholder", function() {
   return {
     restrict: "A",
@@ -8533,7 +8525,6 @@ angular.module("Mac").directive("macReorderable", [
       controller: ["$scope", "$element", "$attrs", hookableDirectiveController],
       link: function($scope, $element, $attrs, controllers) {
         var selector;
-
         selector = $attrs.macReorderable;
         return $element.sortable({
           items: selector,
@@ -8556,7 +8547,6 @@ angular.module("Mac").directive("macReorderableColumns", [
       link: function($scope, $element, $attr, controllers) {
         return controllers[1].registerCallback(function(event, ui, columnElements) {
           var changedElement, columnsOrder;
-
           columnsOrder = [];
           changedElement = $(ui.item);
           columnElements.each(function() {
@@ -8579,7 +8569,6 @@ angular.module("Mac").directive("macResizable", [
       controller: ["$scope", "$element", "$attrs", hookableDirectiveController],
       link: function($scope, $element, $attrs, controllers) {
         var axis, containment;
-
         axis = $attrs.macResizable || "x";
         containment = $attrs.macResizableContainment || "parent";
         return $element.resizable({
@@ -8602,7 +8591,6 @@ angular.module("Mac").directive("macResizableColumn", [
       link: function($scope, $element, $attrs, controllers) {
         return controllers[1].registerCallback(function(event, ui) {
           var column, percentage, width;
-
           column = $scope.cell.column;
           width = ui.size.width;
           percentage = (width / controllers[0].element.width()) * 100;
@@ -8627,6 +8615,7 @@ A directive for generating spinner
 @param {Integer} mac-spinner-z-index The z-index (default inherit)
 @param {String}  mac-spinner-color Color of all the bars (default #2f3035)
 */
+
 angular.module("Mac").directive("macSpinner", function() {
   return {
     restrict: "E",
@@ -8634,7 +8623,6 @@ angular.module("Mac").directive("macSpinner", function() {
     template: "<div class=\"mac-spinner\"></div>",
     compile: function(element, attributes) {
       var i, _i;
-
       for (i = _i = 0; _i <= 9; i = ++_i) {
         element.append("<div class=\"bar\"></div>");
       }
@@ -8672,9 +8660,9 @@ This directive is automatically added to any row whose cells use `mac-columns-wi
 @dependencies
 macTable, macTableSection, macTableRow
 */
+
 angular.module("Mac").factory("macColumnsController", function() {
   var MacColumnsController;
-
   return MacColumnsController = (function() {
     function MacColumnsController(scope, element, attrs) {
       this.scope = scope;
@@ -8685,7 +8673,6 @@ angular.module("Mac").factory("macColumnsController", function() {
 
     MacColumnsController.prototype.getSiblingScopes = function(siblings) {
       var el, li, siblingScope, _i, _len;
-
       li = [];
       for (_i = 0, _len = siblings.length; _i < _len; _i++) {
         el = siblings[_i];
@@ -8699,7 +8686,6 @@ angular.module("Mac").factory("macColumnsController", function() {
 
     MacColumnsController.prototype.recalculateWidths = function(event, id, newValue, oldValue) {
       var cElement, cScope, nextSiblings, nextSiblingsWidthMap, prevSiblings, scale, siblingScope, siblingsTotalWidth, width, _i, _j, _len, _len1, _ref, _results;
-
       if (!(!isNaN(newValue) && !isNaN(oldValue))) {
         return;
       }
@@ -8783,6 +8769,7 @@ macTable, macTableSection, macTableRow
 
 @param {String}     mac-cell-template     Space-delimited column names specifying when to show this template
 */
+
 angular.module("Mac").directive("macCellTemplate", [
   function() {
     return {
@@ -8792,7 +8779,6 @@ angular.module("Mac").directive("macCellTemplate", [
       compile: function(element, attr, linker) {
         return function($scope, $element, $attr, controllers) {
           var templateName, templateNames, _i, _len, _results;
-
           templateNames = $attr.macCellTemplate ? $attr.macCellTemplate.split(" ") : ["?"];
           _results = [];
           for (_i = 0, _len = templateNames.length; _i < _len; _i++) {
@@ -8815,20 +8801,18 @@ Directive initializing a table row for cell templates to be registered under
 @dependencies
 macTable, macTableSection
 */
+
 angular.module("Mac").factory("MacTableRowController", [
   "directiveHelpers", function(directiveHelpers) {
     var MacTableRowController;
-
     return MacTableRowController = (function() {
       function MacTableRowController() {}
 
       MacTableRowController.prototype.repeatCells = function(cells, rowElement, sectionController) {
         var linkerFactory;
-
         rowElement.children().remove();
         linkerFactory = function(cell) {
           var template, templateName;
-
           templateName = cell.column.colName in sectionController.cellTemplates ? cell.column.colName : "?";
           if (template = sectionController.cellTemplates[templateName]) {
             return template[1];
@@ -8852,7 +8836,6 @@ angular.module("Mac").directive("macTableRow", [
         return function($scope, $element, $attr, controllers) {
           return $scope.$watch("row.cells", function(cells) {
             var _ref;
-
             if (((_ref = controllers[1].section) != null ? _ref.name : void 0) == null) {
               return;
             }
@@ -8874,9 +8857,9 @@ macTableSectionModels, macTableSectionController, or macTableSectionBlankRow.
 @dependencies
 macTable
 */
+
 angular.module("Mac").directive("macTableSection", function() {
   var MacTableSectionController;
-
   MacTableSectionController = (function() {
     function MacTableSectionController(scope, attrs) {
       this.scope = scope;
@@ -8894,7 +8877,6 @@ angular.module("Mac").directive("macTableSection", function() {
     MacTableSectionController.prototype.applyWatchers = function() {
       var controller, directiveName, _ref, _results,
         _this = this;
-
       _ref = this.watchers;
       _results = [];
       for (directiveName in _ref) {
@@ -8950,7 +8932,6 @@ macTable, macTableSection
 
 angular.module("Mac").directive("macTableSectionBlankRow", function() {
   var MacTableSectionBlankRowCtrl;
-
   MacTableSectionBlankRowCtrl = (function() {
     function MacTableSectionBlankRowCtrl(scope) {
       this.scope = scope;
@@ -8959,7 +8940,6 @@ angular.module("Mac").directive("macTableSectionBlankRow", function() {
     MacTableSectionBlankRowCtrl.prototype.watch = function(expression, sectionName) {
       var killWatcher, sectionToWaitOn,
         _this = this;
-
       sectionToWaitOn = expression || "body";
       return killWatcher = this.scope.$watch("table.sections." + sectionToWaitOn + ".rows", function(rows) {
         if (!rows) {
@@ -9002,7 +8982,6 @@ macTable, macTableSection
 angular.module("Mac").directive("macTableSectionModels", [
   "$parse", function($parse) {
     var MacTableSectionModelsCtrl;
-
     MacTableSectionModelsCtrl = (function() {
       function MacTableSectionModelsCtrl(scope) {
         this.scope = scope;
@@ -9011,11 +8990,9 @@ angular.module("Mac").directive("macTableSectionModels", [
       MacTableSectionModelsCtrl.prototype.watch = function(expression, sectionName) {
         var lastStringified,
           _this = this;
-
         lastStringified = "";
         return this.scope.$watch(function() {
           var currStringified, models;
-
           models = $parse(expression)(_this.scope);
           if (!angular.isArray(models)) {
             return;
@@ -9056,7 +9033,6 @@ macTable, macTableSection
 
 angular.module("Mac").directive("macTableSectionController", function() {
   var MacTableSectionControllerCtrl;
-
   MacTableSectionControllerCtrl = (function() {
     function MacTableSectionControllerCtrl(scope) {
       this.scope = scope;
@@ -9064,7 +9040,6 @@ angular.module("Mac").directive("macTableSectionController", function() {
 
     MacTableSectionControllerCtrl.prototype.watch = function(expression, sectionName) {
       var _this = this;
-
       return this.scope.$watch(expression, function(controller) {
         if (!controller) {
           return;
@@ -9095,10 +9070,10 @@ Directive for displaying tabluar data
 @param {None}       mac-table-resizable-columns     Convenience param to add macResizableColumn and dependent directives to template elements
 @param {None}       mac-table-reorderable-columns   Convenience param to add macReorderableColumn and dependent directives to template elements
 */
+
 angular.module("Mac").factory("MacTableController", [
   "Table", function(Table) {
     var MacTableController;
-
     return MacTableController = (function() {
       function MacTableController(scope) {
         this.scope = scope;
@@ -9126,7 +9101,6 @@ angular.module("Mac").directive("macTable", [
       controller: ["$scope", MacTableController],
       compile: function(element, attr) {
         var autoWidthTemplates, headerSectionElement, initialWidthExp, remainingPercent, siblingTemplates;
-
         headerSectionElement = element.find("[mac-table-section=header]");
         element.find("[mac-column-width]").attr("width", "{{cell.column.width}}%").parents("[mac-table-row]").attr("mac-columns", "");
         element.find("[mac-cell-template]").wrapInner("<div class='cell-wrapper' />").attr("data-column-name", "{{cell.column.colName}}");
@@ -9197,7 +9171,7 @@ A directive for generating tag input with autocomplete support on text input
 var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 angular.module("Mac").directive("macTagAutocomplete", [
-  "$parse", "keys", function($parse, keys) {
+  "$parse", "$timeout", "keys", function($parse, $timeout, keys) {
     return {
       restrict: "E",
       templateUrl: "template/tag_autocomplete.html",
@@ -9214,7 +9188,6 @@ angular.module("Mac").directive("macTagAutocomplete", [
       },
       compile: function(element, attrs) {
         var attrEvent, attrsObject, delay, events, eventsList, item, labelKey, queryKey, tagLabelKey, textInput, valueKey, _i, _len, _ref;
-
         valueKey = attrs.macTagAutocompleteValue;
         if (valueKey == null) {
           valueKey = "id";
@@ -9270,7 +9243,6 @@ angular.module("Mac").directive("macTagAutocomplete", [
           $scope.eventsList = eventsList;
           $scope.$watch("eventsList", function(value) {
             var event, _j, _len1, _results;
-
             _results = [];
             for (_j = 0, _len1 = eventsList.length; _j < _len1; _j++) {
               event = eventsList[_j];
@@ -9280,7 +9252,6 @@ angular.module("Mac").directive("macTagAutocomplete", [
               _results.push((function(event) {
                 return $(".text-input", element).on(event.name, function($event) {
                   var expression;
-
                   expression = $parse(event.eventFn);
                   return $scope.$apply(function() {
                     return expression($scope.$parent, {
@@ -9295,10 +9266,8 @@ angular.module("Mac").directive("macTagAutocomplete", [
           });
           $scope.$watch("selected.length", function(length) {
             var difference, selectedValues, sourceValues;
-
             sourceValues = (function() {
               var _j, _len1, _ref1, _results;
-
               _ref1 = $scope.source || [];
               _results = [];
               for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
@@ -9309,7 +9278,6 @@ angular.module("Mac").directive("macTagAutocomplete", [
             })();
             selectedValues = (function() {
               var _j, _len1, _ref1, _results;
-
               _ref1 = $scope.selected || [];
               _results = [];
               for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
@@ -9320,7 +9288,6 @@ angular.module("Mac").directive("macTagAutocomplete", [
             })();
             difference = (function() {
               var _j, _len1, _results;
-
               _results = [];
               for (_j = 0, _len1 = sourceValues.length; _j < _len1; _j++) {
                 item = sourceValues[_j];
@@ -9332,7 +9299,6 @@ angular.module("Mac").directive("macTagAutocomplete", [
             })();
             return $scope.autocompleteSource = (function() {
               var _j, _len1, _ref1, _ref2, _results;
-
               _ref1 = $scope.source || [];
               _results = [];
               for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
@@ -9346,7 +9312,6 @@ angular.module("Mac").directive("macTagAutocomplete", [
           });
           $scope.onKeyDown = function($event) {
             var stroke, _base;
-
             stroke = $event.which || $event.keyCode;
             switch (stroke) {
               case keys.BACKSPACE:
@@ -9373,10 +9338,8 @@ angular.module("Mac").directive("macTagAutocomplete", [
           };
           $scope.onSuccess = function(data) {
             var existingValues;
-
             existingValues = (function() {
               var _j, _len1, _ref1, _results;
-
               _ref1 = $scope.selected || [];
               _results = [];
               for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
@@ -9387,7 +9350,6 @@ angular.module("Mac").directive("macTagAutocomplete", [
             })();
             return (function() {
               var _j, _len1, _ref1, _ref2, _results;
-
               _ref1 = data.data;
               _results = [];
               for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
@@ -9408,7 +9370,7 @@ angular.module("Mac").directive("macTagAutocomplete", [
             if (item != null) {
               $scope.selected.push(item);
             }
-            return setTimeout(function() {
+            return $timeout(function() {
               return $scope.$apply(function() {
                 return $scope.textInput = "";
               });
@@ -9435,6 +9397,7 @@ A directive for generating tag input.
 @param {String} mac-tag-input-value        The value to be sent back upon selection          (default "id")
 @param {String} mac-tag-input-label        The label to display to the users                 (default "name")
 */
+
 angular.module("Mac").directive("macTagInput", [
   function() {
     return {
@@ -9448,7 +9411,6 @@ angular.module("Mac").directive("macTagInput", [
       },
       compile: function(element, attrs) {
         var textKey, valueKey;
-
         valueKey = attrs.macTagInputValue || "id";
         textKey = attrs.macTagInputLabel || "name";
         $(".tag-autocomplete", element).attr({
@@ -9474,8 +9436,9 @@ A directive for creating a time input field
 @param {String} mac-time-disabled     Enable or disable time input
 @param {String} mac-time-default      If model is undefined, use this as the starting value (default 12:00 PM)
 */
+
 angular.module("Mac").directive("macTime", [
-  "$filter", "util", "keys", function($filter, util, keys) {
+  "$filter", "$timeout", "util", "keys", function($filter, $timeout, util, keys) {
     return {
       restrict: "E",
       scope: {
@@ -9486,7 +9449,6 @@ angular.module("Mac").directive("macTime", [
       templateUrl: "template/time.html",
       compile: function(element, attrs) {
         var defaults, opts;
-
         defaults = {
           placeholder: "--:--",
           "default": "12:00 AM"
@@ -9494,7 +9456,6 @@ angular.module("Mac").directive("macTime", [
         opts = util.extendAttributes("macTime", defaults, attrs);
         return function($scope, element, attrs) {
           var highlighActions, inputDOM, inputSelectAction, prefix, time, timeRegex;
-
           $scope.placeholder = opts.placeholder;
           inputDOM = $("input", element)[0];
           timeRegex = /(\d+):(\d+) ([AP]M)/;
@@ -9548,7 +9509,6 @@ angular.module("Mac").directive("macTime", [
           };
           $scope.updateInput = function(actions) {
             var end, start;
-
             if (actions == null) {
               actions = {};
             }
@@ -9558,13 +9518,12 @@ angular.module("Mac").directive("macTime", [
               inputSelectAction(start, end, actions);
             }
             $scope.model = $filter("date")($scope.time.getTime(), "hh:mm a");
-            return setTimeout((function() {
+            return $timeout(function() {
               return inputSelectAction(start, end, highlighActions);
-            }), 0);
+            }, 0);
           };
           $scope.updateScopeTime = function() {
             var hours, markers, minutes, timeMatch;
-
             if (timeMatch = timeRegex.exec($scope.model)) {
               hours = +timeMatch[1];
               minutes = +timeMatch[2];
@@ -9586,7 +9545,6 @@ angular.module("Mac").directive("macTime", [
           };
           $scope.keydownEvent = function(event) {
             var change, end, key, start;
-
             key = event.which;
             switch (key) {
               case keys.UP:
@@ -9632,7 +9590,6 @@ angular.module("Mac").directive("macTime", [
           };
           return $scope.keyupEvent = function(event) {
             var key;
-
             key = event.which;
             if ((keys.NUMPAD0 <= key && key <= keys.NUMPAD9) || (keys.ZERO <= key && key <= keys.NINE)) {
               return $scope.updateScopeTime();
@@ -9655,17 +9612,19 @@ Tooltip directive
 @param {String}  mac-tooltip-direction Direction of tooltip (default 'top')
 @param {String}  mac-tooltip-trigger   How tooltip is triggered (default 'hover')
 @param {Boolean} mac-tooltip-inside    Should the tooltip be appended inside element (default false)
+@param {Expr}    mac-tooltip-disabled  Disable and enable tooltip
 */
+
 angular.module("Mac").directive("macTooltip", [
-  "util", function(util) {
+  "$timeout", "util", function($timeout, util) {
     return {
       restrict: "A",
       link: function(scope, element, attrs) {
-        var defaults, enabled, opts, removeTip, showTip, text, toggle, tooltip;
-
+        var defaults, disabled, enabled, opts, removeTip, showTip, text, toggle, tooltip;
         tooltip = null;
         text = "";
         enabled = false;
+        disabled = false;
         defaults = {
           direction: "top",
           trigger: "hover",
@@ -9674,7 +9633,9 @@ angular.module("Mac").directive("macTooltip", [
         opts = util.extendAttributes("macTooltip", defaults, attrs);
         showTip = function(event) {
           var elementSize, offset, tip, tooltipSize;
-
+          if (disabled) {
+            return;
+          }
           tip = opts.inside ? element : $(document.body);
           tooltip = $("<div class=\"tooltip " + opts.direction + "\"><div class=\"tooltip-message\">" + text + "</div></div>");
           tip.append(tooltip);
@@ -9718,7 +9679,7 @@ angular.module("Mac").directive("macTooltip", [
         };
         removeTip = function(event) {
           tooltip.removeClass("visible");
-          return setTimeout(function() {
+          return $timeout(function() {
             return tooltip.remove();
           }, 100);
         };
@@ -9731,7 +9692,6 @@ angular.module("Mac").directive("macTooltip", [
         };
         attrs.$observe("macTooltip", function(value) {
           var _ref;
-
           if ((value != null) && value) {
             text = value;
             if (!enabled) {
@@ -9749,6 +9709,9 @@ angular.module("Mac").directive("macTooltip", [
               return enabled = true;
             }
           }
+        });
+        scope.$watch(attrs.macTooltipDisabled, function(value) {
+          return disabled = value;
         });
         return scope.$on("$destroy", function() {
           if (tooltip != null) {
@@ -9778,7 +9741,6 @@ module.controller("ExampleController", [
   "$scope", "$timeout", "Table", function($scope, $timeout, Table) {
     $scope.loadDataIntoTable = function(x) {
       var i, _i, _results;
-
       if (x == null) {
         x = 3000;
       }
@@ -9795,7 +9757,7 @@ module.controller("ExampleController", [
       }
       return _results;
     };
-    $scope.loadDataIntoTable(1000);
+    $scope.loadDataIntoTable(100);
     $scope.editableTest = "Hello";
     $scope.getDisplayText = function() {
       return $scope.editableTest;
@@ -9815,7 +9777,6 @@ module.controller("ExampleController", [
     $scope.selectedOptionValue = "1";
     $scope.convertToText = function() {
       var option, _i, _len, _ref;
-
       _ref = $scope.selectOptions;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         option = _ref[_i];
@@ -9958,6 +9919,7 @@ Pluralizes the given string. It's a simple proxy to the pluralize function on ut
 @param {Boolean} includeCount To include the number in formatted string
 @returns {String} Formatted plural
 */
+
 angular.module("Mac").filter("pluralize", [
   "util", function(util) {
     return function(string, count, includeCount) {
@@ -9980,17 +9942,16 @@ minutes ago" or "just now".
 @param {Unix timestamp} time The time to format
 @returns {String} Formatted string
 */
+
 angular.module("Mac").filter("timestamp", [
   "util", function(util) {
     var _createTimestamp;
-
     _createTimestamp = function(count, noun) {
       noun = util.pluralize(noun, count);
       return "" + count + " " + noun + " ago";
     };
     return function(time) {
       var currentTime, days, hours, minutes, months, secondsAgo, weeks, years;
-
       time = +time;
       currentTime = Math.round(Date.now() / 1000);
       secondsAgo = currentTime - time;
@@ -10047,7 +10008,6 @@ var __slice = [].slice;
 angular.module("Mac").filter("underscoreString", function() {
   return function() {
     var fn, params, string;
-
     string = arguments[0], fn = arguments[1], params = 3 <= arguments.length ? __slice.call(arguments, 2) : [];
     params.unshift(string);
     return _.string[fn].apply(this, params);
@@ -10059,7 +10019,6 @@ angular.module("Mac").factory("directiveHelpers", [
     return {
       repeater: function(iterator, keyName, $scope, $element, linkerFactory, postClone) {
         var clonedElement, item, linkerFn, nScope, _i, _len, _results;
-
         if (!$element.length) {
           return;
         }
@@ -10088,7 +10047,6 @@ var __slice = [].slice;
 angular.module("Mac").factory("hookableDirectiveController", [
   function() {
     var HookableDirectiveController;
-
     return HookableDirectiveController = (function() {
       function HookableDirectiveController(scope, element, attrs) {
         this.scope = scope;
@@ -10103,7 +10061,6 @@ angular.module("Mac").factory("hookableDirectiveController", [
 
       HookableDirectiveController.prototype.fireCallbacks = function() {
         var args;
-
         args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
         return this._callbacks.forEach(function(callback) {
           return callback.apply(null, args);
@@ -10147,22 +10104,25 @@ There are multiple components used by modal.
 @param {Function} clearWaiting Remove certain modal id from waiting list
 - {String} id ID of the modal
 */
+
 angular.module("Mac").factory("modal", [
-  "$rootScope", function($rootScope) {
+  "$rootScope", "$timeout", function($rootScope, $timeout) {
     return {
       registered: {},
       waiting: null,
       opened: null,
       show: function(id, triggerOptions) {
-        var element, options, _ref;
-
+        var element, options, transclude, _ref;
         if (triggerOptions == null) {
           triggerOptions = {};
         }
         if (this.registered[id] != null) {
-          _ref = this.registered[id], element = _ref.element, options = _ref.options;
+          _ref = this.registered[id], element = _ref.element, options = _ref.options, transclude = _ref.transclude;
+          if (!options.preRendered) {
+            transclude.apply(this);
+          }
           element.removeClass("hide");
-          setTimeout(function() {
+          $timeout(function() {
             return element.addClass("visible");
           }, 0);
           angular.extend(options, triggerOptions);
@@ -10186,7 +10146,6 @@ angular.module("Mac").factory("modal", [
       },
       resize: function(modalObject) {
         var css, element, height, modal, options, width;
-
         if (modalObject == null) {
           modalObject = this.opened;
         }
@@ -10207,16 +10166,17 @@ angular.module("Mac").factory("modal", [
         return modal.css(css);
       },
       hide: function(callback) {
-        var id, opened;
-
+        var element, id, options, _ref;
         if (this.opened == null) {
           return;
         }
-        id = this.opened.id;
-        opened = this.opened.element;
-        opened.removeClass("visible");
-        setTimeout(function() {
-          return opened.addClass("hide");
+        _ref = this.opened, id = _ref.id, options = _ref.options, element = _ref.element;
+        element.removeClass("visible");
+        if (!options.preRendered) {
+          $(".modal-content-wrapper", element).empty();
+        }
+        $timeout(function() {
+          return element.addClass("hide");
         }, 250);
         this.opened = null;
         if (typeof callback === "function") {
@@ -10224,13 +10184,14 @@ angular.module("Mac").factory("modal", [
         }
         return $rootScope.$broadcast("modalWasHidden", id);
       },
-      register: function(id, element, options) {
+      register: function(id, element, options, transclude) {
         if (this.registered[id] != null) {
           throw new Error("Modal " + modalId + " already registered");
         }
         this.registered[id] = {
           element: element,
-          options: options
+          options: options,
+          transclude: transclude
         };
         if ((this.waiting != null) && this.waiting.id === id) {
           return this.show(id, this.waiting.options);
@@ -10238,7 +10199,6 @@ angular.module("Mac").factory("modal", [
       },
       unregister: function(id) {
         var _ref;
-
         if (this.registered[id] == null) {
           throw new Error("Modal " + id + " is not registered");
         }
@@ -10250,7 +10210,6 @@ angular.module("Mac").factory("modal", [
       },
       clearWaiting: function(id) {
         var _ref;
-
         if ((id != null) && ((_ref = this.waiting) != null ? _ref.id : void 0) !== id) {
           return;
         }
@@ -10265,7 +10224,6 @@ var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; 
 angular.module("Mac").factory("TableSectionController", [
   function() {
     var TableSectionController;
-
     return TableSectionController = (function() {
       function TableSectionController(section) {
         this.section = section;
@@ -10287,7 +10245,6 @@ angular.module("Mac").factory("TableSectionController", [
 
 angular.module("Mac").factory("TableRow", function() {
   var TableRow;
-
   return TableRow = (function() {
     function TableRow(section, model, cells, cellsMap) {
       this.section = section;
@@ -10309,7 +10266,6 @@ angular.module("Mac").factory("TableRow", function() {
 
 angular.module("Mac").factory("TableSection", function() {
   var TableSection;
-
   return TableSection = (function() {
     function TableSection(controller, table, name, rows) {
       this.table = table;
@@ -10335,7 +10291,6 @@ angular.module("Mac").factory("TableSection", function() {
 
 angular.module("Mac").factory("TableCell", function() {
   var Cell;
-
   return Cell = (function() {
     function Cell(row, column) {
       this.row = row;
@@ -10344,7 +10299,6 @@ angular.module("Mac").factory("TableCell", function() {
 
     Cell.prototype.value = function() {
       var _ref, _ref1;
-
       return (_ref = this.row) != null ? (_ref1 = _ref.section) != null ? _ref1.ctrl.cellValue(this.row, this.column.colName) : void 0 : void 0;
     };
 
@@ -10368,7 +10322,6 @@ angular.module("Mac").factory("tableComponents", [
       },
       columnFactory: function(colName) {
         var Column;
-
         Column = function(colName) {
           this.colName = colName;
         };
@@ -10393,11 +10346,9 @@ angular.module("Mac").factory("tableComponents", [
 angular.module("Mac").factory("dynamicColumnsFunction", function() {
   return function(models) {
     var columns, first, key, model;
-
     first = models[0];
     columns = (function() {
       var _results;
-
       _results = [];
       for (key in first) {
         model = first[key];
@@ -10412,7 +10363,6 @@ angular.module("Mac").factory("dynamicColumnsFunction", function() {
 angular.module("Mac").factory("TableColumnsController", [
   "tableComponents", "dynamicColumnsFunction", function(tableComponents, dynamicColumnsFunction) {
     var ColumnsController;
-
     return ColumnsController = (function() {
       function ColumnsController(table) {
         this.table = table;
@@ -10422,7 +10372,6 @@ angular.module("Mac").factory("TableColumnsController", [
 
       ColumnsController.prototype.blank = function() {
         var colName, obj, _i, _len, _ref;
-
         obj = {};
         _ref = this.table.columnsOrder;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -10440,7 +10389,6 @@ angular.module("Mac").factory("TableColumnsController", [
 
       ColumnsController.prototype.set = function(columns) {
         var colName, column, _i, _len, _results;
-
         this.reset();
         this.table.columnsOrder = columns;
         _results = [];
@@ -10455,7 +10403,6 @@ angular.module("Mac").factory("TableColumnsController", [
 
       ColumnsController.prototype.syncOrder = function() {
         var cells, colName, columns, row, section, sectionName, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3;
-
         _ref = this.table.sections;
         for (sectionName in _ref) {
           section = _ref[sectionName];
@@ -10489,7 +10436,6 @@ angular.module("Mac").factory("TableColumnsController", [
 angular.module("Mac").factory("TableRowsController", [
   "tableComponents", function(tableComponents) {
     var RowsController;
-
     return RowsController = (function() {
       function RowsController(table) {
         this.table = table;
@@ -10497,7 +10443,6 @@ angular.module("Mac").factory("TableRowsController", [
 
       RowsController.prototype.make = function(section, model) {
         var cell, colName, column, row, _ref;
-
         row = tableComponents.rowFactory(section, model);
         _ref = this.table.columnsMap;
         for (colName in _ref) {
@@ -10511,7 +10456,6 @@ angular.module("Mac").factory("TableRowsController", [
 
       RowsController.prototype.set = function(sectionName, models, sectionController) {
         var model, rows, section, _i, _len;
-
         section = this.table.sections[sectionName];
         if ((models != null ? models.length : void 0) == null) {
           return;
@@ -10530,7 +10474,6 @@ angular.module("Mac").factory("TableRowsController", [
 
       RowsController.prototype.insert = function(sectionName, model, index) {
         var row, section;
-
         section = this.table.sections[sectionName];
         row = this.make(section, model);
         return section.rows.splice(index, 0, row);
@@ -10538,14 +10481,12 @@ angular.module("Mac").factory("TableRowsController", [
 
       RowsController.prototype.remove = function(sectionName, index) {
         var section;
-
         section = this.table.sections[sectionName];
         return section.rows.splice(index, 1);
       };
 
       RowsController.prototype.clear = function(sectionName) {
         var section;
-
         section = this.table.sections[sectionName];
         return section.rows = [];
       };
@@ -10559,7 +10500,6 @@ angular.module("Mac").factory("TableRowsController", [
 angular.module("Mac").factory("Table", [
   "TableColumnsController", "TableRowsController", "tableComponents", function(TableColumnsController, TableRowsController, tableComponents) {
     var Table, convertObjectModelsToArray;
-
     convertObjectModelsToArray = function(models) {
       if (models && !angular.isArray(models)) {
         return [models];
@@ -10601,7 +10541,6 @@ angular.module("Mac").factory("Table", [
 
       Table.prototype.loadModels = function(sectionName, models) {
         var args, index, model, row, tableModels, toBeInserted, toBeRemoved, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _results;
-
         models = convertObjectModelsToArray(models);
         if ((_ref = this.sections[sectionName]) != null ? _ref.rows.length : void 0) {
           tableModels = [];
@@ -10686,7 +10625,6 @@ util = angular.module("Mac.Util", []);
 util.factory("util", [
   "$filter", function($filter) {
     var ArrayProto, FuncProto, ObjProto, nativeIsArray, toString;
-
     ArrayProto = Array.prototype;
     ObjProto = Object.prototype;
     FuncProto = Function.prototype;
@@ -10707,7 +10645,6 @@ util.factory("util", [
       },
       pluralize: function(string, count, includeCount) {
         var irregulars, isUppercase, lowercaseWord, pluralizedString, pluralizedWord, pluralizer, pluralizers, uncountables, word, _i, _len, _ref;
-
         if (includeCount == null) {
           includeCount = false;
         }
@@ -10765,7 +10702,6 @@ util.factory("util", [
       },
       convertKeysToCamelCase: function(object) {
         var key, result, value;
-
         result = {};
         for (key in object) {
           if (!__hasProp.call(object, key)) continue;
@@ -10780,7 +10716,6 @@ util.factory("util", [
       },
       convertKeysToSnakeCase: function(object) {
         var key, result, value;
-
         result = {};
         for (key in object) {
           if (!__hasProp.call(object, key)) continue;
@@ -10799,7 +10734,6 @@ util.factory("util", [
       _urlRegex: /(?:(?:(http[s]{0,1}:\/\/)(?:(www|[\d\w\-]+)\.){0,1})|(www|[\d\w\-]+)\.)([\d\w\-]+)\.([A-Za-z]{2,6})(:[\d]*){0,1}(\/?[\d\w\-\?\,\'\/\\\+&amp;%\$#!\=~\.]*){0,1}/i,
       validateUrl: function(url) {
         var match;
-
         match = this._urlRegex.exec(url);
         if (match != null) {
           match = {
@@ -10817,13 +10751,11 @@ util.factory("util", [
       },
       validateEmail: function(email) {
         var emailRegex;
-
         emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
         return emailRegex.test(email);
       },
       getQueryString: function(url, name) {
         var regex, regexS, results;
-
         if (name == null) {
           name = "";
         }
@@ -10839,7 +10771,6 @@ util.factory("util", [
       },
       parseUrlPath: function(fullPath) {
         var path, pathComponents, queries, queryString, queryStrings, urlComponents, values, verb, _i, _len, _ref;
-
         urlComponents = fullPath.split("?");
         pathComponents = urlComponents[0].split("/");
         path = pathComponents.slice(0, pathComponents.length - 1).join("/");
@@ -10864,7 +10795,6 @@ util.factory("util", [
       },
       extendAttributes: function(prefix, defaults, attributes) {
         var altKey, key, macKey, output, value, _ref, _ref1;
-
         if (prefix == null) {
           prefix = "";
         }

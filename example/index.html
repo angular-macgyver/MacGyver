@@ -21,18 +21,20 @@
 <h3>Parameters</h3>
 <p><strong>mac-modal</strong><br>Type: <code>String</code><br>Modal ID to trigger  </p>
 <p><strong>mac-modal-content</strong><br>Type: <code>Object</code><br>Extra content/data to pass along  </p>
-<h3>Example</h3><div class="docs-example"><mac-modal id="test-modal" mac-modal-keyboard><div ng-controller="modalController" class="modal-content"><h1>Just another modal</h1></div></mac-modal><button mac-modal="test-modal" mac-modal-content="maGyverSeasonOne" class="btn">Show Modal</button></div><pre ng-non-bindable class="prettyprint linenums">&lt;mac-modal id=&quot;test-modal&quot; mac-modal-keyboard&gt;
+<h3>Example</h3><div class="docs-example"><mac-modal id="test-modal" mac-modal-keyboard><div ng-controller="modalController" class="modal-content"><h1>Just another modal</h1></div></mac-modal><button mac-modal="test-modal" mac-modal-content="macGyverSeasonOne" class="btn">Show Modal</button></div><pre ng-non-bindable class="prettyprint linenums">&lt;mac-modal id=&quot;test-modal&quot; mac-modal-keyboard&gt;
   &lt;div ng-controller=&quot;modalController&quot; class=&quot;modal-content&quot;&gt;
     &lt;h1&gt;Just another modal&lt;/h1&gt;
   &lt;/div&gt;
 &lt;/mac-modal&gt;
-&lt;button mac-modal=&quot;test-modal&quot; mac-modal-content=&quot;maGyverSeasonOne&quot; class=&quot;btn&quot;&gt;Show Modal&lt;/button&gt;</pre></section><section id="tooltip"><h1>Tooltip</h1>
+&lt;button mac-modal=&quot;test-modal&quot; mac-modal-content=&quot;maGyverSeasonOne&quot; class=&quot;btn&quot;&gt;Show Modal&lt;/button&gt;
+</pre></section><section id="tooltip"><h1>Tooltip</h1>
 <p>Tooltip directive  </p>
 <h3>Parameters</h3>
 <p><strong>mac-tooltip</strong><br>Type: <code>String</code><br>Text to show in tooltip  </p>
 <p><strong>mac-tooltip-direction</strong><br>Type: <code>String</code><br>Direction of tooltip (default &#39;top&#39;)  </p>
 <p><strong>mac-tooltip-trigger</strong><br>Type: <code>String</code><br>How tooltip is triggered (default &#39;hover&#39;)  </p>
 <p><strong>mac-tooltip-inside</strong><br>Type: <code>Boolean</code><br>Should the tooltip be appended inside element (default false)  </p>
+<p><strong>mac-tooltip-disabled</strong><br>Type: <code>Expr</code><br>Disable and enable tooltip  </p>
 <h3>Example</h3><div class="docs-example"><ul class="nav nav-pills"><li><a href="#" mac-tooltip="Tooltip on top">Tooltip on top</a></li><li><a href="#" mac-tooltip="Tooltip on bottom" mac-tooltip-direction="bottom">Tooltip on bottom</a></li><li><a href="#" mac-tooltip="Tooltip on left" mac-tooltip-direction="left">Tooltip on left</a></li><li><a href="#" mac-tooltip="Tooltip on right" mac-tooltip-direction="right">Tooltip on right</a></li></ul></div><pre ng-non-bindable class="prettyprint linenums">&lt;a href=&quot;#&quot; mac-tooltip=&quot;Tooltip on bottom&quot; mac-tooltip-direction=&quot;bottom&quot;&gt;Tooltip on bottom&lt;/a&gt;</pre></section><section id="menu"><h1>Menu</h1>
 <p>A directive for creating a menu with multiple items  </p>
 <h3>Parameters</h3>
@@ -62,10 +64,12 @@
   mac-autocomplete-query=&quot;q&quot;
   mac-autocomplete-on-success=&quot;onSuccess(data)&quot;
   mac-autocomplete-placeholder=&quot;'Autocomplete'&quot;&gt;
-&lt;/mac-autocomplete&gt;</pre><h3>Example with autocomplete using source</h3><div class="docs-example"><mac-autocomplete mac-autocomplete-source="['hello', 'world']" ng-model="autocompleteSourceQuery" mac-placeholder="'Type something...'"></mac-autocomplete></div><pre ng-non-bindable class="prettyprint linenums">&lt;mac-autocomplete
+&lt;/mac-autocomplete&gt;
+</pre><h3>Example with autocomplete using source</h3><div class="docs-example"><mac-autocomplete mac-autocomplete-source="['hello', 'world']" ng-model="autocompleteSourceQuery" mac-placeholder="'Type something...'"></mac-autocomplete></div><pre ng-non-bindable class="prettyprint linenums">&lt;mac-autocomplete
   mac-autocomplete-source=&quot;['hello', 'world']&quot;
   mac-autocomplete-placeholder=&quot;'Autocomplete'&quot;&gt;
-&lt;/mac-autocomplete&gt;</pre></section><section id="tag-autocomplete"><h1>Tag Autocomplete</h1>
+&lt;/mac-autocomplete&gt;
+</pre></section><section id="tag-autocomplete"><h1>Tag Autocomplete</h1>
 <p>A directive for generating tag input with autocomplete support on text input  </p>
 <h3>Dependencies</h3>
 <ul>
@@ -92,13 +96,15 @@
   mac-autocomplete-on-success=&quot;onSuccess(data)&quot;
   mac-autocomplete-placeholder=&quot;'Autocomplete'&quot;
   mac-autocomplete-model=&quot;tagAutocompleteModel&quot;&gt;
-&lt;/mac-autocomplete&gt;</pre><h3>Example with autocomplete disabled</h3><div class="docs-example"><mac-tag-autocomplete mac-tag-autocomplete-selected="tagAutocompleteDisabledSelected" mac-tag-autocomplete-placeholder="tagAutocompletePlaceholder" mac-tag-autocomplete-value="" mac-tag-autocomplete-label="" mac-tag-autocomplete-disabled="true"></mac-tag-autocomplete></div><pre ng-non-bindable class="prettyprint linenums">&lt;mac-tag-autocomplete
+&lt;/mac-autocomplete&gt;
+</pre><h3>Example with autocomplete disabled</h3><div class="docs-example"><mac-tag-autocomplete mac-tag-autocomplete-selected="tagAutocompleteDisabledSelected" mac-tag-autocomplete-placeholder="tagAutocompletePlaceholder" mac-tag-autocomplete-value="" mac-tag-autocomplete-label="" mac-tag-autocomplete-disabled="true"></mac-tag-autocomplete></div><pre ng-non-bindable class="prettyprint linenums">&lt;mac-tag-autocomplete
   mac-tag-autocomplete-selected=&quot;tagAutocompleteDisabledSelected&quot;
   mac-tag-autocomplete-placeholder=&quot;tagAutocompletePlaceholder&quot;
   mac-tag-autocomplete-value=&quot;&quot;
   mac-tag-autocomplete-label=&quot;&quot;
   mac-tag-autocomplete-disabled=&quot;true&quot;&gt;
-&lt;/mac-tag-autocomplete&gt;</pre><h3>Example with custom actions on events</h3><div class="docs-example"><mac-tag-autocomplete mac-tag-autocomplete-selected="tagAutocompleteEvents" mac-tag-autocomplete-placeholder="tagAutocompletePlaceholder" mac-tag-autocomplete-value="key" mac-tag-autocomplete-label="key" mac-tag-autocomplete-on-enter="tagAutocompleteOnSelected(item)" mac-tag-autocomplete-events="blur,keyup" mac-tag-autocomplete-on-blur="tagAutocompleteOnBlur($event, item)" mac-tag-autocomplete-on-keyup="tagAutocompleteOnKeyup()" mac-tag-autocomplete-disabled="true" mac-tag-autocomplete-model="tagAutocompleteModel"></mac-tag-autocomplete></div><pre ng-non-bindable class="prettyprint linenums">&lt;mac-tag-autocomplete
+&lt;/mac-tag-autocomplete&gt;
+</pre><h3>Example with custom actions on events</h3><div class="docs-example"><mac-tag-autocomplete mac-tag-autocomplete-selected="tagAutocompleteEvents" mac-tag-autocomplete-placeholder="tagAutocompletePlaceholder" mac-tag-autocomplete-value="key" mac-tag-autocomplete-label="key" mac-tag-autocomplete-on-enter="tagAutocompleteOnSelected(item)" mac-tag-autocomplete-events="blur,keyup" mac-tag-autocomplete-on-blur="tagAutocompleteOnBlur($event, item)" mac-tag-autocomplete-on-keyup="tagAutocompleteOnKeyup()" mac-tag-autocomplete-disabled="true" mac-tag-autocomplete-model="tagAutocompleteModel"></mac-tag-autocomplete></div><pre ng-non-bindable class="prettyprint linenums">&lt;mac-tag-autocomplete
   mac-tag-autocomplete-selected=&quot;tagAutocompleteEvents&quot;
   mac-tag-autocomplete-placeholder=&quot;tagAutocompletePlaceholder&quot;
   mac-tag-autocomplete-value=&quot;key&quot;
@@ -109,7 +115,8 @@
   mac-tag-autocomplete-on-keyup=&quot;tagAutocompleteOnKeyup()&quot;
   mac-tag-autocomplete-disabled=&quot;true&quot;
   mac-tag-autocomplete-model=&quot;tagAutocompleteModel&quot;&gt;
-&lt;/mac-tag-autocomplete&gt;</pre></section><section id="datepicker"><h1>Datepicker</h1>
+&lt;/mac-tag-autocomplete&gt;
+</pre></section><section id="datepicker"><h1>Datepicker</h1>
 <p>A directive for creating a datepicker on text input using jquery ui  </p>
 <h3>Dependencies</h3>
 <ul>
@@ -148,7 +155,8 @@
   mac-time-id=&quot;input-start-time&quot;
   mac-time-model=&quot;myStartTime&quot;
   mac-time-default=&quot;11:59 PM&quot;&gt;
-&lt;/mac-time&gt;</pre></section><section id="tag-input"><h1>Tag Input</h1>
+&lt;/mac-time&gt;
+</pre></section><section id="tag-input"><h1>Tag Input</h1>
 <p>A directive for generating tag input.  </p>
 <h3>Parameters</h3>
 <p><strong>mac-tag-input-tags</strong><br>Type: <code>String</code><br>The list of elements to populate the select input  </p>
@@ -162,7 +170,8 @@
   mac-tag-input-selected=&quot;selected&quot;
   mac-tag-input-value=&quot;id&quot;
   mac-tag-input-label=&quot;name&quot;&gt;
-&lt;/mac-tag-input&gt;</pre></section><section id="spinner"><h1>Spinner</h1>
+&lt;/mac-tag-input&gt;
+</pre></section><section id="spinner"><h1>Spinner</h1>
 <p>A directive for generating spinner  </p>
 <h3>Parameters</h3>
 <p><strong>mac-spinner-size</strong><br>Type: <code>Integer</code><br>The size of the spinne (default 16)  </p>
@@ -205,7 +214,8 @@
       &lt;div ng-style=&quot;{{previewProgress(preview)}}&quot; class=&quot;bar&quot;&gt;&lt;/div&gt;
     &lt;/div&gt;
   &lt;/li&gt;
-&lt;/ul&gt;</pre></section><section id="placeholder"><h1>Placeholder</h1>
+&lt;/ul&gt;
+</pre></section><section id="placeholder"><h1>Placeholder</h1>
 <p>Dynamically fill out the placeholder text of input  </p>
 <h3>Parameters</h3>
 <p><strong>mac-placeholder</strong><br>Type: <code>String</code><br>Variable that contains the placeholder text  </p>
