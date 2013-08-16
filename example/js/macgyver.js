@@ -9230,7 +9230,7 @@ A directive for generating tag input with autocomplete support on text input
 var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 angular.module("Mac").directive("macTagAutocomplete", [
-  "$parse", "$timeout", "keys", function($parse, $timeout, keys) {
+  "$parse", "$timeout", "keys", "util", function($parse, $timeout, keys, util) {
     return {
       restrict: "E",
       templateUrl: "template/tag_autocomplete.html",
@@ -9263,7 +9263,7 @@ angular.module("Mac").directive("macTagAutocomplete", [
           _ref = events.split(",");
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             item = _ref[_i];
-            attrEvent = _.string.capitalize(item);
+            attrEvent = util.capitalize(item);
             eventsList.push({
               name: item,
               capitalized: attrEvent,
@@ -10708,6 +10708,18 @@ util.factory("util", [
         },
         pluralizers: [[/(quiz)$/i, "$1zes"], [/([m|l])ouse$/i, "$1ice"], [/(matr|vert|ind)(ix|ex)$/i, "$1ices"], [/(x|ch|ss|sh)$/i, "$1es"], [/([^aeiouy]|qu)y$/i, "$1ies"], [/(?:([^f])fe|([lr])f)$/i, "$1$2ves"], [/sis$/i, "ses"], [/([ti])um$/i, "$1a"], [/(buffal|tomat)o$/i, "$1oes"], [/(bu)s$/i, "$1ses"], [/(alias|status)$/i, "$1es"], [/(octop|vir)us$/i, "$1i"], [/(ax|test)is$/i, "$1es"], [/x$/i, "xes"], [/s$/i, "s"], [/$/, "s"]]
       },
+      /*
+      @name pluralize
+      @description
+      Pluralize string based on the count
+      
+      @param {String}  string       String to pluralize
+      @param {Integer} count        Object counts
+      @param {Boolean} includeCount Include the number or not (default false)
+      
+      @returns {String} Pluralized string based on the count
+      */
+
       pluralize: function(string, count, includeCount) {
         var irregulars, isUppercase, lowercaseWord, pluralizedString, pluralizedWord, pluralizer, pluralizers, uncountables, word, _i, _len, _ref;
         if (includeCount == null) {
@@ -10754,16 +10766,22 @@ util.factory("util", [
         }
       },
       capitalize: function(string) {
-        return _.string.capitalize(string);
+        var str;
+        str = String(string) || "";
+        return str.charAt(0).toUpperCase() + str.slice(1);
       },
       uncapitalize: function(string) {
-        return string[0].toLowerCase() + string.slice(1);
+        var str;
+        str = String(string) || "";
+        return str.charAt(0).toLowerCase() + str.slice(1);
       },
       toCamelCase: function(string) {
-        return _.string.camelize(string);
+        return string.trim().replace(/[-_\s]+(.)?/g, function(match, c) {
+          return c.toUpperCase();
+        });
       },
       toSnakeCase: function(string) {
-        return _.string.underscored(string);
+        return string.trim().replace(/([a-z\d])([A-Z]+)/g, "$1_$2").replace(/[-\s]+/g, "_").toLowerCase();
       },
       convertKeysToCamelCase: function(object) {
         var key, result, value;
@@ -10839,10 +10857,10 @@ util.factory("util", [
         urlComponents = fullPath.split("?");
         pathComponents = urlComponents[0].split("/");
         path = pathComponents.slice(0, pathComponents.length - 1).join("/");
-        verb = _.last(pathComponents);
+        verb = pathComponents[pathComponents.length - 1];
         queries = {};
         if (urlComponents.length > 1) {
-          queryStrings = _.last(urlComponents);
+          queryStrings = urlComponents[urlComponents.length - 1];
           _ref = queryStrings.split("&");
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             queryString = _ref[_i];
