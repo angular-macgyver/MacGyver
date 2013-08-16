@@ -6,7 +6,12 @@ module.controller "modalController", ["$scope", "modal", ($scope, modal) ->
       console.log modal.opened.options.data
 ]
 
-module.controller "ExampleController", ["$scope", "$timeout", "Table", ($scope, $timeout, Table) ->
+module.controller "ExampleController", [
+  "$scope"
+  "$timeout"
+  "$window"
+  "Table"
+($scope, $timeout, $window, Table) ->
 
   # MacTable
   $scope.loadDataIntoTable = (x = 3000) ->
@@ -87,6 +92,13 @@ module.controller "ExampleController", ["$scope", "$timeout", "Table", ($scope, 
   $scope.fiveMinAgo   = Math.round(Date.now()/1000) - 5 * 60
   $scope.oneDayAgo    = Math.round(Date.now()/1000) - 24 * 60 * 60
   $scope.threeDaysAgo = Math.round(Date.now()/1000) - 72 * 60 * 60
+
+  # Events
+  $scope.afterPausing = ($event) ->
+    $scope.pauseTypingModel = angular.element($event.target).val()
+
+  $scope.windowResizing = ($event) ->
+    $scope.windowWidth = angular.element($event.target).width()
 ]
 
 window.prettyPrint && prettyPrint()

@@ -4,18 +4,95 @@ block append content
   .row.content
     #nav.span3
       ul.nav.nav-list.docs-sidenav(data-spy="affix", data-offset-top="0")
-        li: a(href="#blur")
+        li: a(href="#events")
           i.icon-chevron-right
-          | Blur
+          | Events
+        li: a(href="#keydowns")
+          i.icon-chevron-right
+          | Keydown events
+        li: a(href="#pause-typing")
+          i.icon-chevron-right
+          | Pause Typing
+        li: a(href="#window-resize")
+          i.icon-chevron-right
+          | Window Resize
 
     #example.span9(ng-controller='ExampleController')
-      section#blur
-        .page-header: h1 Blur
+      section#events
+        @@include("docs/html/directives/events/base.html")
+        h3 Example
+        h4 Blur and Focus
+        .docs-example
+          input(type="text", mac-blur="eventIsFocused = false", mac-focus="eventIsFocused = true")
+          div {{eventIsFocused | boolean : 'Focused' : 'Blurred'}}
+        pre.prettyprint.linenums(ng-non-bindable)
+          = '<input type="text" mac-blur="eventIsFocused = false" mac-focus="eventIsFocused = true" />'
+
+        h4 Keydown and Keyup
+        .docs-example
+          input(type="text", mac-keyup="eventKey = 'keyup'", mac-keydown="eventKey = 'keydown'")
+          div Event fired: {{eventKey}}
+        pre.prettyprint.linenums(ng-non-bindable)
+          = '<input type="text" mac-keyup="eventKey = \'keyup\'" mac-keydown="eventKey = \'keydown\'" />'
+
+        h4 Mouseenter and Mouseleave
+        .docs-example
+          div(
+            mac-mouseenter = "eventMouse = 'mouseenter'"
+            mac-mouseleave = "eventMouse = 'mouseleave'"
+            style          = "width: 100px; height: 100px; background: gray;"
+          ) Hover Over
+          div Event fired: {{eventMouse}}
+        pre.prettyprint.linenums(ng-non-bindable)
+          = '<div mac-mouseenter="eventMouse = \'mouseenter\'"\n'
+          = '     mac-mouseleave="eventMouse = \'mouseleave\'"\n'
+          = '     style="width: 100px; height: 100px; background: gray;">Hover Over</div>'
+
+      section#keydowns
+        @@include("docs/html/directives/events/keydown.html")
+
         h3 Example
         .docs-example
-          input(type="text", mac-blur="onTextBlur()")
+          input(
+            type               = "text"
+            placeholder        = "keydown"
+            mac-keydown-enter  = "eventKeydown = 'enter'"
+            mac-keydown-escape = "eventKeydown = 'escape'"
+            mac-keydown-space  = "eventKeydown = 'space'"
+            mac-keydown-left   = "eventKeydown = 'left'"
+            mac-keydown-up     = "eventKeydown = 'up'"
+            mac-keydown-right  = "eventKeydown = 'right'"
+            mac-keydown-down   = "eventKeydown = 'down'"
+          )
+          div Key pressed: {{eventKeydown}}
         pre.prettyprint.linenums(ng-non-bindable)
-          = '<input type="text" mac-blur="onTextBlur()"/>'
+          = '<input type="text"\n'
+          = '       placeholder="keydown"\n'
+          = '       mac-keydown-enter="eventKeydown = \'enter\'"\n'
+          = '       mac-keydown-escape="eventKeydown = \'escape\'"\n'
+          = '       mac-keydown-space="eventKeydown = \'space\'"\n'
+          = '       mac-keydown-left="eventKeydown = \'left\'"\n'
+          = '       mac-keydown-up="eventKeydown = \'up\'"\n'
+          = '       mac-keydown-right="eventKeydown = \'right\'"\n'
+          = '       mac-keydown-down="eventKeydown = \'down\'"/>'
+
+      section#pause-typing
+        @@include("docs/html/directives/events/pause_typing.html")
+
+        h3 Example
+        .docs-example
+          input(type='text', mac-pause-typing="afterPausing($event)")
+          div value: {{pauseTypingModel}}
+
+        pre.prettyprint.linenums(ng-non-bindable)
+          = '<input type="text" mac-pause-typing="afterPausing($event)">'
+
+      section#window-resize
+        @@include("docs/html/directives/events/window_resize.html")
+
+        h3 Example
+        .docs-example
+          div(mac-window-resize="windowResizing($event)") Current width: {{windowWidth}}
 
 block append scripts
   script.
