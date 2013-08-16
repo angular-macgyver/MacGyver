@@ -10,7 +10,7 @@ section h1{padding-bottom:9px;margin:20px 0 30px;border-bottom:1px solid #eee}
 .docs-sidenav li a{display:block;margin:0 0 -1px;padding:8px 14px;border:1px solid #e5e5e5}
 .docs-sidenav li:first-child a{-webkit-border-radius:6px 6px 0 0;border-radius:6px 6px 0 0}
 .docs-sidenav li:last-child a{-webkit-border-radius:0 0 6px 6px;border-radius:0 0 6px 6px}
-.docs-sidenav li .icon-chevron-right{float:right;margin-top:2px;margin-right:-6px;opacity:.25;filter:alpha(opacity=25);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=25)"}
+.docs-sidenav li .icon-chevron-right{float:right;margin-top:2px;margin-right:-6px;opacity:.25;-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=25)";filter:alpha(opacity=25)}
 .docs-sidenav .active a{position:relative;z-index:2;padding:9px 15px;border:0;text-shadow:0 1px 0 rgba(0,0,0,0.15);-webkit-box-shadow:inset 1px 0 0 rgba(0,0,0,0.1),inset -1px 0 0 rgba(0,0,0,0.1);box-shadow:inset 1px 0 0 rgba(0,0,0,0.1),inset -1px 0 0 rgba(0,0,0,0.1)}
 .com{color:#93a1a1}
 .lit{color:#195f91}
