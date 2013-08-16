@@ -1,8 +1,6 @@
 # MacGyver #
 
-![MacGyver utils for Angular.js](http://upload.wikimedia.org/wikipedia/en/9/92/MacGyver_intro.jpg "Duct Tape and a Swiss Army Knife")
-
-Angular helpers for all your friends!
+Duct Tape and a Swiss Army Knife. Angular helpers for all your friends!
 
 ## Current components ##
 
@@ -27,9 +25,8 @@ Angular helpers for all your friends!
  - Underscore String
 
 ## 3rd party libraries dependencies ##
- - Underscore
  - jQuery
- - jQuery UI
+ - jQuery UI (datepicker and table)
 
 ## Get Started ##
 MacGyver requires a few node modules for development environment.
