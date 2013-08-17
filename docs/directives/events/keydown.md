@@ -7,30 +7,30 @@ Currently MacGyver supports enter, escape, space, left, up, right and down
 ### Parameters
 **mac-keydown-enter**  
 Type: `Expression`  
-Expression to evaulate on hitting enter  
+Expression to evaluate on hitting enter  
   
 **mac-keydown-escape**  
 Type: `Expression`  
-Expression to evaulate on hitting escape  
+Expression to evaluate on hitting escape  
   
 **mac-keydown-space**  
 Type: `Expression`  
-Expression to evaulate on hitting space  
+Expression to evaluate on hitting space  
   
 **mac-keydown-left**  
 Type: `Expression`  
-Expression to evaulate on hitting left  
+Expression to evaluate on hitting left  
   
 **mac-keydown-up**  
 Type: `Expression`  
-Expression to evaulate on hitting up  
+Expression to evaluate on hitting up  
   
 **mac-keydown-right**  
 Type: `Expression`  
-Expression to evaulate on hitting right  
+Expression to evaluate on hitting right  
   
 **mac-keydown-down**  
 Type: `Expression`  
-Expression to evaulate on hitting down  
+Expression to evaluate on hitting down  
   
 

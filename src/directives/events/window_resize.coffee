@@ -5,7 +5,7 @@
 @description
 Binding custom behavior on window resize event
 
-@param {Expression} mac-window-resize Expression to evaulate on window resize
+@param {Expression} mac-window-resize Expression to evaluate on window resize
 ###
 
 angular.module("Mac").

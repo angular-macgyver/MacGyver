@@ -7,26 +7,26 @@ Currently MacGyver has blur, focus, keydown, keyup, mouseenter and mouseleave
 ### Parameters
 **mac-blur**  
 Type: `Expression`  
-Expression to evaulate on blur  
+Expression to evaluate on blur  
   
 **mac-focus**  
 Type: `Expression`  
-Expression to evulate on focus  
+Expression to evaluate on focus  
   
 **mac-keydown**  
 Type: `Expression`  
-Expression to evulate on keydown  
+Expression to evaluate on keydown  
   
 **mac-keyup**  
 Type: `Expression`  
-Expression to evulate on keyup  
+Expression to evaluate on keyup  
   
 **mac-mouseenter**  
 Type: `Expression`  
-Expression to evulate on mouseenter  
+Expression to evaluate on mouseenter  
   
 **mac-mouseleave**  
 Type: `Expression`  
-Expression to evulate on mouseleave  
+Expression to evaluate on mouseleave  
   
 
