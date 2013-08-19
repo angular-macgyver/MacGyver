@@ -10,6 +10,8 @@ block append content
           table.table.mac-table-default(
             mac-table
             mac-table-columns="dynamic"
+            mac-table-resizable-columns=""
+            mac-table-reorderable-columns=""
           )
             thead(mac-table-section="header", mac-table-section-blank-row)
               tr(mac-table-row)
@@ -28,7 +30,7 @@ block append content
                   span {{cell.value()}}
 
         pre.prettyprint.linenums(ng-non-bindable)
-          = '<table mac-table  mac-table-columns="dynamic" class="table mac-table-default">\n'
+          = '<table mac-table  mac-table-columns="dynamic" mac-table-resizable-columns mac-table-reorderable-columns class="table mac-table-default">\n'
           = '  <thead mac-table-section="header" mac-table-section-blank-row>\n'
           = '    <tr mac-table-row>\n'
           = '      <th mac-cell-template="No." mac-column-width="5%"><span>{{cell.colName}}</span></th>\n'
@@ -37,7 +39,7 @@ block append content
           = '    </tr>\n'
           = '  </thead>\n'
           = '  <tbody mac-table-section="body" mac-table-section-models="macGyverSeasonOne">\n'
-          = '    <tr table-row>\n'
+          = '    <tr mac-table-row>\n'
           = '      <td mac-cell-template=""><span>{{cell.value()}}</span></td>\n'
           = '    </tr>\n'
           = '  </tbody>\n'

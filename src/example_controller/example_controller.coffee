@@ -10,16 +10,7 @@ module.controller "ExampleController", [
   "$scope"
   "$timeout"
   "$window"
-  "Table"
-($scope, $timeout, $window, Table) ->
-
-  # MacTable
-  $scope.loadDataIntoTable = (x = 3000) ->
-    $scope.macGyverSeasonOne = []
-    for i in [1..x]
-      $scope.macGyverSeasonOne.push {'No.': '1', 'Title': '"Pilot"', 'Directed by': 'Jerrold Freedman', 'Written by': 'Thackary Pallor', 'Original air date': 'September 29, 1985'}
-
-  $scope.loadDataIntoTable(100)
+($scope, $timeout, $window) ->
 
   # Editable
   $scope.editableTest = "Hello"
@@ -99,6 +90,144 @@ module.controller "ExampleController", [
 
   $scope.windowResizing = ($event) ->
     $scope.windowWidth = angular.element($event.target).width()
+
+  # Table
+  $scope.macGyverSeasonOne = [
+    {
+      'No.': '1',
+      'Title': '"Pilot"',
+      'Directed by': 'Jerrold Freedman',
+      'Written by': 'Thackary Pallor',
+      'Original air date': 'September 29, 1985'
+    }, {
+      'No.': '2',
+      'Title': '"The Golden Triangle"',
+      'Directed by': 'Paul Stanley & Donald Petrie',
+      'Written by': 'Dennis R. Foley & Terry Nation',
+      'Original air date': 'October 6, 1985'
+    }, {
+      'No.': '3',
+      'Title': '"Thief of Budapest"',
+      'Directed by': 'Lee H. Katzin & John Patterson',
+      'Written by': 'Terry Nation & Stephen Downing & Joe Viola',
+      'Original air date': 'October 13, 1985'
+    }, {
+      'No.': '4',
+      'Title': '"The Gauntlet"',
+      'Directed by': 'Lee H. Katzin',
+      'Written by': 'Stephen Kandel',
+      'Original air date': 'October 20, 1985'
+    }, {
+      'No.': '5',
+      'Title': '"The Heist"',
+      'Directed by': 'Alan Smithee',
+      'Written by': 'Larry Alexander & James Schmerer',
+      'Original air date': 'November 3, 1985'
+    }, {
+      'No.': '6',
+      'Title': '"Trumbo\'s World"',
+      'Directed by': 'Donald Petrie & Lee H. Katzin',
+      'Written by': 'Stephen Kandel',
+      'Original air date': 'November 10, 1985'
+    }, {
+      'No.': '7',
+      'Title': '"Last Stand"',
+      'Directed by': 'John Florea',
+      'Written by': 'Judy Burns',
+      'Original air date': 'November 17, 1985'
+    }, {
+      'No.': '8',
+      'Title': '"Hellfire"',
+      'Directed by': 'Richard Colla',
+      'Written by': 'Story by: Douglas Brooks West',
+      'Original air date': 'November 24, 1985'
+    }, {
+      'No.': '9',
+      'Title': '"The Prodigal"',
+      'Directed by': 'Alexander Singer',
+      'Written by': 'Story by: David Abramowitz & Paul Savage',
+      'Original air date': 'December 8, 1985'
+    }, {
+      'No.': '10',
+      'Title': '"Target MacGyver"',
+      'Directed by': 'Lee H. Katzin & Ernest Pintoff',
+      'Written by': 'Story by: Mike Marvin',
+      'Original air date': 'December 22, 1985'
+    }, {
+      'No.': '11',
+      'Title': '"Nightmares"',
+      'Directed by': 'Cliff Bole',
+      'Written by': 'James Schmerer',
+      'Original air date': 'January 15, 1986'
+    }, {
+      'No.': '12',
+      'Title': '"Deathlock"',
+      'Directed by': 'Cliff Bole & Alexander Singer',
+      'Written by': 'Jerry Ludwig & Stephen Kandel',
+      'Original air date': 'January 22, 1986'
+    }, {
+      'No.': '13',
+      'Title': '"Flame\'s End"',
+      'Directed by': 'Bruce Seth Green',
+      'Written by': 'Story by: Hannah Louise Shearer',
+      'Original air date': 'January 29, 1986'
+    }, {
+      'No.': '14',
+      'Title': '"Countdown"',
+      'Directed by': 'Stan Jolley',
+      'Written by': 'Tony DiMarco & David Ketchum',
+      'Original air date': 'February 5, 1986'
+    }, {
+      'No.': '15',
+      'Title': '"The Enemy Within"',
+      'Directed by': 'Cliff Bole',
+      'Written by': 'David Abramowitz',
+      'Original air date': 'February 12, 1986'
+    }, {
+      'No.': '16',
+      'Title': '"Every Time She Smiles"',
+      'Directed by': 'Charlie Correll',
+      'Written by': 'James Schmerer',
+      'Original air date': 'February 19, 1986'
+    }, {
+      'No.': '17',
+      'Title': '"To Be a Man"',
+      'Directed by': 'Cliff Bole',
+      'Written by': 'Don Mankiewicz',
+      'Original air date': 'March 5, 1986'
+    }, {
+      'No.': '18',
+      'Title': '"Ugly Duckling"',
+      'Directed by': 'Charlie Correll',
+      'Written by': 'Larry Gross',
+      'Original air date': 'March 12, 1986'
+    }, {
+      'No.': '19',
+      'Title': '"Slow Death"',
+      'Directed by': 'Don Weis',
+      'Written by': 'Stephen Kandel',
+      'Original air date': 'April 2, 1986'
+    }, {
+      'No.': '20',
+      'Title': '"The Escape"',
+      'Directed by': 'Don Chaffey',
+      'Written by': 'Stephen Kandel',
+      'Original air date': 'April 16, 1986'
+    }, {
+      'No.': '21',
+      'Title': '"A Prisoner of Conscience"',
+      'Directed by': 'Cliff Bole',
+      'Written by': 'Stephen Kandel',
+      'Original air date': 'April 30, 1986'
+    }, {
+      'No.': '22',
+      'Title': '"The Assassin"',
+      'Directed by': 'Charlie Correll',
+      'Written by': 'James Schmerer',
+      'Original air date': 'May 7, 1986'
+    }
+  ]
+
 ]
 
 window.prettyPrint && prettyPrint()
