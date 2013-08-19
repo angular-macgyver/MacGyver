@@ -1,12 +1,41 @@
 extends layout
 
+block append header
+  #header.macgyver-head
+    h1.hero MacGyver
+
+    ul.macgyver-links
+      li: a(href="https://github.com/StartTheShift/MacGyver") Github project
+      li: a(href="https://github.com/StartTheShift/MacGyver/issues") Issues
+      li Version 0.1.0
+
+    .github-info
+      ul
+        li
+          iframe(
+            src = "http://ghbtns.com/github-btn.html?user=StartTheShift&repo=MacGyver&type=watch&count=true"
+            allowtransparency = "true"
+            frameborder = "0"
+            scrolling = "0"
+            width = "110"
+            height = "20"
+          )
+        li
+          iframe(
+            src = "http://ghbtns.com/github-btn.html?user=StartTheShift&repo=MacGyver&type=fork&count=true"
+            allowtransparency = "true"
+            frameborder = "0"
+            scrolling = "0"
+            width = "95"
+            height = "20"
+          )
+
 block append content
   .row.content
     #nav.span3
       ul.nav.nav-list.docs-sidenav(
         data-spy           = "affix"
-        data-offset-top    = "0"
-        data-offset-bottom = "100"
+        data-offset-top    = "298"
       )
         li: a(href="#modal")
           i.icon-chevron-right
@@ -298,8 +327,3 @@ block append content
           input(type="text", mac-placeholder="tagAutocompletePlaceholder")
         pre.prettyprint.linenums(ng-non-bindable)
           = '<input type="text" mac-placeholder="placeholderVariable">'
-
-block append scripts
-  script.
-    $("#top-nav li").removeClass("active");
-    $("#directives-nav").addClass("active");
