@@ -2,8 +2,8 @@
   "author": "SHIFT",
   "name": "MacGyver",
   "description": "A library of shared directives",
-  "version": "0.0.1",
-  "homepage": "",
+  "version": "0.1.0",
+  "homepage": "http://starttheshift.github.io/MacGyver",
   "repository": {
     "type": "git",
     "url": "git@github.com:StartTheShift/MacGyver.git"
@@ -14,6 +14,7 @@
   "scripts": {
     "test": "grunt karma:travis"
   },
+  "license" : "MIT",
   "dependencies": {},
   "devDependencies": {
     "express": "~3.3.5",
