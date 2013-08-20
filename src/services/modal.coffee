@@ -137,7 +137,7 @@ angular.module("Mac").factory("modal", [
     #
     register: (id, element, options, transclude) ->
       if @registered[id]?
-        throw new Error "Modal #{modalId} already registered"
+        throw new Error "Modal #{id} already registered"
 
       @registered[id] = {element, options, transclude}
 
