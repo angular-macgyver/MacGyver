@@ -6,7 +6,7 @@ A directive for generating spinner
 ### Parameters
 **mac-spinner-size**  
 Type: `Integer`  
-The size of the spinne (default 16)  
+The size of the spinner (default 16)  
   
 **mac-spinner-z-index**  
 Type: `Integer`  
