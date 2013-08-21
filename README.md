@@ -56,9 +56,7 @@ MacGyver requires a few node modules for development environment.
 
   `sudo npm -g install grunt-cli`
 
-#### Other dev dependencies ####
-  Includes [underscore](https://npmjs.org/package/underscore),
-           [wrench](https://npmjs.org/package/wrench),
-           [express](https://npmjs.org/package/express),
+#### Starting Grunt
+To compile source code and run unit tests while developing:
 
-  `npm install -d`
+    grunt run
