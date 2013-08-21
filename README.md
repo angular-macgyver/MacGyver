@@ -8,7 +8,7 @@ Duct Tape and a Swiss Army Knife. Angular helpers for all your friends!
  - Autocomplete
  - Datepicker
  - Events
- - File Uplaod
+ - File Upload
  - Menu
  - Modal
  - Spinner
