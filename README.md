@@ -30,7 +30,18 @@ Duct Tape and a Swiss Army Knife. Angular helpers for all your friends!
  - jQuery File Upload (file upload directive)
  - Underscore String (Underscore string filter)
 
-## Get Started ##
+## Using MacGyver ##
+You can install via [Bower](http://www.bower.io) or download from [Github](https://github.com/StartTheShift/MacGyver/archive/master.zip)
+
+To install via bower, make sure you have bower installed and then run:
+
+    bower install angular-macgyver
+
+Once you have MacGyver in your project, just include “Mac” as a dependency in your Angular application and you’re good to go.
+
+    angular.module(‘myModule’, [“Mac”])
+
+## Get Started On Development ##
 MacGyver requires a few node modules for development environment.
 
 ### Install all through npm ###
@@ -45,32 +56,9 @@ MacGyver requires a few node modules for development environment.
 
   `sudo npm -g install grunt-cli`
 
-#### Other dependencies ####
+#### Other dev dependencies ####
   Includes [underscore](https://npmjs.org/package/underscore),
            [wrench](https://npmjs.org/package/wrench),
            [express](https://npmjs.org/package/express),
-           [http-proxy](https://npmjs.org/package/http-proxy)
 
   `npm install -d`
-
-## Grunt tasks ##
-
-```
-       chalkboard  A simple grunt task to make documentation easier. *
-            clean  Clean files and folders. *
-           coffee  Compile CoffeeScript files into JavaScript *
-           concat  Concatenate files. *
-             copy  Copy files. *
-             jade  Compile jade templates. *
-           stylus  Compile Stylus files into CSS *
-           uglify  Minify files with UglifyJS. *
-            watch  Run predefined tasks whenever watched files change.
-            karma  run karma. *
-    embedtemplate  Replace templateUrl with actual html *
-           marked  Convert markdown to html *
- update:component  Update bower.json
-           deploy  Build and copy to lib/
-          compile  Compile files
-              run  Watch src and run test server
-           server  Run test server
-```
