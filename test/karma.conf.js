@@ -19,6 +19,14 @@ module.exports = function(config) {
       "template/*.html",
 
       // Application Code //
+      {
+        "pattern":  '../src/example_controller/*.coffee',
+        "watched":  false,
+        "included": false,
+        "served":   false
+      },
+      '../src/main.coffee',
+      '../src/services/*.coffee',
       '../src/*.coffee',
       '../src/**/*.coffee',
 
