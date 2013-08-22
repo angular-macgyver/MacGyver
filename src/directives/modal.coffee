@@ -15,9 +15,9 @@ angular.module("Mac").directive("macModal", [
   "$rootScope"
   "$parse"
   "modal"
+  "modalViews"
   "util"
-  "keys"
-  ($rootScope, $parse, modal, util, keys) ->
+  ($rootScope, $parse, modal, modalViews, util) ->
     restrict:    "E"
     templateUrl: "template/modal.html"
     replace:     true
@@ -25,54 +25,22 @@ angular.module("Mac").directive("macModal", [
 
     compile: (element, attrs, transclude) ->
       ($scope, element, attrs) ->
-        defaults =
-          keyboard:     false
-          overlayClose: false
-          resize:       true
-          open:         null
-          topOffset:    20
-          preRendered:  false
-
-        opts = util.extendAttributes "macModal", defaults, attrs
-
-        elementId = attrs.id
-
-        escapeKeyHandler = (event) ->
-          modal.hide() if event.which is keys.ESCAPE
-
-        resizeHandler = (event) -> modal.resize()
-
-        bindingEvents = (action = "bind") ->
-          return unless action in ["bind", "unbind"]
-
-          if opts.keyboard
-            $(document)[action] "keydown", escapeKeyHandler
-
-          if opts.resize
-            $(window)[action] "resize", resizeHandler
+        opts = util.extendAttributes "macModal", modalViews.defaults, attrs
 
         registerModal = (id) ->
           if id? and id
             opts.callback = ->
-              bindingEvents()
               $parse(opts.open) $scope if opts.open?
 
-            transcluding = ->
-              transclude $scope, (clone) ->
-                $(".modal-content-wrapper", element).append clone
+            modal.register id, element, opts
 
-            modal.register id, element, opts, transcluding
-            transcluding() if opts.preRendered
-
+        $scope.modal        = modal
         $scope.closeOverlay = ($event) ->
-          if opts.overlayClose and $($event.target).is(".modal-overlay")
-            $scope.closeModal()
+          if opts.overlayClose and angular.element($event.target).is(".modal-overlay")
+            modal.hide()
 
-        $scope.closeModal = ($event) ->
-          modal.hide -> bindingEvents "unbind"
-
-        if elementId
-          registerModal elementId
+        if attrs.id
+          registerModal attrs.id
         else
           attrs.$observe "macModal", (id) -> registerModal id
 ]).
@@ -97,4 +65,3 @@ directive "macModal", [
             data: $parse(attrs.macModalContent) $scope
       return
 ]
-

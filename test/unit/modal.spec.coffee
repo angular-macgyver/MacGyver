@@ -132,40 +132,16 @@ describe "Mac modal", ->
 
       expect(opened).toBe true
 
-    it "should close the modal clicking on the close button", ->
+    it "should close the modal after hiding the modal", ->
       modalElement = $compile("<mac-modal id='test-modal'></mac-modal>") $rootScope
       $rootScope.$digest()
 
       modal.show "test-modal"
       $timeout.flush()
 
-      $(".close-modal", modalElement).click()
-      expect(modalElement.hasClass("visible")).toBe false
-
-    it "should not transclude into content", ->
-      modalElement = $compile("<mac-modal id='test-modal'>Content</mac-modal>") $rootScope
-      $rootScope.$digest()
-
-      expect($(".modal-content-wrapper", modalElement).text()).toBe ""
-
-    it "should transclude the content on compile", ->
-      modalElement = $compile("<mac-modal id='test-modal' mac-modal-pre-rendered>Content</mac-modal>") $rootScope
-      $rootScope.$digest()
-
-      expect($(".modal-content-wrapper", modalElement).text()).toBe "Content"
-
-    it "should transclude on open and clear on hide", ->
-      modalElement = $compile("<mac-modal id='test-modal'>Content</mac-modal>") $rootScope
-      $rootScope.$digest()
-
-      modal.show "test-modal"
-      $timeout.flush()
-
-      expect($(".modal-content-wrapper", modalElement).text()).toBe "Content"
-
       modal.hide()
 
-      expect($(".modal-content-wrapper", modalElement).text()).toBe ""
+      expect(modalElement.hasClass("visible")).toBe false
 
   describe "modal trigger", ->
     it "should bind a click event to trigger a modal", ->
@@ -175,3 +151,37 @@ describe "Mac modal", ->
 
       element.click()
       expect(modal.opened.id).toBe "test-modal"
+
+  describe "modal method", ->
+    beforeEach ->
+      angular.module("Mac").modal "testing",
+        template: "<div>Test Modal Content</div>"
+
+    afterEach ->
+      angular.element(".modal-overlay").remove()
+
+    it "should register a new modal", ->
+      expect(modal.registered["testing"]).toBeDefined()
+
+    it "should compile on show", ->
+      modal.show "testing"
+
+      $timeout.flush()
+      contentText = angular.element(".modal-content-wrapper").text()
+      expect(contentText).toBe "Test Modal Content"
+
+    it "should have modal service on scope", ->
+      modal.show "testing"
+      $timeout.flush()
+
+      scope = angular.element(".modal-overlay").scope()
+      expect(scope.modal).toBeDefined()
+
+    it "should remove modal on hide", ->
+      modal.show "testing"
+      $timeout.flush()
+
+      modal.hide()
+      $timeout.flush()
+
+      expect(angular.element(".modal-content-wrapper").length).toBe 0
