@@ -3,9 +3,14 @@ table.mac-table-default
     white-space nowrap
     th, td
       white-space normal
+  tr
+    &.selected
+      background blanchedalmond
   th, td
     padding 0
     .cell-wrapper
       box-sizing border-box
       padding    8px
+  [mac-table-selectable]
+    cursor pointer
 

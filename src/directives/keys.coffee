@@ -36,6 +36,7 @@ angular.module("Mac").factory "keys", ->
   NINE:          57
   SEMICOLON:     59
   EQUALS:        61
+  COMMAND:       91
   A:             65
   B:             66
   C:             67
