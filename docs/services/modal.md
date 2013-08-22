@@ -23,6 +23,11 @@ Type: `Function`
 Hide currently opened modal  
 - {Function} callback Callback after modal has been hidden  
   
+**bindingEvents**  
+Type: `Function`  
+Binding escape key or resize event  
+- {String} action Either to bind or unbind events (default "bind")  
+  
 **register**  
 Type: `Function`  
 Registering modal with the service  
