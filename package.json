@@ -14,7 +14,10 @@
   "scripts": {
     "test": "grunt karma:travis"
   },
-  "license": "MIT",
+  "license": [{
+    "type": "MIT",
+    "url": "https://github.com/StartTheShift/MacGyver/blob/master/LICENSE"
+  }],
   "dependencies": {},
   "devDependencies": {
     "express": "~3.3.5",
@@ -33,11 +36,8 @@
     "matchdep": "~0.1.2",
     "underscore": ">= 1.4.0 < 1.5",
     "wrench": "1.5.1",
-    "karma-script-launcher": "~0.1.0",
     "karma-chrome-launcher": "~0.1.0",
-    "karma-firefox-launcher": "~0.1.0",
     "karma-jasmine": "~0.1.0",
-    "karma-requirejs": "~0.1.0",
     "karma-coffee-preprocessor": "~0.1.0",
     "karma-phantomjs-launcher": "~0.1.0",
     "karma": "~0.10.1",
