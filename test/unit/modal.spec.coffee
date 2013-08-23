@@ -155,13 +155,26 @@ describe "Mac modal", ->
   describe "modal method", ->
     beforeEach ->
       angular.module("Mac").modal "testing",
-        template: "<div>Test Modal Content</div>"
+        template:  "<div>Test Modal Content</div>"
+        keyboard:  true
+        resize:    false
+        topOffset: 10
 
     afterEach ->
       angular.element(".modal-overlay").remove()
 
     it "should register a new modal", ->
       expect(modal.registered["testing"]).toBeDefined()
+
+    it "should add moduleMethod to options", ->
+      options = modal.registered["testing"].options
+      expect(options.moduleMethod).toBe true
+
+    it "should update options", ->
+      options = modal.registered["testing"].options
+
+      expect(options.keyboard).toBe true
+      expect(options.overlayClose).toBe false
 
     it "should compile on show", ->
       modal.show "testing"

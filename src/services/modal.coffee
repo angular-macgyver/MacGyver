@@ -101,7 +101,8 @@ angular.module("Mac").service("modal", [
               $controller options.controller,
                 $scope: viewScope
 
-            element = angular.element(@modalTemplate).attr {id}
+            angular.extend options.attributes, {id}
+            element = angular.element(@modalTemplate).attr options.attributes
             angular.element(".modal-content-wrapper", element).html template
             angular.element("body").append $compile(element) viewScope
 
@@ -245,6 +246,7 @@ provider("modalViews", ->
     resize:       true
     open:         null
     topOffset:    20
+    attributes:   {}
   @$get = -> this
   return this
 ).
@@ -258,6 +260,7 @@ provider("modalViews", ->
 # @param {String}   template          Modal HTML content
 # @param {String}   templateUrl       URL to load modal template
 # @param {String|Function} controller Controller for the modal
+# @param {Object}   attributes        Extra attributes to add to modal
 #
 # angular.module("Mac").modal("myModal", {
 #   controller: "myController"
@@ -265,9 +268,10 @@ provider("modalViews", ->
 # })
 #
 # Add modal shortcut to Mac module
+#
 config ["modalViewsProvider", (modalViews) ->
   angular.module("Mac").modal = (id, options) ->
     unless modalViews.registered[id]?
-      angular.extend options, modalViews.defaults, {moduleMethod: true}
+      options = angular.extend modalViews.defaults, options, {moduleMethod: true}
       modalViews.registered[id] = {id, options}
 ]
