@@ -90,7 +90,9 @@ module.exports = (grunt) ->
     stylus:
       compile:
         options:
-          use: ["nib"]
+          paths:   ["example/css"]
+          urlfunc: "url"
+          import:  ["nib"]
         files:
           "tmp/app.css": ["src/css/*.styl"]
       vendor:
@@ -121,7 +123,7 @@ module.exports = (grunt) ->
         files: [
           expand:  true
           flatten: true
-          src:     ["example/img/**/*.png"]
+          src:     ["example/css/img/ui-*.png"]
           dest:    "lib/img/"
         ]
 
