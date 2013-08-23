@@ -31,6 +31,7 @@ module.exports = function(config) {
       '../src/**/*.coffee',
 
       '../test/vendor/angular/angular-mocks.js',
+      '../test/vendor/browserTrigger.js',
 
       // Test Code //
       '../test/unit/*.spec.coffee'
