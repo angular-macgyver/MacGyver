@@ -10296,9 +10296,10 @@ angular.module("Mac").service("modal", [
                   $scope: viewScope
                 });
               }
-              element = angular.element(_this.modalTemplate).attr({
+              angular.extend(options.attributes, {
                 id: id
               });
+              element = angular.element(_this.modalTemplate).attr(options.attributes);
               angular.element(".modal-content-wrapper", element).html(template);
               angular.element("body").append($compile(element)(viewScope));
               return showModal(element);
@@ -10433,7 +10434,8 @@ angular.module("Mac").service("modal", [
     overlayClose: false,
     resize: true,
     open: null,
-    topOffset: 20
+    topOffset: 20,
+    attributes: {}
   };
   this.$get = function() {
     return this;
@@ -10443,7 +10445,7 @@ angular.module("Mac").service("modal", [
   "modalViewsProvider", function(modalViews) {
     return angular.module("Mac").modal = function(id, options) {
       if (modalViews.registered[id] == null) {
-        angular.extend(options, modalViews.defaults, {
+        options = angular.extend(modalViews.defaults, options, {
           moduleMethod: true
         });
         return modalViews.registered[id] = {
