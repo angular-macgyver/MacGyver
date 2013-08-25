@@ -12,12 +12,6 @@ module.controller "ExampleController", [
   "$window"
 ($scope, $timeout, $window) ->
 
-  # Editable
-  $scope.editableTest = "Hello"
-
-  $scope.getDisplayText = ->
-    $scope.editableTest
-
   $scope.selectOptions = [
     {value: 1, text: "text1"}
     {value: 2, text: "text2"}
@@ -27,6 +21,16 @@ module.controller "ExampleController", [
   $scope.convertToText = ->
     for option in $scope.selectOptions when option.value is +$scope.selectedOptionValue
       return option.text
+
+  # Menu section
+  $scope.menuItems = [
+    {label: "Page 1", key: "Page 1"}
+    {label: "Page 2", key: "Page 2"}
+    {label: "Page 3", key: "Page 3"}
+    {label: "Page 4", key: "Page 4"}
+  ]
+  $scope.selectingMenuItem = (index) ->
+    $scope.selectedItem = $scope.menuItems[index].label
 
   # Autocomplete section
   # Used in autocomplete to transform data

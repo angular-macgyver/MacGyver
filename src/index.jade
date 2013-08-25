@@ -110,7 +110,11 @@ block append content
         @@include("docs/html/directives/menu.html")
         h3 Example
         .docs-example
-          mac-menu
+          mac-menu(
+            mac-menu-items  = "menuItems"
+            mac-menu-select = "selectingMenuItem(index)"
+          )
+          div Current selected item: {{selectedItem}}
 
       section#autocomplete
         @@include("docs/html/directives/autocomplete.html")
