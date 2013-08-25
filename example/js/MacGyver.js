@@ -8424,10 +8424,13 @@ angular.module("Mac").factory("keys", function() {
 @description
 A directive for creating a menu with multiple items
 
-@param {Expression} mac-menu-item
+@param {Expression} mac-menu-items List of items to display in the menu
+        Each item should have a `label` key as display text
 @param {Function} mac-menu-select Callback on select
+        - `index` - {Integer} Item index
 @param {Object} mac-menu-style Styles apply to the menu
 @param {Expression} mac-menu-index Index of selected item
+        - `index` - {Integer} Item index
 */
 
 angular.module("Mac").directive("macMenu", [
@@ -8439,7 +8442,6 @@ angular.module("Mac").directive("macMenu", [
       scope: {
         items: "=macMenuItems",
         style: "=macMenuStyle",
-        index: "=macMenuIndex",
         select: "&macMenuSelect"
       },
       link: function($scope, element, attrs, ctrls) {
@@ -8448,9 +8450,16 @@ angular.module("Mac").directive("macMenu", [
             index: index
           });
         };
-        return $scope.setIndex = function(index) {
+        $scope.setIndex = function(index) {
           return $scope.index = index;
         };
+        return $scope.$watch("index", function(value) {
+          var getter;
+          getter = $parse(attrs.macMenuIndex);
+          if ((getter.assign != null) && value) {
+            return getter.assign($scope.$parent, value);
+          }
+        });
       }
     };
   }
@@ -9753,10 +9762,6 @@ module.controller("modalController", [
 
 module.controller("ExampleController", [
   "$scope", "$timeout", "$window", function($scope, $timeout, $window) {
-    $scope.editableTest = "Hello";
-    $scope.getDisplayText = function() {
-      return $scope.editableTest;
-    };
     $scope.selectOptions = [
       {
         value: 1,
@@ -9779,6 +9784,24 @@ module.controller("ExampleController", [
           return option.text;
         }
       }
+    };
+    $scope.menuItems = [
+      {
+        label: "Page 1",
+        key: "Page 1"
+      }, {
+        label: "Page 2",
+        key: "Page 2"
+      }, {
+        label: "Page 3",
+        key: "Page 3"
+      }, {
+        label: "Page 4",
+        key: "Page 4"
+      }
+    ];
+    $scope.selectingMenuItem = function(index) {
+      return $scope.selectedItem = $scope.menuItems[index].label;
     };
     $scope.onSuccess = function(data) {
       return data.data;
