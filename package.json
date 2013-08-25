@@ -14,10 +14,12 @@
   "scripts": {
     "test": "grunt karma:travis"
   },
-  "license": [{
-    "type": "MIT",
-    "url": "https://github.com/StartTheShift/MacGyver/blob/master/LICENSE"
-  }],
+  "license": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/StartTheShift/MacGyver/blob/master/LICENSE"
+    }
+  ],
   "dependencies": {},
   "devDependencies": {
     "express": "~3.3.5",

@@ -1,6 +1,7 @@
 describe "Mac tag autocomplete", ->
   $compile   = null
   $rootScope = null
+  $timeout   = null
   keys       = null
 
   beforeEach module("Mac")
@@ -8,9 +9,10 @@ describe "Mac tag autocomplete", ->
   beforeEach module("template/autocomplete.html")
   beforeEach module("template/menu.html")
 
-  beforeEach inject (_$compile_, _$rootScope_, _keys_) ->
+  beforeEach inject (_$compile_, _$rootScope_, _$timeout_, _keys_) ->
     $compile   = _$compile_
     $rootScope = _$rootScope_
+    $timeout   = _$timeout_
     keys       = _keys_
 
   describe "basic initialization", ->
@@ -104,16 +106,9 @@ describe "Mac tag autocomplete", ->
       $rootScope.$digest()
 
       textInput = $(".mac-autocomplete", element)
+      textInput.trigger "keyup", keyCode: keys.A
 
-      runs ->
-        textInput.trigger "keyup", keyCode: keys.A
-
-      waitsFor ->
-        return called
-      , "keyup event to fire", 150
-
-      runs ->
-        expect(called).toBe true
+      expect(called).toBe true
 
   describe "selected variable", ->
     it "should filter out used tags", ->
@@ -127,8 +122,7 @@ describe "Mac tag autocomplete", ->
       element = $compile("<mac-tag-autocomplete mac-tag-autocomplete-source='source' mac-tag-autocomplete-selected='selected'></mac-tag-autocomplete>") $rootScope
       $rootScope.$digest()
 
-      textInput = $(".mac-autocomplete", element)
-      textInputScope = textInput.scope()
+      textInputScope = $rootScope.$$childHead
 
       expect(textInputScope.autocompleteSource.length).toBe 2
 
@@ -141,15 +135,9 @@ describe "Mac tag autocomplete", ->
       $rootScope.$digest()
 
       textInput = $(".mac-autocomplete", element)
-      runs ->
-        textInput.trigger "keydown"
+      browserTrigger textInput, "keydown"
 
-      waitsFor ->
-        return called
-      , "keydown callback to be fired", 150
-
-      runs ->
-        expect(called).toBe true
+      expect(called).toBe true
 
     it "should remove the last tag", ->
       called              = false
@@ -160,15 +148,9 @@ describe "Mac tag autocomplete", ->
       $rootScope.$digest()
 
       textInput = $(".mac-autocomplete", element)
-      runs ->
-        textInput.trigger $.Event("keydown", which: keys.BACKSPACE)
+      textInput.trigger $.Event("keydown", which: keys.BACKSPACE)
 
-      waitsFor ->
-        return called
-      , "keydown callback to be fired", 150
-
-      runs ->
-        expect($rootScope.selected.length).toBe 0
+      expect($rootScope.selected.length).toBe 0
 
     it "should push the text into selected", ->
       called              = false
@@ -179,16 +161,12 @@ describe "Mac tag autocomplete", ->
       $rootScope.$digest()
 
       textInput = $(".mac-autocomplete", element)
-      runs ->
-        textInput.scope().textInput = "Testing"
-        textInput.trigger $.Event("keydown", which: keys.ENTER)
+      $rootScope.$$childHead.textInput = "Testing"
+      textInput.trigger $.Event("keydown", which: keys.ENTER)
 
-      waitsFor ->
-        return called
-      , "keydown callback to be fired", 150
+      $timeout.flush()
 
-      runs ->
-        expect($rootScope.selected.length).toBe 1
+      expect($rootScope.selected.length).toBe 1
 
   describe "on select callback", ->
     it "should fire callback", ->
@@ -202,13 +180,9 @@ describe "Mac tag autocomplete", ->
       $rootScope.$digest()
 
       textInput = $(".mac-autocomplete", element)
-      runs ->
-        textInput.scope().textInput = "Testing"
-        textInput.trigger $.Event("keydown", which: keys.ENTER)
+      $rootScope.$$childHead.textInput = "Testing"
+      textInput.trigger $.Event("keydown", which: keys.ENTER)
 
-      waitsFor ->
-        return called
-      , "on enter callback to be fired", 150
+      $timeout.flush()
 
-      runs ->
-        expect(called).toBe true
+      expect(called).toBe true

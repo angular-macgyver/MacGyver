@@ -42,7 +42,13 @@ describe "Mac modal", ->
       modal.show "test-modal"
 
       expect(modal.waiting.id).toBe "test-modal"
-      expect(_(modal.waiting.options).isEmpty()).toBe true
+
+      isEmpty = (obj) ->
+          return true unless obj?
+          return false for key in obj when obj[key]?
+          return true
+
+      expect(isEmpty(modal.waiting.options)).toBe true
 
     it "should resize the modal after open", ->
       element = $("<div></div>")

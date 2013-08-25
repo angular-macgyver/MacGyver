@@ -28,7 +28,8 @@ describe "Mac Time input", ->
       $rootScope.$digest()
 
       expectTime = new Date "Jan 1, 1970, 12:00 AM"
-      expect($("input", element).scope().time.getTime()).toBe expectTime.getTime()
+      scope      = $rootScope.$$childHead
+      expect(scope.time.getTime()).toBe expectTime.getTime()
 
     it "should use set default time based on user input", ->
       $rootScope.model = ""
@@ -36,7 +37,8 @@ describe "Mac Time input", ->
       $rootScope.$digest()
 
       expectTime = new Date "Jan 1, 1970, 06:30 PM"
-      expect($("input", element).scope().time.getTime()).toBe expectTime.getTime()
+      scope      = $rootScope.$$childHead
+      expect(scope.time.getTime()).toBe expectTime.getTime()
 
     it "should update the model with default time", ->
       $rootScope.model = ""

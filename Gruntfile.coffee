@@ -9,6 +9,23 @@ examplePath    = "example/"
 finalBuildPath = "lib/"
 componentFile  = "bower.json"
 
+appFiles = [
+  "tmp/app/main.js"
+  # jQuery UI js
+  "vendor/bower/jquery.ui/ui/jquery.ui.core.js"
+  "vendor/bower/jquery.ui/ui/jquery.ui.widget.js"
+  "vendor/bower/jquery.ui/ui/jquery.ui.mouse.js"
+  "vendor/bower/jquery.ui/ui/jquery.ui.position.js"
+  "vendor/bower/jquery.ui/ui/jquery.ui.datepicker.js"
+  "vendor/bower/jquery.ui/ui/jquery.ui.resizable.js"
+  "vendor/bower/jquery.ui/ui/jquery.ui.sortable.js"
+  "vendor/bower/underscore.string/lib/underscore.string.js"
+  "vendor/bower/jquery-file-upload/js/jquery.fileupload.js"
+  "tmp/app/**/*.js"
+]
+deployAppFiles = appFiles.slice(0)
+deployAppFiles.push "!tmp/app/example_controller/*.js"
+
 module.exports = (grunt) ->
   require('matchdep').filterDev('grunt-*').forEach grunt.loadNpmTasks
 
@@ -51,28 +68,15 @@ module.exports = (grunt) ->
 
       appJs:
         dest: "example/js/<%= pkg.name %>.js"
-        src: [
-          "tmp/app/main.js"
-          "vendor/js/jquery-ui.js"
-          "vendor/js/*.js"
-          "tmp/app/**/*.js"
-        ]
+        src: appFiles
 
       deployAppJs:
         dest: "lib/<%= pkg.name %>.js"
-        src: [
-          "tmp/app/main.js"
-          "vendor/js/jquery-ui.js"
-          "vendor/js/*.js"
-          "tmp/app/**/*.js"
-          "!tmp/app/example_controller/*.js"
-        ]
+        src: deployAppFiles
 
       vendorCss:
         dest: "example/css/vendor.css"
-        src: [
-          "tmp/vendor.css"
-        ]
+        src:  ["tmp/vendor.css"]
 
       appCss:
         dest: "example/css/<%= pkg.name %>.css"

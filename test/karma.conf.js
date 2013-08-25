@@ -8,11 +8,16 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       // Javascript //
-      '../test/vendor/jquery.min.js',
-      '../vendor/bower/underscore/underscore.js',
-      '../vendor/js/underscore.string.js',
-      '../vendor/js/jquery-ui.js',
-      '../vendor/js/jquery.fileupload.js',
+      '../vendor/bower/jquery/jquery.js',
+      '../vendor/bower/underscore.string/lib/underscore.string.js',
+      '../vendor/bower/jquery.ui/ui/jquery.ui.core.js',
+      '../vendor/bower/jquery.ui/ui/jquery.ui.widget.js',
+      '../vendor/bower/jquery.ui/ui/jquery.ui.mouse.js',
+      '../vendor/bower/jquery.ui/ui/jquery.ui.position.js',
+      '../vendor/bower/jquery.ui/ui/jquery.ui.datepicker.js',
+      '../vendor/bower/jquery.ui/ui/jquery.ui.resizable.js',
+      '../vendor/bower/jquery.ui/ui/jquery.ui.sortable.js',
+      '../vendor/bower/jquery-file-upload/js/jquery.fileupload.js',
       '../vendor/bower/angular/angular.js',
 
       // Template //
@@ -30,7 +35,7 @@ module.exports = function(config) {
       '../src/*.coffee',
       '../src/**/*.coffee',
 
-      '../test/vendor/angular/angular-mocks.js',
+      '../vendor/bower/angular-mocks/angular-mocks.js',
       '../test/vendor/browserTrigger.js',
 
       // Test Code //
