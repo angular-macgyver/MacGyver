@@ -9,9 +9,7 @@ examplePath    = "example/"
 finalBuildPath = "lib/"
 componentFile  = "bower.json"
 
-appFiles = [
-  "tmp/app/main.js"
-  # jQuery UI js
+jqueryui = [
   "vendor/bower/jquery.ui/ui/jquery.ui.core.js"
   "vendor/bower/jquery.ui/ui/jquery.ui.widget.js"
   "vendor/bower/jquery.ui/ui/jquery.ui.mouse.js"
@@ -19,6 +17,10 @@ appFiles = [
   "vendor/bower/jquery.ui/ui/jquery.ui.datepicker.js"
   "vendor/bower/jquery.ui/ui/jquery.ui.resizable.js"
   "vendor/bower/jquery.ui/ui/jquery.ui.sortable.js"
+]
+appFiles = [
+  "tmp/app/main.js"
+  "tmp/jqueryui.js"
   "vendor/bower/underscore.string/lib/underscore.string.js"
   "vendor/bower/jquery-file-upload/js/jquery.fileupload.js"
   "tmp/app/**/*.js"
@@ -36,7 +38,8 @@ module.exports = (grunt) ->
     grunt.util.spawn options, done
 
   grunt.initConfig
-    pkg: grunt.file.readJSON "package.json"
+    pkg:      grunt.file.readJSON "package.json"
+    jqueryUI: grunt.file.readJSON "vendor/bower/jquery.ui/package.json"
 
     #
     # Coffeescript section
@@ -54,12 +57,18 @@ module.exports = (grunt) ->
 
     #
     # Concat section
-    # vendorJs  - compile all the vendor codes from bower
-    # appJs     - concat all the application code into MacGyver.js
-    # vendorCss - compile all vendor css from bower
-    # appCss    - concat application css into MacGyver.css
+    # jqueryui    - compile required jquery ui files
+    # vendorJs    - compile all the vendor codes from bower
+    # appJs       - concat all the application code into MacGyver.js
+    # deployAppJs - concat all app code for deployment
+    # vendorCss   - compile all vendor css from bower
+    # appCss      - concat application css into MacGyver.css
     #
     concat:
+      jqueryui:
+        dest: "tmp/jqueryui.js"
+        src:  jqueryui
+
       vendorJs:
         dest: "example/js/vendor.js"
         src: [
@@ -171,7 +180,7 @@ module.exports = (grunt) ->
         options: interrupt: true
       jade:
         files: ["src/**/*.jade"]
-        tasks: ["jade", "embedtemplate:docs"]
+        tasks: ["jade", "replace:docs"]
         options: interrupt: true
 
     #
@@ -203,11 +212,10 @@ module.exports = (grunt) ->
         ]
 
     #
-    # embed template section
-    # Embed template into directives and also component documents into
-    # main documentation
+    # replace section
+    # Replace placeholder with contents
     #
-    embedtemplate:
+    replace:
       src:
         options:
           pattern: /templateUrl: "([^"]+)"/g
@@ -229,6 +237,14 @@ module.exports = (grunt) ->
           src:     "*.html"
           dest:    "example/"
         ]
+      jqueryui:
+        options:
+          pattern: /@VERSION/g
+          replace: "<%= jqueryUI.version %>"
+        files: [
+          src:  "tmp/jqueryui.js"
+          dest: "tmp/jqueryui.js"
+        ]
 
     marked:
       docs:
@@ -242,7 +258,7 @@ module.exports = (grunt) ->
         ]
 
   # Replace templateUrl with actual html
-  grunt.registerMultiTask "embedtemplate", "Replace templateUrl with actual html", ->
+  grunt.registerMultiTask "replace", "Replace placeholder with contents", ->
     options = @options
       separator: ""
       replace:   ""
@@ -272,7 +288,7 @@ module.exports = (grunt) ->
       .join grunt.util.normalizelf(options.separator)
 
       grunt.file.write file.dest, src
-      grunt.log.writeln("Embeded template into '#{file.dest}' successfully")
+      grunt.log.writeln("Replace placeholder with contents in '#{file.dest}' successfully")
 
   grunt.registerMultiTask "marked", "Convert markdown to html", ->
     options = @options
@@ -319,13 +335,19 @@ module.exports = (grunt) ->
       "coffee"
       "stylus"
       "jade"
-      "concat"
+      "concat:jqueryui"
+      "replace:jqueryui"
+      "concat:vendorJs"
+      "concat:appJs"
+      "concat:deployAppJs"
+      "concat:vendorCss"
+      "concat:appCss"
       "clean"
       "copy"
-      "embedtemplate:src"
+      "replace:src"
       "chalkboard"
       "marked"
-      "embedtemplate:docs"
+      "replace:docs"
       "update:component"
       "uglify"
     ]
@@ -334,6 +356,8 @@ module.exports = (grunt) ->
     "coffee"
     "stylus"
     "jade"
+    "concat:jqueryui"
+    "replace:jqueryui"
     "concat:vendorJs"
     "concat:appJs"
     "concat:vendorCss"
@@ -341,7 +365,7 @@ module.exports = (grunt) ->
     "clean"
     "chalkboard"
     "marked"
-    "embedtemplate:docs"
+    "replace:docs"
   ]
 
   grunt.registerTask "run", "Watch src and run test server", ->
