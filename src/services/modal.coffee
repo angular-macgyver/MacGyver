@@ -270,8 +270,9 @@ provider("modalViews", ->
 # Add modal shortcut to Mac module
 #
 config ["modalViewsProvider", (modalViews) ->
-  angular.module("Mac").modal = (id, options) ->
+  angular.module("Mac").modal = (id, modalOptions) ->
     unless modalViews.registered[id]?
-      options = angular.extend modalViews.defaults, options, {moduleMethod: true}
+      options = {}
+      angular.extend options, modalViews.defaults, modalOptions, {moduleMethod: true}
       modalViews.registered[id] = {id, options}
 ]

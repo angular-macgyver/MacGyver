@@ -176,6 +176,12 @@ describe "Mac modal", ->
       expect(options.keyboard).toBe true
       expect(options.overlayClose).toBe false
 
+    it "should not overwrite default options", inject (modalViews) ->
+      defaults = modalViews.defaults
+
+      expect(defaults.keyboard).toBe false
+      expect(defaults.resize).toBe true
+
     it "should compile on show", ->
       modal.show "testing"
 
