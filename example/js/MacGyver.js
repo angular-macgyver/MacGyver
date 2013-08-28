@@ -11350,12 +11350,9 @@ angular.module("Mac").factory("Table", [
   }
 ]);
 
-var util,
-  __hasProp = {}.hasOwnProperty;
+var __hasProp = {}.hasOwnProperty;
 
-util = angular.module("Mac.Util", []);
-
-util.factory("util", [
+angular.module("Mac.Util", []).factory("util", [
   "$filter", function($filter) {
     var ArrayProto, FuncProto, ObjProto, nativeIsArray, toString;
     ArrayProto = Array.prototype;
