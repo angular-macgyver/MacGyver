@@ -4,10 +4,8 @@
 ## Contains various miscellaneous utility functions and extensions.
 ##
 
-util = angular.module "Mac.Util", []
-
 # Expose an object with a bunch of utility functions on it.
-util.factory "util", [
+angular.module("Mac.Util", []).factory "util", [
   "$filter"
   (
     $filter
