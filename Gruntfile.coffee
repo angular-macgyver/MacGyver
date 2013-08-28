@@ -58,7 +58,6 @@ module.exports = (grunt) ->
     #
     # Concat section
     # jqueryui    - compile required jquery ui files
-    # vendorJs    - compile all the vendor codes from bower
     # appJs       - concat all the application code into MacGyver.js
     # deployAppJs - concat all app code for deployment
     # vendorCss   - compile all vendor css from bower
@@ -68,12 +67,6 @@ module.exports = (grunt) ->
       jqueryui:
         dest: "tmp/jqueryui.js"
         src:  jqueryui
-
-      vendorJs:
-        dest: "example/js/vendor.js"
-        src: [
-          "vendor/bower/angular/angular.js"
-        ]
 
       appJs:
         dest: "example/js/<%= pkg.name %>.js"
@@ -337,7 +330,6 @@ module.exports = (grunt) ->
       "jade"
       "concat:jqueryui"
       "replace:jqueryui"
-      "concat:vendorJs"
       "concat:appJs"
       "concat:deployAppJs"
       "concat:vendorCss"
@@ -358,7 +350,6 @@ module.exports = (grunt) ->
     "jade"
     "concat:jqueryui"
     "replace:jqueryui"
-    "concat:vendorJs"
     "concat:appJs"
     "concat:vendorCss"
     "concat:appCss"
