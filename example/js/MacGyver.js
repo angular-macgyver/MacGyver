@@ -1,7 +1,7 @@
 angular.module("Mac", ["Mac.Util"]);
 
 /*!
- * jQuery UI Core @VERSION
+ * jQuery UI Core 1.10.3
  * http://jqueryui.com
  *
  * Copyright 2013 jQuery Foundation and other contributors
@@ -19,7 +19,7 @@ var uuid = 0,
 $.ui = $.ui || {};
 
 $.extend( $.ui, {
-	version: "@VERSION",
+	version: "1.10.3",
 
 	keyCode: {
 		BACKSPACE: 8,
@@ -322,7 +322,7 @@ $.extend( $.ui, {
 })( jQuery );
 
 /*!
- * jQuery UI Widget @VERSION
+ * jQuery UI Widget 1.10.3
  * http://jqueryui.com
  *
  * Copyright 2013 jQuery Foundation and other contributors
@@ -844,7 +844,7 @@ $.each( { show: "fadeIn", hide: "fadeOut" }, function( method, defaultEffect ) {
 })( jQuery );
 
 /*!
- * jQuery UI Mouse @VERSION
+ * jQuery UI Mouse 1.10.3
  * http://jqueryui.com
  *
  * Copyright 2013 jQuery Foundation and other contributors
@@ -864,7 +864,7 @@ $( document ).mouseup( function() {
 });
 
 $.widget("ui.mouse", {
-	version: "@VERSION",
+	version: "1.10.3",
 	options: {
 		cancel: "input,textarea,button,select,option",
 		distance: 1,
@@ -1014,7 +1014,7 @@ $.widget("ui.mouse", {
 })(jQuery);
 
 /*!
- * jQuery UI Position @VERSION
+ * jQuery UI Position 1.10.3
  * http://jqueryui.com
  *
  * Copyright 2013 jQuery Foundation and other contributors
@@ -1512,7 +1512,7 @@ $.ui.position = {
 }( jQuery ) );
 
 /*!
- * jQuery UI Datepicker @VERSION
+ * jQuery UI Datepicker 1.10.3
  * http://jqueryui.com
  *
  * Copyright 2013 jQuery Foundation and other contributors
@@ -1526,7 +1526,7 @@ $.ui.position = {
  */
 (function( $, undefined ) {
 
-$.extend($.ui, { datepicker: { version: "@VERSION" } });
+$.extend($.ui, { datepicker: { version: "1.10.3" } });
 
 var PROP_NAME = "datepicker",
 	instActive;
@@ -3546,12 +3546,12 @@ $.fn.datepicker = function(options){
 $.datepicker = new Datepicker(); // singleton instance
 $.datepicker.initialized = false;
 $.datepicker.uuid = new Date().getTime();
-$.datepicker.version = "@VERSION";
+$.datepicker.version = "1.10.3";
 
 })(jQuery);
 
 /*!
- * jQuery UI Resizable @VERSION
+ * jQuery UI Resizable 1.10.3
  * http://jqueryui.com
  *
  * Copyright 2013 jQuery Foundation and other contributors
@@ -3576,7 +3576,7 @@ function isNumber(value) {
 }
 
 $.widget("ui.resizable", $.ui.mouse, {
-	version: "@VERSION",
+	version: "1.10.3",
 	widgetEventPrefix: "resize",
 	options: {
 		alsoResize: false,
@@ -4520,7 +4520,7 @@ $.ui.plugin.add("resizable", "grid", {
 })(jQuery);
 
 /*!
- * jQuery UI Sortable @VERSION
+ * jQuery UI Sortable 1.10.3
  * http://jqueryui.com
  *
  * Copyright 2013 jQuery Foundation and other contributors
@@ -4547,7 +4547,7 @@ function isFloating(item) {
 }
 
 $.widget("ui.sortable", $.ui.mouse, {
-	version: "@VERSION",
+	version: "1.10.3",
 	widgetEventPrefix: "sort",
 	ready: false,
 	options: {
