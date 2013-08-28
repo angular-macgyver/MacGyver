@@ -1,0 +1,8 @@
+<h1>Scroll Spy Service</h1>
+<p>There are multiple components used by scrollspy<br>- Scrollspy service is used to keep track of all and active anchors<br>- Multiple directives including:<br>- mac-scroll-spy - Element to spy scroll event<br>- mac-scroll-spy-anchor - Section in element spying on<br>- mac-scroll-spy-target - Element to highlight, most likely a nav item<br>Scrollspy defaults:<br>offset - 0  </p>
+<h3>Parameters</h3>
+<p><strong>register</strong><br>Type: <code>Function</code><br>Register an anchor with the service<br>- {String} id ID of the anchor<br>- {DOM Element} element Element to spy on  </p>
+<p><strong>unregister</strong><br>Type: <code>Function</code><br>Remove anchor from service<br>- {String} id ID of the anchor  </p>
+<p><strong>setActive</strong><br>Type: <code>Function</code><br>Set active anchor and fire all listeners<br>- {Object} anchor Anchor object  </p>
+<p><strong>addListener</strong><br>Type: <code>Function</code><br>Add listener when active is set<br>- {Function} fn Callback function  </p>
+<p><strong>removeListener</strong><br>Type: <code>Function</code><br>Remove listener<br>- {Function} fn Callback function  </p>
