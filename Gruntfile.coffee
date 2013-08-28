@@ -9,25 +9,6 @@ examplePath    = "example/"
 finalBuildPath = "lib/"
 componentFile  = "bower.json"
 
-jqueryui = [
-  "vendor/bower/jquery.ui/ui/jquery.ui.core.js"
-  "vendor/bower/jquery.ui/ui/jquery.ui.widget.js"
-  "vendor/bower/jquery.ui/ui/jquery.ui.mouse.js"
-  "vendor/bower/jquery.ui/ui/jquery.ui.position.js"
-  "vendor/bower/jquery.ui/ui/jquery.ui.datepicker.js"
-  "vendor/bower/jquery.ui/ui/jquery.ui.resizable.js"
-  "vendor/bower/jquery.ui/ui/jquery.ui.sortable.js"
-]
-appFiles = [
-  "tmp/app/main.js"
-  "tmp/jqueryui.js"
-  "vendor/bower/underscore.string/lib/underscore.string.js"
-  "vendor/bower/jquery-file-upload/js/jquery.fileupload.js"
-  "tmp/app/**/*.js"
-]
-deployAppFiles = appFiles.slice(0)
-deployAppFiles.push "!tmp/app/example_controller/*.js"
-
 module.exports = (grunt) ->
   require('matchdep').filterDev('grunt-*').forEach grunt.loadNpmTasks
 
@@ -38,8 +19,9 @@ module.exports = (grunt) ->
     grunt.util.spawn options, done
 
   grunt.initConfig
-    pkg:      grunt.file.readJSON "package.json"
-    jqueryUI: grunt.file.readJSON "vendor/bower/jquery.ui/package.json"
+    pkg:       grunt.file.readJSON "package.json"
+    jqueryUI:  grunt.file.readJSON "vendor/bower/jquery.ui/package.json"
+    buildConf: grunt.file.readJSON "build.json"
 
     #
     # Coffeescript section
@@ -65,26 +47,71 @@ module.exports = (grunt) ->
     #
     concat:
       jqueryui:
+        options:
+          process: (src, filepath) ->
+            src.replace /@VERSION/g, grunt.config.get("jqueryUI").version
         dest: "tmp/jqueryui.js"
-        src:  jqueryui
+        src:  "<%= buildConf.jqueryui %>"
 
       appJs:
         dest: "example/js/<%= pkg.name %>.js"
-        src: appFiles
+        src: "<%= buildConf.example %>"
 
       deployAppJs:
         dest: "lib/<%= pkg.name %>.js"
-        src: deployAppFiles
+        src: "<%= buildConf.full %>"
 
-      vendorCss:
-        dest: "example/css/vendor.css"
-        src:  ["tmp/vendor.css"]
+      modulesJs:
+        options:
+          banner:"""/**
+                     * MacGyver v<%= pkg.version %>
+                     * @link <%= pkg.homepage %>
+                     * @license <%= pkg.license[0].type %>
+                     */
+                    (function(window, angular, undefined) {
 
-      appCss:
-        dest: "example/css/<%= pkg.name %>.css"
-        src: [
-          "vendor/css/*.css"
-          "tmp/app.css"
+                  """
+          footer: "\n})(window, window.angular);"
+        files: [
+          {
+            src:  "<%= buildConf.core %>"
+            dest: "lib/<%= pkg.name.toLowerCase() %>-core.js"
+          }
+          {
+            src:  "<%= buildConf.filters %>"
+            dest: "lib/<%= pkg.name.toLowerCase() %>-filters.js"
+          }
+          {
+            src:  "<%= buildConf.underscoreFilter %>"
+            dest: "lib/<%= pkg.name.toLowerCase() %>-string-filter.js"
+          }
+          {
+            src:  "<%= buildConf.table %>"
+            dest: "lib/<%= pkg.name.toLowerCase() %>-table.js"
+          }
+          {
+            src:  "<%= buildConf.datepicker %>"
+            dest: "lib/<%= pkg.name.toLowerCase() %>-datepicker.js"
+          }
+          {
+            src:  "<%= buildConf.fileupload %>"
+            dest: "lib/<%= pkg.name.toLowerCase() %>-fileupload.js"
+          }
+        ]
+
+      css:
+        files: [
+          {
+            dest: "example/css/vendor.css"
+            src:  ["tmp/vendor.css"]
+          }
+          {
+            dest: "example/css/<%= pkg.name %>.css"
+            src: [
+              "vendor/css/*.css"
+              "tmp/app.css"
+            ]
+          }
         ]
 
     #
@@ -181,11 +208,24 @@ module.exports = (grunt) ->
     # Testing framework
     #
     karma:
-      unit:
+      options:
         configFile: "test/karma.conf.js"
+      unit:
         autoWatch: true
       travis:
-        configFile: "test/karma.conf.js"
+        autoWatch: false
+        singleRun: true
+      build:
+        options:
+          files: [
+            "../vendor/bower/jquery/jquery.js"
+            "../vendor/bower/angular/angular.js"
+            "template/*.html"
+            "../lib/macgyver-*.js"
+            "../vendor/bower/angular-mocks/angular-mocks.js"
+            "../test/vendor/browserTrigger.js"
+            "../test/unit/*.spec.coffee"
+          ]
         autoWatch: false
         singleRun: true
 
@@ -217,8 +257,12 @@ module.exports = (grunt) ->
             compiledHtml = grunt.file.read filePath
             compiledHtml = compiledHtml.replace /"/g, "\\\""
             "template: \"#{compiledHtml}\""
-        files:
-          "lib/macgyver.js": ["lib/macgyver.js"]
+        files: [
+          expand: true
+          flatten: false
+          src: "lib/*.js"
+          ext: ".js"
+        ]
       docs:
         options:
           pattern: /@@include\("([^"]+)"\)/g
@@ -229,14 +273,6 @@ module.exports = (grunt) ->
           cwd:     "example"
           src:     "*.html"
           dest:    "example/"
-        ]
-      jqueryui:
-        options:
-          pattern: /@VERSION/g
-          replace: "<%= jqueryUI.version %>"
-        files: [
-          src:  "tmp/jqueryui.js"
-          dest: "tmp/jqueryui.js"
         ]
 
     marked:
@@ -328,18 +364,14 @@ module.exports = (grunt) ->
       "coffee"
       "stylus"
       "jade"
-      "concat:jqueryui"
-      "replace:jqueryui"
-      "concat:appJs"
-      "concat:deployAppJs"
-      "concat:vendorCss"
-      "concat:appCss"
+      "concat"
       "clean"
       "copy"
       "replace:src"
       "chalkboard"
       "marked"
       "replace:docs"
+      "karma:build"
       "update:component"
       "uglify"
     ]
@@ -349,10 +381,8 @@ module.exports = (grunt) ->
     "stylus"
     "jade"
     "concat:jqueryui"
-    "replace:jqueryui"
     "concat:appJs"
-    "concat:vendorCss"
-    "concat:appCss"
+    "concat:css"
     "clean"
     "chalkboard"
     "marked"

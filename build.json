@@ -1,0 +1,77 @@
+{
+  "example": [
+    "tmp/app/main.js",
+    "tmp/jqueryui.js",
+    "vendor/bower/underscore.string/lib/underscore.string.js",
+    "vendor/bower/jquery-file-upload/js/jquery.fileupload.js",
+    "tmp/app/**/*.js"
+  ],
+  "full": [
+    "tmp/app/main.js",
+    "tmp/jqueryui.js",
+    "vendor/bower/underscore.string/lib/underscore.string.js",
+    "vendor/bower/jquery-file-upload/js/jquery.fileupload.js",
+    "tmp/app/**/*.js",
+    "!tmp/app/example_controller/*.js"
+  ],
+  "core": [
+    "tmp/app/main.js",
+    "tmp/app/util.js",
+    "tmp/app/directives/keys.js",
+    "tmp/app/directives/events/*.js",
+    "tmp/app/directives/autocomplete.js",
+    "tmp/app/directives/focus_on_event.js",
+    "tmp/app/directives/menu.js",
+    "tmp/app/services/modal.js",
+    "tmp/app/directives/modal.js",
+    "tmp/app/directives/placeholder.js",
+    "tmp/app/services/scroll_spy.js",
+    "tmp/app/directives/scroll_spy.js",
+    "tmp/app/directives/spinner.js",
+    "tmp/app/directives/tag_autocomplete.js",
+    "tmp/app/directives/tag_input.js",
+    "tmp/app/directives/time.js",
+    "tmp/app/directives/tooltip.js"
+  ],
+  "filters": [
+    "tmp/app/filters/*.js",
+    "!tmp/app/filters/underscore.string.js"
+  ],
+  "underscoreFilter": [
+    "vendor/bower/underscore.string/lib/underscore.string.js",
+    "tmp/app/filters/underscore.string.js"
+  ],
+  "table": [
+    "vendor/bower/jquery.ui/ui/jquery.ui.core.js",
+    "vendor/bower/jquery.ui/ui/jquery.ui.widget.js",
+    "vendor/bower/jquery.ui/ui/jquery.ui.mouse.js",
+    "vendor/bower/jquery.ui/ui/jquery.ui.resizable.js",
+    "vendor/bower/jquery.ui/ui/jquery.ui.sortable.js",
+    "tmp/app/services/table.js",
+    "tmp/app/services/directive_helpers.js",
+    "tmp/app/services/hookable_directive_controller.js",
+    "tmp/app/directives/reorderable.js",
+    "tmp/app/directives/resizable.js",
+    "tmp/app/directives/table/*.js"
+  ],
+  "datepicker": [
+    "vendor/bower/jquery.ui/ui/jquery.ui.core.js",
+    "vendor/bower/jquery.ui/ui/jquery.ui.datepicker.js",
+    "tmp/app/directives/datepicker.js"
+  ],
+  "fileupload": [
+    "vendor/bower/jquery.ui/ui/jquery.ui.core.js",
+    "vendor/bower/jquery.ui/ui/jquery.ui.widget.js",
+    "vendor/bower/jquery-file-upload/js/jquery.fileupload.js",
+    "tmp/app/directives/file_upload.js"
+  ],
+  "jqueryui": [
+    "vendor/bower/jquery.ui/ui/jquery.ui.core.js",
+    "vendor/bower/jquery.ui/ui/jquery.ui.widget.js",
+    "vendor/bower/jquery.ui/ui/jquery.ui.mouse.js",
+    "vendor/bower/jquery.ui/ui/jquery.ui.position.js",
+    "vendor/bower/jquery.ui/ui/jquery.ui.datepicker.js",
+    "vendor/bower/jquery.ui/ui/jquery.ui.resizable.js",
+    "vendor/bower/jquery.ui/ui/jquery.ui.sortable.js"
+  ]
+}
