@@ -4,18 +4,18 @@ block append content
   .row.content
     #nav.span3
       ul.nav.nav-list.docs-sidenav(data-spy="affix", data-offset-top="0")
-        li: a(href="#underscore-string")
+        li(mac-scroll-spy-target="underscore-string"): a(href="#underscore-string")
           i.icon-chevron-right
           | Underscore String Filter
-        li: a(href="#pluralize-filter")
+        li(mac-scroll-spy-target="pluralize-filter"): a(href="#pluralize-filter")
           i.icon-chevron-right
           | Pluralize Filter
-        li: a(href="#timestamp-filter")
+        li(mac-scroll-spy-target="timestamp-filter"): a(href="#timestamp-filter")
           i.icon-chevron-right
           | Timestamp Filter
 
     #example.span9(ng-controller='ExampleController')
-      section#underscore-string
+      section#underscore-string(mac-scroll-spy-anchor)
         @@include("docs/html/filters/underscore.html")
         h3 Example
         .docs-example
@@ -25,7 +25,7 @@ block append content
         pre.prettyprint.linenums(ng-non-bindable)
           = '<p>{{ "this_Is_aTestFor_Underscore_string" | underscoreString: "humanize" }}</p>'
 
-      section#pluralize-filter
+      section#pluralize-filter(mac-scroll-spy-anchor)
         @@include("docs/html/filters/pluralize.html")
         h3 Example
         .docs-example
@@ -37,7 +37,7 @@ block append content
         pre.prettyprint.linenums(ng-non-bindable)
           = '{{"person" | pluralize:1500}}'
 
-      section#timestamp-filter
+      section#timestamp-filter(mac-scroll-spy-anchor)
         @@include("docs/html/filters/timestamp.html")
         h3 Example
         .docs-example

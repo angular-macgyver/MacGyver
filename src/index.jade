@@ -13,21 +13,21 @@ block append header
       ul
         li
           iframe(
-            src = "http://ghbtns.com/github-btn.html?user=StartTheShift&repo=MacGyver&type=watch&count=true"
+            src               = "http://ghbtns.com/github-btn.html?user=StartTheShift&repo=MacGyver&type=watch&count=true"
             allowtransparency = "true"
-            frameborder = "0"
-            scrolling = "0"
-            width = "110"
-            height = "20"
+            frameborder       = "0"
+            scrolling         = "0"
+            width             = "110"
+            height            = "20"
           )
         li
           iframe(
-            src = "http://ghbtns.com/github-btn.html?user=StartTheShift&repo=MacGyver&type=fork&count=true"
+            src               = "http://ghbtns.com/github-btn.html?user=StartTheShift&repo=MacGyver&type=fork&count=true"
             allowtransparency = "true"
-            frameborder = "0"
-            scrolling = "0"
-            width = "95"
-            height = "20"
+            frameborder       = "0"
+            scrolling         = "0"
+            width             = "95"
+            height            = "20"
           )
 
 block append content
@@ -35,44 +35,47 @@ block append content
     #nav.span3
       ul.nav.nav-list.docs-sidenav(
         data-spy           = "affix"
-        data-offset-top    = "298"
+        data-offset-top    = "188"
       )
-        li: a(href="#modal")
+        li(mac-scroll-spy-target="modal"): a(href="#modal")
           i.icon-chevron-right
           | Modal
-        li: a(href="#tooltip")
+        li(mac-scroll-spy-target="scrollspy"): a(href="#scrollspy")
+          i.icon-chevron-right
+          | Scroll Spy
+        li(mac-scroll-spy-target="tooltip"): a(href="#tooltip")
           i.icon-chevron-right
           | Tooltip
-        li: a(href="#menu")
+        li(mac-scroll-spy-target="menu"): a(href="#menu")
           i.icon-chevron-right
           | Menu
-        li: a(href="#autocomplete")
+        li(mac-scroll-spy-target="autocomplete"): a(href="#autocomplete")
           i.icon-chevron-right
           | Autocomplete
-        li: a(href="#tag-autocomplete")
+        li(mac-scroll-spy-target="tag-autocomplete"): a(href="#tag-autocomplete")
           i.icon-chevron-right
           | Tag Autocomplete
-        li: a(href="#datepicker")
+        li(mac-scroll-spy-target="datepicker"): a(href="#datepicker")
           i.icon-chevron-right
           | Date Picker
-        li: a(href="#time-input")
+        li(mac-scroll-spy-target="time-input"): a(href="#time-input")
           i.icon-chevron-right
           | Time Input
-        li: a(href='#tag-input')
+        li(mac-scroll-spy-target="tag-input"): a(href="#tag-input")
           i.icon-chevron-right
           | Tag Input
-        li: a(href='#spinner')
+        li(mac-scroll-spy-target="spinner"): a(href="#spinner")
           i.icon-chevron-right
           | Spinner
-        li: a(href="#file-upload")
+        li(mac-scroll-spy-target="file-upload"): a(href="#file-upload")
           i.icon-chevron-right
           | File Upload
-        li: a(href="#placeholder")
+        li(mac-scroll-spy-target="placeholder"): a(href="#placeholder")
           i.icon-chevron-right
           | Placeholder
 
     #example.span9(ng-controller='ExampleController')
-      section#modal
+      section#modal(mac-scroll-spy-anchor)
         @@include("docs/html/services/modal.html")
         @@include("docs/html/directives/modal.html")
         h3 Example
@@ -94,7 +97,28 @@ block append content
           = '</mac-modal>\n'
           = '<button mac-modal="test-modal" mac-modal-content="maGyverSeasonOne" class="btn">Show Modal</button>\n'
 
-      section#tooltip
+      section#scrollspy(mac-scroll-spy-anchor)
+        @@include("docs/html/services/scroll_spy.html")
+        @@include("docs/html/directives/scroll_spy.html")
+        h3 Example
+        .docs-example The nav to the left and this documentation page is probably the best example
+
+        h4 Scroll spy element
+        pre.prettyprint.linenums(ng-non-bindable)
+          = '<body mac-scroll-spy mac-scroll-spy-offset="10"></body>'
+
+        h4 Scroll spy target
+        pre.prettyprint.linenums(ng-non-bindable)
+          = '<ul class="nav nav-list docs-sidenav">\n'
+          = '  <li mac-scroll-spy-target="modal"><a href="#modal">Modal</a></li>\n'
+          = '  <li mac-scroll-spy-target="scrollspy"><a href="#scrollspy">Scroll Spy</a></li>\n'
+          = '</ul>\n'
+
+        h5 Scroll spy anchor
+        pre.prettyprint.linenums(ng-non-bindable)
+          = '<section id="modal" mac-scroll-spy-anchor></section>'
+
+      section#tooltip(mac-scroll-spy-anchor)
         @@include("docs/html/directives/tooltip.html")
         h3 Example
         .docs-example
@@ -106,7 +130,7 @@ block append content
         pre.prettyprint.linenums(ng-non-bindable)
           = '<a href="#" mac-tooltip="Tooltip on bottom" mac-tooltip-direction="bottom">Tooltip on bottom</a>'
 
-      section#menu
+      section#menu(mac-scroll-spy-anchor)
         @@include("docs/html/directives/menu.html")
         h3 Example
         .docs-example
@@ -116,7 +140,7 @@ block append content
           )
           div Current selected item: {{selectedItem}}
 
-      section#autocomplete
+      section#autocomplete(mac-scroll-spy-anchor)
         @@include("docs/html/directives/autocomplete.html")
         h3 Example
         .docs-example
@@ -148,7 +172,7 @@ block append content
           = '  mac-autocomplete-placeholder="\'Autocomplete\'">\n'
           = '</mac-autocomplete>\n'
 
-      section#tag-autocomplete
+      section#tag-autocomplete(mac-scroll-spy-anchor)
         @@include("docs/html/directives/tag_autocomplete.html")
         h3 Example
         .docs-example
@@ -216,7 +240,7 @@ block append content
           = '  mac-tag-autocomplete-model="tagAutocompleteModel">\n'
           = '</mac-tag-autocomplete>\n'
 
-      section#datepicker
+      section#datepicker(mac-scroll-spy-anchor)
         @@include("docs/html/directives/datepicker.html")
         h3 Example
         .docs-example
@@ -228,7 +252,7 @@ block append content
         pre.prettyprint.linenums(ng-non-bindable)
           = '<mac-datepicker mac-datepicker-id="input-start-date" mac-datepicker-model="startDate"></mac-datepicker>'
 
-      section#time-input
+      section#time-input(mac-scroll-spy-anchor)
         @@include("docs/html/directives/time.html")
         h3 Example
         .docs-example
@@ -244,7 +268,7 @@ block append content
           = '  mac-time-default="11:59 PM">\n'
           = '</mac-time>\n'
 
-      section#tag-input
+      section#tag-input(mac-scroll-spy-anchor)
         @@include("docs/html/directives/tag_input.html")
         p Proxy directive to mac tag autocomplete
         h3 Example
@@ -265,7 +289,7 @@ block append content
           = '  mac-tag-input-label="name">\n'
           = '</mac-tag-input>\n'
 
-      section#spinner
+      section#spinner(mac-scroll-spy-anchor)
         @@include("docs/html/directives/spinner.html")
         h3 Example
         .docs-example
@@ -273,7 +297,7 @@ block append content
         pre.prettyprint.linenums(ng-non-bindable)
           = '<mac-spinner></mac-spinner>'
 
-      section#file-upload
+      section#file-upload(mac-scroll-spy-anchor)
         @@include("docs/html/directives/file_upload.html")
         h3 Example
         .docs-example.example-hit-area
@@ -324,7 +348,7 @@ block append content
           = '  </li>\n'
           = '</ul>\n'
 
-      section#placeholder
+      section#placeholder(mac-scroll-spy-anchor)
         @@include("docs/html/directives/placeholder.html")
         h3 Example
         .docs-example
