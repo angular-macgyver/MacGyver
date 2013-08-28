@@ -50,13 +50,22 @@ angular.module("Mac").directive("macScrollSpy", [
 directive("macScrollSpyAnchor", [
   "scrollSpy"
   (scrollSpy) ->
-    link: ($scope, element, attrs) ->
-      id          = attrs.macScrollSpyAnchor or attrs.id
-      registering = -> scrollSpy.register id, element
+    compile: (element, attrs) ->
+      id = attrs.macScrollSpyAnchor or attrs.id
 
-      $scope.$on "refresh-scroll-spy", registering
-      registering()
+      unless id
+        throw new Error("Missing scroll spy anchor id")
 
+      interpolate = id.match /{{(.*)}}/
+
+      ($scope, element, attrs) ->
+        registering = (value) -> scrollSpy.register value, element
+        $scope.$on "refresh-scroll-spy", registering
+
+        if interpolate
+          attrs.$observe "macScrollSpyAnchor", (value) -> registering value
+        else
+          registering id
 ]).
 
 #
@@ -69,15 +78,27 @@ directive("macScrollSpyAnchor", [
 directive("macScrollSpyTarget", [
   "scrollSpy"
   (scrollSpy) ->
-    link: ($scope, element, attrs) ->
-      target   = attrs.macScrollSpyTarget
-      callback = (active) ->
-        action = if target is active.id then "addClass" else "removeClass"
-        element[action] "active"
+    compile: (element, attrs) ->
+      target = attrs.macScrollSpyTarget
+      unless target
+        throw new Error("Missing scroll spy target name")
 
-      scrollSpy.addListener callback
+      interpolate = target.match /{{(.*)}}/
 
-      $scope.$on "$destroy", ->
-        scrollSpy.removeListener callback
+      ($scope, element, attrs) ->
+        register = (id) ->
+          callback = (active) ->
+            action = if id is active.id then "addClass" else "removeClass"
+            element[action] "active"
+
+          scrollSpy.addListener callback
+
+          $scope.$on "$destroy", ->
+            scrollSpy.removeListener callback
+
+        if interpolate
+          attrs.$observe "macScrollSpyTarget", (value) -> register value
+        else
+          register target
 
 ])

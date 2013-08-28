@@ -56,7 +56,35 @@ describe "Mac scroll spy", ->
       expect(scrollspy.registered.length).toBe 1
       expect(scrollspy.registered[0].id).toBe "test-anchor"
 
+    it "should register with the service with an interpolated id", ->
+      $rootScope.name = 'test-anchor2'
+      element = angular.element "<div mac-scroll-spy-anchor='{{name}}'></div>"
+      angular.element("body").append element
+      $compile(element) $rootScope
+      $rootScope.$digest()
+
+      expect(scrollspy.registered.length).toBe 1
+      expect(scrollspy.registered[0].id).toBe "test-anchor2"
+
+    it "should throw an error when id is not provided", ->
+      create = ->
+        $compile("<div mac-scroll-spy-anchor></div>") $rootScope
+      expect(create).toThrow()
+
   describe "scroll spy target", ->
+    it "should throw an error when name is not provided", ->
+      create = ->
+        $compile("<div mac-scroll-spy-target></div>") $rootScope
+
+      expect(create).toThrow()
+
+    it "should add a listener with interpolated name", ->
+      $rootScope.name = "test"
+      $compile("<div mac-scroll-spy-target='{{name}}'></div>") $rootScope
+      $rootScope.$digest()
+
+      expect(scrollspy.listeners.length).toBe 1
+
     it "should add a listener", ->
       element = $compile("<div mac-scroll-spy-target='test'></div>") $rootScope
       $rootScope.$digest()
