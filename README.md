@@ -11,11 +11,12 @@ Duct Tape and a Swiss Army Knife. Angular helpers for all your friends!
  - File Upload
  - Menu
  - Modal
+ - Scroll Spy
  - Spinner
  - Table
  - Tag Autocomplete
  - Tag Input
- - Time input
+ - Time Input
  - Tooltip
 
 ### Filters ###
@@ -42,7 +43,11 @@ Once you have MacGyver in your project, just include “Mac” as a dependency i
     angular.module(‘myModule’, [“Mac”])
 
 ## Get Started On Development ##
-MacGyver requires a few node modules for development environment.
+MacGyver requires a few node modules and bower packages for development environment.
+
+The easiest way to install all requirements,
+
+  `./init-project`
 
 ### Install all through npm ###
 
@@ -55,6 +60,10 @@ MacGyver requires a few node modules for development environment.
 #### Install Grunt ####
 
   `sudo npm -g install grunt-cli`
+
+#### Scripts dependencies
+
+  `bower install`
 
 #### Starting Grunt
 To compile source code and run unit tests while developing:
