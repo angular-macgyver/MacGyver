@@ -59,7 +59,11 @@ directive("macScrollSpyAnchor", [
       interpolate = id.match /{{(.*)}}/
 
       ($scope, element, attrs) ->
-        registering = (value) -> scrollSpy.register value, element
+        registering  = (value) ->
+          return unless value
+          scrollSpy.register value, element
+          $scope.$on "$destroy", -> scrollSpy.unregister value
+
         $scope.$on "refresh-scroll-spy", registering
 
         if interpolate
@@ -87,6 +91,7 @@ directive("macScrollSpyTarget", [
 
       ($scope, element, attrs) ->
         register = (id) ->
+          return unless id
           callback = (active) ->
             action = if id is active.id then "addClass" else "removeClass"
             element[action] "active"
