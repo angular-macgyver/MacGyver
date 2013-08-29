@@ -51,7 +51,7 @@ directive("macScrollSpyAnchor", [
   "scrollSpy"
   (scrollSpy) ->
     compile: (element, attrs) ->
-      id = attrs.macScrollSpyAnchor or attrs.id
+      id = attrs.id or attrs.macScrollSpyAnchor
 
       unless id
         throw new Error("Missing scroll spy anchor id")
