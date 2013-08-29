@@ -42,6 +42,15 @@ Once you have MacGyver in your project, just include “Mac” as a dependency i
 
     angular.module(‘myModule’, [“Mac”])
 
+MacGyver includes multiple scripts,
+- `macgyver.js` - All directives, services and filters bundled together
+- `macgyver-core.js` - Utilities, events and all directives without 3rd party dependencies
+- `macgyver-datepicker.js` - Datepicker with jQuery UI datepicker
+- `macgyver-fileupload.js` - Fileupload directive with jQuery UI and jQuery fileupload
+- `macgyver-filters.js` - Filters except underscore string filter
+- `macgyver-string-filter.js` - Underscore String filter
+- `macgyver-table.js` - Table view
+
 ## Get Started On Development ##
 MacGyver requires a few node modules and bower packages for development environment.
 
