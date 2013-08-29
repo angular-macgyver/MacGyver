@@ -42,8 +42,8 @@ module.exports = (grunt) ->
     # jqueryui    - compile required jquery ui files
     # appJs       - concat all the application code into MacGyver.js
     # deployAppJs - concat all app code for deployment
-    # vendorCss   - compile all vendor css from bower
-    # appCss      - concat application css into MacGyver.css
+    # modulesJs   - modularized js
+    # css         - compile all css
     #
     concat:
       jqueryui:
