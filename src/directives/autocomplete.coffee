@@ -10,7 +10,7 @@ A directive for providing suggestions while typing into the field
 
 @param {String} ng-model Assignable angular expression to data-bind to
 @param {String} mac-placeholder Placeholder text
-@param {String} mac-autocomplete-url Url to fetch autocomplete dropdown list data
+@param {String} mac-autocomplete-url Url to fetch autocomplete dropdown list data. URL may include GET params e.g. "/users?nocache=1"
 @param {Expression} mac-autocomplete-source Local data source
 @param {Boolean} mac-autocomplete-disabled Boolean value if autocomplete should be disabled
 @param {Function} mac-autocomplete-on-select Function called when user select on an item
@@ -23,8 +23,8 @@ A directive for providing suggestions while typing into the field
         - `data` - {Object} Data returned from the request
         - `status` - {Number} The status code of the response
         - `header` - {Object} Header of the response
-@param {String}  mac-autocomplete-label The label to display to the users               (default "name")
-@param {String}  mac-autocomplete-query The query parameter on GET command              (default "q")
+@param {String}  mac-autocomplete-label The label to display to the users (default "name")
+@param {String}  mac-autocomplete-query The query parameter on GET command (default "q")
 @param {Integer} mac-autocomplete-delay Delay on fetching autocomplete data after keyup (default 800)
 ###
 
