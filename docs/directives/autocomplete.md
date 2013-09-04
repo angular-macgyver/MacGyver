@@ -17,7 +17,7 @@ Placeholder text
   
 **mac-autocomplete-url**  
 Type: `String`  
-Url to fetch autocomplete dropdown list data  
+Url to fetch autocomplete dropdown list data. URL may include GET params e.g. "/users?nocache=1"  
   
 **mac-autocomplete-source**  
 Type: `Expression`  
@@ -48,11 +48,11 @@ Function called on ajax request error
   
 **mac-autocomplete-label**  
 Type: `String`  
-The label to display to the users               (default "name")  
+The label to display to the users (default "name")  
   
 **mac-autocomplete-query**  
 Type: `String`  
-The query parameter on GET command              (default "q")  
+The query parameter on GET command (default "q")  
   
 **mac-autocomplete-delay**  
 Type: `Integer`  
