@@ -23,10 +23,10 @@ angular.module("Mac").directive("macScrollSpy", [
 
       spyElement.on "scroll.scroll-spy", ($event) ->
         scrollTop    = spyElement.scrollTop() + options.offset
-        scrollHeight = spyElement[0].scrollHeight or element[0].scrollHeight
+        scrollHeight = this.scrollHeight or element[0].scrollHeight
         maxScroll    = scrollHeight - spyElement.height()
 
-        return true if scrollTop >= maxScroll
+        return true if scrollTop >= maxScroll or not scrollSpy.registered.length
 
         for i in [0..scrollSpy.registered.length - 1]
           anchors = scrollSpy.registered
