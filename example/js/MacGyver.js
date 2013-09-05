@@ -8962,22 +8962,23 @@ angular.module("Mac").directive("macScrollSpy", [
         interpolate = id.match(/{{(.*)}}/);
         return function($scope, element, attrs) {
           var registering;
-          registering = function(value) {
-            if (!value) {
+          registering = function() {
+            if (!id) {
               return;
             }
-            scrollSpy.register(value, element);
+            scrollSpy.register(id, element);
             return $scope.$on("$destroy", function() {
-              return scrollSpy.unregister(value);
+              return scrollSpy.unregister(id);
             });
           };
           $scope.$on("refresh-scroll-spy", registering);
           if (interpolate) {
             return attrs.$observe("macScrollSpyAnchor", function(value) {
-              return registering(value);
+              id = value;
+              return registering();
             });
           } else {
-            return registering(id);
+            return registering();
           }
         };
       }
