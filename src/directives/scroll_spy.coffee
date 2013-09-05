@@ -59,17 +59,19 @@ directive("macScrollSpyAnchor", [
       interpolate = id.match /{{(.*)}}/
 
       ($scope, element, attrs) ->
-        registering  = (value) ->
-          return unless value
-          scrollSpy.register value, element
-          $scope.$on "$destroy", -> scrollSpy.unregister value
+        registering  = ->
+          return unless id
+          scrollSpy.register id, element
+          $scope.$on "$destroy", -> scrollSpy.unregister id
 
         $scope.$on "refresh-scroll-spy", registering
 
         if interpolate
-          attrs.$observe "macScrollSpyAnchor", (value) -> registering value
+          attrs.$observe "macScrollSpyAnchor", (value) ->
+            id = value
+            registering()
         else
-          registering id
+          registering()
 ]).
 
 #

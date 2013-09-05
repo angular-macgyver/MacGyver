@@ -71,6 +71,18 @@ describe "Mac scroll spy", ->
         $compile("<div mac-scroll-spy-anchor></div>") $rootScope
       expect(create).toThrow()
 
+    it "should update anchor on refresh-scroll-spy event", ->
+      element = angular.element("<div mac-scroll-spy-anchor id='test'></div>")
+      angular.element("body").append element
+      $compile(element) $rootScope
+
+      origTop = element.offset().top
+      element.css "margin-top", 200
+
+      $rootScope.$broadcast "refresh-scroll-spy"
+
+      expect(origTop).not.toBe scrollspy.registered[0].top
+
   describe "scroll spy target", ->
     it "should throw an error when name is not provided", ->
       create = ->
