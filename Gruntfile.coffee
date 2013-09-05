@@ -58,7 +58,7 @@ module.exports = (grunt) ->
         src: "<%= buildConf.example %>"
 
       deployAppJs:
-        dest: "lib/<%= pkg.name %>.js"
+        dest: "lib/<%= pkg.name.toLowerCase() %>.js"
         src: "<%= buildConf.full %>"
 
       modulesJs:
@@ -178,8 +178,12 @@ module.exports = (grunt) ->
 
     uglify:
       dist:
-        files:
-          "lib/<%= pkg.name %>.min.js": "lib/<%= pkg.name %>.js"
+        files: [
+          {
+            src: "lib/<%= pkg.name.toLowerCase() %>.js"
+            dest: "lib/<%= pkg.name.toLowerCase() %>.min.js"
+          }
+        ]
 
     #
     # watch section
