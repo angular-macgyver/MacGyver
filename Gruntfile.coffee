@@ -177,6 +177,9 @@ module.exports = (grunt) ->
     clean: ["tmp"]
 
     uglify:
+      options:
+        report:           "gzip"
+        preserveComments: false
       dist:
         files: [
           {
