@@ -111,3 +111,12 @@ describe "Mac scroll spy", ->
         scrollspy.setActive {id: "test", element: angular.element("<div></div>"), top: 123}
 
       expect(element.hasClass "active").toBeTruthy()
+
+    it "should add custom set class", ->
+      element = $compile("<div mac-scroll-spy-target='test' mac-scroll-spy-target-class='class2'></div>") $rootScope
+      $rootScope.$digest()
+
+      $rootScope.$apply ->
+        scrollspy.setActive {id: "test", element: angular.element("<div></div>"), top: 123}
+
+      expect(element.hasClass "class2").toBeTruthy()

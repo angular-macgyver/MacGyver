@@ -79,13 +79,15 @@ directive("macScrollSpyAnchor", [
 # @name mac-scroll-spy-target
 # @description
 # Element to highlight when anchor scroll into view
-# @param {String} mac-scroll-spy-target Name of the anchor
+# @param {String} mac-scroll-spy-target       Name of the anchor
+# @param {String} mac-scroll-spy-target-class Class to apply for highlighting (default active)
 #
 directive("macScrollSpyTarget", [
   "scrollSpy"
   (scrollSpy) ->
     compile: (element, attrs) ->
-      target = attrs.macScrollSpyTarget
+      target         = attrs.macScrollSpyTarget
+      highlightClass = attrs.macScrollSpyTargetClass or "active"
       unless target
         throw new Error("Missing scroll spy target name")
 
@@ -96,7 +98,7 @@ directive("macScrollSpyTarget", [
           return unless id
           callback = (active) ->
             action = if id is active.id then "addClass" else "removeClass"
-            element[action] "active"
+            element[action] highlightClass
 
           # Update target class if target is re-rendered
           callback scrollSpy.active if scrollSpy.active?
