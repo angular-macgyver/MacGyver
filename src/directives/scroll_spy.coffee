@@ -98,6 +98,8 @@ directive("macScrollSpyTarget", [
             action = if id is active.id then "addClass" else "removeClass"
             element[action] "active"
 
+          # Update target class if target is re-rendered
+          callback scrollSpy.active if scrollSpy.active?
           scrollSpy.addListener callback
 
           $scope.$on "$destroy", ->
