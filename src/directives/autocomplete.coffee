@@ -62,10 +62,6 @@ angular.module("Mac").directive "macAutocomplete", [
       $menuScope.items = []
       $menuScope.index = 0
 
-      $scope.$watch attrs.ngModel, (value) ->
-        ctrl.$setViewValue value
-        ctrl.$render()
-
       ctrl.$parsers.push (value) ->
         if value and not disabled($scope)
           if delay > 0
