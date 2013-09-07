@@ -126,8 +126,9 @@ angular.module("Mac").factory "TableRowsController", [
 
         make: (section, model) ->
           row = tableComponents.rowFactory(section, model)
-          for colName, column of @table.columnsMap
-            cell = tableComponents.cellFactory(row, column)
+          for colName in @table.columnsOrder
+            column                = @table.columnsMap[colName]
+            cell                  = tableComponents.cellFactory(row, column)
             row.cellsMap[colName] = cell
             row.cells.push cell
           row
