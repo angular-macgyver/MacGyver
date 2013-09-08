@@ -78,8 +78,6 @@ angular.module("Mac").directive "macTableSectionSelectedModels", [
     controller: ["$scope", "$element", "$attrs", SelectedModelsController]
     require:    ["^macTable", "macTableSection", "macTableSectionSelectedModels"]
     compile: (element, attrs) ->
-      element.find("[mac-table-row]").attr("ng-class", "{selected: row.selected}")
-
       ($scope, $element, $attrs, controllers) ->
         controllers[1].registerWatcher "macTableSectionSelectedModels", controllers[2]
 ]

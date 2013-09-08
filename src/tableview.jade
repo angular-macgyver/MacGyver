@@ -81,7 +81,10 @@ block append content
                   mac-table-section-models          = "macGyverSeasonOne | filter: query"
                   mac-table-section-selected-models = "$parent.$parent.selectedModels"
                 )
-                  tr(mac-table-row)
+                  tr(
+                    mac-table-row
+                    ng-class = "{selected: row.selected}"
+                  )
                     td(mac-cell-template="No.", mac-table-selectable="true")
                       span {{cell.value()}}
                     td(mac-cell-template="")
@@ -118,7 +121,9 @@ block append content
           = '      mac-table-section="body"\n' 
           = '      mac-table-section-models="macGyverSeasonOne | filter: query"\n'
           = '      mac-table-section-selected-models="$parent.$parent.selectedModels">\n'
-          = '    <tr mac-table-row>\n'
+          = '    <tr\n'
+          = '        mac-table-row\n'
+          = '        ng-class = "{selected: row.selected}">\n'
           = '      <td mac-cell-template="No." mac-table-selectable="true"><span>{{cell.value()}}</span></td>\n'
           = '      <td mac-cell-template=""><span>{{cell.value()}}</span></td>\n'
           = '    </tr>\n'
