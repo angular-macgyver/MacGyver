@@ -203,7 +203,7 @@ module.exports = (grunt) ->
         options: interrupt: true
       vendorCss:
         files: ["vendor/vendor.styl"]
-        tasks: ["stylus:vendor", "concat:vendorCss", "clean"]
+        tasks: ["stylus:vendor", "concat:css", "clean"]
         options: interrupt: true
       jade:
         files: ["src/**/*.jade"]
