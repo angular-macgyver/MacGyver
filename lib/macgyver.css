@@ -760,8 +760,10 @@ i.mac-icons.mac-icon-time{background-position:-32px 0}
 
 table.mac-table-default thead,table.mac-table-default tbody,table.mac-table-default tfoot{white-space:nowrap;}
 table.mac-table-default thead th,table.mac-table-default tbody th,table.mac-table-default tfoot th,table.mac-table-default thead td,table.mac-table-default tbody td,table.mac-table-default tfoot td{white-space:normal}
+table.mac-table-default tr.selected{background:#ffebcd}
 table.mac-table-default th,table.mac-table-default td{padding:0;}
 table.mac-table-default th .cell-wrapper,table.mac-table-default td .cell-wrapper{-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding:8px}
+table.mac-table-default [mac-table-selectable]{cursor:pointer}
 
 .mac-menu{position:absolute;top:0;left:0;width:200px;background:#fff;-webkit-box-shadow:0 3px 6px rgba(0,0,0,0.2);box-shadow:0 3px 6px rgba(0,0,0,0.2);border:1px solid #d1d3d8;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;max-height:325px;overflow-y:auto;opacity:0;-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";filter:alpha(opacity=0);visibility:hidden;-webkit-transition:opacity 0.1s ease-out, visibility 0.1s ease-out;-moz-transition:opacity 0.1s ease-out, visibility 0.1s ease-out;-o-transition:opacity 0.1s ease-out, visibility 0.1s ease-out;-ms-transition:opacity 0.1s ease-out, visibility 0.1s ease-out;transition:opacity 0.1s ease-out, visibility 0.1s ease-out;}
 .mac-menu.visible{visibility:visible;opacity:1;-ms-filter:none;filter:none}

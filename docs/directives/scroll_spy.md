@@ -32,4 +32,8 @@ Element to highlight when anchor scroll into view
 Type: `String`  
 Name of the anchor  
   
+**mac-scroll-spy-target-class**  
+Type: `String`  
+Class to apply for highlighting (default active)  
+  
 

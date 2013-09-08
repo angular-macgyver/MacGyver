@@ -106,7 +106,7 @@ module.exports = (grunt) ->
             src:  ["tmp/vendor.css"]
           }
           {
-            dest: "example/css/<%= pkg.name %>.css"
+            dest: "example/css/<%= pkg.name.toLowerCase() %>.css"
             src: [
               "vendor/css/*.css"
               "tmp/app.css"
@@ -165,7 +165,7 @@ module.exports = (grunt) ->
           expand:  true
           flatten: true
           src:     [
-            "example/css/<%= pkg.name %>.css"
+            "example/css/<%= pkg.name.toLowerCase() %>.css"
           ]
           dest: "lib/"
         ]
