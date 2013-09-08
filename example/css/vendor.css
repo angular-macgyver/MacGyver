@@ -39,6 +39,11 @@ section h1{padding-bottom:9px;margin:20px 0;border-bottom:1px solid #eee}
 .pln{color:#48484c}
 .prettyprint{padding:8px;background-color:#f7f7f9;border:1px solid #e1e1e8}
 .prettyprint.linenums{-webkit-box-shadow:inset 40px 0 0 #fbfbfc,inset 41px 0 0 #ececf0;box-shadow:inset 40px 0 0 #fbfbfc,inset 41px 0 0 #ececf0}
+.table-view-example__selectable-columns{background:#f7f7f9;border:1px solid #e1e1e8;padding:20px;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;-webkit-border-radius:6px;border-radius:6px;}
+.table-view-example__selectable-columns hr{margin:5px 0}
+.table-view-example__selectable-columns__actions{list-style:none;margin-left:0;}
+.table-view-example__selectable-columns__actions li a{background:rgba(128,128,128,0.8);-webkit-border-radius:3px;border-radius:3px;padding:6px;margin-right:5px;color:#fff;}
+.table-view-example__selectable-columns__actions li a:hover{background:rgba(128,128,128,0.9);text-decoration:none}
 ol.linenums{margin:0 0 0 33px;}
 ol.linenums li{padding-left:12px;color:#bebec5;line-height:20px;text-shadow:0 1px 0 #fff}
 @media (min-width: 1200px){.docs-sidenav{width:258px}
