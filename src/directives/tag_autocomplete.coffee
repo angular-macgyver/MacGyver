@@ -54,21 +54,12 @@ angular.module("Mac").directive "macTagAutocomplete", [
       labelKey   ?= "name"
       queryKey    = attrs.macTagAutocompleteQuery  or "q"
       delay       = +attrs.macTagAutocompleteDelay or 800
-      events      = attrs.macTagAutocompleteEvents or ""
-      eventsList  = []
-      if events
-        for item in events.split(",")
-          attrEvent = util.capitalize item
-          eventsList.push
-            name:        item
-            capitalized: attrEvent
-            eventFn:     attrs["macTagAutocompleteOn#{attrEvent}"]
 
       # Update template on label variable name
       tagLabelKey = if labelKey then ".#{labelKey}" else labelKey
-      $(".tag-label", element).text "{{tag#{tagLabelKey}}}"
+      angular.element(".tag-label", element).attr "ng-bind", "tag#{tagLabelKey}"
 
-      textInput   = $(".mac-autocomplete", element)
+      textInput   = angular.element(".mac-autocomplete", element)
       attrsObject =
         "mac-autocomplete-value": valueKey
         "mac-autocomplete-label": labelKey
@@ -91,23 +82,27 @@ angular.module("Mac").directive "macTagAutocomplete", [
           $scope.$watch "model",     (value) -> $scope.textInput = value
 
         # Clicking on the element will focus on input
-        element.click -> $(".text-input", element).focus()
+        $scope.focusTextInput = ->
+          angular.element(".text-input", element).focus()
 
-        # HACK - To make sure autocomplete html has been replaced
-        $scope.eventsList = eventsList
-        $scope.$watch "eventsList", (value) ->
-          # Loop through the list of events user specified
-          for event in eventsList
-            continue unless event.eventFn and event.name isnt "keydown"
+        # Loop through the list of events user specified
+        $timeout ->
+          if (events = attrs.macTagAutocompleteEvents)
+            for name in events.split(",")
+              capitalized = util.capitalize name
+              eventFn     = attrs["macTagAutocompleteOn#{capitalized}"]
 
-            do (event) ->
-              $(".text-input", element).on event.name, ($event) ->
-                expression = $parse event.eventFn
-                $scope.$apply ->
-                  expression $scope.$parent, {$event, item: $scope.textInput }
+              continue unless eventFn and name isnt "keydown"
+
+              do (name, eventFn) ->
+                angular.element(".text-input", element).on name, ($event) ->
+                  expression = $parse eventFn
+                  $scope.$apply ->
+                    item = $scope.textInput
+                    expression $scope.$parent, {$event, item}
+        , 0
 
         $scope.$watch "selected.length", (length) ->
-          # TODO Better way to find the difference between selected and source
           sourceValues   = (item[valueKey] for item in ($scope.source or []))
           selectedValues = (item[valueKey] for item in ($scope.selected or []))
           difference     = (item for item in sourceValues when item not in selectedValues)
@@ -141,9 +136,9 @@ angular.module("Mac").directive "macTagAutocomplete", [
 
           $scope.selected.push item if item?
           $timeout ->
-            $scope.$apply -> $scope.textInput = ""
+            $scope.textInput = ""
           , 0
 
         $scope.$on "mac-tag-autocomplete-clear-input", ->
-          $scope.textInput = ""
+          $scope.$apply -> $scope.textInput = ""
 ]

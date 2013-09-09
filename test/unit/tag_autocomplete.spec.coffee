@@ -104,6 +104,7 @@ describe "Mac tag autocomplete", ->
 
       element = $compile("<mac-tag-autocomplete mac-tag-autocomplete-events='keyup' mac-tag-autocomplete-on-keyup='keyup()'></mac-tag-autocomplete>") $rootScope
       $rootScope.$digest()
+      $timeout.flush()
 
       textInput = $(".mac-autocomplete", element)
       textInput.trigger "keyup", keyCode: keys.A

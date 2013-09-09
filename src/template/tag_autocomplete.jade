@@ -1,4 +1,4 @@
-.mac-tag-autocomplete
+.mac-tag-autocomplete(ng-click="focusTextInput()")
   ul.tag-list
     li.tag.label(ng-repeat="tag in selected")
       .tag-close(ng-click="selected.splice($index, 1)") &times;
