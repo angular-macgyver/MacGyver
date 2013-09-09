@@ -1,24 +1,26 @@
-fs        = require "fs"
-express   = require "express"
+fs      = require "fs"
+connect = require "connect"
+http    = require "http"
 
 exports.startServer = (port, publicPath, callback) ->
-  server = express()
+  app = connect()
+    .use(connect.static publicPath)
+    .use(connect.bodyParser())
+    .use((req, res, next)->
+      if req.method is "POST" and req.url is "/test_upload"
+        newPaths = []
+        for file in req.files.files
+          data    = fs.readFileSync file.path
+          newPath = __dirname + "/example/uploads/#{file.name}"
+          fs.writeFileSync newPath, data
+          console.log newPath
+          newPaths.push newPath
+        res.end JSON.stringify newPaths
+      else
+        next()
+    )
 
-  server.use express.static publicPath
-  server.use express.bodyParser()
-
-  # Server routes n' stuff
-  server.post "/test_upload", (req, res) ->
-    newPaths = []
-    for file in req.files.files
-      data    = fs.readFileSync file.path
-      newPath = __dirname + "/example/uploads/#{file.name}"
-      fs.writeFileSync newPath, data
-      console.log newPath
-      newPaths.push newPath
-    res.send newPaths
-
-  server.listen port
+  http.createServer(app).listen port
 
   console.log """
 

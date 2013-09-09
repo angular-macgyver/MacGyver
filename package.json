@@ -22,7 +22,7 @@
   ],
   "dependencies": {},
   "devDependencies": {
-    "express": "~3.3.5",
+    "connect": "~2.9.0",
     "grunt": "~0.4.1",
     "grunt-chalkboard": "~0.1.2",
     "grunt-contrib-clean": "~0.4.1",
