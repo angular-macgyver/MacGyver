@@ -1,16 +1,9 @@
 server = require "./server"
 path   = require "path"
-fs     = require "fs"
-wrench = require "wrench"
-_      = require "underscore"
-
-# Path variables
-examplePath    = "example/"
-finalBuildPath = "lib/"
-componentFile  = "bower.json"
 
 module.exports = (grunt) ->
   require('matchdep').filterDev('grunt-*').forEach grunt.loadNpmTasks
+  grunt.loadTasks "misc/grunt"
 
   # Internal functions
   spawn = (options, done = ->) ->
@@ -295,80 +288,6 @@ module.exports = (grunt) ->
           dest:    "docs/html"
           ext:     ".html"
         ]
-
-  # Replace templateUrl with actual html
-  grunt.registerMultiTask "replace", "Replace placeholder with contents", ->
-    options = @options
-      separator: ""
-      replace:   ""
-      pattern:   null
-
-    parse = (code) ->
-      templateUrlRegex = options.pattern
-      updatedCode      = code
-
-      while match = templateUrlRegex.exec code
-        if _(options.replace).isFunction()
-          replacement = options.replace match
-        else
-          replacement = options.replace
-
-        updatedCode = updatedCode.replace match[0], replacement
-
-      return updatedCode
-
-    @files.forEach (file) ->
-      src = file.src.filter (filepath) ->
-        unless (exists = grunt.file.exists(filepath))
-          grunt.log.warn "Source file '#{filepath}' not found"
-        return exists
-      .map (filepath) ->
-        parse grunt.file.read(filepath)
-      .join grunt.util.normalizelf(options.separator)
-
-      grunt.file.write file.dest, src
-      grunt.log.writeln("Replace placeholder with contents in '#{file.dest}' successfully")
-
-  grunt.registerMultiTask "marked", "Convert markdown to html", ->
-    options = @options
-      separator: grunt.util.linefeed
-
-    @files.forEach (file) ->
-      src = file.src.filter (filepath) ->
-        unless (exists = grunt.file.exists(filepath))
-          grunt.log.warn "Source file '#{filepath}' not found"
-        return exists
-      .map (filepath) ->
-        marked = require "marked"
-        marked grunt.file.read(filepath)
-      .join grunt.util.normalizelf(options.separator)
-
-      grunt.file.write file.dest, src
-      grunt.log.writeln("Converted '#{file.dest}'")
-
-  # Read all files in build folder and add to component.json
-  grunt.registerTask "update:component", "Update bower.json", ->
-    fileList = wrench.readdirSyncRecursive finalBuildPath
-    done     = @async()
-
-    fs.readFile componentFile, "utf8", (err, data) ->
-      throw err if err?
-
-      fileList = _(fileList).map (file) ->
-        if file.indexOf(".DS_Store") is -1
-          path.join "lib", file
-        else
-          ""
-      fileList = _(fileList).compact()
-
-      newArray = JSON.stringify fileList
-      data     = data.replace /"main": \[[^\]]+]/, "\"main\": #{newArray}"
-      data     = data.replace /"name": [^,]+/ , "\"name\": \"#{grunt.config.get("pkg").name}\""
-      data     = data.replace /"version": [^,]+/, "\"version\": \"#{grunt.config.get("pkg").version}\""
-
-      fs.writeFile componentFile, data, "utf8", (err, data) ->
-        grunt.log.writeln "Updated bower.json"
-        done()
 
   grunt.registerTask "deploy", "Build and copy to lib/", [
       "coffee"
