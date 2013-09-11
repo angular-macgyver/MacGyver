@@ -13,6 +13,9 @@ block append content
         li(mac-scroll-spy-target="timestamp-filter"): a(href="#timestamp-filter")
           i.icon-chevron-right
           | Timestamp Filter
+        li(mac-scroll-spy-target="list-filter"): a(href="#list-filter")
+          i.icon-chevron-right
+          | List Filter
 
     #example.span9(ng-controller='ExampleController')
       section#underscore-string(mac-scroll-spy-anchor)
@@ -50,3 +53,11 @@ block append content
             dd {{ threeDaysAgo | timestamp }}
         pre.prettyprint.linenums(ng-non-bindable)
           = '{{ fiveMinAgo | timestamp }}'
+
+      section#list-filter(mac-scroll-spy-anchor)
+        @@include("docs/html/filters/list.html")
+        h3 Example
+        .docs-example
+          p {{ ["item1", "item2", "item3", "item4"] | list }}
+        pre.prettyprint.linenums(ng-non-bindable)
+          = '{{ ["item1", "item2", "item3", "item4"] | list }}'
