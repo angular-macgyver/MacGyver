@@ -8,9 +8,8 @@ module.controller "modalController", ["$scope", "modal", ($scope, modal) ->
 
 module.controller "ExampleController", [
   "$scope"
-  "$timeout"
   "$window"
-($scope, $timeout, $window) ->
+($scope, $window) ->
 
   $scope.selectOptions = [
     {value: 1, text: "text1"}
