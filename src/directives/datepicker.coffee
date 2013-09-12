@@ -80,20 +80,24 @@ angular.module("Mac").directive "macDatepicker", [
           return unless initialized and value?
           inputElement.datepicker "option", name, value
 
-        $scope.$watch attrs.macDatepickerModel, (value) ->
-          if initialized and value?
-            $timeout ->
-              inputElement.datepicker "setDate", value
-            , 0
+        if attrs.macDatepickerModel?
+          $scope.$watch attrs.macDatepickerModel, (value) ->
+            if initialized and value?
+              $timeout ->
+                inputElement.datepicker "setDate", value
+              , 0
 
-        $scope.$watch attrs.macDatepickerDefaultDate, (value) ->
-          setOptions "defaultDate", value
+        if attrs.macDatepickerDefaultDate?
+          $scope.$watch attrs.macDatepickerDefaultDate, (value) ->
+            setOptions "defaultDate", value
 
-        $scope.$watch attrs.macDatepickerMaxDate, (value) ->
-          setOptions "maxDate", value
+        if attrs.macDatepickerMaxDate?
+          $scope.$watch attrs.macDatepickerMaxDate, (value) ->
+            setOptions "maxDate", value
 
-        $scope.$watch attrs.macDatepickerMinDate, (value) ->
-          setOptions "minDate", value
+        if attrs.macDatepickerMinDate?
+          $scope.$watch attrs.macDatepickerMinDate, (value) ->
+            setOptions "minDate", value
 
         opts.onSelect = (date, instance) ->
           $scope.$apply ->
