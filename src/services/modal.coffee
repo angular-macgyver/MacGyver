@@ -76,7 +76,7 @@ angular.module("Mac").service("modal", [
           element.removeClass "hide"
           $timeout ->
             element.addClass "visible"
-          , 0
+          , 0, false
 
           # Update opened modal object
           @opened = {id, element, options}
@@ -167,7 +167,7 @@ angular.module("Mac").service("modal", [
       element.removeClass "visible"
       $timeout ->
         element.addClass "hide"
-      , 250
+      , 250, false
       @bindingEvents "unbind"
       @opened = null
 
