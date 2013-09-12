@@ -95,8 +95,9 @@ angular.module("Mac").directive "macTooltip", [
 
             enabled = true
 
-      scope.$watch attrs.macTooltipDisabled, (value) ->
-        disabled = value
+      if attrs.macTooltipDisabled?
+        scope.$watch attrs.macTooltipDisabled, (value) ->
+          disabled = value
 
       scope.$on "$destroy", ->
         removeTip() if tooltip?
