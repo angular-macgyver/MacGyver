@@ -94,7 +94,7 @@ directive("macUpload", ["$rootScope", "$parse", "$timeout", "util", ($rootScope,
         dragoverTimeout = $timeout ->
           clearTimeout(dragoverTimeout) if dragoverTimeout?
           dropZone.removeClass "droppable"
-        , 250
+        , 250, false
 
     options.dropZone  = dropZone or $()
     options.pasteZone = null
