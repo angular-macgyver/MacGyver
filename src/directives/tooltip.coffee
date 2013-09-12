@@ -73,7 +73,7 @@ angular.module("Mac").directive "macTooltip", [
         tooltip.removeClass "visible"
         $timeout ->
           tooltip.remove()
-        , 100
+        , 100, false
 
       toggle = (event) ->
         if tooltip? then removeTip(event) else showTip(event)
