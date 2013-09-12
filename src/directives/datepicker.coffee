@@ -85,7 +85,7 @@ angular.module("Mac").directive "macDatepicker", [
             if initialized and value?
               $timeout ->
                 inputElement.datepicker "setDate", value
-              , 0
+              , 0, false
 
         if attrs.macDatepickerDefaultDate?
           $scope.$watch attrs.macDatepickerDefaultDate, (value) ->
