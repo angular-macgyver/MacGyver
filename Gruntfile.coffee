@@ -191,12 +191,8 @@ module.exports = (grunt) ->
         tasks: ["coffee", "concat:jqueryui", "concat:appJs", "clean", "copy:public"]
         options: interrupt: true
       css:
-        files: ["src/css/*.styl"]
-        tasks: ["stylus", "concat:appCss", "clean"]
-        options: interrupt: true
-      vendorCss:
-        files: ["vendor/vendor.styl"]
-        tasks: ["stylus:vendor", "concat:css", "clean"]
+        files: ["src/css/*.styl", "vendor/vendor.styl"]
+        tasks: ["stylus", "concat:css", "clean"]
         options: interrupt: true
       jade:
         files: ["src/**/*.jade"]
