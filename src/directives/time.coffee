@@ -37,7 +37,7 @@ angular.module("Mac").directive "macTime", [
 
         inputDOM        = $("input", element)[0]
         timeRegex       = /(\d+):(\d+) ([AP]M)/
-        highlighActions =
+        highlightActions =
           hours:   -> inputDOM.setSelectionRange 0, 2
           minutes: -> inputDOM.setSelectionRange 3, 5
           markers: -> inputDOM.setSelectionRange 6, 8
@@ -101,8 +101,8 @@ angular.module("Mac").directive "macTime", [
 
           # Highlight hour on activating the time input
           $timeout ->
-            inputSelectAction start, end, highlighActions
-          , 0
+            inputSelectAction start, end, highlightActions
+          , 0, false
 
         #
         # @name $scope.updateScopeTime
