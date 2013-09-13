@@ -78,16 +78,16 @@ directive("macUpload", ["$rootScope", "$parse", "$timeout", "util", ($rootScope,
         applyCallback "progress", $event, $data
 
     if opts.dropZone?
-      $(document).on "drop dragover", (event) -> event.preventDefault()
+      angular.element(document).bind "drop dragover", (event) -> event.preventDefault()
 
       # Add and remove droppable class
       dragoverTimeout = null
       dropZone        = element.parents opts.dropZone
 
-      $(document).bind "dragover", (event) ->
+      angular.element(document).bind "dragover", (event) ->
         $timeout.cancel dragoverTimeout if dragoverTimeout?
 
-        node   = $(event.target).parents opts.dropZone
+        node   = angular.element(event.target).parents opts.dropZone
         method = if node.length then "addClass" else "removeClass"
         dropZone[method] "droppable"
 
@@ -96,7 +96,7 @@ directive("macUpload", ["$rootScope", "$parse", "$timeout", "util", ($rootScope,
           dropZone.removeClass "droppable"
         , 250, false
 
-    options.dropZone  = dropZone or $()
+    options.dropZone  = dropZone or angular.element()
     options.pasteZone = null
 
     if opts.options
