@@ -150,7 +150,7 @@ angular.module("Mac").directive "macAutocomplete", [
 
         reset()
 
-      element.on "keydown", (event) ->
+      element.bind "keydown", (event) ->
         switch event.which
           when keys.DOWN
             $scope.$apply ->
@@ -167,7 +167,7 @@ angular.module("Mac").directive "macAutocomplete", [
 
         return true
 
-      $(document).on "click", (event) ->
+      angular.element(document).bind "click", (event) ->
         if $menuScope.items.length > 0
           $scope.$apply -> reset()
 
@@ -180,7 +180,7 @@ angular.module("Mac").directive "macAutocomplete", [
       if inside
         element.after $compile(menuEl) $menuScope
       else
-        $(document.body).append $compile(menuEl) $menuScope
+        angular.element(document.body).append $compile(menuEl) $menuScope
 
       #
       # @event
