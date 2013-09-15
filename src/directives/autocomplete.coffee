@@ -95,6 +95,11 @@ angular.module("Mac").directive "macAutocomplete", [
         $menuScope.style.top  += element.outerHeight()
         $menuScope.style.width = element.outerWidth()
 
+        angular.forEach $menuScope.style, (value, key) ->
+          if not isNaN(+value) and angular.isNumber +value
+            value = "#{value}px"
+          $menuScope.style[key] = value
+
       #
       # @function
       # @name updateItem

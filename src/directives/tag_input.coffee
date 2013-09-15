@@ -24,7 +24,7 @@ angular.module("Mac").directive "macTagInput", [ ->
     valueKey = attrs.macTagInputValue or "id"
     textKey  = attrs.macTagInputLabel or "name"
 
-    $(".tag-autocomplete", element).attr
+    angular.element(element[0].getElementsByClassName("mac-autocomplete")).attr
       "mac-tag-autocomplete-value": valueKey
       "mac-tag-autocomplete-label": textKey
 

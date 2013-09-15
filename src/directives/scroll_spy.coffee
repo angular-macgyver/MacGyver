@@ -16,12 +16,12 @@ angular.module("Mac").directive("macScrollSpy", [
       options = util.extendAttributes "macScrollSpy", defaults, attrs
 
       spyElement =
-        if element.is("body")
+        if element[0].tagName is "BODY"
           angular.element window
         else
           element
 
-      spyElement.on "scroll.scroll-spy", ($event) ->
+      spyElement.bind "scroll", ($event) ->
         scrollTop    = spyElement.scrollTop() + options.offset
         scrollHeight = this.scrollHeight or element[0].scrollHeight
         maxScroll    = scrollHeight - spyElement.height()

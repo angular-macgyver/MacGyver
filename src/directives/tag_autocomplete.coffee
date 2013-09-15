@@ -55,11 +55,9 @@ angular.module("Mac").directive "macTagAutocomplete", [
       queryKey    = attrs.macTagAutocompleteQuery  or "q"
       delay       = +attrs.macTagAutocompleteDelay or 800
 
-      # Update template on label variable name
-      tagLabelKey = if labelKey then ".#{labelKey}" else labelKey
-      angular.element(".tag-label", element).attr "ng-bind", "tag#{tagLabelKey}"
 
-      textInput   = angular.element(".mac-autocomplete", element)
+      textInput =
+        angular.element(element[0].getElementsByClassName "mac-autocomplete")
       attrsObject =
         "mac-autocomplete-value": valueKey
         "mac-autocomplete-label": labelKey
@@ -83,11 +81,17 @@ angular.module("Mac").directive "macTagAutocomplete", [
 
         # Clicking on the element will focus on input
         $scope.focusTextInput = ->
-          angular.element(".text-input", element).focus()
+          textInputDOM = element[0].getElementsByClassName "text-input"
+          angular.element(textInputDOM).triggerHandler "focus"
+
+        $scope.getTagLabel = (tag) -> if labelKey then tag[labelKey] else tag
 
         # Loop through the list of events user specified
         $timeout ->
           if (events = attrs.macTagAutocompleteEvents)
+            textInput =
+              angular.element(element[0].getElementsByClassName "text-input")
+
             for name in events.split(",")
               capitalized = util.capitalize name
               eventFn     = attrs["macTagAutocompleteOn#{capitalized}"]
@@ -95,7 +99,7 @@ angular.module("Mac").directive "macTagAutocomplete", [
               continue unless eventFn and name isnt "keydown"
 
               do (name, eventFn) ->
-                angular.element(".text-input", element).on name, ($event) ->
+                textInput.bind name, ($event) ->
                   expression = $parse eventFn
                   $scope.$apply ->
                     item = $scope.textInput

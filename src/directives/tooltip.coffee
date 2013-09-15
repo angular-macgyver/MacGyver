@@ -34,8 +34,9 @@ angular.module("Mac").directive "macTooltip", [
       showTip = (event) ->
         return if disabled
 
-        tip       = if opts.inside then element else $(document.body)
-        tooltip   = $("""<div class="tooltip #{opts.direction}"><div class="tooltip-message">#{text}</div></div>""")
+        tip =
+          if opts.inside then element else angular.element(document.body)
+        tooltip = angular.element """<div class="tooltip #{opts.direction}"><div class="tooltip-message">#{text}</div></div>"""
         tip.append tooltip
 
         # Only get element offset when not adding tooltip within the element.
@@ -53,8 +54,10 @@ angular.module("Mac").directive "macTooltip", [
 
         # Adjust offset based on direction.
         switch opts.direction
-          when "bottom", "top" then offset.left += elementSize.width / 2.0 - tooltipSize.width / 2.0
-          when "left", "right" then offset.top  += elementSize.height / 2.0 - tooltipSize.height / 2.0
+          when "bottom", "top"
+            offset.left += elementSize.width / 2.0 - tooltipSize.width / 2.0
+          when "left", "right"
+            offset.top  += elementSize.height / 2.0 - tooltipSize.height / 2.0
 
         switch opts.direction
           when "bottom" then offset.top  += elementSize.height
@@ -67,7 +70,12 @@ angular.module("Mac").directive "macTooltip", [
         offset.left = Math.max 0, offset.left
 
         # Set the offset.
-        tooltip.css(offset).addClass "visible"
+        angular.forEach offset, (value, key) ->
+          if not isNaN(+value) and angular.isNumber +value
+            value = "#{value}px"
+          tooltip.css key, value
+
+        tooltip.addClass "visible"
 
       removeTip = (event) ->
         tooltip.removeClass "visible"
@@ -88,10 +96,10 @@ angular.module("Mac").directive "macTooltip", [
 
             switch opts.trigger
               when "click"
-                element.on "click", toggle
+                element.bind "click", toggle
               when "hover"
-                element.on "mouseenter", showTip
-                element.on "mouseleave click", removeTip
+                element.bind "mouseenter", showTip
+                element.bind "mouseleave click", removeTip
 
             enabled = true
 

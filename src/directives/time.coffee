@@ -35,7 +35,7 @@ angular.module("Mac").directive "macTime", [
       ($scope, element, attrs) ->
         $scope.placeholder = opts.placeholder
 
-        inputDOM        = $("input", element)[0]
+        inputDOM        = element[0].getElementsByTagName("input")[0]
         timeRegex       = /(\d+):(\d+) ([AP]M)/
         highlightActions =
           hours:   -> inputDOM.setSelectionRange 0, 2

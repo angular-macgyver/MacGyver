@@ -68,7 +68,8 @@ angular.module("Mac").directive "macDatepicker", [
       if attrs.macDatepickerDisabled?
         inputAttrs["ng-disabled"] = attrs.macDatepickerDisabled
 
-      inputElement = angular.element("input", element).attr inputAttrs
+      inputElement = angular.element(element[0].getElementsByTagName "input")
+      inputElement.attr inputAttrs
 
       ($scope, element, attrs) ->
         onSelect    = $parse attrs.macDatepickerOnSelect

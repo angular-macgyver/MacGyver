@@ -22,9 +22,13 @@ angular.module("Mac").directive "macSpinner", ->
     ($scope, element, attributes) ->
       attributes.$observe "macSpinnerSize", (value) ->
         if value? and value
-          element.css
-            height: value
-            width:  value
+
+          if not isNaN(+value) and angular.isNumber +value
+            value = "#{value}px"
+
+          element
+            .css("height", value)
+            .css("width", value)
 
       attributes.$observe "macSpinnerZIndex", (value) ->
         if value? and value
@@ -32,4 +36,5 @@ angular.module("Mac").directive "macSpinner", ->
 
       attributes.$observe "macSpinnerColor", (value) ->
         if value? and value
-          $(".bar", element).css "background", value
+          bars = element[0].getElementsByClassName "bar"
+          angular.element(bars).css "background", value
