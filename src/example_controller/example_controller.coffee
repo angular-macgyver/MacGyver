@@ -253,7 +253,3 @@ module.controller "ExampleController", [
 ]
 
 window.prettyPrint && prettyPrint()
-
-#Disable certain links in docs
-$('section [href^=#]').click (e) ->
-  e.preventDefault()

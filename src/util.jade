@@ -4,6 +4,9 @@ block append content
   .row.content
     #nav.span3
       ul.nav.nav-list.docs-sidenav(data-spy="affix", data-offset-top="0")
+        li(mac-scroll-spy-target="element"): a(href="#element")
+          i.icon-chevron-right
+          | Angular element
         li(mac-scroll-spy-target="pluralize"): a(href="#pluralize")
           i.icon-chevron-right
           | Pluralize
@@ -40,6 +43,9 @@ block append content
 
 
     #example.span9
+      section#element(mac-scroll-spy-anchor)
+        @@include("docs/html/main.html")
+
       section#pluralize(mac-scroll-spy-anchor)
         h3 pluralize
         pre.prettyprint(ng-non-bindable)
