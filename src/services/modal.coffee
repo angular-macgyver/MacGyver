@@ -94,7 +94,8 @@ angular.module("Mac").service("modal", [
             viewScope              = $rootScope.$new()
             viewScope.modal        = this
             viewScope.closeOverlay = ($event) =>
-              if options.overlayClose and angular.element($event.target).hasClass("modal-overlay")
+              if options.overlayClose and
+                  angular.element($event.target).hasClass("modal-overlay")
                 @hide()
 
             if options.controller
@@ -103,8 +104,9 @@ angular.module("Mac").service("modal", [
 
             angular.extend options.attributes, {id}
             element = angular.element(@modalTemplate).attr options.attributes
-            angular.element(".modal-content-wrapper", element).html template
-            angular.element("body").append $compile(element) viewScope
+            wrapper = angular.element element[0].getElementsByClassName("modal-content-wrapper")
+            wrapper.html template
+            angular.element(document.body).append $compile(element) viewScope
 
             showModal element
 
@@ -140,18 +142,21 @@ angular.module("Mac").service("modal", [
       element = modalObject.element
       options = modalObject.options
 
-      modal  = $(".modal", element).attr "style", ""
+      modal  = angular.element(element[0].getElementsByClassName "modal").attr "style", ""
       height = modal.outerHeight()
       width  = modal.outerWidth()
 
       css =
-        if $(window).height() > height
+        if angular.element(window).height() > height
           marginTop:  -height / 2
         else
           top: options.topOffset
       css.marginLeft = -width / 2
 
-      modal.css css
+      angular.forEach css, (value, key) ->
+        if not isNaN(+value) and angular.isNumber +value
+          value = "#{value}px"
+        modal.css key, value
 
     #
     # @name hide
@@ -189,10 +194,10 @@ angular.module("Mac").service("modal", [
       options       = @opened.options
 
       if options.keyboard
-        $(document)[action] "keydown", escapeKeyHandler
+        angular.element(document)[action] "keydown", escapeKeyHandler
 
       if options.resize
-        $(window)[action] "resize", resizeHandler
+        angular.element(window)[action] "resize", resizeHandler
 
     #
     # @name register
