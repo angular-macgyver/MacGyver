@@ -16,7 +16,7 @@ angular.module("Mac").
       expression = $parse attributes["macPauseTyping"]
       delay      = scope.$eval(attributes["macPauseTypingDelay"]) or 800
       keyupTimer = null
-      element.on "keyup", ($event) ->
+      element.bind "keyup", ($event) ->
         $timeout.cancel keyupTimer if keyupTimer?
         keyupTimer = $timeout ->
           expression scope, {$event}

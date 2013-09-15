@@ -20,7 +20,7 @@ for event in ["Blur", "Focus", "Keydown", "Keyup", "Mouseenter", "Mouseleave"]
       restrict: "A"
       link: (scope, element, attributes) ->
         expression = $parse attributes["mac#{event}"]
-        element.on event.toLowerCase(), ($event) ->
+        element.bind event.toLowerCase(), ($event) ->
           scope.$apply -> expression scope, {$event}
           true
     ]
