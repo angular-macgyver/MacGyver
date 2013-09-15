@@ -5,12 +5,11 @@ angular.module "Mac", ["Mac.Util"]
 @name angular.element
 
 @description
-Angular comes with jqLite, a tiny, API-compatible subset of jQuery.
-However, its functionality is very limited and MacGyver extends
-jqLite to make sure MacGyver components work properly.
+Angular comes with jqLite, a tiny, API-compatible subset of jQuery. However, its
+functionality is very limited and MacGyver extends jqLite to make sure MacGyver
+components work properly.
 
-Real jQuery will continue to take precedence over jqLite and all
-functions MacGyver extends.
+Real jQuery will continue to take precedence over jqLite and all functions MacGyver extends.
 
 MacGyver adds the following methods:
 - [height()](http://api.jquery.com/height/) - Does not support set
