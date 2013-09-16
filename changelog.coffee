@@ -6,7 +6,7 @@ fs      = require "fs"
 
 GIT_LOG = "git log --grep='%s' -E --format=%s %s..HEAD"
 GIT_TAG = "git describe --tags --abbrev=0"
-GIT_GREP = "^fix|^feature|BREAKING"
+GIT_GREP = "^fix|^feature|^refactor|BREAKING"
 
 githubUrl = "https://github.com/StartTheShift/MacGyver"
 
@@ -17,6 +17,7 @@ displayText =
   fix:      "Bug Fixes"
   feature:  "Features"
   breaking: "Breaking Changes"
+  refactor: "Optimization"
 
 linkToIssue  = (issue) -> util.format issueLink, issue, issue
 linkToCommit = (hash) -> util.format commitLink, hash.substr(0, 8), hash
@@ -45,7 +46,7 @@ parseCommit = (log) ->
   message = commit.join " "
   if match = message.match /^([^\(]+)\(([\w\.]+)\):\s+(.+)/
     commitObj.type =
-      if match[1] in ["fix", "feature"] then match[1] else "breaking"
+      if match[1] in ["fix", "feature", "refactor"] then match[1] else "breaking"
 
     commitObj.component = match[2]
     commitObj.message   = match[3]
@@ -72,8 +73,9 @@ getLastVersion = (callback) ->
 
 writeChangeLog = (stream, commits, version) ->
   sections =
-    fix:    {}
-    feature: {}
+    fix:      {}
+    feature:  {}
+    refactor: {}
     breaking: {}
 
   for commit in commits
