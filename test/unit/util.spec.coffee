@@ -68,7 +68,10 @@ describe "Mac Util", ->
 
   it "should not break when pluralizing empty strings or null", ->
     expect(util.pluralize "").toBe   ""
-    expect(util.pluralize null).toBe null
+    expect(util.pluralize null).toBe ""
+
+  it "should not break when passing parameter other than string", ->
+    expect(util.pluralize 23).toBe 23
 
   it "should convert strings to camel case", ->
     expect(util.toCamelCase "my_cool_string").toBe "myCoolString"

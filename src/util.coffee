@@ -47,15 +47,15 @@ angular.module("Mac.Util", []).factory "util", [
     @description
     Pluralize string based on the count
 
-    @param {String}  string       String to pluralize
+    @param {String}  string       String to pluralize (default "")
     @param {Integer} count        Object counts
     @param {Boolean} includeCount Include the number or not (default false)
 
     @returns {String} Pluralized string based on the count
     ###
-    pluralize: (string, count, includeCount = false) ->
+    pluralize: (string = "", count, includeCount = false) ->
       # If our string has no length, return without further processing
-      return string unless string?.trim().length > 0
+      return string if not angular.isString(string) or string.trim().length is 0
 
       # If the user is expecting count to be anything other
       # than the default, check if it is actually a number
@@ -92,9 +92,9 @@ angular.module("Mac.Util", []).factory "util", [
     uncapitalize: (string) ->
       str = String(string) or ""
       return str.charAt(0).toLowerCase() + str[1..]
-    toCamelCase: (string) ->
+    toCamelCase: (string =  "") ->
       string.trim().replace /[-_\s]+(.)?/g, (match, c) -> c.toUpperCase()
-    toSnakeCase: (string) ->
+    toSnakeCase: (string = "") ->
       string.trim().
         replace(/([a-z\d])([A-Z]+)/g, "$1_$2").
         replace(/[-\s]+/g, "_").
