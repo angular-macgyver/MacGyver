@@ -10,13 +10,6 @@ angular.module("Mac.Util", []).factory "util", [
   (
     $filter
   ) ->
-    # Underscore function section
-    ArrayProto    = Array.prototype
-    ObjProto      = Object.prototype
-    FuncProto     = Function.prototype
-    toString      = ObjProto.toString
-    nativeIsArray = Array.isArray
-
     _inflectionConstants:
       uncountables: [
         "sheep", "fish", "moose", "series", "species", "money", "rice", "information", "info", "equipment", "min"
@@ -126,8 +119,6 @@ angular.module("Mac.Util", []).factory "util", [
         result[key] = value
 
       result
-
-    isArray: nativeIsArray or (obj) -> toString.call(obj) is "[object Array]"
 
     _urlRegex: /(?:(?:(http[s]{0,1}:\/\/)(?:(www|[\d\w\-]+)\.){0,1})|(www|[\d\w\-]+)\.)([\d\w\-]+)\.([A-Za-z]{2,6})(:[\d]*){0,1}(\/?[\d\w\-\?\,\'\/\\\+&amp;%\$#!\=~\.]*){0,1}/i
 
