@@ -17,7 +17,7 @@ displayText =
   fix:      "Bug Fixes"
   feature:  "Features"
   breaking: "Breaking Changes"
-  refactor: "Optimization"
+  refactor: "Optimizations"
 
 linkToIssue  = (issue) -> util.format issueLink, issue, issue
 linkToCommit = (hash) -> util.format commitLink, hash.substr(0, 8), hash
