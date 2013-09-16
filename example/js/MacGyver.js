@@ -1,4 +1,185 @@
+var augmentWidthOrHeight, core_pnum, cssExpand, extendjQuery, getStyles, getWidthOrHeight, getWindow, isWindow, jqLiteExtend, rnumnonpx;
+
 angular.module("Mac", ["Mac.Util"]);
+
+/*
+@chalk overview
+@name angular.element
+
+@description
+Angular comes with jqLite, a tiny, API-compatible subset of jQuery. However, its
+functionality is very limited and MacGyver extends jqLite to make sure MacGyver
+components work properly.
+
+Real jQuery will continue to take precedence over jqLite and all functions MacGyver extends.
+
+MacGyver adds the following methods:
+- [height()](http://api.jquery.com/height/) - Does not support set
+- [width()](http://api.jquery.com/width/) - Does not support set
+- [outerHeight()](http://api.jquery.com/outerHeight/) - Does not support set
+- [outerWidth()](http://api.jquery.com/outerWidth/) - Does not support set
+- [offset()](http://api.jquery.com/offset/)
+- [scrollTop()](http://api.jquery.com/scrollTop/)
+*/
+
+
+cssExpand = ["Top", "Right", "Bottom", "Left"];
+
+core_pnum = /[+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|)/.source;
+
+rnumnonpx = new RegExp("^(" + core_pnum + ")(?!px)[a-z%]+$", "i");
+
+getStyles = function(element) {
+  return window.getComputedStyle(element, null);
+};
+
+isWindow = function(obj) {
+  return obj && obj.document && obj.location && obj.alert && obj.setInterval;
+};
+
+getWindow = function(element) {
+  if (isWindow(element)) {
+    return element;
+  } else {
+    return element.nodeType === 9 && element.defaultView;
+  }
+};
+
+augmentWidthOrHeight = function(element, name, extra, isBorderBox, styles) {
+  var i, start, _i;
+  if (extra === (isBorderBox ? "border" : "content")) {
+    return 0;
+  }
+  start = name === "Width" ? 1 : 0;
+  for (i = _i = start; _i <= 3; i = _i += 2) {
+    if (extra === "margin") {
+      val += parseFloat(styles["" + extra + cssExpand[i]]);
+    }
+    if (isBorderBox) {
+      if (extra === "content") {
+        val -= parseFloat(styles["padding" + cssExpand[i]]);
+      }
+      if (extra !== "margin") {
+        val -= parseFloat(styles["border" + cssExpand[i]]);
+      }
+    } else {
+      val += parseFloat(styles["padding" + cssExpand[i]]);
+      if (extra !== "padding") {
+        val += parseFloat(styles["border" + cssExpand + "Width"]);
+      }
+    }
+  }
+  return val;
+};
+
+getWidthOrHeight = function(type, prefix, element) {
+  return function(margin) {
+    var defaultExtra, doc, extra, isBorderBox, name, styles, value, valueIsBorderBox;
+    defaultExtra = (function() {
+      switch (prefix) {
+        case "inner":
+          return "padding";
+        case "outer":
+          return "";
+        default:
+          return "content";
+      }
+    })();
+    extra = defaultExtra || (margin === true ? "margin" : "border");
+    if (isWindow(element)) {
+      return element.document.documentElement["client" + type];
+    }
+    if (element.nodeType === 9) {
+      doc = element.documentElement;
+      return Math.max(element.body["scroll" + type], doc["scroll" + type], element.body["offset" + type], doc["offset" + type], doc["client" + type]);
+    }
+    valueIsBorderBox = true;
+    styles = getStyles(element);
+    name = type.toLowerCase();
+    value = type === "Height" ? element.offsetHeight : element.offsetWidth;
+    isBorderBox = element.style.boxSizing === "border-box";
+    if (value <= 0 || value === null) {
+      value = styles[name];
+      if (value < 0 || value === null) {
+        value = element.style[name];
+      }
+      if (rnumnonpx.test(value)) {
+        return value;
+      }
+      valueIsBorderBox = isBorderBox;
+      value = parseFloat(value) || 0;
+    }
+    return value + augmentWidthOrHeight(element, type, extra || (isBorderBox ? "border" : "content"), valueIsBorderBox, styles);
+  };
+};
+
+jqLiteExtend = {
+  height: function(element) {
+    return getWidthOrHeight("Height", "", element)();
+  },
+  width: function(element) {
+    return getWidthOrHeight("Width", "", element)();
+  },
+  outerHeight: function(element, margin) {
+    return getWidthOrHeight("Height", "outer", element)(margin);
+  },
+  outerWidth: function(element, margin) {
+    return getWidthOrHeight("Width", "outer", element)(margin);
+  },
+  offset: function(element) {
+    var box, doc, docElem, win;
+    box = {
+      top: 0,
+      left: 0
+    };
+    doc = element && element.ownerDocument;
+    if (!doc) {
+      return;
+    }
+    docElem = doc.documentElement;
+    if (element.getBoundingClientRect != null) {
+      box = element.getBoundingClientRect();
+    }
+    win = getWindow(doc);
+    return {
+      top: box.top + win.pageYOffset - docElem.clientTop,
+      left: box.left + win.pageXOffset - docElem.clientLeft
+    };
+  },
+  scrollTop: function(element, value) {
+    var win;
+    win = getWindow(element);
+    if (value == null) {
+      if (win) {
+        return win["pageYOffset"];
+      } else {
+        return element["scrollTop"];
+      }
+    }
+    if (win) {
+      return win.scrollTo(window.pageXOffset, value);
+    } else {
+      return element["scrollTop"] = value;
+    }
+  }
+};
+
+extendjQuery = function() {
+  var jqLite;
+  if (window.jQuery != null) {
+    return;
+  }
+  jqLite = angular.element;
+  return angular.forEach(jqLiteExtend, function(fn, name) {
+    return jqLite.prototype[name] = function(arg1, arg2) {
+      if (this.length) {
+        return fn(this[0], arg1, arg2);
+      }
+    };
+  });
+};
+
+extendjQuery();
 
 /*!
  * jQuery UI Core 1.10.3
@@ -7867,10 +8048,6 @@ angular.module("Mac").directive("macAutocomplete", [
         $menuScope = $rootScope.$new();
         $menuScope.items = [];
         $menuScope.index = 0;
-        $scope.$watch(attrs.ngModel, function(value) {
-          ctrl.$setViewValue(value);
-          return ctrl.$render();
-        });
         ctrl.$parsers.push(function(value) {
           if (value && !disabled($scope)) {
             if (delay > 0) {
@@ -7893,7 +8070,13 @@ angular.module("Mac").directive("macAutocomplete", [
         positionMenu = function() {
           $menuScope.style = element.offset();
           $menuScope.style.top += element.outerHeight();
-          return $menuScope.style.width = element.outerWidth();
+          $menuScope.style.width = element.outerWidth();
+          return angular.forEach($menuScope.style, function(value, key) {
+            if (!isNaN(+value) && angular.isNumber(+value)) {
+              value = "" + value + "px";
+            }
+            return $menuScope.style[key] = value;
+          });
         };
         updateItem = function(data) {
           var item, label, value, _i, _len, _results;
@@ -7960,7 +8143,7 @@ angular.module("Mac").directive("macAutocomplete", [
           }
           return reset();
         };
-        element.on("keydown", function(event) {
+        element.bind("keydown", function(event) {
           switch (event.which) {
             case keys.DOWN:
               $scope.$apply(function() {
@@ -7986,7 +8169,7 @@ angular.module("Mac").directive("macAutocomplete", [
           }
           return true;
         });
-        $(document).on("click", function(event) {
+        angular.element(document).bind("click", function(event) {
           if ($menuScope.items.length > 0) {
             return $scope.$apply(function() {
               return reset();
@@ -8003,7 +8186,7 @@ angular.module("Mac").directive("macAutocomplete", [
         if (inside) {
           element.after($compile(menuEl)($menuScope));
         } else {
-          $(document.body).append($compile(menuEl)($menuScope));
+          angular.element(document.body).append($compile(menuEl)($menuScope));
         }
         return $scope.$on("resetAutocomplete", function() {
           return reset();
@@ -8082,7 +8265,8 @@ angular.module("Mac").directive("macDatepicker", [
         if (attrs.macDatepickerDisabled != null) {
           inputAttrs["ng-disabled"] = attrs.macDatepickerDisabled;
         }
-        inputElement = $("input", element).attr(inputAttrs);
+        inputElement = angular.element(element[0].getElementsByTagName("input"));
+        inputElement.attr(inputAttrs);
         return function($scope, element, attrs) {
           var initialized, model, onClose, onSelect, setOptions;
           onSelect = $parse(attrs.macDatepickerOnSelect);
@@ -8095,22 +8279,30 @@ angular.module("Mac").directive("macDatepicker", [
             }
             return inputElement.datepicker("option", name, value);
           };
-          $scope.$watch(attrs.macDatepickerModel, function(value) {
-            if (initialized && (value != null)) {
-              return $timeout(function() {
-                return inputElement.datepicker("setDate", value);
-              }, 0);
-            }
-          });
-          $scope.$watch(attrs.macDatepickerDefaultDate, function(value) {
-            return setOptions("defaultDate", value);
-          });
-          $scope.$watch(attrs.macDatepickerMaxDate, function(value) {
-            return setOptions("maxDate", value);
-          });
-          $scope.$watch(attrs.macDatepickerMinDate, function(value) {
-            return setOptions("minDate", value);
-          });
+          if (attrs.macDatepickerModel != null) {
+            $scope.$watch(attrs.macDatepickerModel, function(value) {
+              if (initialized && (value != null)) {
+                return $timeout(function() {
+                  return inputElement.datepicker("setDate", value);
+                }, 0, false);
+              }
+            });
+          }
+          if (attrs.macDatepickerDefaultDate != null) {
+            $scope.$watch(attrs.macDatepickerDefaultDate, function(value) {
+              return setOptions("defaultDate", value);
+            });
+          }
+          if (attrs.macDatepickerMaxDate != null) {
+            $scope.$watch(attrs.macDatepickerMaxDate, function(value) {
+              return setOptions("maxDate", value);
+            });
+          }
+          if (attrs.macDatepickerMinDate != null) {
+            $scope.$watch(attrs.macDatepickerMinDate, function(value) {
+              return setOptions("minDate", value);
+            });
+          }
           opts.onSelect = function(date, instance) {
             return $scope.$apply(function() {
               if (typeof onSelect === "function") {
@@ -8165,7 +8357,7 @@ _fn = function(event) {
         link: function(scope, element, attributes) {
           var expression;
           expression = $parse(attributes["mac" + event]);
-          return element.on(event.toLowerCase(), function($event) {
+          return element.bind(event.toLowerCase(), function($event) {
             scope.$apply(function() {
               return expression(scope, {
                 $event: $event
@@ -8211,7 +8403,7 @@ _fn = function(key) {
         link: function(scope, element, attributes) {
           var expression;
           expression = $parse(attributes["macKeydown" + key]);
-          return element.on("keydown", function($event) {
+          return element.bind("keydown", function($event) {
             if (event.which === keys["" + (key.toUpperCase())]) {
               event.preventDefault();
               return scope.$apply(function() {
@@ -8251,7 +8443,7 @@ angular.module("Mac").directive("macPauseTyping", [
         expression = $parse(attributes["macPauseTyping"]);
         delay = scope.$eval(attributes["macPauseTypingDelay"]) || 800;
         keyupTimer = null;
-        return element.on("keyup", function($event) {
+        return element.bind("keyup", function($event) {
           if (keyupTimer != null) {
             $timeout.cancel(keyupTimer);
           }
@@ -8408,17 +8600,17 @@ angular.module("Mac").directive("macUpload", [
           }
         };
         if (opts.dropZone != null) {
-          $(document).on("drop dragover", function(event) {
+          angular.element(document).bind("drop dragover", function(event) {
             return event.preventDefault();
           });
           dragoverTimeout = null;
           dropZone = element.parents(opts.dropZone);
-          $(document).bind("dragover", function(event) {
+          angular.element(document).bind("dragover", function(event) {
             var method, node;
             if (dragoverTimeout != null) {
               $timeout.cancel(dragoverTimeout);
             }
-            node = $(event.target).parents(opts.dropZone);
+            node = angular.element(event.target).parents(opts.dropZone);
             method = node.length ? "addClass" : "removeClass";
             dropZone[method]("droppable");
             return dragoverTimeout = $timeout(function() {
@@ -8426,10 +8618,10 @@ angular.module("Mac").directive("macUpload", [
                 clearTimeout(dragoverTimeout);
               }
               return dropZone.removeClass("droppable");
-            }, 250);
+            }, 250, false);
           });
         }
-        options.dropZone = dropZone || $();
+        options.dropZone = dropZone || angular.element();
         options.pasteZone = null;
         if (opts.options) {
           extraOptions = $scope.$eval(opts.options) || {};
@@ -8774,7 +8966,7 @@ angular.module("Mac").directive("macModal", [
           };
           $scope.modal = modal;
           $scope.closeOverlay = function($event) {
-            if (opts.overlayClose && angular.element($event.target).is(".modal-overlay")) {
+            if (opts.overlayClose && angular.element($event.target).hasClass("modal-overlay")) {
               return modal.hide();
             }
           };
@@ -8929,8 +9121,8 @@ angular.module("Mac").directive("macScrollSpy", [
       link: function($scope, element, attrs) {
         var options, spyElement;
         options = util.extendAttributes("macScrollSpy", defaults, attrs);
-        spyElement = element.is("body") ? angular.element(window) : element;
-        return spyElement.on("scroll.scroll-spy", function($event) {
+        spyElement = element[0].tagName === "BODY" ? angular.element(window) : element;
+        return spyElement.bind("scroll", function($event) {
           var anchors, i, maxScroll, scrollHeight, scrollTop, _i, _ref;
           scrollTop = spyElement.scrollTop() + options.offset;
           scrollHeight = this.scrollHeight || element[0].scrollHeight;
@@ -9054,10 +9246,10 @@ angular.module("Mac").directive("macSpinner", function() {
       return function($scope, element, attributes) {
         attributes.$observe("macSpinnerSize", function(value) {
           if ((value != null) && value) {
-            return element.css({
-              height: value,
-              width: value
-            });
+            if (!isNaN(+value) && angular.isNumber(+value)) {
+              value = "" + value + "px";
+            }
+            return element.css("height", value).css("width", value);
           }
         });
         attributes.$observe("macSpinnerZIndex", function(value) {
@@ -9066,8 +9258,10 @@ angular.module("Mac").directive("macSpinner", function() {
           }
         });
         return attributes.$observe("macSpinnerColor", function(value) {
+          var bars;
           if ((value != null) && value) {
-            return $(".bar", element).css("background", value);
+            bars = element[0].getElementsByClassName("bar");
+            return angular.element(bars).css("background", value);
           }
         });
       };
@@ -9854,7 +10048,7 @@ angular.module("Mac").directive("macTagAutocomplete", [
         onKeydown: "&macTagAutocompleteOnKeydown"
       },
       compile: function(element, attrs) {
-        var attrEvent, attrsObject, delay, events, eventsList, item, labelKey, queryKey, tagLabelKey, textInput, valueKey, _i, _len, _ref;
+        var attrsObject, delay, labelKey, queryKey, textInput, valueKey;
         valueKey = attrs.macTagAutocompleteValue;
         if (valueKey == null) {
           valueKey = "id";
@@ -9865,23 +10059,7 @@ angular.module("Mac").directive("macTagAutocomplete", [
         }
         queryKey = attrs.macTagAutocompleteQuery || "q";
         delay = +attrs.macTagAutocompleteDelay || 800;
-        events = attrs.macTagAutocompleteEvents || "";
-        eventsList = [];
-        if (events) {
-          _ref = events.split(",");
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            item = _ref[_i];
-            attrEvent = util.capitalize(item);
-            eventsList.push({
-              name: item,
-              capitalized: attrEvent,
-              eventFn: attrs["macTagAutocompleteOn" + attrEvent]
-            });
-          }
-        }
-        tagLabelKey = labelKey ? "." + labelKey : labelKey;
-        $(".tag-label", element).text("{{tag" + tagLabelKey + "}}");
-        textInput = $(".mac-autocomplete", element);
+        textInput = angular.element(element[0].getElementsByClassName("mac-autocomplete"));
         attrsObject = {
           "mac-autocomplete-value": valueKey,
           "mac-autocomplete-label": labelKey,
@@ -9904,60 +10082,76 @@ angular.module("Mac").directive("macTagAutocomplete", [
               return $scope.textInput = value;
             });
           }
-          element.click(function() {
-            return $(".text-input", element).focus();
-          });
-          $scope.eventsList = eventsList;
-          $scope.$watch("eventsList", function(value) {
-            var event, _j, _len1, _results;
-            _results = [];
-            for (_j = 0, _len1 = eventsList.length; _j < _len1; _j++) {
-              event = eventsList[_j];
-              if (!(event.eventFn && event.name !== "keydown")) {
-                continue;
-              }
-              _results.push((function(event) {
-                return $(".text-input", element).on(event.name, function($event) {
-                  var expression;
-                  expression = $parse(event.eventFn);
-                  return $scope.$apply(function() {
-                    return expression($scope.$parent, {
-                      $event: $event,
-                      item: $scope.textInput
+          $scope.focusTextInput = function() {
+            var textInputDOM;
+            textInputDOM = element[0].getElementsByClassName("text-input");
+            return angular.element(textInputDOM).triggerHandler("focus");
+          };
+          $scope.getTagLabel = function(tag) {
+            if (labelKey) {
+              return tag[labelKey];
+            } else {
+              return tag;
+            }
+          };
+          $timeout(function() {
+            var capitalized, eventFn, events, name, _i, _len, _ref, _results;
+            if ((events = attrs.macTagAutocompleteEvents)) {
+              textInput = angular.element(element[0].getElementsByClassName("text-input"));
+              _ref = events.split(",");
+              _results = [];
+              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                name = _ref[_i];
+                capitalized = util.capitalize(name);
+                eventFn = attrs["macTagAutocompleteOn" + capitalized];
+                if (!(eventFn && name !== "keydown")) {
+                  continue;
+                }
+                _results.push((function(name, eventFn) {
+                  return textInput.bind(name, function($event) {
+                    var expression;
+                    expression = $parse(eventFn);
+                    return $scope.$apply(function() {
+                      var item;
+                      item = $scope.textInput;
+                      return expression($scope.$parent, {
+                        $event: $event,
+                        item: item
+                      });
                     });
                   });
-                });
-              })(event));
+                })(name, eventFn));
+              }
+              return _results;
             }
-            return _results;
-          });
+          }, 0);
           $scope.$watch("selected.length", function(length) {
-            var difference, selectedValues, sourceValues;
+            var difference, item, selectedValues, sourceValues;
             sourceValues = (function() {
-              var _j, _len1, _ref1, _results;
-              _ref1 = $scope.source || [];
+              var _i, _len, _ref, _results;
+              _ref = $scope.source || [];
               _results = [];
-              for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-                item = _ref1[_j];
+              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                item = _ref[_i];
                 _results.push(item[valueKey]);
               }
               return _results;
             })();
             selectedValues = (function() {
-              var _j, _len1, _ref1, _results;
-              _ref1 = $scope.selected || [];
+              var _i, _len, _ref, _results;
+              _ref = $scope.selected || [];
               _results = [];
-              for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-                item = _ref1[_j];
+              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                item = _ref[_i];
                 _results.push(item[valueKey]);
               }
               return _results;
             })();
             difference = (function() {
-              var _j, _len1, _results;
+              var _i, _len, _results;
               _results = [];
-              for (_j = 0, _len1 = sourceValues.length; _j < _len1; _j++) {
-                item = sourceValues[_j];
+              for (_i = 0, _len = sourceValues.length; _i < _len; _i++) {
+                item = sourceValues[_i];
                 if (__indexOf.call(selectedValues, item) < 0) {
                   _results.push(item);
                 }
@@ -9965,12 +10159,12 @@ angular.module("Mac").directive("macTagAutocomplete", [
               return _results;
             })();
             return $scope.autocompleteSource = (function() {
-              var _j, _len1, _ref1, _ref2, _results;
-              _ref1 = $scope.source || [];
+              var _i, _len, _ref, _ref1, _results;
+              _ref = $scope.source || [];
               _results = [];
-              for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-                item = _ref1[_j];
-                if (_ref2 = item[valueKey], __indexOf.call(difference, _ref2) >= 0) {
+              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                item = _ref[_i];
+                if (_ref1 = item[valueKey], __indexOf.call(difference, _ref1) >= 0) {
                   _results.push(item);
                 }
               }
@@ -10004,24 +10198,24 @@ angular.module("Mac").directive("macTagAutocomplete", [
             return true;
           };
           $scope.onSuccess = function(data) {
-            var existingValues;
+            var existingValues, item;
             existingValues = (function() {
-              var _j, _len1, _ref1, _results;
-              _ref1 = $scope.selected || [];
+              var _i, _len, _ref, _results;
+              _ref = $scope.selected || [];
               _results = [];
-              for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-                item = _ref1[_j];
+              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                item = _ref[_i];
                 _results.push(item[valueKey]);
               }
               return _results;
             })();
             return (function() {
-              var _j, _len1, _ref1, _ref2, _results;
-              _ref1 = data.data;
+              var _i, _len, _ref, _ref1, _results;
+              _ref = data.data;
               _results = [];
-              for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-                item = _ref1[_j];
-                if (_ref2 = item[valueKey] || item, __indexOf.call(existingValues, _ref2) < 0) {
+              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                item = _ref[_i];
+                if (_ref1 = item[valueKey] || item, __indexOf.call(existingValues, _ref1) < 0) {
                   _results.push(item);
                 }
               }
@@ -10038,13 +10232,13 @@ angular.module("Mac").directive("macTagAutocomplete", [
               $scope.selected.push(item);
             }
             return $timeout(function() {
-              return $scope.$apply(function() {
-                return $scope.textInput = "";
-              });
+              return $scope.textInput = "";
             }, 0);
           };
           return $scope.$on("mac-tag-autocomplete-clear-input", function() {
-            return $scope.textInput = "";
+            return $scope.$apply(function() {
+              return $scope.textInput = "";
+            });
           });
         };
       }
@@ -10080,7 +10274,7 @@ angular.module("Mac").directive("macTagInput", [
         var textKey, valueKey;
         valueKey = attrs.macTagInputValue || "id";
         textKey = attrs.macTagInputLabel || "name";
-        $(".tag-autocomplete", element).attr({
+        angular.element(element[0].getElementsByClassName("mac-autocomplete")).attr({
           "mac-tag-autocomplete-value": valueKey,
           "mac-tag-autocomplete-label": textKey
         });
@@ -10122,11 +10316,11 @@ angular.module("Mac").directive("macTime", [
         };
         opts = util.extendAttributes("macTime", defaults, attrs);
         return function($scope, element, attrs) {
-          var highlighActions, inputDOM, inputSelectAction, prefix, time, timeRegex;
+          var highlightActions, inputDOM, inputSelectAction, prefix, time, timeRegex;
           $scope.placeholder = opts.placeholder;
-          inputDOM = $("input", element)[0];
+          inputDOM = element[0].getElementsByTagName("input")[0];
           timeRegex = /(\d+):(\d+) ([AP]M)/;
-          highlighActions = {
+          highlightActions = {
             hours: function() {
               return inputDOM.setSelectionRange(0, 2);
             },
@@ -10186,8 +10380,8 @@ angular.module("Mac").directive("macTime", [
             }
             $scope.model = $filter("date")($scope.time.getTime(), "hh:mm a");
             return $timeout(function() {
-              return inputSelectAction(start, end, highlighActions);
-            }, 0);
+              return inputSelectAction(start, end, highlightActions);
+            }, 0, false);
           };
           $scope.updateScopeTime = function() {
             var hours, markers, minutes, timeMatch;
@@ -10303,8 +10497,8 @@ angular.module("Mac").directive("macTooltip", [
           if (disabled) {
             return;
           }
-          tip = opts.inside ? element : $(document.body);
-          tooltip = $("<div class=\"tooltip " + opts.direction + "\"><div class=\"tooltip-message\">" + text + "</div></div>");
+          tip = opts.inside ? element : angular.element(document.body);
+          tooltip = angular.element("<div class=\"tooltip " + opts.direction + "\"><div class=\"tooltip-message\">" + text + "</div></div>");
           tip.append(tooltip);
           offset = opts.inside ? {
             top: 0,
@@ -10342,13 +10536,19 @@ angular.module("Mac").directive("macTooltip", [
           }
           offset.top = Math.max(0, offset.top);
           offset.left = Math.max(0, offset.left);
-          return tooltip.css(offset).addClass("visible");
+          angular.forEach(offset, function(value, key) {
+            if (!isNaN(+value) && angular.isNumber(+value)) {
+              value = "" + value + "px";
+            }
+            return tooltip.css(key, value);
+          });
+          return tooltip.addClass("visible");
         };
         removeTip = function(event) {
           tooltip.removeClass("visible");
           return $timeout(function() {
             return tooltip.remove();
-          }, 100);
+          }, 100, false);
         };
         toggle = function(event) {
           if (tooltip != null) {
@@ -10367,19 +10567,21 @@ angular.module("Mac").directive("macTooltip", [
               }
               switch (opts.trigger) {
                 case "click":
-                  element.on("click", toggle);
+                  element.bind("click", toggle);
                   break;
                 case "hover":
-                  element.on("mouseenter", showTip);
-                  element.on("mouseleave click", removeTip);
+                  element.bind("mouseenter", showTip);
+                  element.bind("mouseleave click", removeTip);
               }
               return enabled = true;
             }
           }
         });
-        scope.$watch(attrs.macTooltipDisabled, function(value) {
-          return disabled = value;
-        });
+        if (attrs.macTooltipDisabled != null) {
+          scope.$watch(attrs.macTooltipDisabled, function(value) {
+            return disabled = value;
+          });
+        }
         return scope.$on("$destroy", function() {
           if (tooltip != null) {
             return removeTip();
@@ -10406,7 +10608,7 @@ module.controller("modalController", [
 ]);
 
 module.controller("ExampleController", [
-  "$scope", "$timeout", "$window", function($scope, $timeout, $window) {
+  "$scope", "$window", function($scope, $window) {
     $scope.selectOptions = [
       {
         value: 1,
@@ -10686,10 +10888,6 @@ module.controller("ExampleController", [
 
 window.prettyPrint && prettyPrint();
 
-$('section [href^=#]').click(function(e) {
-  return e.preventDefault();
-});
-
 angular.module("Mac").filter("boolean", function() {
   return function(boolean, trueString, falseString) {
     if (trueString == null) {
@@ -10731,6 +10929,28 @@ angular.module("Mac").filter("false", function() {
     }
   };
 });
+
+/*
+@chalk overview
+@name List
+@description
+List filter. Use for converting arrays into a string
+
+@param {Array} list Array of items
+@param {String} separator String to separate each element of the array (default ,)
+@returns {String} Formatted string
+*/
+
+angular.module("Mac").filter("list", [
+  function() {
+    return function(list, separator) {
+      if (separator == null) {
+        separator = ", ";
+      }
+      return list.join(separator);
+    };
+  }
+]);
 
 /*
 @chalk overview
@@ -10955,7 +11175,7 @@ angular.module("Mac").service("modal", [
             element.removeClass("hide");
             $timeout(function() {
               return element.addClass("visible");
-            }, 0);
+            }, 0, false);
             _this.opened = {
               id: id,
               element: element,
@@ -10971,7 +11191,7 @@ angular.module("Mac").service("modal", [
           };
           if (options.moduleMethod != null) {
             renderModal = function(template) {
-              var element, viewScope;
+              var element, viewScope, wrapper;
               viewScope = $rootScope.$new();
               viewScope.modal = _this;
               viewScope.closeOverlay = function($event) {
@@ -10988,8 +11208,9 @@ angular.module("Mac").service("modal", [
                 id: id
               });
               element = angular.element(_this.modalTemplate).attr(options.attributes);
-              angular.element(".modal-content-wrapper", element).html(template);
-              angular.element("body").append($compile(element)(viewScope));
+              wrapper = angular.element(element[0].getElementsByClassName("modal-content-wrapper"));
+              wrapper.html(template);
+              angular.element(document.body).append($compile(element)(viewScope));
               return showModal(element);
             };
             if ((path = options.templateUrl)) {
@@ -11027,16 +11248,21 @@ angular.module("Mac").service("modal", [
         }
         element = modalObject.element;
         options = modalObject.options;
-        modal = $(".modal", element).attr("style", "");
+        modal = angular.element(element[0].getElementsByClassName("modal")).attr("style", "");
         height = modal.outerHeight();
         width = modal.outerWidth();
-        css = $(window).height() > height ? {
+        css = angular.element(window).height() > height ? {
           marginTop: -height / 2
         } : {
           top: options.topOffset
         };
         css.marginLeft = -width / 2;
-        return modal.css(css);
+        return angular.forEach(css, function(value, key) {
+          if (!isNaN(+value) && angular.isNumber(+value)) {
+            value = "" + value + "px";
+          }
+          return modal.css(key, value);
+        });
       },
       hide: function(callback) {
         var element, id, options, _ref;
@@ -11047,7 +11273,7 @@ angular.module("Mac").service("modal", [
         element.removeClass("visible");
         $timeout(function() {
           return element.addClass("hide");
-        }, 250);
+        }, 250, false);
         this.bindingEvents("unbind");
         this.opened = null;
         if (options.moduleMethod) {
@@ -11076,10 +11302,10 @@ angular.module("Mac").service("modal", [
         };
         options = this.opened.options;
         if (options.keyboard) {
-          $(document)[action]("keydown", escapeKeyHandler);
+          angular.element(document)[action]("keydown", escapeKeyHandler);
         }
         if (options.resize) {
-          return $(window)[action]("resize", resizeHandler);
+          return angular.element(window)[action]("resize", resizeHandler);
         }
       },
       register: function(id, element, options) {
