@@ -10,6 +10,7 @@ A directive for creating a datepicker on text input using jquery ui
 
 @param {String}     mac-datepicker-id        The id of the text input field
 @param {String}     mac-datepicker-model     The model to store the selected date
+Clearing model by setting it to null or '' will clear the input field
 @param {Function}   mac-datepicker-on-select Function called before setting the value to the model
   - `date` - {String} Selected date from the datepicker
   - `instance` - {Object} Datepicker instance
@@ -83,7 +84,7 @@ angular.module("Mac").directive "macDatepicker", [
 
         if attrs.macDatepickerModel?
           $scope.$watch attrs.macDatepickerModel, (value) ->
-            if initialized and value?
+            if initialized
               $timeout ->
                 inputElement.datepicker "setDate", value
               , 0, false
