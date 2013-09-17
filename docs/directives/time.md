@@ -6,7 +6,8 @@ A directive for creating a time input field
 ### Parameters
 **mac-time-model**  
 Type: `String`  
-Model to bind input to  
+Assignable angular expression to data-bind to  
+Clearing model by setting it to null or '' will set model back to default value  
   
 **mac-time-placeholder**  
 Type: `String`  

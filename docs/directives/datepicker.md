@@ -15,6 +15,7 @@ The id of the text input field
 **mac-datepicker-model**  
 Type: `String`  
 The model to store the selected date  
+Clearing model by setting it to null or '' will clear the input field  
   
 **mac-datepicker-on-select**  
 Type: `Function`  
