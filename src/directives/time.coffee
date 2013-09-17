@@ -4,7 +4,8 @@
 @description
 A directive for creating a time input field
 
-@param {String} mac-time-model        Model to bind input to
+@param {String} mac-time-model        Assignable angular expression to data-bind to
+Clearing model by setting it to null or '' will set model back to default value
 @param {String} mac-time-placeholder  Placeholder text of the text input (default --:--)
 @param {String} mac-time-disabled     Enable or disable time input
 @param {String} mac-time-default      If model is undefined, use this as the starting value (default 12:00 PM)
@@ -42,22 +43,28 @@ angular.module("Mac").directive "macTime", [
           minutes: -> inputDOM.setSelectionRange 3, 5
           markers: -> inputDOM.setSelectionRange 6, 8
 
-        prefix = "Jan 1, 1970, "
-        time   = new Date (prefix + opts.default)
+        resetTime = ->
+          prefix = "Jan 1, 1970, "
+          time   = new Date (prefix + opts.default)
 
-        # Invalid Date
-        if isNaN time.getTime()
-          time = new Date prefix + "12:00 AM"
+          # Invalid Date
+          if isNaN time.getTime()
+            time = new Date prefix + "12:00 AM"
 
-        #
-        # @name $scope.time
-        # @description
-        # Javscript date variable for easier datetime manipulation
-        #
-        $scope.time = time
+          #
+          # @name $scope.time
+          # @description
+          # Javscript date variable for easier datetime manipulation
+          #
+          $scope.time = time
+
+        resetTime()
 
         $scope.$watch "model", (value) ->
-          $scope.updateScopeTime() if value?
+          if value? and value
+            $scope.updateScopeTime()
+          else
+            resetTime()
 
         #
         # @name inputSelectAction

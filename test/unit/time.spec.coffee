@@ -49,6 +49,18 @@ describe "Mac Time input", ->
 
       expect($rootScope.model).toBe "12:00 AM"
 
+    it "should reset back to default value when clearing model", ->
+      $rootScope.model = "2:30 PM"
+      element          = $compile("<mac-time mac-time-model='model'></mac-time>") $rootScope
+      $rootScope.$digest()
+
+      $rootScope.model = ""
+      $rootScope.$digest()
+
+      $("input", element).click()
+
+      expect($rootScope.model).toBe "12:00 AM"
+
   describe "Events", ->
     $compile   = null
     $rootScope = null
@@ -152,6 +164,33 @@ describe "Mac Time input", ->
       $rootScope.$digest()
 
       expect(input.val()).toBe "02:30 PM"
+
+    it "should clear out text input when clearing model", ->
+      element = $compile("<mac-time mac-time-model='model'></mac-time>") $rootScope
+      $rootScope.$digest()
+
+      $rootScope.model = "02:30 PM"
+      $rootScope.$digest()
+
+      input = $("input", element)
+      expect(input.val()).toBe "02:30 PM"
+
+      $rootScope.model = ""
+      $rootScope.$digest()
+      expect(input.val()).toBe ""
+
+    it "should clear out text input when clearing model with null", ->
+      element = $compile("<mac-time mac-time-model='model'></mac-time>") $rootScope
+      $rootScope.$digest()
+
+      $rootScope.model = "02:30 PM"
+      $rootScope.$digest()
+
+      input = $("input", element)
+
+      $rootScope.model = null
+      $rootScope.$digest()
+      expect(input.val()).toBe ""
 
   describe "disabled", ->
     $compile   = null
