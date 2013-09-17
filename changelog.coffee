@@ -30,26 +30,28 @@ parseCommit = (log) ->
     type:      ""
     component: ""
     message:   ""
-    hash:      commit[0]
-    issue:     ""
+    hash:      commit.shift()
+    issues:    []
+    title:     commit.shift()
 
-  # Remove hash from array
-  commit.shift()
-
-  commitLineIndex = -1
-  for line, i in commit
-    if issueMatch = line.match /^\w+\s+#(\d+)$/
-      commitObj.issue = issueMatch[1]
-      commitLineIndex = i
-  commit[commitLineIndex..commitLineIndex] = [] unless commitLineIndex is -1
+  newCommit = []
+  for line in commit
+    if match = line.match /(?:Closes|Fixes)\s#(\d+)/
+      msg.issues.push parseInt(match[1])
+    else
+      newCommit.push line
+  commit = newCommit
 
   message = commit.join " "
-  if match = message.match /^([^\(]+)\(([\w\.]+)\):\s+(.+)/
-    commitObj.type =
-      if match[1] in ["fix", "feature", "refactor"] then match[1] else "breaking"
-
+  if match = commitObj.title.match /^([^\(]+)\(([\w\.]+)\):\s+(.+)/
+    commitObj.type      = match[1]
     commitObj.component = match[2]
     commitObj.message   = match[3]
+    commitObj.message  += "\n" + message if message
+
+  if match = message.match /BREAKING CHANGE[S]?:?([\s\S]*)/
+    commitObj.type    = "breaking"
+    commitObj.message = match[1]
 
   return commitObj
 
@@ -104,8 +106,8 @@ writeChangeLog = (stream, commits, version) ->
 
       for item in list[componentName]
         stream.write util.format "%s %s\n  (%s", prefix, item.message, linkToCommit(item.hash)
-        if item.issue
-          stream.write ",\n   #{linkToIssue(item.issue)}"
+        if item.issues.length
+          stream.write ",\n   #{item.issues.map(linkToIssue).join(", ")}"
         stream.write ")\n"
 
     stream.write "\n"
