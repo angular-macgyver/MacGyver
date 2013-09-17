@@ -100,10 +100,27 @@ module.exports = (grunt) ->
           }
           {
             dest: "example/css/<%= pkg.name.toLowerCase() %>.css"
-            src: [
-              "vendor/css/*.css"
-              "tmp/app.css"
-            ]
+            src: "<%= buildConf.css.example %>"
+          }
+        ]
+
+      moduleCss:
+        files: [
+          {
+            dest: "build/bower-macgyver/<%= pkg.name.toLowerCase() %>-core.css"
+            src: "<%= buildConf.css.core %>"
+          }
+          {
+            dest: "build/bower-macgyver-datepicker/<%= pkg.name.toLowerCase() %>-datepicker.css"
+            src: "<%= buildConf.css.datepicker %>"
+          }
+          {
+            dest: "build/bower-macgyver-fileupload/<%= pkg.name.toLowerCase() %>-fileupload.css"
+            src: "<%= buildConf.css.fileupload %>"
+          }
+          {
+            dest: "build/bower-macgyver-table/<%= pkg.name.toLowerCase() %>-table.css"
+            src: "<%= buildConf.css.table %>"
           }
         ]
 
@@ -119,8 +136,13 @@ module.exports = (grunt) ->
           paths:   ["example/css"]
           urlfunc: "url"
           import:  ["nib"]
-        files:
-          "tmp/app.css": ["src/css/*.styl"]
+        files: [
+          expand:  true
+          flatten: true
+          src:     "src/css/*.styl"
+          dest:    "tmp/css"
+          ext:     ".css"
+        ]
       vendor:
         options:
           use: ["nib"]
@@ -162,6 +184,29 @@ module.exports = (grunt) ->
           ]
           dest: "lib/"
         ]
+      bower:
+        files: [
+          {
+            src: "lib/<%= pkg.name.toLowerCase() %>-core.js"
+            dest: "build/bower-macgyver/macgyver-core.js"
+          }
+          {
+            src: "lib/<%= pkg.name.toLowerCase() %>-datepicker.js"
+            dest: "build/bower-macgyver-datepicker/macgyver-datepicker.js"
+          }
+          {
+            src: "lib/<%= pkg.name.toLowerCase() %>-fileupload.js"
+            dest: "build/bower-macgyver-fileupload/macgyver-fileupload.js"
+          }
+          {
+            src: "lib/<%= pkg.name.toLowerCase() %>-filters.js"
+            dest: "build/bower-macgyver-filters/macgyver-filters.js"
+          }
+          {
+            src: "lib/<%= pkg.name.toLowerCase() %>-table.js"
+            dest: "build/bower-macgyver-table/macgyver-table.js"
+          }
+        ]
 
     #
     # Clean section
@@ -178,6 +223,26 @@ module.exports = (grunt) ->
           {
             src: "lib/<%= pkg.name.toLowerCase() %>.js"
             dest: "lib/<%= pkg.name.toLowerCase() %>.min.js"
+          }
+          {
+            src: "lib/<%= pkg.name.toLowerCase() %>-core.js"
+            dest: "build/bower-macgyver/macgyver-core.min.js"
+          }
+          {
+            src: "lib/<%= pkg.name.toLowerCase() %>-datepicker.js"
+            dest: "build/bower-macgyver-datepicker/macgyver-datepicker.min.js"
+          }
+          {
+            src: "lib/<%= pkg.name.toLowerCase() %>-fileupload.js"
+            dest: "build/bower-macgyver-fileupload/macgyver-fileupload.min.js"
+          }
+          {
+            src: "lib/<%= pkg.name.toLowerCase() %>-filters.js"
+            dest: "build/bower-macgyver-filters/macgyver-filters.min.js"
+          }
+          {
+            src: "lib/<%= pkg.name.toLowerCase() %>-table.js"
+            dest: "build/bower-macgyver-table/macgyver-table.min.js"
           }
         ]
 
@@ -291,13 +356,13 @@ module.exports = (grunt) ->
       "jade"
       "concat"
       "clean"
-      "copy"
       "replace:src"
       "chalkboard"
       "marked"
       "replace:docs"
       "karma:build"
       "update:component"
+      "copy"
       "uglify"
     ]
 

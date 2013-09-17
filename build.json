@@ -73,5 +73,32 @@
     "vendor/bower/jquery.ui/ui/jquery.ui.datepicker.js",
     "vendor/bower/jquery.ui/ui/jquery.ui.resizable.js",
     "vendor/bower/jquery.ui/ui/jquery.ui.sortable.js"
-  ]
+  ],
+  "css": {
+    "example": [
+      "vendor/css/*.css",
+      "tmp/css/*.css"
+    ],
+    "core": [
+      "tmp/css/common.css",
+      "tmp/css/icons.css",
+      "tmp/css/menu.css",
+      "tmp/css/modal.css",
+      "tmp/css/spinner.css",
+      "tmp/css/tag_autocomplete.css",
+      "tmp/css/tooltip.css"
+    ],
+    "table": [
+      "vendor/css/jquery-ui-1.10.0.custom.css",
+      "tmp/css/mac-table-themes.css",
+      "tmp/css/table_view.css"
+    ],
+    "fileupload": [
+      "tmp/css/file_upload.css"
+    ],
+    "datepicker": [
+      "vendor/css/jquery-ui-1.10.0.custom.css",
+      "tmp/css/common.css"
+    ]
+  }
 }
