@@ -7,6 +7,10 @@ vendor/bower/*
 # Example upload files
 example/uploads
 
+# Build files
+build/
+.gitmodules
+
 # Logs
 test-results.xml
 libpeerconnection.log
