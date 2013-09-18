@@ -11,7 +11,6 @@ A directive for creating a menu with multiple items
         - `index` - {Integer} Item index
 @param {Object} mac-menu-style Styles apply to the menu
 @param {Expression} mac-menu-index Index of selected item
-        - `index` - {Integer} Item index
 ###
 
 angular.module("Mac").directive "macMenu", [
@@ -24,6 +23,7 @@ angular.module("Mac").directive "macMenu", [
       items:  "=macMenuItems"
       style:  "=macMenuStyle"
       select: "&macMenuSelect"
+      pIndex: "=macMenuIndex"
 
     link: ($scope, element, attrs, ctrls) ->
       $scope.selectItem = (index) ->
@@ -32,8 +32,11 @@ angular.module("Mac").directive "macMenu", [
       $scope.setIndex = (index) ->
         $scope.index = index
 
-      $scope.$watch "index", (value) ->
-        getter = $parse attrs.macMenuIndex
-        if getter.assign? and value
-          getter.assign $scope.$parent, value
+        if attrs.macMenuIndex?
+          $scope.pIndex = parseInt(index)
+
+      # sync local index with user index
+      if attrs.macMenuIndex?
+        $scope.$watch "pIndex", (value) ->
+          $scope.index = parseInt(value)
 ]
