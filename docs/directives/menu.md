@@ -21,6 +21,5 @@ Styles apply to the menu
 **mac-menu-index**  
 Type: `Expression`  
 Index of selected item  
-- `index` - {Integer} Item index  
   
 
