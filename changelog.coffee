@@ -37,7 +37,7 @@ parseCommit = (log) ->
   newCommit = []
   for line in commit
     if match = line.match /(?:Closes|Fixes)\s#(\d+)/
-      msg.issues.push parseInt(match[1])
+      commitObj.issues.push parseInt(match[1])
     else
       newCommit.push line
   commit = newCommit
