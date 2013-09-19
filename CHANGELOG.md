@@ -1,3 +1,25 @@
+# v0.1.14 (2013/9/18)
+## Bug Fixes
+- **changelog:** Fixed referencing invalid object
+  ([9dc09676](https://github.com/StartTheShift/MacGyver/commit/9dc09676c3ab2b02e0b4e6eaab596759cd596e9d))
+- **macDatepicker:** Fixed cannot reset macDatepicker with null
+  ([9d0ab82b](https://github.com/StartTheShift/MacGyver/commit/9d0ab82b0b72b2c9c60996d9b9c5dd59c8677f29),
+   [#119](https://github.com/StartTheShift/MacGyver/issues/119))
+- **macMenu:** Fixed menu index bi-directional binding not working properly
+  ([db719b0c](https://github.com/StartTheShift/MacGyver/commit/db719b0cd128fcb42873296257e08958a05a1df6))
+- **macTime:** Fixed not able to reset time with empty string
+  ([4420a547](https://github.com/StartTheShift/MacGyver/commit/4420a5478eb6474490ae9b00e603a360cf75732f),
+   [#119](https://github.com/StartTheShift/MacGyver/issues/119))
+
+## Optimizations
+- **util:** Added default values to pluralize, toCamelCase and toSnakeCase
+  ([166bf16c](https://github.com/StartTheShift/MacGyver/commit/166bf16cf7104ceea64e5f260fe658f920a4f452))
+
+## Breaking Changes
+- **util:**  util.isArray has been removed as it is the same as angular.isArray. User should switch to angular.isArray instead
+  ([4f797650](https://github.com/StartTheShift/MacGyver/commit/4f7976505d5d547b59786e4538c50b7ccb76c672))
+
+
 # v0.1.13 (2013/9/15)
 ## Bug Fixes
 - **Grunt:** Fixed configuration errors with css watch task
