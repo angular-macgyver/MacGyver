@@ -138,7 +138,7 @@ angular.module("Mac").directive "macTagAutocomplete", [
           if attrs.macTagAutocompleteOnEnter?
             item = $scope.onEnter {item}
 
-          $scope.selected.push item if item?
+          $scope.selected.push item if item
           $timeout ->
             $scope.textInput = ""
           , 0
