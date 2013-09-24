@@ -10,31 +10,68 @@ A directive for generating spinner
 @param {String}  mac-spinner-color Color of all the bars (default #2f3035)
 ###
 
-angular.module("Mac").directive "macSpinner", ->
+angular.module("Mac").directive "macSpinner", ["util", (util) ->
   restrict: "E"
   replace:  true
   template: """<div class="mac-spinner"></div>"""
 
-  compile: (element, attributes) ->
+  compile: (element, attrs) ->
+    prefixes = ["webkit", "Moz", "ms", "O"]
+    vendor = (el, name) ->
+      name = util.capitalize name
+      return prefix+name for prefix in prefixes when el.style[prefix+name]?
+      return name
+
     for i in [0..9]
-      element.append """<div class="bar"></div>"""
+      delay  = i * 0.1 - 1 + (not i)
+      degree = i * 36
+      styl   = {}
+      bar    = angular.element """<div class="bar"></div>"""
 
-    ($scope, element, attributes) ->
-      attributes.$observe "macSpinnerSize", (value) ->
-        if value? and value
+      styl[vendor(bar[0], "animation")] = "fade 1s linear infinite #{delay}s"
+      styl[vendor(bar[0], "transform")] = "rotate(#{degree}deg) translate(0, 130%)"
+      bar.css styl
 
-          if not isNaN(+value) and angular.isNumber +value
-            value = "#{value}px"
+      element.append bar
 
-          element
-            .css("height", value)
-            .css("width", value)
+    ($scope, element, attrs) ->
+      defaults =
+        size:   16
+        zIndex: "inherit"
+        color:  "#2f3035"
 
-      attributes.$observe "macSpinnerZIndex", (value) ->
+      bars = angular.element element[0].getElementsByClassName("bar")
+
+      setSpinnerSize = (size) ->
+        bars.css
+          height:       size * 0.32 + "px"
+          left:         size * 0.445 + "px"
+          top:          size * 0.37 + "px"
+          width:        size * 0.13 + "px"
+          borderRadius: size * 0.32 * 2 + "px"
+          position:     "absolute"
+
+        if not isNaN(+size) and angular.isNumber +size
+          size = "#{size}px"
+
+        element.css
+          height: size
+          width:  size
+
+      if attrs.macSpinnerSize?
+        attrs.$observe "macSpinnerSize", (value) ->
+          setSpinnerSize value if value? and value
+      else
+        setSpinnerSize defaults.size
+
+      attrs.$observe "macSpinnerZIndex", (value) ->
         if value? and value
           element.css "z-index", value
 
-      attributes.$observe "macSpinnerColor", (value) ->
-        if value? and value
-          bars = element[0].getElementsByClassName "bar"
-          angular.element(bars).css "background", value
+      if attrs.macSpinnerColor?
+        attrs.$observe "macSpinnerColor", (value) ->
+          bars.css "background", value if value? and value
+      else
+        bars.css "background", defaults.color
+
+]
