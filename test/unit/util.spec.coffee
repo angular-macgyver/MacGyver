@@ -160,4 +160,29 @@ describe "Mac Util", ->
       expect(util.extendAttributes "macGyver", defaults, attrsWithPrefix).toEqual
         width: 30, height:20
 
+  describe "pythagoras function", ->
+    it "should calculate value correctly", ->
+      expect(util.pyth(3, 4)).toBe 5
+
+  describe "radian to degree", ->
+    it "should convert radian to degree correctly", ->
+      expect(util.degrees Math.PI).toBe 180
+
+  describe "degree to radian", ->
+    it "should convert degree to radian correctly", ->
+      expect(util.radian(180)).toBe Math.PI
+
+  describe "hex to rgb", ->
+
+    hexValues =
+      "3D9AEB":  {r: 61, g: 154, b: 235}
+      "#3D9AEB": {r: 61, g: 154, b: 235}
+      "BAC":     {r: 187, g: 170, b: 204}
+      "#BAC":    {r: 187, g: 170, b: 204}
+
+    for hex, rgb of hexValues
+      it "should convert #{hex} correctly", ->
+        testRGB = util.hex2rgb hex
+        for rgbKey, rgbValue of testRGB
+          expect(rgbValue).toBe rgb[rgbKey]
 

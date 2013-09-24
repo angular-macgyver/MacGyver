@@ -28,6 +28,18 @@ block append content
         li(mac-scroll-spy-target="convertKeysToSnakeCase"): a(href="#convertKeysToSnakeCase")
           i.icon-chevron-right
           | convertKeysToSnakeCase
+        li(mac-scroll-spy-target="pythagoras"): a(href="#pythagoras")
+          i.icon-chevron-right
+          | Pythagoras
+        li(mac-scroll-spy-target="degrees"): a(href="#degrees")
+          i.icon-chevron-right
+          | Radian to Degrees
+        li(mac-scroll-spy-target="radian"): a(href="#radian")
+          i.icon-chevron-right
+          | Degrees to Radian
+        li(mac-scroll-spy-target="hex2rgb"): a(href="#hex2rgb")
+          i.icon-chevron-right
+          | HEX to RGB
         li(mac-scroll-spy-target="validateUrl"): a(href="#validateUrl")
           i.icon-chevron-right
           | validateUrl
@@ -92,6 +104,31 @@ block append content
         pre.prettyprint(ng-non-bindable)
           | util.toSnakeCase({'helloWorld': 'test'})
           | => {'hello_world': 'test'}
+
+      section#pythagoras(mac-scroll-spy-anchor)
+        h3 Pythagoras
+        pre.prettyprint(ng-non-bindable)
+          | util.pyth(3, 4)
+          | => 5
+
+      section#degrees(mac-scroll-spy-anchor)
+        h3 Radian to Degrees
+        pre.prettyprint(ng-non-bindable)
+          | util.degrees(Math.PI)
+          | => 180
+
+      section#radian(mac-scroll-spy-anchor)
+        h3 Degrees to Radian
+        pre.prettyprint(ng-non-bindable)
+          | util.radian(180)
+          | => Math.PI
+
+      section#hex2rgb(mac-scroll-spy-anchor)
+        h3 HEX to RGB
+        p Convert HEX color into RGB values
+        pre.prettyprint(ng-non-bindable)
+          | util.hex2rgb("#5331DE")
+          | => {r: 83, g: 49, b: 222}
 
       section#validateUrl(mac-scroll-spy-anchor)
         h3 validateUrl

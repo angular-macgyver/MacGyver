@@ -88,10 +88,10 @@ angular.module("Mac.Util", []).factory "util", [
 
     capitalize: (string) ->
       str = String(string) or ""
-      return str.charAt(0).toUpperCase() + str[1..]
+      return str.charAt(0).toUpperCase() + str.substring(1)
     uncapitalize: (string) ->
       str = String(string) or ""
-      return str.charAt(0).toLowerCase() + str[1..]
+      return str.charAt(0).toLowerCase() + str.substring(1)
     toCamelCase: (string =  "") ->
       string.trim().replace /[-_\s]+(.)?/g, (match, c) -> c.toUpperCase()
     toSnakeCase: (string = "") ->
@@ -119,6 +119,29 @@ angular.module("Mac.Util", []).factory "util", [
         result[key] = value
 
       result
+
+    pyth:    (a,b)    -> Math.sqrt a*a + b*b
+    degrees: (radian) -> (radian * 180) / Math.PI
+    radian:  (degrees) -> (degrees * Math.PI) / 180
+
+    hex2rgb: (hex) ->
+      hex = hex.substring(1) if hex.indexOf('#') is 0
+      hex = hex.toLowerCase()
+      rgb = {}
+
+      if hex.length is 3
+        rgb.r = hex.charAt(0) + hex.charAt(0)
+        rgb.g = hex.charAt(1) + hex.charAt(1)
+        rgb.b = hex.charAt(2) + hex.charAt(2)
+      else
+        rgb.r = hex.substring(0, 2)
+        rgb.g = hex.substring(2, 4)
+        rgb.b = hex.substring(4)
+
+      for color, value of rgb
+        rgb[color] = parseInt value, 16
+
+      return rgb
 
     _urlRegex: /(?:(?:(http[s]{0,1}:\/\/)(?:(www|[\d\w\-]+)\.){0,1})|(www|[\d\w\-]+)\.)([\d\w\-]+)\.([A-Za-z]{2,6})(:[\d]*){0,1}(\/?[\d\w\-\?\,\'\/\\\+&amp;%\$#!\=~\.]*){0,1}/i
 
