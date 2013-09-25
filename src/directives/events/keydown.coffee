@@ -22,7 +22,7 @@ for key in ["Enter", "Escape", "Space", "Left", "Up", "Right", "Down"]
       link: (scope, element, attributes) ->
         expression = $parse attributes["macKeydown#{key}"]
         element.bind "keydown", ($event) ->
-          if event.which is keys["#{key.toUpperCase()}"]
-            event.preventDefault()
+          if $event.which is keys["#{key.toUpperCase()}"]
+            $event.preventDefault()
             scope.$apply -> expression scope, {$event}
     ]
