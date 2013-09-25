@@ -1,3 +1,19 @@
+# v0.1.15 (2013/9/24)
+## Bug Fixes
+- **macTagAutocomplete:** Fixed tags getting pushed even when mac-tag-autocomplete-on-enter is returning false
+  ([3cef3e74](https://github.com/StartTheShift/MacGyver/commit/3cef3e74e0a20c1904da82344a9371d06720615a))
+
+## Features
+- **cspinner:** Canvas spinner
+  ([33d22fd1](https://github.com/StartTheShift/MacGyver/commit/33d22fd150ac2da52b6cc23ed8bfb494a9fc0a4b))
+- **util:** Added pyth, degrees, radian and hex2rgb
+  ([a3bea8be](https://github.com/StartTheShift/MacGyver/commit/a3bea8beec73875f6134f1dce6a80f0dfed46f7d))
+
+## Optimizations
+- **macSpinner:** Updated to make sure size is rendered correctly. Reduced spinner css size and calculate width and height with js.
+  ([61c9549b](https://github.com/StartTheShift/MacGyver/commit/61c9549b8b94885f5e3deeb63f0d5256d9559ac0))
+
+
 # v0.1.14 (2013/9/18)
 ## Bug Fixes
 - **changelog:** Fixed referencing invalid object
