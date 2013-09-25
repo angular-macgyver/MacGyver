@@ -1,3 +1,13 @@
+# v0.1.16 (2013/9/25)
+## Bug Fixes
+- **macKeydown:** Fixed mac-keydown events not firing at all
+  ([693d263e](https://github.com/StartTheShift/MacGyver/commit/693d263e72b9ea234ece0174d8daa3ca2effced8))
+
+## Optimizations
+- **macCspinner:** Handle timeout better. Switched from setInterval to setTimeout to have better control. Added support for ngShow and ngHide to reduce CPU load.
+  ([6f088da9](https://github.com/StartTheShift/MacGyver/commit/6f088da97e6c43d95a849ae75e7568544390702e))
+
+
 # v0.1.15 (2013/9/24)
 ## Bug Fixes
 - **macTagAutocomplete:** Fixed tags getting pushed even when mac-tag-autocomplete-on-enter is returning false
