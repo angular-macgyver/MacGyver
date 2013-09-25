@@ -6661,7 +6661,7 @@ $.widget("ui.sortable", $.ui.mouse, {
 }(this, String);
 
 /*
- * jQuery File Upload Plugin 5.32.2
+ * jQuery File Upload Plugin 5.32.3
  * https://github.com/blueimp/jQuery-File-Upload
  *
  * Copyright 2010, Sebastian Tschan
@@ -7061,7 +7061,7 @@ $.widget("ui.sortable", $.ui.mouse, {
                 // Ignore non-multipart setting if not supported:
                 multipart = options.multipart || !$.support.xhrFileUpload,
                 paramName = options.paramName[0];
-            options.headers = options.headers || {};
+            options.headers = $.extend({}, options.headers);
             if (options.contentRange) {
                 options.headers['Content-Range'] = options.contentRange;
             }
@@ -8198,6 +8198,136 @@ angular.module("Mac").directive("macAutocomplete", [
 
 /*
 @chalk overview
+@name Canvas Spinner
+
+@description
+A directive for generating a canvas spinner
+This spinner requires much less CPU/GPU resources than CSS spinner
+
+@param {Integer} mac-cspinner-width   Width of each bar (default 2)
+@param {Integer} mac-cspinner-height  Height of each bar (default 5)
+@param {Integer} mac-cpsinner-border  Border radius (default 1)
+@param {Integer} mac-cspinner-size    Dimension of the whole spinner excluding padding (default 20)
+@param {Integer} mac-cspinner-radius  Center radius (default 4)
+@param {Integer} mac-cspinner-bars    Number of bars (default 10)
+@param {Integer} mac-cspinner-padding Padding around the spinner (default 3)
+@param {Integer} mac-cspinner-speed   ms delay between each animation
+@param {String}  mac-cspinner-color   Color of each bar
+@param {Expr}    mac-cspinner-spin    Start or stop spinner
+*/
+
+angular.module("Mac").directive("macCspinner", [
+  "util", function(util) {
+    return {
+      restrict: "E",
+      replace: "true",
+      template: "<div class=\"mac-cspinner\"></div>",
+      compile: function(element, attrs) {
+        var canvas, canvasRadius, ctx, defaults, height, i, left, maxCanvasRadius, maxRadius, opacity, opts, prop, radius, ratio, rgb, rotation, showCtx, size, templateCanvas, top, width, _i, _j, _len, _ref, _ref1;
+        if (!window.HTMLCanvasElement) {
+          return console.log("Browser does not support canvas");
+        }
+        defaults = {
+          width: 2,
+          height: 5,
+          border: 1,
+          radius: 4,
+          bars: 10,
+          padding: 3,
+          speed: 100,
+          color: "#2f3035",
+          size: 20
+        };
+        opts = util.extendAttributes("macCspinner", defaults, attrs);
+        if (attrs.macCspinnerSize != null) {
+          size = !isNaN(+attrs.macCspinnerSize) && +attrs.macCspinnerSize;
+          if (size) {
+            ratio = size / defaults.size;
+            _ref = ["width", "height", "border", "radius"];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              prop = _ref[_i];
+              opts[prop] = defaults[prop] * ratio;
+            }
+          }
+        }
+        width = opts.width;
+        height = opts.height;
+        radius = opts.border;
+        maxRadius = opts.radius + height;
+        maxCanvasRadius = Math.max(width, maxRadius);
+        canvasRadius = Math.ceil(Math.max(maxCanvasRadius, util.pyth(maxRadius, width / 2)));
+        canvasRadius += opts.padding;
+        templateCanvas = angular.element("<canvas></canvas>");
+        ctx = templateCanvas[0].getContext("2d");
+        rotation = util.radian(360 / opts.bars);
+        ctx.translate(canvasRadius, canvasRadius);
+        top = -maxRadius;
+        left = -width / 2;
+        rgb = util.hex2rgb(opts.color);
+        for (i = _j = 0, _ref1 = opts.bars - 1; 0 <= _ref1 ? _j <= _ref1 : _j >= _ref1; i = 0 <= _ref1 ? ++_j : --_j) {
+          opacity = 1 - (0.8 / opts.bars) * i;
+          ctx.fillStyle = "rgba(" + rgb.r + ", " + rgb.g + ", " + rgb.b + ", " + opacity + ")";
+          ctx.beginPath();
+          ctx.moveTo(left + radius, top);
+          ctx.arc(left + width - radius, top + radius, radius, util.radian(-90), util.radian(0), false);
+          ctx.arc(left + width - radius, top + height - radius, radius, util.radian(0), util.radian(90), false);
+          ctx.arc(left + radius, top + height - radius, radius, util.radian(90), util.radian(180), false);
+          ctx.arc(left + radius, top + radius, radius, util.radian(-180), util.radian(-90), false);
+          ctx.closePath();
+          ctx.fill();
+          ctx.rotate(rotation);
+        }
+        canvas = angular.element("<canvas></canvas>");
+        canvas.attr({
+          width: canvasRadius * 2,
+          height: canvasRadius * 2
+        });
+        showCtx = canvas[0].getContext("2d");
+        element.append(canvas);
+        return function($scope, element, attrs) {
+          var intervalID, spinning, start, stop;
+          intervalID = null;
+          spinning = false;
+          start = function() {
+            var counter;
+            counter = 0;
+            spinning = true;
+            return intervalID = setInterval(function() {
+              showCtx.clearRect(0, 0, canvasRadius * 2, canvasRadius * 2);
+              showCtx.save();
+              showCtx.translate(canvasRadius, canvasRadius);
+              showCtx.rotate(util.radian(360 / opts.bars * counter));
+              showCtx.drawImage(templateCanvas[0], -canvasRadius, -canvasRadius);
+              showCtx.restore();
+              return counter = (counter + 1) % opts.bars;
+            }, opts.speed);
+          };
+          stop = function() {
+            spinning = false;
+            return clearInterval(intervalID);
+          };
+          if (attrs.macCspinnerSpin != null) {
+            $scope.$watch(attrs.macCspinnerSpin, function(value) {
+              if (value && !spinning) {
+                return start();
+              } else if (!value && spinning) {
+                return stop();
+              }
+            });
+          } else {
+            start();
+          }
+          return $scope.$on("$destroy", function() {
+            return stop();
+          });
+        };
+      }
+    };
+  }
+]);
+
+/*
+@chalk overview
 @name Datepicker
 @description
 A directive for creating a datepicker on text input using jquery ui
@@ -9235,41 +9365,89 @@ A directive for generating spinner
 @param {String}  mac-spinner-color Color of all the bars (default #2f3035)
 */
 
-angular.module("Mac").directive("macSpinner", function() {
-  return {
-    restrict: "E",
-    replace: true,
-    template: "<div class=\"mac-spinner\"></div>",
-    compile: function(element, attributes) {
-      var i, _i;
-      for (i = _i = 0; _i <= 9; i = ++_i) {
-        element.append("<div class=\"bar\"></div>");
-      }
-      return function($scope, element, attributes) {
-        attributes.$observe("macSpinnerSize", function(value) {
-          if ((value != null) && value) {
-            if (!isNaN(+value) && angular.isNumber(+value)) {
-              value = "" + value + "px";
+angular.module("Mac").directive("macSpinner", [
+  "util", function(util) {
+    return {
+      restrict: "E",
+      replace: true,
+      template: "<div class=\"mac-spinner\"></div>",
+      compile: function(element, attrs) {
+        var bar, degree, delay, i, prefixes, styl, vendor, _i;
+        prefixes = ["webkit", "Moz", "ms", "O"];
+        vendor = function(el, name) {
+          var prefix, _i, _len;
+          name = util.capitalize(name);
+          for (_i = 0, _len = prefixes.length; _i < _len; _i++) {
+            prefix = prefixes[_i];
+            if (el.style[prefix + name] != null) {
+              return prefix + name;
             }
-            return element.css("height", value).css("width", value);
           }
-        });
-        attributes.$observe("macSpinnerZIndex", function(value) {
-          if ((value != null) && value) {
-            return element.css("z-index", value);
+          return name;
+        };
+        for (i = _i = 0; _i <= 9; i = ++_i) {
+          delay = i * 0.1 - 1 + (!i);
+          degree = i * 36;
+          styl = {};
+          bar = angular.element("<div class=\"bar\"></div>");
+          styl[vendor(bar[0], "animation")] = "fade 1s linear infinite " + delay + "s";
+          styl[vendor(bar[0], "transform")] = "rotate(" + degree + "deg) translate(0, 130%)";
+          bar.css(styl);
+          element.append(bar);
+        }
+        return function($scope, element, attrs) {
+          var bars, defaults, setSpinnerSize;
+          defaults = {
+            size: 16,
+            zIndex: "inherit",
+            color: "#2f3035"
+          };
+          bars = angular.element(element[0].getElementsByClassName("bar"));
+          setSpinnerSize = function(size) {
+            bars.css({
+              height: size * 0.32 + "px",
+              left: size * 0.445 + "px",
+              top: size * 0.37 + "px",
+              width: size * 0.13 + "px",
+              borderRadius: size * 0.32 * 2 + "px",
+              position: "absolute"
+            });
+            if (!isNaN(+size) && angular.isNumber(+size)) {
+              size = "" + size + "px";
+            }
+            return element.css({
+              height: size,
+              width: size
+            });
+          };
+          if (attrs.macSpinnerSize != null) {
+            attrs.$observe("macSpinnerSize", function(value) {
+              if ((value != null) && value) {
+                return setSpinnerSize(value);
+              }
+            });
+          } else {
+            setSpinnerSize(defaults.size);
           }
-        });
-        return attributes.$observe("macSpinnerColor", function(value) {
-          var bars;
-          if ((value != null) && value) {
-            bars = element[0].getElementsByClassName("bar");
-            return angular.element(bars).css("background", value);
+          attrs.$observe("macSpinnerZIndex", function(value) {
+            if ((value != null) && value) {
+              return element.css("z-index", value);
+            }
+          });
+          if (attrs.macSpinnerColor != null) {
+            return attrs.$observe("macSpinnerColor", function(value) {
+              if ((value != null) && value) {
+                return bars.css("background", value);
+              }
+            });
+          } else {
+            return bars.css("background", defaults.color);
           }
-        });
-      };
-    }
-  };
-});
+        };
+      }
+    };
+  }
+]);
 
 /*
 @chalk overview
@@ -10230,7 +10408,7 @@ angular.module("Mac").directive("macTagAutocomplete", [
                 item: item
               });
             }
-            if (item != null) {
+            if (item) {
               $scope.selected.push(item);
             }
             return $timeout(function() {
@@ -11974,12 +12152,12 @@ angular.module("Mac.Util", []).factory("util", [
       capitalize: function(string) {
         var str;
         str = String(string) || "";
-        return str.charAt(0).toUpperCase() + str.slice(1);
+        return str.charAt(0).toUpperCase() + str.substring(1);
       },
       uncapitalize: function(string) {
         var str;
         str = String(string) || "";
-        return str.charAt(0).toLowerCase() + str.slice(1);
+        return str.charAt(0).toLowerCase() + str.substring(1);
       },
       toCamelCase: function(string) {
         if (string == null) {
@@ -12022,6 +12200,37 @@ angular.module("Mac.Util", []).factory("util", [
           result[key] = value;
         }
         return result;
+      },
+      pyth: function(a, b) {
+        return Math.sqrt(a * a + b * b);
+      },
+      degrees: function(radian) {
+        return (radian * 180) / Math.PI;
+      },
+      radian: function(degrees) {
+        return (degrees * Math.PI) / 180;
+      },
+      hex2rgb: function(hex) {
+        var color, rgb, value;
+        if (hex.indexOf('#') === 0) {
+          hex = hex.substring(1);
+        }
+        hex = hex.toLowerCase();
+        rgb = {};
+        if (hex.length === 3) {
+          rgb.r = hex.charAt(0) + hex.charAt(0);
+          rgb.g = hex.charAt(1) + hex.charAt(1);
+          rgb.b = hex.charAt(2) + hex.charAt(2);
+        } else {
+          rgb.r = hex.substring(0, 2);
+          rgb.g = hex.substring(2, 4);
+          rgb.b = hex.substring(4);
+        }
+        for (color in rgb) {
+          value = rgb[color];
+          rgb[color] = parseInt(value, 16);
+        }
+        return rgb;
       },
       _urlRegex: /(?:(?:(http[s]{0,1}:\/\/)(?:(www|[\d\w\-]+)\.){0,1})|(www|[\d\w\-]+)\.)([\d\w\-]+)\.([A-Za-z]{2,6})(:[\d]*){0,1}(\/?[\d\w\-\?\,\'\/\\\+&amp;%\$#!\=~\.]*){0,1}/i,
       validateUrl: function(url) {

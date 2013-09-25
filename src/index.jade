@@ -67,6 +67,9 @@ block append content
         li(mac-scroll-spy-target="spinner"): a(href="#spinner")
           i.icon-chevron-right
           | Spinner
+        li(mac-scroll-spy-target="cspinner"): a(href="#cspinner")
+          i.icon-chevron-right
+          | Canvas Spinner
         li(mac-scroll-spy-target="file-upload"): a(href="#file-upload")
           i.icon-chevron-right
           | File Upload
@@ -296,6 +299,14 @@ block append content
           mac-spinner
         pre.prettyprint.linenums(ng-non-bindable)
           = '<mac-spinner></mac-spinner>'
+
+      section#cspinner(mac-scroll-spy-anchor)
+        @@include("docs/html/directives/cspinner.html")
+        h3 Example
+        .docs-example
+          mac-cspinner
+        pre.prettyprint.linenums(ng-non-bindable)
+          = '<mac-cspinner></mac-cspinner>'
 
       section#file-upload(mac-scroll-spy-anchor)
         @@include("docs/html/directives/file_upload.html")
