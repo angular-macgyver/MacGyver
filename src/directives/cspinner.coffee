@@ -97,34 +97,41 @@ angular.module("Mac").directive "macCspinner",["util", (util) ->
       width:  canvasRadius * 2
       height: canvasRadius * 2
     showCtx = canvas[0].getContext "2d"
+    showCtx.translate canvasRadius, canvasRadius
+
     element.append canvas
 
     ($scope, element, attrs) ->
       intervalID = null
       spinning   = false
 
-      start = ->
-        # Animate spinner
-        counter    = 0
-        spinning   = true
-        intervalID = setInterval ->
-          # Clear the canvas before painting a new image
-          showCtx.clearRect 0, 0, canvasRadius * 2, canvasRadius * 2
-
-          showCtx.save()
-          showCtx.translate canvasRadius, canvasRadius
-          showCtx.rotate util.radian(360 / opts.bars * counter)
-          showCtx.drawImage templateCanvas[0], -canvasRadius, -canvasRadius
-          showCtx.restore()
-
-          # Update counter
-          counter = (counter + 1) % opts.bars
-
-        , opts.speed
-
       stop = ->
         spinning = false
-        clearInterval intervalID
+        clearTimeout intervalID
+
+      start = ->
+        # Prevent another setTimeout
+        return if spinning
+
+        # Animate spinner
+        spinning   = true
+        rotate     = util.radian(360 / opts.bars)
+        (drawFn = (startCycle = false) ->
+          # Clear the canvas before painting a new image
+          showCtx.clearRect -canvasRadius, -canvasRadius, canvasRadius * 2, canvasRadius * 2
+
+          showCtx.rotate rotate
+          showCtx.drawImage templateCanvas[0], -canvasRadius, -canvasRadius
+
+          # Only create a new timeout when the spinner is spinning
+          if spinning
+            # Check if element is visible
+            if not startCycle and element[0].offsetHeight <= 0 and
+                element[0].offsetWidth <= 0
+              return stop()
+
+            intervalID = setTimeout drawFn, opts.speed
+        )(true)
 
       if attrs.macCspinnerSpin?
         $scope.$watch attrs.macCspinnerSpin, (value) ->
@@ -134,6 +141,13 @@ angular.module("Mac").directive "macCspinner",["util", (util) ->
             stop()
       else
         start()
+
+      # Add support for ngShow and ngHide
+      if attrs.ngShow
+        $scope.$watch attrs.ngShow, (value) -> if value then start() else stop()
+
+      else if attrs.ngHide
+        $scope.$watch attrs.ngHide, (value) -> if value then stop() else start()
 
       $scope.$on "$destroy", -> stop()
 ]
