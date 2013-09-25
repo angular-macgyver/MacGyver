@@ -8283,28 +8283,37 @@ angular.module("Mac").directive("macCspinner", [
           height: canvasRadius * 2
         });
         showCtx = canvas[0].getContext("2d");
+        showCtx.translate(canvasRadius, canvasRadius);
         element.append(canvas);
         return function($scope, element, attrs) {
           var intervalID, spinning, start, stop;
           intervalID = null;
           spinning = false;
-          start = function() {
-            var counter;
-            counter = 0;
-            spinning = true;
-            return intervalID = setInterval(function() {
-              showCtx.clearRect(0, 0, canvasRadius * 2, canvasRadius * 2);
-              showCtx.save();
-              showCtx.translate(canvasRadius, canvasRadius);
-              showCtx.rotate(util.radian(360 / opts.bars * counter));
-              showCtx.drawImage(templateCanvas[0], -canvasRadius, -canvasRadius);
-              showCtx.restore();
-              return counter = (counter + 1) % opts.bars;
-            }, opts.speed);
-          };
           stop = function() {
             spinning = false;
-            return clearInterval(intervalID);
+            return clearTimeout(intervalID);
+          };
+          start = function() {
+            var drawFn, rotate;
+            if (spinning) {
+              return;
+            }
+            spinning = true;
+            rotate = util.radian(360 / opts.bars);
+            return (drawFn = function(startCycle) {
+              if (startCycle == null) {
+                startCycle = false;
+              }
+              showCtx.clearRect(-canvasRadius, -canvasRadius, canvasRadius * 2, canvasRadius * 2);
+              showCtx.rotate(rotate);
+              showCtx.drawImage(templateCanvas[0], -canvasRadius, -canvasRadius);
+              if (spinning) {
+                if (!startCycle && element[0].offsetHeight <= 0 && element[0].offsetWidth <= 0) {
+                  return stop();
+                }
+                return intervalID = setTimeout(drawFn, opts.speed);
+              }
+            })(true);
           };
           if (attrs.macCspinnerSpin != null) {
             $scope.$watch(attrs.macCspinnerSpin, function(value) {
@@ -8316,6 +8325,23 @@ angular.module("Mac").directive("macCspinner", [
             });
           } else {
             start();
+          }
+          if (attrs.ngShow) {
+            $scope.$watch(attrs.ngShow, function(value) {
+              if (value) {
+                return start();
+              } else {
+                return stop();
+              }
+            });
+          } else if (attrs.ngHide) {
+            $scope.$watch(attrs.ngHide, function(value) {
+              if (value) {
+                return stop();
+              } else {
+                return start();
+              }
+            });
           }
           return $scope.$on("$destroy", function() {
             return stop();
@@ -8535,8 +8561,8 @@ _fn = function(key) {
           var expression;
           expression = $parse(attributes["macKeydown" + key]);
           return element.bind("keydown", function($event) {
-            if (event.which === keys["" + (key.toUpperCase())]) {
-              event.preventDefault();
+            if ($event.which === keys["" + (key.toUpperCase())]) {
+              $event.preventDefault();
               return scope.$apply(function() {
                 return expression(scope, {
                   $event: $event
