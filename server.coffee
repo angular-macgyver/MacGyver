@@ -41,5 +41,5 @@ exports.startServer = (port, publicPath, callback) ->
         C                                l;;                   C                   ff
 
 
-  Macgyver express server running on at localhost:#{port}.
+  Macgyver connect server running on localhost:#{port}.
   """
