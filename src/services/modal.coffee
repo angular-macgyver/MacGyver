@@ -91,7 +91,8 @@ angular.module("Mac").service("modal", [
         # if modal is created thru module method "modal"
         if options.moduleMethod?
           renderModal = (template) =>
-            viewScope              = $rootScope.$new()
+            viewScope =
+              if options.scope then options.scope.$new() else $rootScope.$new(true)
             viewScope.modal        = this
             viewScope.closeOverlay = ($event) =>
               if options.overlayClose and
@@ -108,7 +109,8 @@ angular.module("Mac").service("modal", [
             wrapper.html template
             angular.element(document.body).append $compile(element) viewScope
 
-            showModal element
+            viewScope.$apply ->
+              showModal element
 
           if (path = options.templateUrl)
             template = $templateCache.get path

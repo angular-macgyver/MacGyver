@@ -62,9 +62,15 @@ directive "macModal", [
     link: ($scope, element, attrs) ->
       if attrs.macModal
         element.bind "click", ->
+          modalScope = false
+          if attrs.macModalScope? and attrs.macModalScope
+            modalScope = $parse(attrs.macModalScope)($scope)
+          modalScope = $scope unless modalScope? and modalScope.$new?
+
           # Deprecating mac-modal-content. Use mac-modal-data instead
           dataVar = attrs.macModalContent or attrs.macModalData
           modal.show attrs.macModal,
             data:  $parse(dataVar) $scope
+            scope: modalScope
       return
 ]
