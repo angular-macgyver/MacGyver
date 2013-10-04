@@ -158,6 +158,16 @@ describe "Mac modal", ->
       element.click()
       expect(modal.opened.id).toBe "test-modal"
 
+    it "should bind data to opened modal", ->
+      $rootScope.data = text: "hello"
+      modalElement    = $compile("<mac-modal id='test-modal'></mac-modal>") $rootScope
+      element         = $compile("<button mac-modal='test-modal' mac-modal-data='data'></button>") $rootScope
+
+      $rootScope.$digest()
+
+      element.click()
+      expect(modal.opened.options.data.text).toBe "hello"
+
   describe "modal method", ->
     beforeEach ->
       angular.module("Mac").modal "testing",

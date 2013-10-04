@@ -52,7 +52,7 @@ angular.module("Mac").directive("macModal", [
 # @description
 # Modal attribute directive to trigger modal dialog
 # @param {String} mac-modal Modal ID to trigger
-# @param {Object} mac-modal-content Extra content/data to pass along
+# @param {Object} mac-modal-data    Extra data to pass along
 #
 directive "macModal", [
   "$parse"
@@ -62,7 +62,9 @@ directive "macModal", [
     link: ($scope, element, attrs) ->
       if attrs.macModal
         element.bind "click", ->
+          # Deprecating mac-modal-content. Use mac-modal-data instead
+          dataVar = attrs.macModalContent or attrs.macModalData
           modal.show attrs.macModal,
-            data: $parse(attrs.macModalContent) $scope
+            data:  $parse(dataVar) $scope
       return
 ]
