@@ -37,8 +37,8 @@ Modal attribute directive to trigger modal dialog
 Type: `String`  
 Modal ID to trigger  
   
-**mac-modal-content**  
+**mac-modal-data**  
 Type: `Object`  
-Extra content/data to pass along  
+Extra data to pass along  
   
 
