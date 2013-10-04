@@ -78,7 +78,7 @@ The easiest way to install all requirements,
 To compile source code and run unit tests while developing:
 
     grunt run
-    
+
 ## Authors
 
 **Adrian Lee**
@@ -86,4 +86,5 @@ To compile source code and run unit tests while developing:
 + <http://github.com/adrianlee44>
 
 **Colin Kahn**
++ <http://twitter.com/programmingwtf>
 + <http://github.com/colinkahn>
