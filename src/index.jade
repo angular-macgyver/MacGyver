@@ -31,11 +31,11 @@ block append header
           )
 
 block append content
-  .row.content
+  .row.content(ng-controller='ExampleController')
     #nav.span3
       ul.nav.nav-list.docs-sidenav(
-        data-spy           = "affix"
-        data-offset-top    = "188"
+        mac-affix
+        mac-affix-top = "188"
       )
         li(mac-scroll-spy-target="modal"): a(href="#modal")
           i.icon-chevron-right
@@ -43,6 +43,9 @@ block append content
         li(mac-scroll-spy-target="scrollspy"): a(href="#scrollspy")
           i.icon-chevron-right
           | Scroll Spy
+        li(mac-scroll-spy-target="affix"): a(href="#affix")
+          i.icon-chevron-right
+          | Affix
         li(mac-scroll-spy-target="tooltip"): a(href="#tooltip")
           i.icon-chevron-right
           | Tooltip
@@ -77,7 +80,7 @@ block append content
           i.icon-chevron-right
           | Placeholder
 
-    #example.span9(ng-controller='ExampleController')
+    #example.span9
       section#modal(mac-scroll-spy-anchor)
         @@include("docs/html/services/modal.html")
         @@include("docs/html/directives/modal.html")
@@ -120,6 +123,13 @@ block append content
         h5 Scroll spy anchor
         pre.prettyprint.linenums(ng-non-bindable)
           = '<section id="modal" mac-scroll-spy-anchor></section>'
+
+      section#affix(mac-scroll-spy-anchor)
+        @@include("docs/html/directives/affix.html")
+        h3 Example
+        .docs-example The nav to the left uses mac-affix
+        pre.prettyprint.linenums(ng-non-bindable)
+          = '<div mac-affix>Nav content</div>'
 
       section#tooltip(mac-scroll-spy-anchor)
         @@include("docs/html/directives/tooltip.html")

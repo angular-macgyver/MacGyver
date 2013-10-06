@@ -3,7 +3,7 @@ extends layout
 block append content
   .row.content
     #nav.span3
-      ul.nav.nav-list.docs-sidenav(data-spy="affix", data-offset-top="0")
+      ul.nav.nav-list.docs-sidenav(mac-affix)
         li(mac-scroll-spy-target="element"): a(href="#element")
           i.icon-chevron-right
           | Angular element

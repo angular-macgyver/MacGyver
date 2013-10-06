@@ -1,9 +1,9 @@
 extends layout
 
 block append content
-  .row.content
+  .row.content(ng-controller='ExampleController')
     #nav.span3
-      ul.nav.nav-list.docs-sidenav(data-spy="affix", data-offset-top="0")
+      ul.nav.nav-list.docs-sidenav(mac-affix)
         li(mac-scroll-spy-target="events"): a(href="#events")
           i.icon-chevron-right
           | Events
@@ -17,7 +17,7 @@ block append content
           i.icon-chevron-right
           | Window Resize
 
-    #example.span9(ng-controller='ExampleController')
+    #example.span9
       section#events(mac-scroll-spy-anchor)
         @@include("docs/html/directives/events/base.html")
         h3 Example
