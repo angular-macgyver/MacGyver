@@ -32,7 +32,7 @@ angular.module("Mac").directive "macTooltip", [
       opts = util.extendAttributes "macTooltip", defaults, attrs
 
       showTip = (event) ->
-        return if disabled
+        return true if disabled or not text
 
         tip =
           if opts.inside then element else angular.element(document.body)
@@ -76,18 +76,21 @@ angular.module("Mac").directive "macTooltip", [
           tooltip.css key, value
 
         tooltip.addClass "visible"
+        return true
 
       removeTip = (event) ->
-        tooltip.removeClass "visible"
-        $timeout ->
-          tooltip.remove()
-        , 100, false
+        if tooltip?
+          tooltip.removeClass "visible"
+          $timeout ->
+            tooltip.remove()
+          , 100, false
+        return true
 
       toggle = (event) ->
         if tooltip? then removeTip(event) else showTip(event)
 
       attrs.$observe "macTooltip", (value) ->
-        if value? and value
+        if value?
           text = value
 
           unless enabled
