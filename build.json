@@ -27,7 +27,7 @@
     "tmp/app/directives/placeholder.js",
     "tmp/app/services/scroll_spy.js",
     "tmp/app/directives/scroll_spy.js",
-    "tmp/app/directives/affix.js"
+    "tmp/app/directives/affix.js",
     "tmp/app/directives/spinner.js",
     "tmp/app/directives/tag_autocomplete.js",
     "tmp/app/directives/tag_input.js",
