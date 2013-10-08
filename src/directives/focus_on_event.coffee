@@ -17,5 +17,5 @@ angular.module("Mac").directive "macFocusOnEvent", ["$timeout", ($timeout) ->
           x = window.scrollX
           y = window.scrollY
           window.scrollTo x, y
-      , 0
+      , 0, false
 ]
