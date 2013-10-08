@@ -35,6 +35,7 @@ There are multiple components used by modal.
 
 angular.module("Mac").service("modal", [
   "$rootScope"
+  "$animate"
   "$timeout"
   "$templateCache"
   "$compile"
@@ -42,7 +43,7 @@ angular.module("Mac").service("modal", [
   "$controller"
   "modalViews"
   "keys"
-  ($rootScope, $timeout, $templateCache, $compile, $http, $controller, modalViews, keys) ->
+  ($rootScope, $animate, $timeout, $templateCache, $compile, $http, $controller, modalViews, keys) ->
     # Dictionary of registered modal
     registered: modalViews.registered
 
@@ -73,10 +74,8 @@ angular.module("Mac").service("modal", [
         angular.extend options, triggerOptions
 
         showModal = (element) =>
-          element.removeClass "hide"
-          $timeout ->
-            element.addClass "visible"
-          , 0, false
+          $animate.removeClass element, "hide", ->
+            $animate.addClass element, "visible"
 
           # Update opened modal object
           @opened = {id, element, options}
@@ -107,7 +106,9 @@ angular.module("Mac").service("modal", [
             element = angular.element(@modalTemplate).attr options.attributes
             wrapper = angular.element element[0].getElementsByClassName("modal-content-wrapper")
             wrapper.html template
-            angular.element(document.body).append $compile(element) viewScope
+
+            $animate.enter element, angular.element(document.body)
+            $compile(element) viewScope
 
             showModal element
             $rootScope.$apply() if invokeApply
@@ -171,20 +172,23 @@ angular.module("Mac").service("modal", [
 
       {id, options, element} = @opened
 
-      element.removeClass "visible"
-      $timeout ->
-        element.addClass "hide"
-      , 250, false
-      @bindingEvents "unbind"
-      @opened = null
+      $animate.removeClass element, "visible"
 
-      if options.moduleMethod
-        element.scope().$destroy()
-        element.remove()
+      # 250ms timeout is added to account for the hide modal animation
+      $timeout =>
+        @bindingEvents "unbind"
+        @opened = null
 
-      $rootScope.$broadcast "modalWasHidden", id
+        if options.moduleMethod
+          element.scope().$destroy()
+          $animate.leave element
+        else
+          $animate.addClass element, "hide"
 
-      callback?()
+        $rootScope.$broadcast "modalWasHidden", id
+
+        callback && callback()
+      , 250
 
     bindingEvents: (action = "bind") ->
       return unless action in ["bind", "unbind"] and @opened?
