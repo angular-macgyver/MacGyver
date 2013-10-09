@@ -12,6 +12,10 @@ A directive for generating tag input with autocomplete support on text input
 Type: `String`  
 Url to fetch autocomplete dropdown list data  
   
+**mac-tag-autocomplete-source**  
+Type: `String`  
+List of elements to populate autocomplete  
+  
 **mac-tag-autocomplete-value**  
 Type: `String`  
 The value to be sent back upon selection (default "id")  
@@ -21,7 +25,7 @@ Type: `String`
 The label to display to the users (default "name")  
   
 **mac-tag-autocomplete-model**  
-Type: `Expression`  
+Type: `Expr`  
 Model for autocomplete  
   
 **mac-tag-autocomplete-selected**  
@@ -45,17 +49,17 @@ Type: `Boolean`
 If autocomplete is enabled or disabled (default false)  
   
 **mac-tag-autocomplete-on-enter**  
-Type: `Expression`  
+Type: `Expr`  
 When autocomplete is disabled, this function is called on enter, Should return either string, object or boolean. If false, item is not added  
 - `item` - {String} User input  
   
 **mac-tag-autocomplete-events**  
 Type: `String`  
-a CSV list of events to attach functions to  
+A CSV list of events to attach functions to  
   
 **mac-tag-autocomplete-on-**  
-Type: `Expression`  
-The function to be called when specified event is fired  
+Type: `Expr`  
+Function to be called when specified event is fired  
 - `event` - {Object} jQuery event  
 - `value` - {String} Value in the input text  
   

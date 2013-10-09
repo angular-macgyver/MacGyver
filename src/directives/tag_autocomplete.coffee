@@ -9,20 +9,20 @@ A directive for generating tag input with autocomplete support on text input
 - mac-autocomplete
 - mac-menu
 
-@param {String} mac-tag-autocomplete-url          Url to fetch autocomplete dropdown list data
-@param {String} mac-tag-autocomplete-source       List of elements to populate autocomplete
-@param {String} mac-tag-autocomplete-value        The value to be sent back upon selection (default "id")
-@param {String} mac-tag-autocomplete-label        The label to display to the users (default "name")
-@param {Expression} mac-tag-autocomplete-model    Model for autocomplete
-@param {Array} mac-tag-autocomplete-selected      The list of elements selected by the user
-@param {String} mac-tag-autocomplete-query        The query parameter on GET command (defualt "q")
+@param {String}  mac-tag-autocomplete-url         Url to fetch autocomplete dropdown list data
+@param {String}  mac-tag-autocomplete-source      List of elements to populate autocomplete
+@param {String}  mac-tag-autocomplete-value       The value to be sent back upon selection (default "id")
+@param {String}  mac-tag-autocomplete-label       The label to display to the users (default "name")
+@param {Expr}    mac-tag-autocomplete-model       Model for autocomplete
+@param {Array}   mac-tag-autocomplete-selected    The list of elements selected by the user
+@param {String}  mac-tag-autocomplete-query       The query parameter on GET command (defualt "q")
 @param {Integer} mac-tag-autocomplete-delay       Time delayed on fetching autocomplete data after keyup  (default 800)
-@param {String} mac-tag-autocomplete-placeholder  Placeholder text of the text input (default "")
+@param {String}  mac-tag-autocomplete-placeholder Placeholder text of the text input (default "")
 @param {Boolean} mac-tag-autocomplete-disabled    If autocomplete is enabled or disabled (default false)
-@param {Expression} mac-tag-autocomplete-on-enter When autocomplete is disabled, this function is called on enter, Should return either string, object or boolean. If false, item is not added
+@param {Expr}    mac-tag-autocomplete-on-enter    When autocomplete is disabled, this function is called on enter, Should return either string, object or boolean. If false, item is not added
         - `item` - {String} User input
-@param {String} mac-tag-autocomplete-events a CSV list of events to attach functions to
-@param {Expression} mac-tag-autocomplete-on- The function to be called when specified event is fired
+@param {String}  mac-tag-autocomplete-events      A CSV list of events to attach functions to
+@param {Expr}    mac-tag-autocomplete-on-         Function to be called when specified event is fired
         - `event` - {Object} jQuery event
         - `value` - {String} Value in the input text
 
