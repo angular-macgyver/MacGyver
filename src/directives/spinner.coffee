@@ -10,7 +10,7 @@ A directive for generating spinner
 @param {String}  mac-spinner-color Color of all the bars (default #2f3035)
 ###
 
-angular.module("Mac").directive "macSpinner", ["util", (util) ->
+angular.module("Mac").directive "macSpinner", ["$animate", "util", ($animate, util) ->
   restrict: "E"
   replace:  true
   template: """<div class="mac-spinner"></div>"""
@@ -32,7 +32,7 @@ angular.module("Mac").directive "macSpinner", ["util", (util) ->
       styl[vendor(bar[0], "transform")] = "rotate(#{degree}deg) translate(0, 130%)"
       bar.css styl
 
-      element.append bar
+      $animate.enter bar, element
 
     ($scope, element, attrs) ->
       defaults =
