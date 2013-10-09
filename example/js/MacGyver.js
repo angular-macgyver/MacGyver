@@ -7996,6 +7996,113 @@ $.widget("ui.sortable", $.ui.mouse, {
 
 /*
 @chalk overview
+@name mac-affix
+
+@description
+Fix the component at a certain position
+
+@param {Expr} mac-affix-disabled To unpin element
+@param {Expr} mac-affix-top      Top offset (default 0)
+@param {Expr} mac-affix-bottom   Bottom offset (default 0)
+*/
+
+angular.module("Mac").directive("macAffix", function() {
+  return {
+    link: function($scope, element, attrs) {
+      var defaults, disabled, getPosition, lastAffix, offset, position, scrollEvent, unpin, windowEl;
+      defaults = {
+        top: 0,
+        bottom: 0,
+        disabled: false,
+        classes: "affix affix-top affix-bottom"
+      };
+      offset = {
+        top: defaults.top,
+        bottom: defaults.bottom
+      };
+      position = {
+        top: 0,
+        left: 0
+      };
+      disabled = defaults.disabled;
+      lastAffix = null;
+      unpin = null;
+      windowEl = angular.element(window);
+      if (attrs.macAffixTop != null) {
+        offset.top = $scope.$eval(attrs.macAffixTop) || defaults.top;
+        $scope.$watch(attrs.macAffixTop, function(value) {
+          if (value != null) {
+            return offset.top = value;
+          }
+        });
+      }
+      if (attrs.macAffixBottom != null) {
+        offset.bottom = $scope.$eval(attrs.macAffixBottom) || defaults.bottom;
+        $scope.$watch(attrs.macAffixBottom, function(value) {
+          if (value != null) {
+            return offset.bottom = value;
+          }
+        });
+      }
+      (getPosition = function() {
+        return position = element.offset();
+      })();
+      scrollEvent = function() {
+        var affix, scrollHeight, scrollTop;
+        if (element[0].offsetHeight <= 0 && element[0].offsetWidth <= 0) {
+          return;
+        }
+        scrollTop = windowEl.scrollTop();
+        scrollHeight = angular.element(document).height();
+        affix = (unpin != null) && scrollTop + unpin <= position.top ? false : position.top + element.height() >= scrollHeight - offset.bottom ? "bottom" : scrollTop <= offset.top ? "top" : false;
+        if (affix === lastAffix) {
+          return;
+        }
+        lastAffix = affix;
+        if (unpin) {
+          element.css("top", "");
+        }
+        element.removeClass(defaults.classes).addClass("affix" + (affix ? "-" + affix : ""));
+        if (affix === "bottom") {
+          unpin = position.top - scrollTop;
+          element.css("top", document.body.offsetHeight - offset.bottom - element.height());
+        } else {
+          unpin = null;
+        }
+        return true;
+      };
+      if (attrs.macAffixDisabled != null) {
+        disabled = $scope.$eval(attrs.macAffixDisabled) || defaults.disabled;
+        $scope.$watch(attrs.macAffixDisabled, function(value) {
+          var action;
+          if ((value == null) || value === disabled) {
+            return;
+          }
+          disabled = value;
+          action = value ? "unbind" : "bind";
+          windowEl[action]("scroll", scrollEvent);
+          if (disabled) {
+            lastAffix = null;
+            unpin = null;
+            return element.css("top", "").removeClass(defaults.classes);
+          } else {
+            return scrollEvent();
+          }
+        });
+      }
+      if (!disabled) {
+        windowEl.bind("scroll", scrollEvent);
+      }
+      $scope.$on("refresh-mac-affix", getPosition);
+      return $scope.$on("$destroy", function() {
+        return windowEl.unbind("scroll", scrollEvent);
+      });
+    }
+  };
+});
+
+/*
+@chalk overview
 @name Autocomplete
 
 @description
@@ -8925,7 +9032,7 @@ angular.module("Mac").directive("macFocusOnEvent", [
             y = window.scrollY;
             return window.scrollTo(x, y);
           }
-        }, 0);
+        }, 0, false);
       });
     };
   }
@@ -9146,8 +9253,18 @@ angular.module("Mac").directive("macModal", [
       link: function($scope, element, attrs) {
         if (attrs.macModal) {
           element.bind("click", function() {
+            var dataVar, modalScope;
+            modalScope = false;
+            if ((attrs.macModalScope != null) && attrs.macModalScope) {
+              modalScope = $parse(attrs.macModalScope)($scope);
+            }
+            if (!((modalScope != null) && (modalScope.$new != null))) {
+              modalScope = $scope;
+            }
+            dataVar = attrs.macModalContent || attrs.macModalData;
             return modal.show(attrs.macModal, {
-              data: $parse(attrs.macModalContent)($scope)
+              data: $parse(dataVar)($scope),
+              scope: modalScope
             });
           });
         }
@@ -10707,8 +10824,8 @@ angular.module("Mac").directive("macTooltip", [
         opts = util.extendAttributes("macTooltip", defaults, attrs);
         showTip = function(event) {
           var elementSize, offset, tip, tooltipSize;
-          if (disabled) {
-            return;
+          if (disabled || !text) {
+            return true;
           }
           tip = opts.inside ? element : angular.element(document.body);
           tooltip = angular.element("<div class=\"tooltip " + opts.direction + "\"><div class=\"tooltip-message\">" + text + "</div></div>");
@@ -10755,13 +10872,17 @@ angular.module("Mac").directive("macTooltip", [
             }
             return tooltip.css(key, value);
           });
-          return tooltip.addClass("visible");
+          tooltip.addClass("visible");
+          return true;
         };
         removeTip = function(event) {
-          tooltip.removeClass("visible");
-          return $timeout(function() {
-            return tooltip.remove();
-          }, 100, false);
+          if (tooltip != null) {
+            tooltip.removeClass("visible");
+            $timeout(function() {
+              return tooltip.remove();
+            }, 100, false);
+          }
+          return true;
         };
         toggle = function(event) {
           if (tooltip != null) {
@@ -10772,7 +10893,7 @@ angular.module("Mac").directive("macTooltip", [
         };
         attrs.$observe("macTooltip", function(value) {
           var _ref;
-          if ((value != null) && value) {
+          if (value != null) {
             text = value;
             if (!enabled) {
               if ((_ref = opts.trigger) !== "hover" && _ref !== "click") {
@@ -11405,7 +11526,7 @@ angular.module("Mac").service("modal", [
           if (options.moduleMethod != null) {
             renderModal = function(template) {
               var element, viewScope, wrapper;
-              viewScope = $rootScope.$new();
+              viewScope = options.scope ? options.scope.$new() : $rootScope.$new(true);
               viewScope.modal = _this;
               viewScope.closeOverlay = function($event) {
                 if (options.overlayClose && angular.element($event.target).hasClass("modal-overlay")) {
@@ -11424,7 +11545,9 @@ angular.module("Mac").service("modal", [
               wrapper = angular.element(element[0].getElementsByClassName("modal-content-wrapper"));
               wrapper.html(template);
               angular.element(document.body).append($compile(element)(viewScope));
-              return showModal(element);
+              return viewScope.$apply(function() {
+                return showModal(element);
+              });
             };
             if ((path = options.templateUrl)) {
               template = $templateCache.get(path);
