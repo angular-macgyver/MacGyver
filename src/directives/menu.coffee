@@ -14,8 +14,7 @@ A directive for creating a menu with multiple items
 ###
 
 angular.module("Mac").directive "macMenu", [
-  "$parse",
-  ($parse) ->
+  ->
     restrict:    "EA"
     replace:     true
     templateUrl: "template/menu.html"
