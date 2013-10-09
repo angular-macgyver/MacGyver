@@ -1,3 +1,11 @@
+# v0.1.18 (2013/10/9)
+## Bug Fixes
+- **macModal:** Fixed showing modal the first time might invoke a digest cycle
+  ([bc532a6b](https://github.com/StartTheShift/MacGyver/commit/bc532a6b3f738f9c5732781d10c9677160a5cf72))
+- **macTagAutocomplete:** Fixed autocomplete menu not updating when source gets updated
+  ([a26353c5](https://github.com/StartTheShift/MacGyver/commit/a26353c58a13b0a91e730df0588a145321179bc5))
+
+
 # 0.1.17 (2013/10/8)
 ## Features
 - **macAffix:** Adding mac-affix
