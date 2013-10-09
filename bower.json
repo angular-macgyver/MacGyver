@@ -1,6 +1,6 @@
 {
   "name": "MacGyver",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "main": ["lib/img/ui-bg_flat_0_aaaaaa_40x100.png","lib/img/ui-bg_glass_75_ffffff_1x400.png","lib/img/ui-icons_222222_256x240.png","lib/img/ui-icons_2e83ff_256x240.png","lib/img/ui-icons_454545_256x240.png","lib/img/ui-icons_888888_256x240.png","lib/img/ui-icons_cd0a0a_256x240.png","lib/img/ui-icons_f6cf3b_256x240.png","lib/macgyver-core.js","lib/macgyver-datepicker.js","lib/macgyver-fileupload.js","lib/macgyver-filters.js","lib/macgyver-string-filter.js","lib/macgyver-table.js","lib/macgyver.css","lib/macgyver.js","lib/macgyver.min.js"],
   "ignore": [
     "example",

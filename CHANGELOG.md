@@ -1,3 +1,21 @@
+# 0.1.17 (2013/10/8)
+## Features
+- **macAffix:** Adding mac-affix
+  ([c7aaca80](https://github.com/StartTheShift/MacGyver/commit/c7aaca800e018cf5dd5034118f5c6dbd153027d7))
+
+## Optimizations
+- **macFocusOnEvent:** Prevent digest cycle from invoking on focus
+  ([d019f761](https://github.com/StartTheShift/MacGyver/commit/d019f7616085f2851d77778d2039f075651ebc3b))
+- **macModal:** Allow modal to compile with modal trigger scope
+  ([17108162](https://github.com/StartTheShift/MacGyver/commit/171081622b560c298de1a25192189885ad06b1c5))
+- **macTooltip:** Clear and not show tooltip with empty string. Make sure events propagate up the bubble
+  ([2ab95b26](https://github.com/StartTheShift/MacGyver/commit/2ab95b26fd10f533772e431c899a11587cf5621c))
+
+## Breaking Changes
+- **macModal:**  mac-modal-content is deprecated. Use mac-modal-data instead.
+  ([b29cbd68](https://github.com/StartTheShift/MacGyver/commit/b29cbd687c4c885cbf932b96d268fcc0c4064ee0))
+
+
 # v0.1.16 (2013/9/25)
 ## Bug Fixes
 - **macKeydown:** Fixed mac-keydown events not firing at all

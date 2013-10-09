@@ -9032,7 +9032,7 @@ angular.module("Mac").directive("macFocusOnEvent", [
             y = window.scrollY;
             return window.scrollTo(x, y);
           }
-        }, 0);
+        }, 0, false);
       });
     };
   }
@@ -10824,8 +10824,8 @@ angular.module("Mac").directive("macTooltip", [
         opts = util.extendAttributes("macTooltip", defaults, attrs);
         showTip = function(event) {
           var elementSize, offset, tip, tooltipSize;
-          if (disabled) {
-            return;
+          if (disabled || !text) {
+            return true;
           }
           tip = opts.inside ? element : angular.element(document.body);
           tooltip = angular.element("<div class=\"tooltip " + opts.direction + "\"><div class=\"tooltip-message\">" + text + "</div></div>");
@@ -10872,13 +10872,17 @@ angular.module("Mac").directive("macTooltip", [
             }
             return tooltip.css(key, value);
           });
-          return tooltip.addClass("visible");
+          tooltip.addClass("visible");
+          return true;
         };
         removeTip = function(event) {
-          tooltip.removeClass("visible");
-          return $timeout(function() {
-            return tooltip.remove();
-          }, 100, false);
+          if (tooltip != null) {
+            tooltip.removeClass("visible");
+            $timeout(function() {
+              return tooltip.remove();
+            }, 100, false);
+          }
+          return true;
         };
         toggle = function(event) {
           if (tooltip != null) {
@@ -10889,7 +10893,7 @@ angular.module("Mac").directive("macTooltip", [
         };
         attrs.$observe("macTooltip", function(value) {
           var _ref;
-          if ((value != null) && value) {
+          if (value != null) {
             text = value;
             if (!enabled) {
               if ((_ref = opts.trigger) !== "hover" && _ref !== "click") {
