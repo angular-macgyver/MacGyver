@@ -127,6 +127,28 @@ describe "Mac tag autocomplete", ->
 
       expect(textInputScope.autocompleteSource.length).toBe 2
 
+    it "should update autocompleteSource when source changes", ->
+      $rootScope.source   = [
+        {id: "tag1"},
+        {id: "tag2"},
+        {id: "tag3"}
+      ]
+      $rootScope.selected = [{id: "tag1"}]
+
+      element = $compile("""
+        <mac-tag-autocomplete
+          mac-tag-autocomplete-source='source'
+          mac-tag-autocomplete-selected='selected'>
+        </mac-tag-autocomplete>""") $rootScope
+      $rootScope.$digest()
+
+      textInputScope = $rootScope.$$childHead
+
+      $rootScope.source.push {id: "tag5"}
+      $rootScope.$digest()
+
+      expect(textInputScope.autocompleteSource.length).toBe 3
+
   describe "onKeyDown", ->
     it "should fire keydown callback", ->
       called             = false
