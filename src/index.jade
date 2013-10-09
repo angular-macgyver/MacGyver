@@ -64,9 +64,6 @@ block append content
         li(mac-scroll-spy-target="time-input"): a(href="#time-input")
           i.icon-chevron-right
           | Time Input
-        li(mac-scroll-spy-target="tag-input"): a(href="#tag-input")
-          i.icon-chevron-right
-          | Tag Input
         li(mac-scroll-spy-target="spinner"): a(href="#spinner")
           i.icon-chevron-right
           | Spinner
@@ -282,27 +279,6 @@ block append content
           = '  mac-time-model="myStartTime"\n'
           = '  mac-time-default="11:59 PM">\n'
           = '</mac-time>\n'
-
-      section#tag-input(mac-scroll-spy-anchor)
-        @@include("docs/html/directives/tag_input.html")
-        p Proxy directive to mac tag autocomplete
-        h3 Example
-        .docs-example
-          mac-tag-input(
-            mac-tag-input-tags        = "extraTagInputs"
-            mac-tag-input-placeholder = "Select all target countries"
-            mac-tag-input-selected    = "selected"
-            mac-tag-input-value       = "id"
-            mac-tag-input-label       = "name"
-          )
-        pre.prettyprint.linenums(ng-non-bindable)
-          = '<mac-tag-input\n'
-          = '  mac-tag-input-tags="extraTagInputs"\n'
-          = '  mac-tag-input-placeholder="Select all target countries"\n'
-          = '  mac-tag-input-selected="selected"\n'
-          = '  mac-tag-input-value="id"\n'
-          = '  mac-tag-input-label="name">\n'
-          = '</mac-tag-input>\n'
 
       section#spinner(mac-scroll-spy-anchor)
         @@include("docs/html/directives/spinner.html")
