@@ -90,7 +90,7 @@ angular.module("Mac").service("modal", [
 
         # if modal is created thru module method "modal"
         if options.moduleMethod?
-          renderModal = (template) =>
+          renderModal = (template, invokeApply = true) =>
             viewScope =
               if options.scope then options.scope.$new() else $rootScope.$new(true)
             viewScope.modal        = this
@@ -109,8 +109,8 @@ angular.module("Mac").service("modal", [
             wrapper.html template
             angular.element(document.body).append $compile(element) viewScope
 
-            viewScope.$apply ->
-              showModal element
+            showModal element
+            $rootScope.$apply() if invokeApply
 
           if (path = options.templateUrl)
             template = $templateCache.get path
@@ -119,7 +119,7 @@ angular.module("Mac").service("modal", [
             else
               $http.get(path).then (resp) ->
                 $templateCache.put path, resp.data
-                renderModal resp.data
+                renderModal resp.data, false
               , ->
                 throw Error("Failed to load template: #{path}")
           else if (template = options.template)
