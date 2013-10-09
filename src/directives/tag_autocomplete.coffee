@@ -10,6 +10,7 @@ A directive for generating tag input with autocomplete support on text input
 - mac-menu
 
 @param {String} mac-tag-autocomplete-url          Url to fetch autocomplete dropdown list data
+@param {String} mac-tag-autocomplete-source       List of elements to populate autocomplete
 @param {String} mac-tag-autocomplete-value        The value to be sent back upon selection (default "id")
 @param {String} mac-tag-autocomplete-label        The label to display to the users (default "name")
 @param {Expression} mac-tag-autocomplete-model    Model for autocomplete
@@ -54,7 +55,7 @@ angular.module("Mac").directive "macTagAutocomplete", [
       labelKey   ?= "name"
       queryKey    = attrs.macTagAutocompleteQuery  or "q"
       delay       = +attrs.macTagAutocompleteDelay or 800
-
+      useSource   = false
 
       textInput =
         angular.element(element[0].getElementsByClassName "mac-autocomplete")
@@ -67,16 +68,18 @@ angular.module("Mac").directive "macTagAutocomplete", [
       if attrs.macTagAutocompleteUrl?
         attrsObject["mac-autocomplete-url"] = "url"
       else if attrs.macTagAutocompleteSource?
+        useSource                              = true
         attrsObject["mac-autocomplete-source"] = "autocompleteSource"
 
       textInput.attr attrsObject
 
       ($scope, element, attrs) ->
         # Variable for input element
-        $scope.textInput = ""
+        $scope.textInput          = ""
+        $scope.autocompleteSource = []
 
         if attrs.macTagAutocompleteModel?
-          $scope.$watch "textInput", (value) -> $scope.model = value
+          $scope.$watch "textInput", (value) -> $scope.model     = value
           $scope.$watch "model",     (value) -> $scope.textInput = value
 
         # Clicking on the element will focus on input
@@ -106,12 +109,18 @@ angular.module("Mac").directive "macTagAutocomplete", [
                     expression $scope.$parent, {$event, item}
         , 0
 
-        $scope.$watch "selected.length", (length) ->
-          sourceValues   = (item[valueKey] for item in ($scope.source or []))
-          selectedValues = (item[valueKey] for item in ($scope.selected or []))
-          difference     = (item for item in sourceValues when item not in selectedValues)
+        if useSource
+          updateAutocompleteSource = ->
+            sourceValues   = (item[valueKey] for item in ($scope.source or []))
+            selectedValues = (item[valueKey] for item in ($scope.selected or []))
+            difference     = (item for item in sourceValues when item not in selectedValues)
 
-          $scope.autocompleteSource  = (item for item in ($scope.source or []) when item[valueKey] in difference)
+            $scope.autocompleteSource =
+              (item for item in ($scope.source or []) when item[valueKey] in difference)
+
+          # Switch to use watchCollections when upgrading to AngularJS 1.2
+          $scope.$watch "selected", updateAutocompleteSource, true
+          $scope.$watch "source", updateAutocompleteSource, true
 
         $scope.onKeyDown = ($event) ->
           stroke = $event.which or $event.keyCode
