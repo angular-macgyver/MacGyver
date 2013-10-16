@@ -39,6 +39,12 @@ describe "Mac autocomplete", ->
 
       expect(init).toThrow()
 
+    it "should not append menu", ->
+      element = $compile("<mac-autocomplete ng-model='value'></mac-autocomplete>") $rootScope
+      $rootScope.$digest()
+
+      expect($(".mac-menu").length).toBe 0
+
   describe "source", ->
     it "should use local array", ->
       $rootScope.source = data

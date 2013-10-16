@@ -57,13 +57,25 @@ angular.module("Mac").directive "macAutocomplete", [
 
       currentAutocomplete = []
       timeoutId           = null
+      onSelectBool        = false
 
       $menuScope       = $rootScope.$new()
       $menuScope.items = []
       $menuScope.index = 0
 
+      menuEl = angular.element("<mac-menu></mac-menu>")
+      menuEl.attr
+        "mac-menu-items":  "items"
+        "mac-menu-style":  "style"
+        "mac-menu-select": "select(index)"
+        "mac-menu-index":  "index"
+      # Precompile menu element
+      $compile(menuEl) $menuScope
+
       ctrl.$parsers.push (value) ->
-        if value and not disabled($scope)
+        # If value is more than an empty string,
+        # autocomplete is enabled and not 'onSelect' cycle
+        if value and not disabled($scope) and not onSelectBool
           if delay > 0
             $timeout.cancel timeoutId if timeoutId?
             timeoutId = $timeout ->
@@ -71,8 +83,24 @@ angular.module("Mac").directive "macAutocomplete", [
             , delay
           else
             queryData value
+        else
+          reset()
+
+        onSelectBool = false
 
         return value
+
+      #
+      # @function
+      # @name appendMenu
+      # @description
+      # Adding menu to DOM
+      #
+      appendMenu = ->
+        if inside
+          element.after menuEl
+        else
+          angular.element(document.body).append menuEl
 
       #
       # @function
@@ -83,6 +111,7 @@ angular.module("Mac").directive "macAutocomplete", [
       reset = ->
         $menuScope.items = []
         $menuScope.index = 0
+        menuEl.remove()
 
       #
       # @function
@@ -91,14 +120,17 @@ angular.module("Mac").directive "macAutocomplete", [
       # Calculate the style include position and width for menu
       #
       positionMenu = ->
-        $menuScope.style       = element.offset()
-        $menuScope.style.top  += element.outerHeight()
-        $menuScope.style.width = element.outerWidth()
+        if $menuScope.items.length > 0
+          $menuScope.style       = element.offset()
+          $menuScope.style.top  += element.outerHeight()
+          $menuScope.style.width = element.outerWidth()
 
-        angular.forEach $menuScope.style, (value, key) ->
-          if not isNaN(+value) and angular.isNumber +value
-            value = "#{value}px"
-          $menuScope.style[key] = value
+          angular.forEach $menuScope.style, (value, key) ->
+            if not isNaN(+value) and angular.isNumber +value
+              value = "#{value}px"
+            $menuScope.style[key] = value
+
+          appendMenu()
 
       #
       # @function
@@ -108,11 +140,12 @@ angular.module("Mac").directive "macAutocomplete", [
       # @param {Array} data Array of data
       #
       updateItem = (data = []) ->
-        currentAutocomplete = data
-        $menuScope.items    = []
-        for item in data
-          label = value = item[labelKey] or item
-          $menuScope.items.push {label, value}
+        if data.length > 0
+          currentAutocomplete = data
+          $menuScope.items    = []
+          for item in data
+            label = value = item[labelKey] or item
+            $menuScope.items.push {label, value}
 
       #
       # @function
@@ -148,7 +181,9 @@ angular.module("Mac").directive "macAutocomplete", [
         selected = currentAutocomplete[index]
         onSelect $scope, {selected}
 
-        label = $menuScope.items[index].label or ""
+        label        = $menuScope.items[index].label or ""
+        onSelectBool = true
+
         if attrs.ngModel?
           ctrl.$setViewValue label
           ctrl.$render()
@@ -176,16 +211,9 @@ angular.module("Mac").directive "macAutocomplete", [
         if $menuScope.items.length > 0
           $scope.$apply -> reset()
 
-      menuEl = angular.element("<mac-menu></mac-menu>")
-      menuEl.attr
-        "mac-menu-items":  "items"
-        "mac-menu-style":  "style"
-        "mac-menu-select": "select(index)"
-        "mac-menu-index":  "index"
-      if inside
-        element.after $compile(menuEl) $menuScope
-      else
-        angular.element(document.body).append $compile(menuEl) $menuScope
+      $scope.$on "$destroy", ->
+        # Remove menu on body when autocomplete is removed
+        menuEl.remove()
 
       #
       # @event
