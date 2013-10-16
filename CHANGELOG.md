@@ -1,3 +1,13 @@
+# v0.1.19 (2013/10/16)
+## Optimizations
+- **macAutocomplete:**
+    - Updated autocomplete to not append menu initially.
+    - Menu is appended to body when needed.
+    - Menu will not show up when there is no input or after selecting and item.
+    - Menu will be removed when scope is destroyed.
+  ([b93d17b1](https://github.com/StartTheShift/MacGyver/commit/b93d17b1393ec935027e5a948956b5f073d73ce2))
+
+
 # v0.1.18 (2013/10/9)
 ## Bug Fixes
 - **macModal:** Fixed showing modal the first time might invoke a digest cycle
