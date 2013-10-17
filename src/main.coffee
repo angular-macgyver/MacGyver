@@ -1,4 +1,8 @@
-angular.module "Mac", ["Mac.Util"]
+modules = ["Mac.Util"]
+try
+  angular.module("ngAnimate")
+  modules.push "ngAnimate"
+angular.module "Mac", modules
 
 ###
 @chalk overview
