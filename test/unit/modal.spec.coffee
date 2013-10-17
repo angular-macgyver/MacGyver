@@ -56,6 +56,7 @@ describe "Mac modal", ->
 
       modal.register "test-modal", element, {}, angular.noop
       modal.show "test-modal"
+      $timeout.flush()
 
       modalElement = $(".modal", element)
       expect(modalElement.attr("style")).toBeDefined()
@@ -156,6 +157,7 @@ describe "Mac modal", ->
       $rootScope.$digest()
 
       element.click()
+      $timeout.flush()
       expect(modal.opened.id).toBe "test-modal"
 
     it "should bind data to opened modal", ->
@@ -166,6 +168,7 @@ describe "Mac modal", ->
       $rootScope.$digest()
 
       element.click()
+      $timeout.flush()
       expect(modal.opened.options.data.text).toBe "hello"
 
   describe "modal method", ->
@@ -216,7 +219,9 @@ describe "Mac modal", ->
       modal.show "testing"
       $timeout.flush()
 
-      modal.hide()
+      callback = jasmine.createSpy "select"
+
+      modal.hide(callback)
       $timeout.flush()
 
-      expect(angular.element(".modal-content-wrapper").length).toBe 0
+      expect(callback).toHaveBeenCalled()

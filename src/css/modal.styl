@@ -7,16 +7,22 @@
   bottom           0
   opacity          0
   visibility       hidden
-  transition       all 0.2s ease-out
   overflow-y       auto
   z-index          3
 
-  &.visible
+  &.visible, &.visible-add-active
     visibility visible
     opacity    1.0
 
     .modal
       top 50%
+
+  &.visible-add, &.visible-remove
+    transition 0.2s ease-out all
+
+  &.visible-remove-active
+    visibility hidden
+    opacity    0
 
   .modal
     position      absolute

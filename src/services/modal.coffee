@@ -36,14 +36,13 @@ There are multiple components used by modal.
 angular.module("Mac").service("modal", [
   "$rootScope"
   "$animate"
-  "$timeout"
   "$templateCache"
   "$compile"
   "$http"
   "$controller"
   "modalViews"
   "keys"
-  ($rootScope, $animate, $timeout, $templateCache, $compile, $http, $controller, modalViews, keys) ->
+  ($rootScope, $animate, $templateCache, $compile, $http, $controller, modalViews, keys) ->
     # Dictionary of registered modal
     registered: modalViews.registered
 
@@ -74,18 +73,18 @@ angular.module("Mac").service("modal", [
         angular.extend options, triggerOptions
 
         showModal = (element) =>
-          $animate.removeClass element, "hide", ->
-            $animate.addClass element, "visible"
+          $animate.removeClass element, "hide", =>
+            $animate.addClass element, "visible", =>
 
-          # Update opened modal object
-          @opened = {id, element, options}
-          @resize @opened
-          @bindingEvents()
+              # Update opened modal object
+              @opened = {id, element, options}
+              @resize @opened
+              @bindingEvents()
 
-          options.callback?()
+              options.callback?()
 
-          $rootScope.$broadcast "modalWasShown", id
-          @clearWaiting()
+              $rootScope.$broadcast "modalWasShown", id
+              @clearWaiting()
 
         # if modal is created thru module method "modal"
         if options.moduleMethod?
@@ -172,10 +171,7 @@ angular.module("Mac").service("modal", [
 
       {id, options, element} = @opened
 
-      $animate.removeClass element, "visible"
-
-      # 250ms timeout is added to account for the hide modal animation
-      $timeout =>
+      $animate.removeClass element, "visible", =>
         @bindingEvents "unbind"
         @opened = null
 
@@ -188,7 +184,6 @@ angular.module("Mac").service("modal", [
         $rootScope.$broadcast "modalWasHidden", id
 
         callback && callback()
-      , 250
 
     bindingEvents: (action = "bind") ->
       return unless action in ["bind", "unbind"] and @opened?
