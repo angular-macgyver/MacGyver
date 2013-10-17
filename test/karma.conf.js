@@ -19,6 +19,7 @@ module.exports = function(config) {
       '../vendor/bower/jquery.ui/ui/jquery.ui.sortable.js',
       '../vendor/bower/jquery-file-upload/js/jquery.fileupload.js',
       '../vendor/bower/angular/angular.js',
+      '../vendor/bower/angular-animate/angular-animate.js',
 
       // Template //
       "template/*.html",
