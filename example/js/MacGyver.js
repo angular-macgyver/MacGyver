@@ -9442,8 +9442,9 @@ angular.module("Mac").directive("macScrollSpy", [
   "scrollSpy", function(scrollSpy) {
     return {
       compile: function(element, attrs) {
-        var id, interpolate;
+        var id, interpolate, observeKey;
         id = attrs.id || attrs.macScrollSpyAnchor;
+        observeKey = attrs.id ? "id" : "macScrollSpyAnchor";
         if (!id) {
           throw new Error("Missing scroll spy anchor id");
         }
@@ -9461,7 +9462,7 @@ angular.module("Mac").directive("macScrollSpy", [
           };
           $scope.$on("refresh-scroll-spy", registering);
           if (interpolate) {
-            return attrs.$observe("macScrollSpyAnchor", function(value) {
+            return attrs.$observe(observeKey, function(value) {
               id = value;
               return registering();
             });
