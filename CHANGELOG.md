@@ -1,3 +1,11 @@
+# v0.1.20 (2013/10/21)
+## Bug Fixes
+- **macScrollSpyAnchor:** Fixed interpolated id not working properly
+  ([28f0996f](https://github.com/StartTheShift/MacGyver/commit/28f0996fb54d1e383a7f4b439eb7d2dea51c69ec))
+- **macTime:** Removed unnecessary digest cycle on blur
+  ([b3faef64](https://github.com/StartTheShift/MacGyver/commit/b3faef64fb32cd1b936c68ecd42f377ad11a4b8d))
+
+
 # v0.1.19 (2013/10/16)
 ## Optimizations
 - **macAutocomplete:**
