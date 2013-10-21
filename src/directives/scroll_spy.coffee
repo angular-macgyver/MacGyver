@@ -51,7 +51,8 @@ directive("macScrollSpyAnchor", [
   "scrollSpy"
   (scrollSpy) ->
     compile: (element, attrs) ->
-      id = attrs.id or attrs.macScrollSpyAnchor
+      id         = attrs.id or attrs.macScrollSpyAnchor
+      observeKey = if attrs.id then "id" else "macScrollSpyAnchor"
 
       unless id
         throw new Error("Missing scroll spy anchor id")
@@ -67,7 +68,7 @@ directive("macScrollSpyAnchor", [
         $scope.$on "refresh-scroll-spy", registering
 
         if interpolate
-          attrs.$observe "macScrollSpyAnchor", (value) ->
+          attrs.$observe observeKey, (value) ->
             id = value
             registering()
         else
