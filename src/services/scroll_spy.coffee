@@ -67,6 +67,9 @@ angular.module("Mac").service("scrollSpy", [
         @registered[i..i] = []
         break
 
+    last: ->
+      @registered[@registered.length - 1]
+
     setActive: (anchor) ->
       @active = anchor
       listener(anchor) for listener in @listeners
