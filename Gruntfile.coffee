@@ -338,6 +338,17 @@ module.exports = (grunt) ->
           src:     "*.html"
           dest:    "example/"
         ]
+      version:
+        options:
+          pattern: /@@version/g
+          replace: "<%= pkg.version %>"
+        files: [
+          expand:  true
+          flatten: false
+          cwd:     "example"
+          src:     "*.html"
+          dest:    "example/"
+        ]
 
     marked:
       docs:
@@ -350,6 +361,8 @@ module.exports = (grunt) ->
           ext:     ".html"
         ]
 
+  grunt.registerTask "prepare", "Prepare for deploying", ["bump", "changelog"]
+
   grunt.registerTask "deploy", "Build and copy to lib/", [
       "coffee"
       "stylus"
@@ -360,10 +373,12 @@ module.exports = (grunt) ->
       "chalkboard"
       "marked"
       "replace:docs"
+      "replace:version"
       "karma:build"
       "update:component"
       "copy"
       "uglify"
+      "tag"
     ]
 
   grunt.registerTask "compile", "Compile files", [

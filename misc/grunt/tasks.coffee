@@ -2,6 +2,17 @@
 finalBuildPath = "lib/"
 componentFile  = "bower.json"
 
+child   = require "child_process"
+
+GIT_TAG       = "git describe --tags --abbrev=0"
+CHANGELOG     = "coffee ./changelog.coffee"
+VERSION_REGEX = /^v\d+\.\d+\.\d+$/
+
+getLastVersion = (callback) ->
+  child.exec GIT_TAG, (error, stdout, stderr) ->
+    data = if error? then "" else stdout.replace("\n", "")
+    callback error, data
+
 module.exports = (grunt) ->
 
   # Replace templateUrl with actual html
@@ -60,11 +71,62 @@ module.exports = (grunt) ->
     grunt.file.recurse finalBuildPath, (path, root, sub, filename) ->
       fileList.push path if filename.indexOf(".DS_Store") is -1
 
-    data     = grunt.file.read componentFile, encoding: "utf8"
-    newArray = JSON.stringify fileList
-    data     = data.replace /"main": \[[^\]]+]/, "\"main\": #{newArray}"
-    data     = data.replace /"name": [^,]+/ , "\"name\": \"#{grunt.config.get("pkg").name}\""
-    data     = data.replace /"version": [^,]+/, "\"version\": \"#{grunt.config.get("pkg").version}\""
+    data         = grunt.file.readJSON componentFile, encoding: "utf8"
+    data.main    = fileList
+    data.name    = grunt.config.get("pkg").name
+    data.version = grunt.config.get("pkg").version
 
-    grunt.file.write componentFile, data, encoding: "utf8"
+    grunt.file.write componentFile, JSON.stringify(data, null, "  "), encoding: "utf8"
     grunt.log.writeln "Updated bower.json"
+
+  grunt.registerTask "bump", "Bump package version up", ->
+    done = @async()
+
+    version = grunt.option "tag"
+    if version? and not VERSION_REGEX.test version
+      grunt.fail.fatal "Invalid tag"
+
+    if version?
+      grunt.log.writeln version
+    else
+      getLastVersion (error, data) ->
+        grunt.fail.fatal "Failed to read last tag" if error?
+
+        grunt.log.writeln "Previous version #{data}"
+
+        versionArr    = data.split "."
+        versionArr[2] = +versionArr[2] + 1
+        data          = versionArr.join "."
+
+        grunt.log.writeln "Updating to version #{data}"
+
+        pkg         = grunt.config.get("pkg")
+        pkg.version = data[1..]
+        grunt.file.write "package.json", JSON.stringify(pkg, null, "  "), encoding: "utf8"
+
+        done()
+
+  grunt.registerTask "changelog", "Generate temporary changelog", ->
+    done    = @async()
+    version = grunt.config.get("pkg").version
+
+    CMD = "#{CHANGELOG} v#{version} changelog.tmp.md"
+    child.exec CMD, (error, stdout, stderr) ->
+      grunt.fail.fatal error if error?
+
+      grunt.log.writeln stdout
+      done()
+
+  grunt.registerTask "tag", "Tag latest commit", ->
+    done    = @async()
+    version = grunt.config.get("pkg").version
+
+    CMD = [
+      "git commit -am 'chore(build): Build v#{version}'"
+      "git tag v#{version}"
+    ].join "&&"
+
+    child.exec CMD, (error, stdout, stderr) ->
+      grunt.fail.fatal "Failed to tag" if error?
+      grunt.log.writeln stdout
+      done()
