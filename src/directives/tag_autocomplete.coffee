@@ -153,5 +153,5 @@ angular.module("Mac").directive "macTagAutocomplete", [
           , 0
 
         $scope.$on "mac-tag-autocomplete-clear-input", ->
-          $scope.$apply -> $scope.textInput = ""
+          $scope.textInput = ""
 ]
