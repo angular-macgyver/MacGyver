@@ -84,8 +84,8 @@ angular.module("Mac").directive "macTagAutocomplete", [
 
         # Clicking on the element will focus on input
         $scope.focusTextInput = ->
-          textInputDOM = element[0].getElementsByClassName "text-input"
-          angular.element(textInputDOM).triggerHandler "focus"
+          textInputDOM = element[0].getElementsByClassName "mac-autocomplete"
+          textInputDOM[0].focus()
 
         $scope.getTagLabel = (tag) -> if labelKey then tag[labelKey] else tag
 
