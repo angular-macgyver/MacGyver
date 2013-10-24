@@ -7,24 +7,24 @@
   padding    0
 
   .tag-list
-    margin-left 0px
+    margin 0px
 
     .tag
       padding       3px 20px 3px 5px
-      margin        3px 0px 3px 5px
+      margin        3px
       position      relative
-      float         left
+      display       inline-block
       list-style    none
       font-size     13px
       line-height   13px
       border-radius 3px
-      box-shadow    0px 0px 2px #ffffff inset, 0 1px 0 rgba(0,0,0,0.05);
+      box-shadow    0px 0px 2px #ffffff inset, 0 1px 0 rgba(0,0,0,0.05)
 
       &.label
-        background    linear-gradient(top,#eaf0ff,#dee8ff)
-        border 1px solid #bfc9e1
+        background  linear-gradient(top,#eaf0ff,#dee8ff)
+        border      1px solid #bfc9e1
         text-shadow none
-        color #000
+        color       #000
         font-weight normal
 
       .tag-close
@@ -35,14 +35,21 @@
 
       &.input-tag
         white-space nowrap
-        margin      0px 0px 0px 5px
         padding     0
 
         .text-input
-          color         #666
-          background    transparent
-          font-size     100%
-          padding       5px
-          margin        1px 0px
-          border        0px !important
+          color      #666
+          background transparent
+          padding    5px
+          margin     0px
+          border     0px !important
 
+          &:focus
+            border     none
+            box-shadow none
+
+        &.fullwidth
+          width 100%
+
+          .text-input
+            width 90%

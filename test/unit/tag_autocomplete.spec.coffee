@@ -149,6 +149,30 @@ describe "Mac tag autocomplete", ->
 
       expect(textInputScope.autocompleteSource.length).toBe 3
 
+    it "should have a placeholder", ->
+      $rootScope.selected = []
+      element = $compile("""
+        <mac-tag-autocomplete
+          mac-tag-autocomplete-placeholder = \"'Testing'\"
+          mac-tag-autocomplete-selected='selected'>
+        </mac-tag-autocomplete>""") $rootScope
+      $rootScope.$digest()
+
+      textInputScope = $rootScope.$$childHead
+      expect(textInputScope.autocompletePlaceholder).toBe "Testing"
+
+    it "should not have a placeholder when there is selcted tag", ->
+      $rootScope.selected = [{id: "tag123"}]
+      element = $compile("""
+        <mac-tag-autocomplete
+          mac-tag-autocomplete-placeholder = \"'Testing'\"
+          mac-tag-autocomplete-selected='selected'>
+        </mac-tag-autocomplete>""") $rootScope
+      $rootScope.$digest()
+
+      textInputScope = $rootScope.$$childHead
+      expect(textInputScope.autocompletePlaceholder).toBe ""
+
   describe "onKeyDown", ->
     it "should fire keydown callback", ->
       called             = false

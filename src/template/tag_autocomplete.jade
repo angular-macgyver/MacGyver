@@ -3,12 +3,12 @@
     li.tag.label(ng-repeat="tag in selected")
       .tag-close(ng-click="selected.splice($index, 1)") &times;
       span.tag-label {{getTagLabel(tag)}}
-    li.tag.input-tag
+    li.tag.input-tag(ng-class="{'fullwidth': !selected.length}")
       mac-autocomplete.text-input.mac-autocomplete(
         ng-model                    = "textInput"
         mac-autocomplete-disabled   = "disabled"
         mac-autocomplete-on-select  = "onSelect(selected)"
         mac-autocomplete-on-success = "onSuccess(data)"
-        mac-placeholder             = "placeholder"
+        mac-placeholder             = "autocompletePlaceholder"
         mac-keydown                 = "onKeyDown($event)"
       )

@@ -49,13 +49,13 @@ angular.module("Mac").directive "macTagAutocomplete", [
       onKeydown:   "&macTagAutocompleteOnKeydown"
 
     compile: (element, attrs) ->
-      valueKey    = attrs.macTagAutocompleteValue
-      valueKey   ?= "id"
-      labelKey    = attrs.macTagAutocompleteLabel
-      labelKey   ?= "name"
-      queryKey    = attrs.macTagAutocompleteQuery  or "q"
-      delay       = +attrs.macTagAutocompleteDelay or 800
-      useSource   = false
+      valueKey   = attrs.macTagAutocompleteValue
+      valueKey  ?= "id"
+      labelKey   = attrs.macTagAutocompleteLabel
+      labelKey  ?= "name"
+      queryKey   = attrs.macTagAutocompleteQuery  or "q"
+      delay      = +attrs.macTagAutocompleteDelay or 800
+      useSource  = false
 
       textInput =
         angular.element(element[0].getElementsByClassName "mac-autocomplete")
@@ -109,18 +109,21 @@ angular.module("Mac").directive "macTagAutocomplete", [
                     expression $scope.$parent, {$event, item}
         , 0
 
-        if useSource
-          updateAutocompleteSource = ->
-            sourceValues   = (item[valueKey] for item in ($scope.source or []))
-            selectedValues = (item[valueKey] for item in ($scope.selected or []))
-            difference     = (item for item in sourceValues when item not in selectedValues)
+        updateAutocompleteSource = ->
+          $scope.autocompletePlaceholder =
+            if $scope.selected?.length then "" else $scope.placeholder
 
-            $scope.autocompleteSource =
-              (item for item in ($scope.source or []) when item[valueKey] in difference)
+          return unless useSource
+          sourceValues   = (item[valueKey] for item in ($scope.source or []))
+          selectedValues = (item[valueKey] for item in ($scope.selected or []))
+          difference     = (item for item in sourceValues when item not in selectedValues)
 
-          # Switch to use watchCollections when upgrading to AngularJS 1.2
-          $scope.$watch "selected", updateAutocompleteSource, true
-          $scope.$watch "source", updateAutocompleteSource, true
+          $scope.autocompleteSource =
+            (item for item in ($scope.source or []) when item[valueKey] in difference)
+
+        # Switch to use watchCollections when upgrading to AngularJS 1.2
+        $scope.$watch "source", updateAutocompleteSource, true if useSource
+        $scope.$watch "selected", updateAutocompleteSource, true
 
         $scope.onKeyDown = ($event) ->
           stroke = $event.which or $event.keyCode
