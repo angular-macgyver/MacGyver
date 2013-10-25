@@ -29,6 +29,7 @@ section h1{padding-bottom:9px;margin:20px 0;border-bottom:1px solid #eee}
 .footer .footer-links{margin:10px 0;}
 .footer .footer-links li{display:inline;padding:0 2px;}
 .footer .footer-links li:first-child{padding-left:0}
+.mac-tag-autocomplete{width:100%}
 .com{color:#93a1a1}
 .lit{color:#195f91}
 .pun,.opn,.clo{color:#93a1a1}

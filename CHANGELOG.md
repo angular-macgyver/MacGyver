@@ -1,3 +1,19 @@
+# v0.1.21 (2013/10/24)
+## Bug Fixes
+- **macMenu:** Removed left padding on menu item
+  ([dd2c2495](https://github.com/StartTheShift/MacGyver/commit/dd2c249545e467b053a13a0414716a3a7282894e))
+- **macScrollSpy:** Fixed not selecting last anchor when scroll to the bottom
+  ([cf104358](https://github.com/StartTheShift/MacGyver/commit/cf104358ad4d5c25b36dcd43d261f4d787763368))
+- **macTagAutocomplete:**
+  - Placeholder shows when no items are selected and can now accomedate for longer placeholder
+  ([671bd823](https://github.com/StartTheShift/MacGyver/commit/671bd82398dcf46f2ebe802ac0eb9b7d53bd9ea8),
+   [#110](https://github.com/StartTheShift/MacGyver/issues/110))
+  - Fixed clicking on tag autocomplete focus on input
+  ([ce73e365](https://github.com/StartTheShift/MacGyver/commit/ce73e365d459c3e79101aafd41cfb30aed474ceb))
+  - Removed digest cycle on reset event
+  ([d5a53aa6](https://github.com/StartTheShift/MacGyver/commit/d5a53aa6e947be694666ec8707b0bc02fcc2b1a4))
+
+
 # v0.1.20 (2013/10/21)
 ## Bug Fixes
 - **macScrollSpyAnchor:** Fixed interpolated id not working properly
