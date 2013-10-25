@@ -29,7 +29,7 @@ angular.module("Mac").directive("macScrollSpy", [
         return true unless scrollSpy.registered.length
 
         # Select the last anchor when scrollTop is over maxScroll
-        if scrollTop >= maxScroll and scrollSpy.active.id isnt scrollSpy.last().id
+        if scrollTop >= maxScroll
           return scrollSpy.setActive scrollSpy.last()
 
         for i in [0..scrollSpy.registered.length - 1]
