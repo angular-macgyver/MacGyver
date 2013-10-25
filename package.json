@@ -33,14 +33,14 @@
     "grunt-contrib-stylus": "~0.8.0",
     "grunt-contrib-uglify": "~0.2.2",
     "grunt-contrib-watch": "~0.5.1",
-    "grunt-karma": "~0.6.1",
+    "grunt-karma": "~0.7.1",
     "marked": "~0.2.9",
     "matchdep": "~0.1.2",
     "karma-chrome-launcher": "~0.1.0",
     "karma-jasmine": "~0.1.0",
     "karma-coffee-preprocessor": "~0.1.0",
     "karma-phantomjs-launcher": "~0.1.0",
-    "karma": "~0.10.1",
+    "karma": "0.10.2",
     "karma-ng-html2js-preprocessor": "~0.1.0"
   }
 }
