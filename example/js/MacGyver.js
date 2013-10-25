@@ -9422,8 +9422,11 @@ angular.module("Mac").directive("macScrollSpy", [
           scrollTop = spyElement.scrollTop() + options.offset;
           scrollHeight = this.scrollHeight || element[0].scrollHeight;
           maxScroll = scrollHeight - spyElement.height();
-          if (scrollTop >= maxScroll || !scrollSpy.registered.length) {
+          if (!scrollSpy.registered.length) {
             return true;
+          }
+          if (scrollTop >= maxScroll && scrollSpy.active.id !== scrollSpy.last().id) {
+            return scrollSpy.setActive(scrollSpy.last());
           }
           for (i = _i = 0, _ref = scrollSpy.registered.length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
             anchors = scrollSpy.registered;
@@ -10433,8 +10436,8 @@ angular.module("Mac").directive("macTagAutocomplete", [
           }
           $scope.focusTextInput = function() {
             var textInputDOM;
-            textInputDOM = element[0].getElementsByClassName("text-input");
-            return angular.element(textInputDOM).triggerHandler("focus");
+            textInputDOM = element[0].getElementsByClassName("mac-autocomplete");
+            return textInputDOM[0].focus();
           };
           $scope.getTagLabel = function(tag) {
             if (labelKey) {
@@ -10474,56 +10477,60 @@ angular.module("Mac").directive("macTagAutocomplete", [
               return _results;
             }
           }, 0);
+          updateAutocompleteSource = function() {
+            var difference, item, selectedValues, sourceValues, _ref;
+            $scope.autocompletePlaceholder = ((_ref = $scope.selected) != null ? _ref.length : void 0) ? "" : $scope.placeholder;
+            if (!useSource) {
+              return;
+            }
+            sourceValues = (function() {
+              var _i, _len, _ref1, _results;
+              _ref1 = $scope.source || [];
+              _results = [];
+              for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+                item = _ref1[_i];
+                _results.push(item[valueKey]);
+              }
+              return _results;
+            })();
+            selectedValues = (function() {
+              var _i, _len, _ref1, _results;
+              _ref1 = $scope.selected || [];
+              _results = [];
+              for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+                item = _ref1[_i];
+                _results.push(item[valueKey]);
+              }
+              return _results;
+            })();
+            difference = (function() {
+              var _i, _len, _results;
+              _results = [];
+              for (_i = 0, _len = sourceValues.length; _i < _len; _i++) {
+                item = sourceValues[_i];
+                if (__indexOf.call(selectedValues, item) < 0) {
+                  _results.push(item);
+                }
+              }
+              return _results;
+            })();
+            return $scope.autocompleteSource = (function() {
+              var _i, _len, _ref1, _ref2, _results;
+              _ref1 = $scope.source || [];
+              _results = [];
+              for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+                item = _ref1[_i];
+                if (_ref2 = item[valueKey], __indexOf.call(difference, _ref2) >= 0) {
+                  _results.push(item);
+                }
+              }
+              return _results;
+            })();
+          };
           if (useSource) {
-            updateAutocompleteSource = function() {
-              var difference, item, selectedValues, sourceValues;
-              sourceValues = (function() {
-                var _i, _len, _ref, _results;
-                _ref = $scope.source || [];
-                _results = [];
-                for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                  item = _ref[_i];
-                  _results.push(item[valueKey]);
-                }
-                return _results;
-              })();
-              selectedValues = (function() {
-                var _i, _len, _ref, _results;
-                _ref = $scope.selected || [];
-                _results = [];
-                for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                  item = _ref[_i];
-                  _results.push(item[valueKey]);
-                }
-                return _results;
-              })();
-              difference = (function() {
-                var _i, _len, _results;
-                _results = [];
-                for (_i = 0, _len = sourceValues.length; _i < _len; _i++) {
-                  item = sourceValues[_i];
-                  if (__indexOf.call(selectedValues, item) < 0) {
-                    _results.push(item);
-                  }
-                }
-                return _results;
-              })();
-              return $scope.autocompleteSource = (function() {
-                var _i, _len, _ref, _ref1, _results;
-                _ref = $scope.source || [];
-                _results = [];
-                for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                  item = _ref[_i];
-                  if (_ref1 = item[valueKey], __indexOf.call(difference, _ref1) >= 0) {
-                    _results.push(item);
-                  }
-                }
-                return _results;
-              })();
-            };
-            $scope.$watch("selected", updateAutocompleteSource, true);
             $scope.$watch("source", updateAutocompleteSource, true);
           }
+          $scope.$watch("selected", updateAutocompleteSource, true);
           $scope.onKeyDown = function($event) {
             var stroke, _base;
             stroke = $event.which || $event.keyCode;
@@ -10589,9 +10596,7 @@ angular.module("Mac").directive("macTagAutocomplete", [
             }, 0);
           };
           return $scope.$on("mac-tag-autocomplete-clear-input", function() {
-            return $scope.$apply(function() {
-              return $scope.textInput = "";
-            });
+            return $scope.textInput = "";
           });
         };
       }
@@ -11828,6 +11833,9 @@ angular.module("Mac").service("scrollSpy", [
           break;
         }
         return _results;
+      },
+      last: function() {
+        return this.registered[this.registered.length - 1];
       },
       setActive: function(anchor) {
         var listener, _i, _len, _ref, _results;
