@@ -121,9 +121,9 @@ angular.module("Mac").directive "macAutocomplete", [
       #
       positionMenu = ->
         if $menuScope.items.length > 0
-          $menuScope.style       = element.offset()
-          $menuScope.style.top  += element.outerHeight()
-          $menuScope.style.width = element.outerWidth()
+          $menuScope.style          = element.offset()
+          $menuScope.style.top     += element.outerHeight()
+          $menuScope.style.minWidth = element.outerWidth()
 
           angular.forEach $menuScope.style, (value, key) ->
             if not isNaN(+value) and angular.isNumber +value
