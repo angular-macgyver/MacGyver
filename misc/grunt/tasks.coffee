@@ -79,7 +79,7 @@ module.exports = (grunt) ->
     grunt.file.write componentFile, JSON.stringify(data, null, "  "), encoding: "utf8"
     grunt.log.writeln "Updated bower.json"
 
-  grunt.registerTask "bump", "Bump package version up", ->
+  grunt.registerTask "bump", "Bump package version up and generate changelog", ->
     done = @async()
 
     version = grunt.option "tag"
@@ -103,6 +103,8 @@ module.exports = (grunt) ->
         pkg         = grunt.config.get("pkg")
         pkg.version = data[1..]
         grunt.file.write "package.json", JSON.stringify(pkg, null, "  "), encoding: "utf8"
+
+        grunt.task.run "changelog"
 
         done()
 
