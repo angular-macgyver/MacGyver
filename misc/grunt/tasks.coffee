@@ -79,6 +79,25 @@ module.exports = (grunt) ->
     grunt.file.write componentFile, JSON.stringify(data, null, "  "), encoding: "utf8"
     grunt.log.writeln "Updated bower.json"
 
+  ###
+  @name updatebuild
+  @description
+  Update bower.json version of all bower repositories
+  ###
+  grunt.registerMultiTask "updatebuild", "Update all bower.json in build/", ->
+    version = grunt.config.get("pkg").version
+    @files.forEach (file) ->
+      src = file.src.filter (filepath) ->
+        unless (exists = grunt.file.exists(filepath))
+          grunt.log.warn "File '#{filepath}' not found"
+        return exists
+      .map (filepath) ->
+        data         = grunt.file.readJSON filepath, encoding: "utf8"
+        data.version = grunt.config.get("pkg").version
+        return data
+
+      grunt.file.write file.dest, JSON.stringify(src, null, "  "), encoding: "utf8"
+      grunt.log.writeln "Updated version in #{file.dest}"
   grunt.registerTask "bump", "Bump package version up and generate changelog", ->
     done = @async()
 
