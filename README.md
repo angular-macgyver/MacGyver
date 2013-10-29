@@ -26,7 +26,9 @@ Duct Tape and a Swiss Army Knife. Angular helpers for all your friends!
  - Underscore String
 
 ## 3rd party libraries dependencies ##
- - jQuery
+Libraries are only needed for a few directives,
+
+ - jQuery (datepicker, table and file upload)
  - jQuery UI (datepicker and table)
  - jQuery File Upload (file upload directive)
  - Underscore String (Underscore string filter)
