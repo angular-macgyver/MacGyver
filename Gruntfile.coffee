@@ -1,5 +1,4 @@
 server = require "./server"
-path   = require "path"
 
 module.exports = (grunt) ->
   require('matchdep').filterDev('grunt-*').forEach grunt.loadNpmTasks
@@ -107,7 +106,11 @@ module.exports = (grunt) ->
       moduleCss:
         files: [
           {
-            dest: "build/bower-macgyver/<%= pkg.name.toLowerCase() %>-core.css"
+            dest: "build/bower-macgyver/<%= pkg.name.toLowerCase() %>.css"
+            src: "<%= buildConf.css.example %>"
+          }
+          {
+            dest: "build/bower-macgyver-core/<%= pkg.name.toLowerCase() %>-core.css"
             src: "<%= buildConf.css.core %>"
           }
           {
@@ -187,8 +190,12 @@ module.exports = (grunt) ->
       bower:
         files: [
           {
+            src: "lib/<%= pkg.name.toLowerCase() %>.js"
+            dest: "build/bower-macgyver/<%= pkg.name.toLowerCase() %>.js"
+          }
+          {
             src: "lib/<%= pkg.name.toLowerCase() %>-core.js"
-            dest: "build/bower-macgyver/macgyver-core.js"
+            dest: "build/bower-macgyver-core/macgyver-core.js"
           }
           {
             src: "lib/<%= pkg.name.toLowerCase() %>-datepicker.js"
@@ -216,7 +223,7 @@ module.exports = (grunt) ->
 
     uglify:
       options:
-        report:           "gzip"
+        report:           "min"
         preserveComments: false
       dist:
         files: [
@@ -224,9 +231,16 @@ module.exports = (grunt) ->
             src: "lib/<%= pkg.name.toLowerCase() %>.js"
             dest: "lib/<%= pkg.name.toLowerCase() %>.min.js"
           }
+        ]
+      bower:
+        files: [
+          {
+            src: "lib/<%= pkg.name.toLowerCase() %>.js"
+            dest: "build/bower-macgyver/macgyver.min.js"
+          }
           {
             src: "lib/<%= pkg.name.toLowerCase() %>-core.js"
-            dest: "build/bower-macgyver/macgyver-core.min.js"
+            dest: "build/bower-macgyver-core/macgyver-core.min.js"
           }
           {
             src: "lib/<%= pkg.name.toLowerCase() %>-datepicker.js"
@@ -314,7 +328,7 @@ module.exports = (grunt) ->
         options:
           pattern: /templateUrl: "([^"]+)"/g
           replace: (match) ->
-            filePath     = path.join "example/", match[1]
+            filePath     = require("path").join "example/", match[1]
             compiledHtml = grunt.file.read filePath
             compiledHtml = compiledHtml.replace /"/g, "\\\""
             "template: \"#{compiledHtml}\""
@@ -361,6 +375,16 @@ module.exports = (grunt) ->
           ext:     ".html"
         ]
 
+    updatebuild:
+      app:
+        files: [
+          expand:  true
+          flatten: false
+          cwd:     "build"
+          src:     "**/bower.json"
+          dest:    "build"
+        ]
+
     "gh-pages":
       options:
         base:    "example"
@@ -369,12 +393,19 @@ module.exports = (grunt) ->
       src: ["**"]
 
   grunt.registerTask "prepare", "Prepare for deploying", ["bump", "changelog"]
+  grunt.registerTask "concatDeploy", [
+    "concat:jqueryui"
+    "concat:appJs"
+    "concat:deployAppJs"
+    "concat:modulesJs"
+    "concat:css"
+  ]
 
   grunt.registerTask "deploy", "Build and copy to lib/", [
       "coffee"
       "stylus"
       "jade"
-      "concat"
+      "concatDeploy"
       "clean"
       "replace:src"
       "chalkboard"
@@ -383,8 +414,9 @@ module.exports = (grunt) ->
       "replace:version"
       "karma:build"
       "update:component"
-      "copy"
-      "uglify"
+      "copy:images"
+      "copy:public"
+      "uglify:dist"
       "tag"
     ]
 
@@ -399,6 +431,15 @@ module.exports = (grunt) ->
     "chalkboard"
     "marked"
     "replace:docs"
+  ]
+
+  grunt.registerTask "deploy-bower", "Updated all bower repositories", [
+    "copy:bower"
+    "uglify:bower"
+    "stylus:compile"
+    "concat:moduleCss"
+    "clean"
+    "updatebuild"
   ]
 
   grunt.registerTask "run", "Watch src and run test server", ->
