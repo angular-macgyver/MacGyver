@@ -361,6 +361,13 @@ module.exports = (grunt) ->
           ext:     ".html"
         ]
 
+    "gh-pages":
+      options:
+        base:    "example"
+        message: "docs update"
+        push:    false
+      src: ["**"]
+
   grunt.registerTask "prepare", "Prepare for deploying", ["bump", "changelog"]
 
   grunt.registerTask "deploy", "Build and copy to lib/", [

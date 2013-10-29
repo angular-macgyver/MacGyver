@@ -10,6 +10,7 @@ example/uploads
 # Build files
 build/
 .gitmodules
+.grunt/
 
 # Logs
 test-results.xml
@@ -20,6 +21,3 @@ libpeerconnection.log
 
 # Except these files
 !/vendor/bower/vendor.styl
-
-# Chrome generated file
-libpeerconnection.log
