@@ -105,8 +105,17 @@ module.exports = (grunt) ->
     if version? and not VERSION_REGEX.test version
       grunt.fail.fatal "Invalid tag"
 
+    writeAndChangelog = (newVersion) ->
+      grunt.log.writeln "Updating to version #{newVersion}"
+
+      pkg         = grunt.config.get("pkg")
+      pkg.version = newVersion
+      grunt.file.write "package.json", JSON.stringify(pkg, null, "  "), encoding: "utf8"
+
+      grunt.task.run "changelog"
+
     if version?
-      grunt.log.writeln version
+      writeAndChangelog version[1..]
     else
       getLastVersion (error, data) ->
         grunt.fail.fatal "Failed to read last tag" if error?
@@ -117,13 +126,7 @@ module.exports = (grunt) ->
         versionArr[2] = +versionArr[2] + 1
         data          = versionArr.join "."
 
-        grunt.log.writeln "Updating to version #{data}"
-
-        pkg         = grunt.config.get("pkg")
-        pkg.version = data[1..]
-        grunt.file.write "package.json", JSON.stringify(pkg, null, "  "), encoding: "utf8"
-
-        grunt.task.run "changelog"
+        writeAndChangelog data[1..]
 
         done()
 
