@@ -98,6 +98,9 @@ module.exports = (grunt) ->
   ###
   grunt.registerMultiTask "updatebuild", "Update all bower.json in build/", ->
     version = grunt.config.get("pkg").version
+    options = @options
+      separator: grunt.util.linefeed
+
     @files.forEach (file) ->
       src = file.src.filter (filepath) ->
         unless (exists = grunt.file.exists(filepath))
@@ -106,9 +109,10 @@ module.exports = (grunt) ->
       .map (filepath) ->
         data         = grunt.file.readJSON filepath, encoding: "utf8"
         data.version = grunt.config.get("pkg").version
-        return data
+        JSON.stringify(data, null, "  ")
+      .join grunt.util.normalizelf(options.separator)
 
-      grunt.file.write file.dest, JSON.stringify(src, null, "  "), encoding: "utf8"
+      grunt.file.write file.dest, src, encoding: "utf8"
       grunt.log.writeln "Updated version in #{file.dest}"
 
   ###
