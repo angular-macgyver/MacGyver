@@ -1,12 +1,15 @@
 extends layout
 
 block append content
-  .row.content
+  .row.content(ng-controller='ExampleController')
     #nav.span3
       ul.nav.nav-list.docs-sidenav(mac-affix)
         li(mac-scroll-spy-target="element"): a(href="#element")
           i.icon-chevron-right
           | Angular element
+        li(mac-scroll-spy-target="keys"): a(href="#keys")
+          i.icon-chevron-right
+          | Character code enum
         li(mac-scroll-spy-target="pluralize"): a(href="#pluralize")
           i.icon-chevron-right
           | Pluralize
@@ -57,6 +60,17 @@ block append content
     #example.span9
       section#element(mac-scroll-spy-anchor)
         @@include("docs/html/main.html")
+
+      section#keys(mac-scroll-spy-anchor)
+        h3 Character code enum
+        p MacGyver comes with character code enum for easy reference and increase
+          | readability. With dependency injection, just inject "keys" to gain access.
+        ul.keycode-list
+          li(
+            ng-repeat = "item in keys | orderBy:code"
+          )
+            b {{item.key}}
+            |  - {{item.code}}
 
       section#pluralize(mac-scroll-spy-anchor)
         h3 pluralize

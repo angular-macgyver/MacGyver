@@ -9,8 +9,9 @@ module.controller "modalController", ["$scope", "modal", ($scope, modal) ->
 module.controller "ExampleController", [
   "$scope"
   "$window"
-($scope, $window) ->
-
+  "keys"
+($scope, $window, keys) ->
+  $scope.keys          = ({key, code} for key, code of keys)
   $scope.selectOptions = [
     {value: 1, text: "text1"}
     {value: 2, text: "text2"}
