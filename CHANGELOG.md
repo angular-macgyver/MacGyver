@@ -1,3 +1,13 @@
+# v0.1.21 (2013/10/30)
+## Bug Fixes
+- **macAutocomplete:** Changed menu to min width to prevent content getting cut off
+  ([d80c4153](https://github.com/StartTheShift/MacGyver/commit/d80c4153fc5e92260b87bc948d68daeb3e1b0f25),
+   [#131](https://github.com/StartTheShift/MacGyver/issues/131))
+- **macScrollSpy:** Scroll spy doesn't flicker when scrolling to last element.
+  ([39ed95db](https://github.com/StartTheShift/MacGyver/commit/39ed95db6e31b91147207253a0422d4c8a61f5f6),
+   [#132](https://github.com/StartTheShift/MacGyver/issues/132))
+
+
 # v0.1.21 (2013/10/24)
 ## Bug Fixes
 - **macMenu:** Removed left padding on menu item

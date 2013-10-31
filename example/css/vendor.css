@@ -14,6 +14,8 @@ section h1{padding-bottom:9px;margin:20px 0;border-bottom:1px solid #eee}
 .macgyver-head ul li{margin:0 10px;display:inline}
 .macgyver-head .macgyver-links{margin:0 auto 30px auto}
 .macgyver-head .github-info{padding:10px 0;background-color:#f5f5f5;border-top:1px solid #ddd;border-bottom:1px solid #ddd}
+.keycode-list{margin-left:0;list-style:none;}
+.keycode-list li{float:left;width:25%;border-bottom:1px solid #f0f0f0;padding:3px 0}
 .docs-example{position:relative;margin:15px 0;padding:39px 19px 14px;*padding-top:19px;background-color:#fff;border:1px solid #ddd;-webkit-border-radius:4px;border-radius:4px;min-height:25px;}
 .docs-example:after{content:"Example";position:absolute;top:-1px;left:-1px;padding:3px 7px;font-size:12px;font-weight:bold;background-color:#f5f5f5;border:1px solid #ddd;color:#9da0a4;-webkit-border-radius:4px 0 4px 0;border-radius:4px 0 4px 0}
 .docs-example .mac-menu{position:relative}
