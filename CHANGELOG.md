@@ -1,4 +1,4 @@
-# v0.1.21 (2013/10/30)
+# v0.1.22 (2013/10/30)
 ## Bug Fixes
 - **macAutocomplete:** Changed menu to min width to prevent content getting cut off
   ([d80c4153](https://github.com/StartTheShift/MacGyver/commit/d80c4153fc5e92260b87bc948d68daeb3e1b0f25),
