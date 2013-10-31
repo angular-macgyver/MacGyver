@@ -8201,7 +8201,7 @@ angular.module("Mac").directive("macAutocomplete", [
           if ($menuScope.items.length > 0) {
             $menuScope.style = element.offset();
             $menuScope.style.top += element.outerHeight();
-            $menuScope.style.width = element.outerWidth();
+            $menuScope.style.minWidth = element.outerWidth();
             angular.forEach($menuScope.style, function(value, key) {
               if (!isNaN(+value) && angular.isNumber(+value)) {
                 value = "" + value + "px";
@@ -9425,7 +9425,7 @@ angular.module("Mac").directive("macScrollSpy", [
           if (!scrollSpy.registered.length) {
             return true;
           }
-          if (scrollTop >= maxScroll && scrollSpy.active.id !== scrollSpy.last().id) {
+          if (scrollTop >= maxScroll) {
             return scrollSpy.setActive(scrollSpy.last());
           }
           for (i = _i = 0, _ref = scrollSpy.registered.length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
@@ -10977,7 +10977,20 @@ module.controller("modalController", [
 ]);
 
 module.controller("ExampleController", [
-  "$scope", "$window", function($scope, $window) {
+  "$scope", "$window", "keys", function($scope, $window, keys) {
+    var code, key;
+    $scope.keys = (function() {
+      var _results;
+      _results = [];
+      for (key in keys) {
+        code = keys[key];
+        _results.push({
+          key: key,
+          code: code
+        });
+      }
+      return _results;
+    })();
     $scope.selectOptions = [
       {
         value: 1,
