@@ -5,7 +5,9 @@ Duct Tape and a Swiss Army Knife. Angular helpers for all your friends!
 ## Current components ##
 
 ### Directives ###
+ - Affix
  - Autocomplete
+ - Canvas Spinner
  - Datepicker
  - Events
  - File Upload
@@ -79,7 +81,7 @@ The easiest way to install all requirements,
 #### Starting Grunt
 To compile source code and run unit tests while developing:
 
-    grunt run
+    grunt dev
 
 ## Authors
 
