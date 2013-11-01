@@ -1,14 +1,6 @@
-server = require "./server"
-
 module.exports = (grunt) ->
   require('matchdep').filterDev('grunt-*').forEach grunt.loadNpmTasks
   grunt.loadTasks "misc/grunt"
-
-  # Internal functions
-  spawn = (options, done = ->) ->
-    options.grunt ?= true
-    options.opts  ?= stdio: "inherit"
-    grunt.util.spawn options, done
 
   grunt.initConfig
     pkg:       grunt.file.readJSON "package.json"
@@ -265,18 +257,24 @@ module.exports = (grunt) ->
     # Watch all js, css and jade changes
     #
     watch:
+      options:
+        interrupt: true
       js:
         files: ["src/**/*.coffee", "src/*.coffee"]
-        tasks: ["coffee", "concat:jqueryui", "concat:appJs", "clean", "copy:public"]
-        options: interrupt: true
+        tasks: [
+          "karma:unit:run"
+          "coffee"
+          "concat:jqueryui"
+          "concat:appJs"
+          "clean"
+          "copy:public"
+        ]
       css:
         files: ["src/css/*.styl", "vendor/vendor.styl"]
         tasks: ["stylus", "concat:css", "clean"]
-        options: interrupt: true
       jade:
         files: ["src/**/*.jade"]
         tasks: ["jade", "replace:docs"]
-        options: interrupt: true
 
     #
     # karma section
@@ -286,7 +284,7 @@ module.exports = (grunt) ->
       options:
         configFile: "test/karma.conf.js"
       unit:
-        autoWatch: true
+        background: true
       travis:
         autoWatch: false
         singleRun: true
@@ -442,15 +440,9 @@ module.exports = (grunt) ->
     "updatebuild"
   ]
 
-  grunt.registerTask "run", "Watch src and run test server", ->
-    @async()
-
-    spawn args: ["compile"], ->
-      spawn args: ["watch"]
-      spawn args: ["server"]
-      spawn args: ["karma:unit"]
-
-  grunt.registerTask "server", "Run test server", ->
-    @async()
-
-    server.startServer 9001, "example"
+  grunt.registerTask "dev", "Watch src and run test server", [
+    "compile"
+    "karma:unit"
+    "server"
+    "watch"
+  ]
