@@ -269,6 +269,9 @@ module.exports = (grunt) ->
           "clean"
           "copy:public"
         ]
+      test:
+        files: ["test/**/*.spec.coffee"]
+        tasks: ["karma:unit:run"]
       css:
         files: ["src/css/*.styl", "vendor/vendor.styl"]
         tasks: ["stylus", "concat:css", "clean"]
