@@ -143,19 +143,36 @@ angular.module("Mac.Util", []).factory "util", [
 
       return rgb
 
-    _urlRegex: /(?:(?:(http[s]{0,1}:\/\/)(?:(www|[\d\w\-]+)\.){0,1})|(www|[\d\w\-]+)\.)([\d\w\-]+)\.([A-Za-z]{2,6})(:[\d]*){0,1}(\/?[\d\w\-\?\,\'\/\\\+&amp;%\$#!\=~\.]*){0,1}/i
+    # http://tools.ietf.org/html/rfc3986#section-2.2
+    _urlRegex: ///
+      (?:
+        (http[s]?):// # protocol (optional)
+      )?
+      (?:
+        (www|[\d\w\-]+)\. # subdomain (optional)
+      )?
+      ([\d\w\-]+)\.       # domain
+      ([A-Za-z]{2,6})     # tld
+      (:[\d]*)?           # port (optional)
+      ([                  # path (optional)
+        :/?#\[\]@         # rfc3986 gen-delims
+        !$&'()*+,;=       # rfc3986 sub-delims
+        \w\d-._~          # rfc3986 unreserved characters
+        %\\               # additional characters
+      ]*)?
+    ///i
 
     validateUrl: (url) ->
       match = @_urlRegex.exec url
       if match?
         match = {
           url:        match[0]
-          protocol:   match[1] or "http://"
-          subdomain:  match[2] or match[3]
-          name:       match[4]
-          domain:     match[5]
-          port:       match[6]
-          path:       match[7] or "/"
+          protocol:   match[1] or "http"
+          subdomain:  match[2]
+          name:       match[3]
+          domain:     match[4]
+          port:       match[5]
+          path:       match[6] or "/"
         }
         # Recreate the full url
         match["url"] = match.url

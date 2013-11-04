@@ -115,13 +115,22 @@ describe "Mac Util", ->
 
   it "should validate URL", ->
     validUrl = "http://www.macgyver.com"
-
     validObj = util.validateUrl validUrl
-    expect(validObj.protocol).toBe "http://"
+
+    expect(validObj.protocol).toBe "http"
     expect(validObj.subdomain).toBe "www"
     expect(validObj.name).toBe "macgyver"
     expect(validObj.domain).toBe "com"
     expect(validObj.path).toBe "/"
+
+  it "should validate complex URL", ->
+    validComplexUrl = "https://macgyver.io/cow/make/sound?sound=(moo)&andrian=cool#carey"
+    validComplexObj = util.validateUrl validComplexUrl
+
+    expect(validComplexObj.protocol).toBe "https"
+    expect(validComplexObj.subdomain).toBeUndefined()
+    expect(validComplexObj.domain).toBe "io"
+    expect(validComplexObj.path).toBe "/cow/make/sound?sound=(moo)&andrian=cool#carey"
 
   it "should return null on invalid URL", ->
     invalidUrl = "http://www"
