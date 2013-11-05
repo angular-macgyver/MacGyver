@@ -134,9 +134,12 @@ module.exports = (grunt) ->
 
       pkg         = grunt.config.get("pkg")
       pkg.version = newVersion
+      grunt.config "pkg", pkg
       grunt.file.write "package.json", JSON.stringify(pkg, null, "  "), encoding: "utf8"
 
       grunt.task.run "changelog"
+
+      done()
 
     if version?
       writeAndChangelog version[1..]
@@ -151,8 +154,6 @@ module.exports = (grunt) ->
         data          = versionArr.join "."
 
         writeAndChangelog data[1..]
-
-        done()
 
   ###
   @name changelog
