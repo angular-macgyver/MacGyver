@@ -1,3 +1,10 @@
+# v0.1.23 (2013/11/4)
+## Bug Fixes
+- **util:** Updated the url regex to be more verbose—more inline with rfc3986. Modified the protocol attribute to return only the protocol.
+Close #134
+  ([5d573011](https://github.com/StartTheShift/MacGyver/commit/5d5730114625b0482dd1c9dd156472ff80b9327b))
+
+
 # v0.1.22 (2013/10/30)
 ## Bug Fixes
 - **macAutocomplete:** Changed menu to min width to prevent content getting cut off
