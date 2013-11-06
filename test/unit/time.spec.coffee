@@ -119,7 +119,7 @@ describe "Mac Time input", ->
 
       expect($rootScope.model).toBe "06:25 PM"
 
-    it "should reset back to the original time when input is invalid", ->
+    it "should reset back to the original time when input is invalid - 1", ->
       $rootScope.model = ""
       element          = $compile("<mac-time mac-time-model='model'></mac-time>") $rootScope
       $rootScope.$digest()
@@ -132,7 +132,7 @@ describe "Mac Time input", ->
 
       expect($rootScope.model).toBe "06:25 PM"
 
-    it "should reset back to the original time when input is invalid", ->
+    it "should reset back to the original time when input is invalid - 2", ->
       $rootScope.model = ""
       element          = $compile("<mac-time mac-time-model='model'></mac-time>") $rootScope
       $rootScope.$digest()
