@@ -823,7 +823,7 @@ table.mac-table-default [mac-table-selectable]{cursor:pointer}
 .mac-table-container .mac-table-transclude{display:none}
 
 .mac-tag-autocomplete{position:relative;display:inline-block;border:1px solid #aaa;background:#fff;margin:0;padding:0;}
-.mac-tag-autocomplete .tag-list{margin:0;}
+.mac-tag-autocomplete .tag-list{margin:0;padding-left:0;}
 .mac-tag-autocomplete .tag-list .tag{padding:3px 20px 3px 5px;margin:3px;position:relative;display:inline-block;list-style:none;font-size:13px;line-height:13px;-webkit-border-radius:3px;border-radius:3px;}
 .mac-tag-autocomplete .tag-list .tag.label{background:-webkit-linear-gradient(top, #eaf0ff, #dee8ff);background:-moz-linear-gradient(top, #eaf0ff, #dee8ff);background:-o-linear-gradient(top, #eaf0ff, #dee8ff);background:-ms-linear-gradient(top, #eaf0ff, #dee8ff);background:linear-gradient(to bottom, #eaf0ff, #dee8ff);border:1px solid #bfc9e1;text-shadow:none;color:#000;font-weight:normal;-webkit-box-shadow:0 0 2px #fff inset,0 1px 0 rgba(0,0,0,0.05);box-shadow:0 0 2px #fff inset,0 1px 0 rgba(0,0,0,0.05)}
 .mac-tag-autocomplete .tag-list .tag .tag-close{position:absolute;right:6px;color:#9da6b7;cursor:pointer}

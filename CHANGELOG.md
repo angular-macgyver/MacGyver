@@ -1,3 +1,16 @@
+# v0.1.24 (2013/11/6)
+## Bug Fixes
+- **macTagAutocomplete:** Remove left padding in tag list
+  ([389f337f](https://github.com/StartTheShift/MacGyver/commit/389f337ff50f756fb587bd7f07a03fcea8232429))
+- **macTime:** Replaced the comparison of {} since you cannot compare objects to {}.
+  ([30b68d1b](https://github.com/StartTheShift/MacGyver/commit/30b68d1b300219d59accc1f448768ef250106404))
+
+## Features
+- **macTime:** Converted date to use current instead of unix. Removed notion of end selection because it broke highlighting when you selected more than one section (hour, minute, or marker). Denested some control blocks for readability/dry-ness. Added new lines for readability. Added "A" and "P" events to modify meridian values.
+  ([715bbe20](https://github.com/StartTheShift/MacGyver/commit/715bbe20bd41ea521611777ddf37e8fba810bfc3),
+   [#135](https://github.com/StartTheShift/MacGyver/issues/135))
+
+
 # v0.1.23 (2013/11/4)
 ## Bug Fixes
 - **util:** Updated the url regex to be more verbose—more inline with rfc3986. Modified the protocol attribute to return only the protocol.
