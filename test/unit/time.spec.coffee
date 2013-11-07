@@ -5,6 +5,7 @@ describe "Mac Time input", ->
   describe "Basic Initialization", ->
     $compile   = null
     $rootScope = null
+    currentDate = new Date().toDateString()
 
     beforeEach inject (_$compile_, _$rootScope_) ->
       $compile   = _$compile_
@@ -27,7 +28,7 @@ describe "Mac Time input", ->
       element          = $compile("<mac-time mac-time-model='model'></mac-time>") $rootScope
       $rootScope.$digest()
 
-      expectTime = new Date "Jan 1, 1970, 12:00 AM"
+      expectTime = new Date currentDate + " " + "12:00 AM"
       scope      = $rootScope.$$childHead
       expect(scope.time.getTime()).toBe expectTime.getTime()
 
@@ -36,7 +37,7 @@ describe "Mac Time input", ->
       element          = $compile("<mac-time mac-time-default='06:30 PM'></mac-time>") $rootScope
       $rootScope.$digest()
 
-      expectTime = new Date "Jan 1, 1970, 06:30 PM"
+      expectTime = new Date currentDate + " " + "06:30 PM"
       scope      = $rootScope.$$childHead
       expect(scope.time.getTime()).toBe expectTime.getTime()
 
@@ -62,12 +63,19 @@ describe "Mac Time input", ->
       expect($rootScope.model).toBe "12:00 AM"
 
   describe "Events", ->
-    $compile   = null
-    $rootScope = null
+    $compile         = null
+    $rootScope       = null
+    $sniffer         = null
+    changeInputValue = null
 
-    beforeEach inject (_$compile_, _$rootScope_) ->
+    beforeEach inject (_$compile_, _$rootScope_, _$sniffer_) ->
       $compile   = _$compile_
       $rootScope = _$rootScope_
+      $sniffer   = _$sniffer_
+
+      changeInputValue = (element, value) ->
+        element.val value
+        element.trigger (if $sniffer.hasEvent("input") then "input" else "change")
 
     it "should change the model after pressing down button", ->
       element = $compile("<mac-time mac-time-model='model'></mac-time>") $rootScope
@@ -92,6 +100,57 @@ describe "Mac Time input", ->
       input.trigger downEvent
 
       expect($rootScope.model).toBe "01:00 AM"
+
+    it "should change the meridian to PM after pressing the P button", ->
+      element = $compile("<mac-time mac-time-model='model'></mac-time>") $rootScope
+      $rootScope.$digest()
+
+      input           = $("input", element)
+      downEvent       = $.Event("keydown")
+      downEvent.which = 80
+      input.focus()
+
+      # hack to set cursor set input.selectionStart
+      # this luckily works because we want the selection to be 8 and the time to be 12:00 AM
+      changeInputValue input, "12:00 AM"
+
+      input.trigger downEvent
+
+      expect($rootScope.model).toBe "12:00 PM"
+
+    it "should change the meridian to AM after pressing the A button", ->
+      element = $compile("<mac-time mac-time-model='model'></mac-time>") $rootScope
+      $rootScope.$digest()
+
+      input           = $("input", element)
+      downEvent       = $.Event("keydown")
+      downEvent.which = 65
+      input.focus()
+
+      # hack to set cursor set input.selectionStart
+      # this luckily works because we want the selection to be 8 and the time to be 12:00 AM
+      changeInputValue input, "12:00 PM"
+
+      input.trigger downEvent
+
+      expect($rootScope.model).toBe "12:00 AM"
+
+    it "should not change the meridian to AM after pressing the P button", ->
+      element = $compile("<mac-time mac-time-model='model'></mac-time>") $rootScope
+      $rootScope.$digest()
+
+      input           = $("input", element)
+      downEvent       = $.Event("keydown")
+      downEvent.which = 80
+      input.focus()
+
+      # hack to set cursor set input.selectionStart
+      # this luckily works because we want the selection to be 8 and the time to be 12:00 AM
+      changeInputValue input, "12:00 PM"
+
+      input.trigger downEvent
+
+      expect($rootScope.model).toBe "12:00 PM"
 
   describe "view -> model", ->
     $compile         = null
