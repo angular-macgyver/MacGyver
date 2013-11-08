@@ -162,6 +162,8 @@ angular.module("Mac.Util", []).factory "util", [
       ]*)?
     ///i
 
+    _emailRegex: /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+
     validateUrl: (url) ->
       match = @_urlRegex.exec url
       if match?
@@ -178,9 +180,7 @@ angular.module("Mac.Util", []).factory "util", [
         match["url"] = match.url
       match
 
-    validateEmail: (email) ->
-      emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
-      emailRegex.test email
+    validateEmail: (email) -> @_emailRegex.test email
 
     # credits: http://www.netlobo.com/url_query_string_javascript.html
     getQueryString: (url, name = "") ->
