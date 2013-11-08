@@ -257,8 +257,6 @@ module.exports = (grunt) ->
     # Watch all js, css and jade changes
     #
     watch:
-      options:
-        interrupt: true
       js:
         files: ["src/**/*.coffee", "src/*.coffee"]
         tasks: [
