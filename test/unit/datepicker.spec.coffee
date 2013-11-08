@@ -128,6 +128,28 @@ describe "Mac datepicker", ->
       inputElement = $("input", element)
       equalsDate inputElement.datepicker("option", "maxDate"), date
 
+  describe "view -> model", ->
+    $sniffer         = null
+    changeInputValue = ->
+
+    beforeEach inject (_$sniffer_) ->
+      $sniffer = _$sniffer_
+
+      changeInputValue = (element, value) ->
+        element.val value
+        element.trigger (if $sniffer.hasEvent("input") then "input" else "change")
+
+    it "should update model", ->
+      $rootScope.model = "01/01/2014"
+
+      element = $compile("<mac-datepicker mac-datepicker-model='model'></mac-datepicker>") $rootScope
+      $rootScope.$digest()
+
+      input = $("input", element)
+      changeInputValue input, "10/21/2015"
+
+      expect($rootScope.model).toBe "10/21/2015"
+
   describe "callbacks", ->
     it "should call on select callback and set the model", ->
       called           = false

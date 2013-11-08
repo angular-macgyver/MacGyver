@@ -66,6 +66,11 @@ angular.module("Mac").directive "macDatepicker", [
       opts = util.extendAttributes "macDatepicker", defaults, attrs
 
       inputAttrs = "mac-id": opts.id
+
+      if attrs.macDatepickerModel
+        inputAttrs["ng-model"]             = attrs.macDatepickerModel
+        inputAttrs["mac-datepicker-input"] = opts.dateFormat
+
       if attrs.macDatepickerDisabled?
         inputAttrs["ng-disabled"] = attrs.macDatepickerDisabled
 
@@ -76,18 +81,23 @@ angular.module("Mac").directive "macDatepicker", [
         onSelect    = $parse attrs.macDatepickerOnSelect
         onClose     = $parse attrs.macDatepickerOnClose
         model       = $parse attrs.macDatepickerModel
-        initialized = false
 
+        # jQuery UI Datepicker initialization
+        opts.onSelect = (date, instance) ->
+          $scope.$apply ->
+            onSelect? $scope, {date, instance}
+            model.assign? $scope, date
+
+        opts.onClose = (date, instance) ->
+          $scope.$apply ->
+            onClose? $scope, {date, instance}
+
+        inputElement.datepicker opts
+
+        # Watchers on local variables
         setOptions = (name, value) ->
-          return unless initialized and value?
-          inputElement.datepicker "option", name, value
-
-        if attrs.macDatepickerModel?
-          $scope.$watch attrs.macDatepickerModel, (value) ->
-            if initialized
-              $timeout ->
-                inputElement.datepicker "setDate", value
-              , 0, false
+          if value?
+            inputElement.datepicker "option", name, value
 
         if attrs.macDatepickerDefaultDate?
           $scope.$watch attrs.macDatepickerDefaultDate, (value) ->
@@ -100,16 +110,4 @@ angular.module("Mac").directive "macDatepicker", [
         if attrs.macDatepickerMinDate?
           $scope.$watch attrs.macDatepickerMinDate, (value) ->
             setOptions "minDate", value
-
-        opts.onSelect = (date, instance) ->
-          $scope.$apply ->
-            onSelect? $scope, {date, instance}
-            model.assign? $scope, date
-
-        opts.onClose = (date, instance) ->
-          $scope.$apply ->
-            onClose? $scope, {date, instance}
-
-        inputElement.datepicker opts
-        initialized = true
 ]
