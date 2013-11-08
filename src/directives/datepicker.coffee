@@ -111,3 +111,26 @@ angular.module("Mac").directive "macDatepicker", [
           $scope.$watch attrs.macDatepickerMinDate, (value) ->
             setOptions "minDate", value
 ]
+
+###
+@name Datepicker Input
+@description
+An internal directive for mac-datepicker input element to add validator
+###
+angular.module("Mac").directive "macDatepickerInput", ->
+  restrict: "A"
+  require:  "?ngModel"
+  link:     ($scope, element, attrs, ctrl) ->
+    if ctrl
+      datepickerValidator = (value) ->
+        format = attrs.macDatepickerInput
+        try
+          $.datepicker.parseDate format, value
+          ctrl.$setValidity "date", true
+          return value
+        catch e
+          ctrl.$setValidity "date", false
+          return undefined
+
+      ctrl.$formatters.push datepickerValidator
+      ctrl.$parsers.push datepickerValidator
