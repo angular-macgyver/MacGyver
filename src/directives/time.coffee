@@ -36,19 +36,12 @@ angular.module("Mac").directive "macTime", [
       ($scope, element, attrs) ->
         $scope.placeholder = opts.placeholder
 
-        inputDOM         = element[0].getElementsByTagName("input")[0]
-        timeRegex        = /^(0?[1-9]|1[0-2]):([0-5][0-9]) ([AP]M)$/
-        highlightActions = 
-          hours:   -> inputDOM.setSelectionRange 0, 2
-          minutes: -> inputDOM.setSelectionRange 3, 5
-          markers: -> inputDOM.setSelectionRange 6, 8
+        inputDOM = element[0].getElementsByTagName("input")[0]
 
-        resetTime = ->
+        do initializeTime = ->
           currentDate = new Date().toDateString()
+          time        = new Date currentDate + " " + opts.default
 
-          time = new Date currentDate + " " + opts.default
-
-          # Invalid Date
           if isNaN time.getTime()
             time = new Date currentDate + " " + defaults.default
 
@@ -59,131 +52,163 @@ angular.module("Mac").directive "macTime", [
           #
           $scope.time = time
 
-        resetTime()
-
-        $scope.$watch "model", (value) ->
-          if value? and value
-            $scope.updateScopeTime()
-          else
-            resetTime()
-
-        #
-        # @name inputSelectAction
-        # @description
-        # Based on the index given, execute certain actions
-        # @param {Integer} index Start index of selection
-        # @param {Object} actions Three functions to execute out based on selection
-        #
-        inputSelectAction = (index, actions = {}) ->
-          if 0 <= index < 3
-            actions.hours?()
-
-          else if 3 <= index < 6
-            actions.minutes?()
-
-          else if 6 <= index < 9
-            actions.markers?()
-
-          actions.all?()
-
-        #
-        # @name $scope.updateInput
-        # @description
-        # Update the text input with the current set time and highlight section accordingly
-        # @param {Object} actions Three functions to execute out based on selection
-        #
-        $scope.updateInput = (actions = {}) ->
+        getSelection = ->
           start = inputDOM.selectionStart
 
-          hasActions = (key for own key of actions).length > 0
+          switch
+            when 0 <= start < 3 then "hour"
+            when 3 <= start < 6 then "minute"
+            when 6 <= start < 9 then "meridian"
 
-          if hasActions
-            inputSelectAction start, actions
-
-          # Highlight hour on activating the time input
+        selectRange = (start, end) ->
           $timeout ->
-            inputSelectAction start, highlightActions
+            inputDOM.setSelectionRange start, end
           , 0, false
 
+        selectHours    = -> selectRange 0, 2
+        selectMinutes  = -> selectRange 3, 5
+        selectMeridian = -> selectRange 6, 8
+
+        selectNextSection = ->
+          switch getSelection()
+            when "hour" then selectMinutes()
+            when "minute", "meridian" then selectMeridian()
+
+        selectPreviousSection = ->
+          switch getSelection()
+            when "hour", "minute" then selectHours()
+            when "meridian" then selectMinutes()
+
+        setMeridian = (meridian) ->
+          hours = $scope.time.getHours()
+
+          hours -= 12 if hours >= 12 and meridian is "AM"
+          hours += 12 if hours < 12 and meridian is "PM"
+
+          $scope.time.setHours hours
+
+        toggleMeridian = ->
+          hours = $scope.time.getHours()
+
+          $scope.time.setHours (hours + 12) % 24
+
+        incrementHour = (change) ->
+          $scope.time.setHours $scope.time.getHours() + change
+
+        incrementMinute = (change) ->
+          $scope.time.setMinutes $scope.time.getMinutes() + change
+
+        updateInput = ->
           $scope.model = $filter("date") $scope.time.getTime(), "hh:mm a"
 
-        #
-        # @name $scope.updateScopeTime
-        # @description
-        # Using model on scope, try to convert to javascript datetime object
-        #
-        $scope.updateScopeTime = ->
-          if timeMatch = timeRegex.exec $scope.model
-            hours   = +timeMatch[1]
-            minutes = +timeMatch[2]
-            markers = timeMatch[3] or "AM"
+        updateTime = ->
+          if timeMatch = util.timeRegex.exec $scope.model
+            hours    = +timeMatch[1]
+            minutes  = +timeMatch[2]
+            meridian = timeMatch[3]
 
-            hours += 12 if markers is "PM" and hours isnt 12
-            hours  = 0 if markers is "AM" and hours is 12
+            hours += 12 if meridian is "PM" and hours isnt 12
+            hours  = 0 if meridian is "AM" and hours is 12
 
             $scope.time.setHours hours, minutes
-          else
-            $scope.updateInput()
+
+        $scope.blurEvent = (event) ->
+          updateInput()
+
+        #
+        # @name $scope.clickEvent
+        # @description
+        # Note: The initial click into the input will not update the time because the
+        # model is empty. The selection by default should be hour. This works
+        # due to the cursor defaulting to 0,0.
+        #
+        $scope.clickEvent = (event) ->
+          updateTime()
+          updateInput()
+
+          switch getSelection()
+            when "hour" then selectHours()
+            when "minute" then selectMinutes()
+            when "meridian" then selectMeridian()
 
         $scope.keydownEvent = (event) ->
           key = event.which
 
+          event.preventDefault() if key in [
+            keys.UP
+            keys.DOWN
+            keys.LEFT
+            keys.RIGHT
+            keys.A
+            keys.P
+          ]
+
           switch key
             when keys.UP, keys.DOWN
-              event.preventDefault()
+              change = if key is keys.UP then 1 else -1
 
-              change  = if key is keys.UP then 1 else -1
+              switch getSelection()
+                when "hour"
+                  incrementHour(change)
+                  selectHours()
+                when "minute"
+                  incrementMinute(change)
+                  selectMinutes()
+                when "meridian"
+                  toggleMeridian()
+                  selectMeridian()
 
-              $scope.updateInput
-                hours:   -> $scope.time.setHours $scope.time.getHours() + change
-                minutes: -> $scope.time.setMinutes $scope.time.getMinutes() + change
-                markers: -> $scope.time.setHours $scope.time.getHours() + change * 12
-
+              updateInput()
+              
             when keys.LEFT, keys.RIGHT
-              event.preventDefault()
+              switch key
+                when keys.LEFT then selectPreviousSection()
+                when keys.RIGHT then selectNextSection()
 
-              change = if key is keys.LEFT then -3 else 3
-              start  = inputDOM.selectionStart
-              end    = inputDOM.selectionEnd
-
-              # Determine the next input to highlight
-              inputSelectAction start,
-                # if hours are highlighted, keep their selectionStart at 0
-                hours:   -> change = 0 if key is keys.LEFT
-                # if markers are highlighted, keep their selectionStart at 8
-                markers: -> change = 0 if key is keys.RIGHT
-                # otherwise, navigate between hours, minutes, markers
-                all:     ->
-                  start += change
-                  end   += change
-
-              # Using the new start and end index, select the correct value
-              inputDOM.setSelectionRange start, end
-
-              $scope.updateInput()
+              updateInput()
 
             when keys.A, keys.P
-              event.preventDefault()
+              meridianSelected = getSelection() is "meridian"
 
-              hours  = $scope.time.getHours()
+              switch
+                when meridianSelected and key is keys.A
+                  setMeridian("AM")
+                when meridianSelected and key is keys.P
+                  setMeridian("PM")
 
-              if key is keys.A
-                change = if hours >= 12 then -1 else 0
-              else if key is keys.P
-                change = if hours >= 12 then 0 else -1
-              else
-                change = 0
-
-              $scope.updateInput
-                # if markers are highlighted, change to AM or PM
-                markers: -> $scope.time.setHours hours + change * 12
+              selectMeridian()
+              updateInput()
 
         $scope.keyupEvent = (event) ->
           key = event.which
 
-          keyIsAorP   = keys.A or keys.P
-          keyIsNumber = keys.NUMPAD0 <= key <= keys.NUMPAD9 or keys.ZERO <= key <= keys.NINE
-          
-          if keyIsNumber or keyIsAorP
-            $scope.updateScopeTime()
+          unless keys.NUMPAD0 <= key <= keys.NUMPAD9 or keys.ZERO <= key <= keys.NINE
+            event.preventDefault()
+
+          updateTime()
+]
+
+###
+@name Time Input
+@description
+An internal directive for mac-time input element to add validator
+###
+angular.module("Mac").directive "macTimeInput", [
+  "util"
+  (util) ->
+    restrict: "A"
+    require:  "?ngModel"
+    link:     ($scope, element, attrs, ctrl) ->
+      timeValidator = (value) ->
+        if !value or util.timeRegex.exec(value)
+          ctrl.$setValidity "time", true
+
+          return value
+        else
+          ctrl.$setValidity "time", false
+
+          return undefined
+
+      ctrl.$formatters.push timeValidator
+      ctrl.$parsers.push timeValidator
 ]

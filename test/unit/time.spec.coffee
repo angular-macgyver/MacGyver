@@ -185,11 +185,10 @@ describe "Mac Time input", ->
 
       input = $("input", element)
       input.click()
-      changeInputValue input, "06:25 PM"
 
       changeInputValue input, "14:41 AM"
 
-      expect($rootScope.model).toBe "06:25 PM"
+      expect(input.hasClass("ng-invalid")).toBeTruthy()
 
     it "should reset back to the original time when input is invalid - 2", ->
       $rootScope.model = ""
@@ -198,11 +197,10 @@ describe "Mac Time input", ->
 
       input = $("input", element)
       input.click()
-      changeInputValue input, "06:25 PM"
 
       changeInputValue input, "123"
 
-      expect($rootScope.model).toBe "06:25 PM"
+      expect(input.hasClass("ng-invalid")).toBeTruthy()
 
   describe "model -> view", ->
     $compile   = null

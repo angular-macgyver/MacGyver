@@ -143,6 +143,21 @@ angular.module("Mac.Util", []).factory "util", [
 
       return rgb
 
+    #
+    # @name timeRegex
+    # @example
+    # 01:30 PM or 9:45 AM
+    #
+    timeRegex: ///
+      ^
+      (0?[1-9]|1[0-2])  # hours (starting zero optional)
+      :                 # colon
+      ([0-5][0-9])      # minute
+      [\s]              # space
+      ([AP]M)           # meridian
+      $
+    ///
+
     # http://tools.ietf.org/html/rfc3986#section-2.2
     _urlRegex: ///
       (?:
