@@ -46,7 +46,8 @@ describe "Mac Time input", ->
       element          = $compile("<mac-time mac-time-model='model'></mac-time>") $rootScope
       $rootScope.$digest()
 
-      $("input", element).click()
+      $rootScope.$$childHead.clickEvent()
+      $rootScope.$digest()
 
       expect($rootScope.model).toBe "12:00 AM"
 
@@ -58,7 +59,8 @@ describe "Mac Time input", ->
       $rootScope.model = ""
       $rootScope.$digest()
 
-      $("input", element).click()
+      $rootScope.$$childHead.clickEvent()
+      $rootScope.$digest()
 
       expect($rootScope.model).toBe "12:00 AM"
 
@@ -184,11 +186,15 @@ describe "Mac Time input", ->
       $rootScope.$digest()
 
       input = $("input", element)
-      input.click()
+
+      $rootScope.$$childHead.clickEvent()
+      $rootScope.$digest()
 
       changeInputValue input, "14:41 AM"
+      $rootScope.$$childHead.blurEvent()
+      $rootScope.$digest()
 
-      expect(input.hasClass("ng-invalid")).toBeTruthy()
+      expect($rootScope.model).toBe("12:00 AM")
 
     it "should reset back to the original time when input is invalid - 2", ->
       $rootScope.model = ""
@@ -196,11 +202,15 @@ describe "Mac Time input", ->
       $rootScope.$digest()
 
       input = $("input", element)
-      input.click()
+
+      $rootScope.$$childHead.clickEvent()
+      $rootScope.$digest()
 
       changeInputValue input, "123"
+      $rootScope.$$childHead.blurEvent()
+      $rootScope.$digest()
 
-      expect(input.hasClass("ng-invalid")).toBeTruthy()
+      expect($rootScope.model).toBe("12:00 AM")
 
   describe "model -> view", ->
     $compile   = null
