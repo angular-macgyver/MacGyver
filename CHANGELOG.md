@@ -1,3 +1,19 @@
+# v0.1.25 (2013/11/12)
+## Bug Fixes
+- **macDatepicker:** Fixed changing datepicker text input does not update model
+  ([5d3fc664](https://github.com/StartTheShift/MacGyver/commit/5d3fc6640ed218dc2072f1503d2a50e098dbeca4),
+   [#136](https://github.com/StartTheShift/MacGyver/issues/136))
+- **macTime:** Refactor time picker interactions to fix model watch conflicts between programatically setting the model vs a user typing in a invalid time (e.g. 11:8) no longer freezes the input. Added extra directive to control validation similar to angularjs inputDirective pattern. Fixed tests to follow new validation convention.
+  ([c3ae8f52](https://github.com/StartTheShift/MacGyver/commit/c3ae8f52347658d74a7ddceda780ac3cc67075d0),
+   [#137](https://github.com/StartTheShift/MacGyver/issues/137))
+
+## Features
+- **macDatepicker:** Added validation to mac-datepicker model
+  ([7322c4b0](https://github.com/StartTheShift/MacGyver/commit/7322c4b025b9bcb100020327a2b7d697ee77c1da))
+- **util:** Make email regex part of util api
+  ([0627e318](https://github.com/StartTheShift/MacGyver/commit/0627e318066290bbdd3464f0165ba7b5227ca102))
+
+
 # v0.1.24 (2013/11/6)
 ## Bug Fixes
 - **macTagAutocomplete:** Remove left padding in tag list

@@ -1,15 +1,23 @@
-<h1>Datepicker</h1>
+<h1 id="datepicker">Datepicker</h1>
 <p>A directive for creating a datepicker on text input using jquery ui  </p>
-<h3>Dependencies</h3>
+<h3 id="dependencies">Dependencies</h3>
 <ul>
 <li>jQuery  </li>
 <li>jQuery datepicker  </li>
 </ul>
-<h3>Parameters</h3>
+<h3 id="parameters">Parameters</h3>
 <p><strong>mac-datepicker-id</strong><br>Type: <code>String</code><br>The id of the text input field  </p>
 <p><strong>mac-datepicker-model</strong><br>Type: <code>String</code><br>The model to store the selected date<br>Clearing model by setting it to null or &#39;&#39; will clear the input field  </p>
-<p><strong>mac-datepicker-on-select</strong><br>Type: <code>Function</code><br>Function called before setting the value to the model<br>- <code>date</code> - {String} Selected date from the datepicker<br>- <code>instance</code> - {Object} Datepicker instance  </p>
-<p><strong>mac-datepicker-on-close</strong><br>Type: <code>String</code><br>Function called before closing datepicker<br>- <code>date</code> - {String} Selected date from the datepicker<br>- <code>instance</code> - {Object} Datepicker instance  </p>
+<p><strong>mac-datepicker-on-select</strong><br>Type: <code>Function</code><br>Function called before setting the value to the model  </p>
+<ul>
+<li><code>date</code> - {String} Selected date from the datepicker  </li>
+<li><code>instance</code> - {Object} Datepicker instance  </li>
+</ul>
+<p><strong>mac-datepicker-on-close</strong><br>Type: <code>String</code><br>Function called before closing datepicker  </p>
+<ul>
+<li><code>date</code> - {String} Selected date from the datepicker  </li>
+<li><code>instance</code> - {Object} Datepicker instance  </li>
+</ul>
 <p><strong>mac-datepicker-append-text</strong><br>Type: <code>String</code><br>The text to display after each date field  </p>
 <p><strong>mac-datepicker-auto-size</strong><br>Type: <code>Boolean</code><br>Automatically resize the input to accommodate dates in the current dateFormat  </p>
 <p><strong>mac-datepicker-change-month</strong><br>Type: <code>Boolean</code><br>Whether the month should be rendered as a dropdown instead of text  </p>

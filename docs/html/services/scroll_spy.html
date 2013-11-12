@@ -1,8 +1,31 @@
-<h1>Scroll Spy Service</h1>
-<p>There are multiple components used by scrollspy<br>- Scrollspy service is used to keep track of all and active anchors<br>- Multiple directives including:<br>- mac-scroll-spy - Element to spy scroll event<br>- mac-scroll-spy-anchor - Section in element spying on<br>- mac-scroll-spy-target - Element to highlight, most likely a nav item<br>Scrollspy defaults:<br>offset - 0  </p>
-<h3>Parameters</h3>
-<p><strong>register</strong><br>Type: <code>Function</code><br>Register an anchor with the service<br>- {String} id ID of the anchor<br>- {DOM Element} element Element to spy on  </p>
-<p><strong>unregister</strong><br>Type: <code>Function</code><br>Remove anchor from service<br>- {String} id ID of the anchor  </p>
-<p><strong>setActive</strong><br>Type: <code>Function</code><br>Set active anchor and fire all listeners<br>- {Object} anchor Anchor object  </p>
-<p><strong>addListener</strong><br>Type: <code>Function</code><br>Add listener when active is set<br>- {Function} fn Callback function  </p>
-<p><strong>removeListener</strong><br>Type: <code>Function</code><br>Remove listener<br>- {Function} fn Callback function  </p>
+<h1 id="scroll-spy-service">Scroll Spy Service</h1>
+<p>There are multiple components used by scrollspy  </p>
+<ul>
+<li>Scrollspy service is used to keep track of all and active anchors  </li>
+<li>Multiple directives including:  </li>
+<li>mac-scroll-spy - Element to spy scroll event  </li>
+<li>mac-scroll-spy-anchor - Section in element spying on  </li>
+<li>mac-scroll-spy-target - Element to highlight, most likely a nav item<br>Scrollspy defaults:<br>offset - 0  </li>
+</ul>
+<h3 id="parameters">Parameters</h3>
+<p><strong>register</strong><br>Type: <code>Function</code><br>Register an anchor with the service  </p>
+<ul>
+<li>{String} id ID of the anchor  </li>
+<li>{DOM Element} element Element to spy on  </li>
+</ul>
+<p><strong>unregister</strong><br>Type: <code>Function</code><br>Remove anchor from service  </p>
+<ul>
+<li>{String} id ID of the anchor  </li>
+</ul>
+<p><strong>setActive</strong><br>Type: <code>Function</code><br>Set active anchor and fire all listeners  </p>
+<ul>
+<li>{Object} anchor Anchor object  </li>
+</ul>
+<p><strong>addListener</strong><br>Type: <code>Function</code><br>Add listener when active is set  </p>
+<ul>
+<li>{Function} fn Callback function  </li>
+</ul>
+<p><strong>removeListener</strong><br>Type: <code>Function</code><br>Remove listener  </p>
+<ul>
+<li>{Function} fn Callback function  </li>
+</ul>
