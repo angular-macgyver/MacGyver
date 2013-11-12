@@ -109,20 +109,21 @@ angular.module("Mac").directive "macTagAutocomplete", [
                     expression $scope.$parent, {$event, item}
         , 0, false
 
-        updateAutocompleteSource = ->
-          $scope.autocompletePlaceholder =
-            if $scope.selected?.length then "" else $scope.placeholder
+        if useSource
+          updateAutocompleteSource = ->
+            $scope.autocompletePlaceholder =
+              if $scope.selected?.length then "" else $scope.placeholder
 
-          return unless useSource
-          sourceValues   = (item[valueKey] for item in ($scope.source or []))
-          selectedValues = (item[valueKey] for item in ($scope.selected or []))
-          difference     = (item for item in sourceValues when item not in selectedValues)
+            return unless useSource
+            sourceValues   = (item[valueKey] for item in ($scope.source or []))
+            selectedValues = (item[valueKey] for item in ($scope.selected or []))
+            difference     = (item for item in sourceValues when item not in selectedValues)
 
-          $scope.autocompleteSource =
-            (item for item in ($scope.source or []) when item[valueKey] in difference)
+            $scope.autocompleteSource =
+              (item for item in ($scope.source or []) when item[valueKey] in difference)
 
-        $scope.$watchCollection "selected", updateAutocompleteSource
-        $scope.$watchCollection "source", updateAutocompleteSource
+          $scope.$watchCollection "selected", updateAutocompleteSource
+          $scope.$watchCollection "source", updateAutocompleteSource
 
         $scope.onKeyDown = ($event) ->
           stroke = $event.which or $event.keyCode
