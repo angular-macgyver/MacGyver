@@ -12,6 +12,12 @@ Tooltip directive
 @param {Expr}    mac-tooltip-disabled  Disable and enable tooltip
 ###
 
+###
+NOTE: This directive does not use $animate to append and remove DOM element or
+  add and remove classes in order to optimize showing tooltips by eliminating
+  the need for firing a $digest cycle.
+###
+
 angular.module("Mac").directive "macTooltip", [
   "$timeout"
   "util"
