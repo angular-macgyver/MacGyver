@@ -19,34 +19,16 @@ block append content
 
     #example.span9
       section#events(mac-scroll-spy-anchor)
-        @@include("docs/html/directives/events/base.html")
-        h3 Example
-        h4 Blur and Focus
-        .docs-example
-          input(type="text", mac-blur="eventIsFocused = false", mac-focus="eventIsFocused = true")
-          div {{eventIsFocused | boolean : 'Focused' : 'Blurred'}}
-        pre.prettyprint.linenums(ng-non-bindable)
-          = '<input type="text" mac-blur="eventIsFocused = false" mac-focus="eventIsFocused = true" />'
-
-        h4 Keydown and Keyup
-        .docs-example
-          input(type="text", mac-keyup="eventKey = 'keyup'", mac-keydown="eventKey = 'keydown'")
-          div Event fired: {{eventKey}}
-        pre.prettyprint.linenums(ng-non-bindable)
-          = '<input type="text" mac-keyup="eventKey = \'keyup\'" mac-keydown="eventKey = \'keydown\'" />'
-
-        h4 Mouseenter and Mouseleave
-        .docs-example
-          div(
-            mac-mouseenter = "eventMouse = 'mouseenter'"
-            mac-mouseleave = "eventMouse = 'mouseleave'"
-            style          = "width: 100px; height: 100px; background: gray;"
-          ) Hover Over
-          div Event fired: {{eventMouse}}
-        pre.prettyprint.linenums(ng-non-bindable)
-          = '<div mac-mouseenter="eventMouse = \'mouseenter\'"\n'
-          = '     mac-mouseleave="eventMouse = \'mouseleave\'"\n'
-          = '     style="width: 100px; height: 100px; background: gray;">Hover Over</div>'
+        h1 Events
+        p Most of MacGyver event directives have been deprecated since the latest
+          |  AngularJS include multiple event directives
+        ul
+          li: a(href="http://docs.angularjs.org/api/ng.directive:ngBlur") ngBlur
+          li: a(href="http://docs.angularjs.org/api/ng.directive:ngFocus") ngFocus
+          li: a(href="http://docs.angularjs.org/api/ng.directive:ngKeydown") ngKeydown
+          li: a(href="http://docs.angularjs.org/api/ng.directive:ngKeyup") ngKeyup
+          li: a(href="http://docs.angularjs.org/api/ng.directive:ngMouseenter") ngMouseenter
+          li: a(href="http://docs.angularjs.org/api/ng.directive:ngMouseleave") ngMouseleave
 
       section#keydowns(mac-scroll-spy-anchor)
         @@include("docs/html/directives/events/keydown.html")
