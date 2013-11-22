@@ -14,7 +14,7 @@ A directive for generating tag input with autocomplete support on text input
 @param {String}  mac-tag-autocomplete-value       The value to be sent back upon selection (default "id")
 @param {String}  mac-tag-autocomplete-label       The label to display to the users (default "name")
 @param {Expr}    mac-tag-autocomplete-model       Model for autocomplete
-@param {Array}   mac-tag-autocomplete-selected    The list of elements selected by the user
+@param {Array}   mac-tag-autocomplete-selected    The list of elements selected by the user (required)
 @param {String}  mac-tag-autocomplete-query       The query parameter on GET command (defualt "q")
 @param {Integer} mac-tag-autocomplete-delay       Time delayed on fetching autocomplete data after keyup  (default 800)
 @param {String}  mac-tag-autocomplete-placeholder Placeholder text of the text input (default "")
@@ -109,21 +109,20 @@ angular.module("Mac").directive "macTagAutocomplete", [
                     expression $scope.$parent, {$event, item}
         , 0, false
 
-        if useSource
-          updateAutocompleteSource = ->
-            $scope.autocompletePlaceholder =
-              if $scope.selected?.length then "" else $scope.placeholder
+        updateAutocompleteSource = ->
+          $scope.autocompletePlaceholder =
+            if $scope.selected?.length then "" else $scope.placeholder
 
-            return unless useSource
-            sourceValues   = (item[valueKey] for item in ($scope.source or []))
-            selectedValues = (item[valueKey] for item in ($scope.selected or []))
-            difference     = (item for item in sourceValues when item not in selectedValues)
+          return unless useSource
+          sourceValues   = (item[valueKey] for item in ($scope.source or []))
+          selectedValues = (item[valueKey] for item in ($scope.selected or []))
+          difference     = (item for item in sourceValues when item not in selectedValues)
 
-            $scope.autocompleteSource =
-              (item for item in ($scope.source or []) when item[valueKey] in difference)
+          $scope.autocompleteSource =
+            (item for item in ($scope.source or []) when item[valueKey] in difference)
 
-          $scope.$watchCollection "selected", updateAutocompleteSource
-          $scope.$watchCollection "source", updateAutocompleteSource
+        $scope.$watchCollection "source", updateAutocompleteSource if useSource
+        $scope.$watchCollection "selected", updateAutocompleteSource
 
         $scope.onKeyDown = ($event) ->
           stroke = $event.which or $event.keyCode
