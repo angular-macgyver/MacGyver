@@ -34,6 +34,9 @@ angular.module("Mac").directive "macAffix", [
       @description
       Update top or bottom offset. This function will make sure the value is
       an integer and use default value
+      @param {String} key Offset key
+      @param {String|Integer} value Update value
+      @param {Bool} useDefault
       ###
       setOffset = (key, value, useDefault = false) ->
         value       = defaults[key] if useDefault and not value?
