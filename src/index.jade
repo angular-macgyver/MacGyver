@@ -89,8 +89,8 @@ block append content
             .modal-content(ng-controller="modalController")
               h1 Just another modal
           button.btn(
-            mac-modal         = "test-modal"
-            mac-modal-content = "macGyverSeasonOne"
+            mac-modal      = "test-modal"
+            mac-modal-data = "macGyverSeasonOne"
           ) Show Modal
         pre.prettyprint.linenums(ng-non-bindable)
           = '<mac-modal id="test-modal" mac-modal-keyboard>\n'
@@ -98,7 +98,7 @@ block append content
           = '    <h1>Just another modal</h1>\n'
           = '  </div>\n'
           = '</mac-modal>\n'
-          = '<button mac-modal="test-modal" mac-modal-content="maGyverSeasonOne" class="btn">Show Modal</button>\n'
+          = '<button mac-modal="test-modal" mac-modal-data="maGyverSeasonOne" class="btn">Show Modal</button>\n'
 
       section#scrollspy(mac-scroll-spy-anchor)
         @@include("docs/html/services/scroll_spy.html")

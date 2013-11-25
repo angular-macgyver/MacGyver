@@ -51,8 +51,8 @@ angular.module("Mac").directive("macModal", [
 # @name mac-modal (attribute)
 # @description
 # Modal attribute directive to trigger modal dialog
-# @param {String} mac-modal Modal ID to trigger
-# @param {Object} mac-modal-data    Extra data to pass along
+# @param {String} mac-modal    Modal ID to trigger
+# @param {Expr} mac-modal-data Extra data to pass along
 #
 directive "macModal", [
   "$parse"
@@ -67,10 +67,9 @@ directive "macModal", [
             modalScope = $parse(attrs.macModalScope)($scope)
           modalScope = $scope unless modalScope? and modalScope.$new?
 
-          # Deprecating mac-modal-content. Use mac-modal-data instead
-          dataVar = attrs.macModalContent or attrs.macModalData
+          data = $parse(attrs.macModalData)($scope) or {}
           modal.show attrs.macModal,
-            data:  $parse(dataVar) $scope
+            data:  data
             scope: modalScope
           modalScope.$apply()
       return
