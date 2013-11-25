@@ -72,5 +72,6 @@ directive "macModal", [
           modal.show attrs.macModal,
             data:  $parse(dataVar) $scope
             scope: modalScope
+          modalScope.$apply()
       return
 ]
