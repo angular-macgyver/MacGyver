@@ -208,13 +208,6 @@ describe "Mac modal", ->
       contentText = angular.element(".modal-content-wrapper").text()
       expect(contentText).toBe "Test Modal Content"
 
-    it "should have modal service on scope", ->
-      modal.show "testing"
-      $timeout.flush()
-
-      scope = angular.element(".modal-overlay").scope()
-      expect(scope.modal).toBeDefined()
-
     it "should remove modal on hide", ->
       modal.show "testing"
       $timeout.flush()

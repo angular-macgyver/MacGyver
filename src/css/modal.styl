@@ -6,13 +6,11 @@
   right            0
   bottom           0
   opacity          0
-  visibility       hidden
   overflow-y       auto
   z-index          3
 
   &.visible, &.visible-add-active
-    visibility visible
-    opacity    1.0
+    opacity 1.0
 
     .modal
       top 50%
@@ -21,8 +19,7 @@
     transition 0.2s ease-out all
 
   &.visible-remove-active
-    visibility hidden
-    opacity    0
+    opacity 0
 
   .modal
     position      absolute
@@ -35,6 +32,7 @@
     box-shadow    0 4px 10px rgba(0,0,0,0.15)
     transition    all 0.2s ease-out
     border-radius 3px
+    transform     rotateX(0) rotateY(0)
 
     &:after
       content  ""

@@ -52,7 +52,14 @@ angular.module("Mac").service("modal", [
     # Current opened modal
     opened: null
 
-    modalTemplate: '<div ng-click="closeOverlay($event)" class="modal-overlay hide"><div class="modal"><a ng-click="modal.hide()" class="close-modal"></a><div class="modal-content-wrapper"></div></div></div>'
+    modalTemplate: """
+      <div ng-click="close($event)" class="modal-overlay hide">
+        <div class="modal">
+          <a ng-click="close($event, true)" class="close-modal"></a>
+          <div class="modal-content-wrapper"></div>
+        </div>
+      </div>
+    """
 
     #
     # @name show
@@ -91,10 +98,9 @@ angular.module("Mac").service("modal", [
           renderModal = (template) =>
             viewScope =
               if options.scope then options.scope.$new() else $rootScope.$new(true)
-            viewScope.modal        = this
-            viewScope.closeOverlay = ($event) =>
-              if options.overlayClose and
-                  angular.element($event.target).hasClass("modal-overlay")
+            viewScope.close = ($event, force = false) =>
+              if force or (options.overlayClose and
+                  angular.element($event.target).hasClass("modal-overlay"))
                 @hide()
 
             if options.controller
@@ -103,7 +109,9 @@ angular.module("Mac").service("modal", [
 
             angular.extend options.attributes, {id}
             element = angular.element(@modalTemplate).attr options.attributes
-            wrapper = angular.element element[0].getElementsByClassName("modal-content-wrapper")
+            wrapper = angular.element(
+              element[0].getElementsByClassName("modal-content-wrapper")
+            )
             wrapper.html template
 
             $animate.enter element, angular.element(document.body)
