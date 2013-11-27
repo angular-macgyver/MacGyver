@@ -8,16 +8,17 @@ Element to spy scroll event on
 @param {Integer} mac-scroll-spy-offset Top offset when calculating scroll position
 ###
 angular.module("Mac").directive("macScrollSpy", [
+  "$window"
   "scrollSpy"
   "scrollSpyDefaults"
   "util"
-  (scrollSpy, defaults, util) ->
+  ($window, scrollSpy, defaults, util) ->
     link: ($scope, element, attrs) ->
       options = util.extendAttributes "macScrollSpy", defaults, attrs
 
       spyElement =
         if element[0].tagName is "BODY"
-          angular.element window
+          angular.element $window
         else
           element
 
@@ -48,35 +49,42 @@ angular.module("Mac").directive("macScrollSpy", [
 # @name mac-scroll-spy-anchor
 # @description
 # Section in the spied element
-# @param {Event} refresh-scroll-spy To refresh the top offset of all scroll spy anchors
+# @param {String} id                    ID to identify anchor
+# @param {String} mac-scroll-spy-anchor ID to identify anchor (user either id or this attribute)
+# @param {Event}  refresh-scroll-spy    To refresh the top offset of all scroll spy anchors
 #
 
 directive("macScrollSpyAnchor", [
   "scrollSpy"
   (scrollSpy) ->
-    compile: (element, attrs) ->
+    link: ($scope, element, attrs) ->
       id         = attrs.id or attrs.macScrollSpyAnchor
-      observeKey = if attrs.id then "id" else "macScrollSpyAnchor"
+      registered = false
 
       unless id
         throw new Error("Missing scroll spy anchor id")
 
-      interpolate = id.match /{{(.*)}}/
+      registering = ->
+        scrollSpy.register id, element
 
-      ($scope, element, attrs) ->
-        registering  = ->
-          return unless id
-          scrollSpy.register id, element
+        # Only add $destroy listener on initial run
+        unless registered
           $scope.$on "$destroy", -> scrollSpy.unregister id
 
-        $scope.$on "refresh-scroll-spy", registering
+        registered = true
 
-        if interpolate
-          attrs.$observe observeKey, (value) ->
+      # Reregister anchor to update position/offset
+      $scope.$on "refresh-scroll-spy", registering
+
+      # Check if id is interpolated value
+      if /{{(.*)}}/.test id
+        observeKey = if attrs.id then "id" else "macScrollSpyAnchor"
+        attrs.$observe observeKey, (value) ->
+          if value? and value
             id = value
             registering()
-        else
-          registering()
+      else
+        registering()
 ]).
 
 #
@@ -90,31 +98,31 @@ directive("macScrollSpyAnchor", [
 directive("macScrollSpyTarget", [
   "scrollSpy"
   (scrollSpy) ->
-    compile: (element, attrs) ->
+    link: ($scope, element, attrs) ->
       target         = attrs.macScrollSpyTarget
       highlightClass = attrs.macScrollSpyTargetClass or "active"
+      registered     = false
+
       unless target
         throw new Error("Missing scroll spy target name")
 
-      interpolate = target.match /{{(.*)}}/
+      register = (id) ->
+        return unless id
 
-      ($scope, element, attrs) ->
-        register = (id) ->
-          return unless id
-          callback = (active) ->
-            action = if id is active.id then "addClass" else "removeClass"
-            element[action] highlightClass
+        callback = (active) ->
+          action = if id is active.id then "addClass" else "removeClass"
+          element[action] highlightClass
 
-          # Update target class if target is re-rendered
-          callback scrollSpy.active if scrollSpy.active?
+        # Update target class if target is re-rendered
+        callback scrollSpy.active if scrollSpy.active?
+
+        unless registered
           scrollSpy.addListener callback
+          $scope.$on "$destroy", -> scrollSpy.removeListener callback
 
-          $scope.$on "$destroy", ->
-            scrollSpy.removeListener callback
-
-        if interpolate
-          attrs.$observe "macScrollSpyTarget", (value) -> register value
-        else
-          register target
+      if /{{(.*)}}/.test target
+        attrs.$observe "macScrollSpyTarget", (value) -> register value
+      else
+        register target
 
 ])
