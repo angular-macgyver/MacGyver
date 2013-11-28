@@ -10,7 +10,7 @@ A directive for generating spinner
 @param {String}  mac-spinner-color Color of all the bars (default #2f3035)
 ###
 
-angular.module("Mac").directive "macSpinner", ["$animate", "util", ($animate, util) ->
+angular.module("Mac").directive "macSpinner", ["util", (util) ->
   restrict: "E"
   replace:  true
   template: """<div class="mac-spinner"></div>"""
@@ -22,17 +22,20 @@ angular.module("Mac").directive "macSpinner", ["$animate", "util", ($animate, ut
       return prefix+name for prefix in prefixes when el.style[prefix+name]?
       return name
 
+    animateCss   = vendor element[0], "animation"
+    transformCss = vendor element[0], "transform"
+
     for i in [0..9]
       delay  = i * 0.1 - 1 + (not i)
       degree = i * 36
       styl   = {}
       bar    = angular.element """<div class="bar"></div>"""
 
-      styl[vendor(bar[0], "animation")] = "fade 1s linear infinite #{delay}s"
-      styl[vendor(bar[0], "transform")] = "rotate(#{degree}deg) translate(0, 130%)"
+      styl[animateCss]   = "fade 1s linear infinite #{delay}s"
+      styl[transformCss] = "rotate(#{degree}deg) translate(0, 130%)"
       bar.css styl
 
-      $animate.enter bar, element
+      element.append bar
 
     ($scope, element, attrs) ->
       defaults =
