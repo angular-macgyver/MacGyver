@@ -40,6 +40,6 @@
     "jquery.ui": "~1.10.3"
   },
   "dependencies": {
-    "angular-animate": "~1.2.2"
+    "angular-animate": "1.2.2"
   }
 }
