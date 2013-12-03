@@ -18,7 +18,7 @@ This spinner requires much less CPU/GPU resources than CSS spinner
 @param {Expr}    mac-cspinner-spin    Start or stop spinner
 ###
 
-angular.module("Mac").directive "macCspinner",["util", (util) ->
+angular.module("Mac").directive "macCspinner",["$timeout", "util", ($timeout, util) ->
   restrict: "E"
   replace:  "true"
   template: """<div class="mac-cspinner"></div>"""
@@ -107,7 +107,7 @@ angular.module("Mac").directive "macCspinner",["util", (util) ->
 
       stop = ->
         spinning = false
-        clearTimeout intervalID
+        $timeout.cancel intervalID if intervalID?
 
       start = ->
         # Prevent another setTimeout
@@ -130,15 +130,12 @@ angular.module("Mac").directive "macCspinner",["util", (util) ->
                 element[0].offsetWidth <= 0
               return stop()
 
-            intervalID = setTimeout drawFn, opts.speed
+            intervalID = $timeout drawFn, opts.speed, false
         )(true)
 
       if attrs.macCspinnerSpin?
         $scope.$watch attrs.macCspinnerSpin, (value) ->
-          if value and not spinning
-            start()
-          else if not value and spinning
-            stop()
+          if value and not spinning then start() else stop()
       else
         start()
 
