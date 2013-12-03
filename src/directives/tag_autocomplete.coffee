@@ -67,8 +67,7 @@ angular.module("Mac").directive "macTagAutocomplete", [
 
       if attrs.macTagAutocompleteUrl?
         attrsObject["mac-autocomplete-url"] = "url"
-      else if attrs.macTagAutocompleteSource?
-        useSource                              = true
+      else if useSource = attrs.macTagAutocompleteSource?
         attrsObject["mac-autocomplete-source"] = "autocompleteSource"
 
       textInput.attr attrsObject
@@ -78,6 +77,8 @@ angular.module("Mac").directive "macTagAutocomplete", [
         $scope.textInput          = ""
         $scope.autocompleteSource = []
 
+        # NOTE: Proxy is created to prevent tag autocomplete from breaking
+        # when user did not specify model
         if attrs.macTagAutocompleteModel?
           $scope.$watch "textInput", (value) -> $scope.model     = value
           $scope.$watch "model",     (value) -> $scope.textInput = value
@@ -90,12 +91,15 @@ angular.module("Mac").directive "macTagAutocomplete", [
         $scope.getTagLabel = (tag) -> if labelKey then tag[labelKey] else tag
 
         # Loop through the list of events user specified
+        # NOTE: Timeout is added to make sure the autocomplete directive
+        # has been run and converted the custom tag to input tag
         $timeout ->
           if (events = attrs.macTagAutocompleteEvents)
             textInput =
               angular.element(element[0].getElementsByClassName "text-input")
 
             for name in events.split(",")
+              name        = util.trim name
               capitalized = util.capitalize name
               eventFn     = attrs["macTagAutocompleteOn#{capitalized}"]
 
@@ -105,8 +109,7 @@ angular.module("Mac").directive "macTagAutocomplete", [
                 textInput.bind name, ($event) ->
                   expression = $parse eventFn
                   $scope.$apply ->
-                    item = $scope.textInput
-                    expression $scope.$parent, {$event, item}
+                    expression $scope.$parent, {$event, item: $scope.textInput}
         , 0, false
 
         updateAutocompleteSource = ->
@@ -150,6 +153,8 @@ angular.module("Mac").directive "macTagAutocomplete", [
             item = $scope.onEnter {item}
 
           $scope.selected.push item if item
+          # NOTE: $timeout is added to allow user to access the model before
+          # clearing value in autocomplete
           $timeout ->
             $scope.textInput = ""
           , 0
