@@ -55,7 +55,7 @@ angular.module("Mac.Util", []).factory "util", [
     ###
     pluralize: (string = "", count, includeCount = false) ->
       # If our string has no length, return without further processing
-      return string if not angular.isString(string) or string.trim().length is 0
+      return string if not angular.isString(string) or @trim(string).length is 0
 
       # If the user is expecting count to be anything other
       # than the default, check if it is actually a number
@@ -86,6 +86,13 @@ angular.module("Mac.Util", []).factory "util", [
       pluralizedString  = string[0...-word.length] + pluralizedWord
       if includeCount then "#{$filter("number") count} #{pluralizedString}" else pluralizedString
 
+    trim: (string) ->
+      str = String(string) or ""
+      if String::trim?
+        str.trim()
+      else
+        str.replace /^\s+|\s+$/gm, ""
+
     capitalize: (string) ->
       str = String(string) or ""
       return str.charAt(0).toUpperCase() + str.substring(1)
@@ -93,9 +100,9 @@ angular.module("Mac.Util", []).factory "util", [
       str = String(string) or ""
       return str.charAt(0).toLowerCase() + str.substring(1)
     toCamelCase: (string =  "") ->
-      string.trim().replace /[-_\s]+(.)?/g, (match, c) -> c.toUpperCase()
+      @trim(string).replace /[-_\s]+(.)?/g, (match, c) -> c.toUpperCase()
     toSnakeCase: (string = "") ->
-      string.trim().
+      @trim(string).
         replace(/([a-z\d])([A-Z]+)/g, "$1_$2").
         replace(/[-\s]+/g, "_").
         toLowerCase()

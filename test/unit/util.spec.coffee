@@ -10,6 +10,11 @@ describe "Mac Util", ->
     inject ($injector) ->
       util = $injector.get "util"
 
+  it "should trim string", ->
+    expect(util.trim "    test").toBe "test"
+    expect(util.trim "test    ").toBe "test"
+    expect(util.trim "    test    ").toBe "test"
+
   it "should capitalize words", ->
     expect(util.capitalize "hamburger").toBe "Hamburger"
     expect(util.capitalize "dog house").toBe "Dog house"
