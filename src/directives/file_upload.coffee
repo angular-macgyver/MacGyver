@@ -182,26 +182,20 @@ directive("macUploadPreviews", ["$rootScope", ($rootScope) ->
 
     return
   ]
-  link: ($scope, element, attrs, ctrls) ->
-    previewCtrl = ctrls[0]
 ]).
 
 directive("macUploadProgress", [->
   restrict:   "A"
-  require:    ["macUploadProgress", "?macUploadPreviews"]
+  require:    ["macUploadProgress", "macUploadPreviews"]
   controller: ["$scope", ($scope) ->
-    updateProgress = (data) ->
-      preview           = @getByFilename data.files[0].name
-      preview?.progress = parseInt(data.loaded / data.total * 100, 10)
-
     # Extending preview controller with progress
     @updatePreviewCtrl = (ctrl) ->
-      ctrl.updateProgress = updateProgress
+      ctrl.updateProgress = (data) ->
+        if (preview = @getByFilename data.files[0].name)?
+          preview.progress = parseInt(data.loaded / data.total * 100, 10)
+    return this
   ]
   link: ($scope, element, attrs, ctrls) ->
-    progressCtrl = ctrls[0]
-    previewsCtrl = ctrls[1]
-
-    if progressCtrl? and previewCtrl?
-      progressCtrl?.updatePreviewCtrl previewsCtrl
+    [progressCtrl, previewsCtrl] = ctrls
+    progressCtrl.updatePreviewCtrl previewsCtrl
 ])

@@ -124,7 +124,7 @@ describe "Mac Fileupload", ->
       scope          = $rootScope.$new()
       scope.progress = -> called = true
 
-      element = $compile("<input type='file' mac-upload mac-upload-progress='progress()' />") scope
+      element = $compile("<input type='file' mac-upload mac-upload-progress='progress()' mac-upload-previews />") scope
       scope.$digest()
 
       waitsFor ->
