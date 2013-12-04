@@ -5,6 +5,7 @@
 Directive for proxying jQuery file upload
 
 @dependencies
+- jQuery
 - jQuery file upload
 
 @param {String}     mac-upload-route      File upload route
@@ -13,139 +14,143 @@ Directive for proxying jQuery file upload
 @param {Function}   mac-upload-error      Upload error callback
 @param {Function}   mac-upload-always     Callback for completed (success, abort or error) requests
 @param {Expression} mac-upload-previews   List of uploaded files {Array}
-@param {Function}   mac-upload-progress   Upload progress callback
+@param {Function}   mac-upload-progress   Upload progress callback (requires mac-upload-previews)
 @param {String}     mac-upload-drop-zone  The selector that we can drop files onto
 @param {Expression} mac-upload-form-data  Additional form data {Array|Object|Function|FormData}
 @param {Expression} mac-upload-options    Additional options to pass to jquery fileupload
 ###
 
 angular.module("Mac").
-directive("macUpload", ["$rootScope", "$parse", "$timeout", "util", ($rootScope, $parse, $timeout, util) ->
-  require:    ["macUpload", "?macUploadPreviews"]
-  controller: ["$scope", ->]
-  link:       ($scope, element, attrs, ctrls) ->
-    uploadCtrl  = ctrls[0]
-    previewCtrl = ctrls[1]
+directive("macUpload", [
+  "$rootScope"
+  "$parse"
+  "$timeout"
+  "$document"
+  "util"
+  ($rootScope, $parse, $timeout, $document, util) ->
+    require:    ["macUpload", "?macUploadPreviews"]
+    controller: ["$scope", ->]
+    link:       ($scope, element, attrs, ctrls) ->
+      [uploadCtrl, previewCtrl] = ctrls
 
-    defaults =
-      route:    ""
-      dropZone: null
-      submit:   ""
-      success:  ""
-      error:    ""
-      always:   ""
-      progress: ""
-      formData: ""
-      options:  ""
-    opts = util.extendAttributes "macUpload", defaults, attrs
+      defaults =
+        route:    ""
+        dropZone: null
+        submit:   ""
+        success:  ""
+        error:    ""
+        always:   ""
+        progress: ""
+        formData: ""
+        options:  ""
+      opts = util.extendAttributes "macUpload", defaults, attrs
 
-    setOptions = (option, value) ->
-      element.fileupload("option", option, value) if value?
+      setOptions = (option, value) ->
+        element.fileupload("option", option, value) if value?
 
-    applyCallback = (action, $event, $data) ->
-      callbackFn = $parse opts[action]
-      if callbackFn?
-        $scope.$apply ->
-          $xhr         = $data.jqXHR
-          $status      = $data.jqXHR?.status
-          responseText = $data.jqXHR?.responseText or ""
-          try
-            $response = JSON.parse responseText
-          catch err
-            $response = responseText
-          args = {$event, $data, $status, $xhr, $response}
-          callbackFn $scope, args
+      applyCallback = (action, $event, $data) ->
+        capitalized = util.capitalize action
+        if attrs["macUpload#{capitalized}"]?
+          $scope.$apply ->
+            $xhr         = $data.jqXHR
+            $status      = $data.jqXHR?.status
+            responseText = $data.jqXHR?.responseText or ""
+            try
+              $response = JSON.parse responseText
+            catch err
+              $response = responseText
+            $parse(opts[action]) $scope, {$event, $data, $status, $xhr, $response}
 
-    options =
-      url:              $parse(opts.route)($scope) or ""
-      replaceFileInput: false
-      submit:           ($event, $data) ->
-        submitEvent = -> applyCallback "submit", $event, $data
+      options =
+        url:              $parse(opts.route)($scope) or ""
+        replaceFileInput: false
+        submit:           ($event, $data) ->
+          submitEvent = -> applyCallback "submit", $event, $data
 
-        # Handle previews.
-        if previewCtrl?
-          previewCtrl.add $data.files, submitEvent
-        else
-          submitEvent()
+          # Handle previews.
+          if previewCtrl?
+            previewCtrl.add $data.files, submitEvent
+          else
+            submitEvent()
 
-      fail:     ($event, $data) -> applyCallback "error", $event, $data
-      done:     ($event, $data) -> applyCallback "success", $event, $data
-      always:   ($event, $data) ->
-        element.val ""
-        applyCallback "always", $event, $data
-      progress: ($event, $data) ->
-        previewCtrl?.updateProgress? $data
-        applyCallback "progress", $event, $data
+        fail:     ($event, $data) -> applyCallback "error", $event, $data
+        done:     ($event, $data) -> applyCallback "success", $event, $data
+        always:   ($event, $data) ->
+          element.val ""
+          applyCallback "always", $event, $data
+        progress: ($event, $data) ->
+          previewCtrl?.updateProgress? $data
+          applyCallback "progress", $event, $data
 
-    if opts.dropZone?
-      angular.element(document).bind "drop dragover", (event) -> event.preventDefault()
+      if opts.dropZone?
+        $document.bind "drop dragover", (event) -> event.preventDefault()
 
-      # Add and remove droppable class
-      dragoverTimeout = null
-      dropZone        = element.parents opts.dropZone
+        # Add and remove droppable class
+        dragoverTimeout = null
+        dropZone        = element.parents opts.dropZone
 
-      angular.element(document).bind "dragover", (event) ->
-        $timeout.cancel dragoverTimeout if dragoverTimeout?
+        $document.bind "dragover", (event) ->
+          $timeout.cancel dragoverTimeout if dragoverTimeout?
 
-        node   = angular.element(event.target).parents opts.dropZone
-        method = if node.length then "addClass" else "removeClass"
-        dropZone[method] "droppable"
+          node   = angular.element(event.target).parents opts.dropZone
+          method = if node.length then "addClass" else "removeClass"
+          dropZone[method] "droppable"
 
-        dragoverTimeout = $timeout ->
-          clearTimeout(dragoverTimeout) if dragoverTimeout?
-          dropZone.removeClass "droppable"
-        , 250, false
+          dragoverTimeout = $timeout ->
+            $timeout.cancel(dragoverTimeout) if dragoverTimeout?
+            dropZone.removeClass "droppable"
+          , 250, false
 
-    options.dropZone  = dropZone or angular.element()
-    options.pasteZone = null
+      options.dropZone  = dropZone or angular.element()
+      options.pasteZone = null
 
-    if opts.options
-      extraOptions = $scope.$eval(opts.options) or {}
-      angular.extend options, extraOptions
+      if opts.options
+        extraOptions = $scope.$eval(opts.options) or {}
+        angular.extend options, extraOptions
 
-    element.fileupload(options).
-    on([
-      'fileuploadadd',
-      'fileuploadsubmit',
-      'fileuploadsend',
-      'fileuploaddone',
-      'fileuploadfail',
-      'fileuploadalways',
-      'fileuploadprogress',
-      'fileuploadprogressall',
-      'fileuploadstart',
-      'fileuploadstop',
-      'fileuploadchange',
-      'fileuploadpaste',
-      'fileuploaddrop',
-      'fileuploaddragover',
-      'fileuploadchunksend',
-      'fileuploadchunkdone',
-      'fileuploadchunkfail',
-      'fileuploadchunkalways',
-      'fileuploadprocessstart',
-      'fileuploadprocess',
-      'fileuploadprocessdone',
-      'fileuploadprocessfail',
-      'fileuploadprocessalways',
-      'fileuploadprocessstop'
-    ].join(' '), (event, data) ->
-      $scope.$emit event.type, data
-    )
+      element.fileupload(options).
+      on([
+        'fileuploadadd',
+        'fileuploadsubmit',
+        'fileuploadsend',
+        'fileuploaddone',
+        'fileuploadfail',
+        'fileuploadalways',
+        'fileuploadprogress',
+        'fileuploadprogressall',
+        'fileuploadstart',
+        'fileuploadstop',
+        'fileuploadchange',
+        'fileuploadpaste',
+        'fileuploaddrop',
+        'fileuploaddragover',
+        'fileuploadchunksend',
+        'fileuploadchunkdone',
+        'fileuploadchunkfail',
+        'fileuploadchunkalways',
+        'fileuploadprocessstart',
+        'fileuploadprocess',
+        'fileuploadprocessdone',
+        'fileuploadprocessfail',
+        'fileuploadprocessalways',
+        'fileuploadprocessstop'
+      ].join(' '), (event, data) ->
+        $scope.$emit event.type, data
+      )
 
-    $scope.$watch opts.route,    (route) -> setOptions "url", route
-    $scope.$watch opts.formData, (value) -> setOptions "formData", value
-    $scope.$watch opts.options,  (value) -> element.fileupload "option", value
+      $scope.$watch opts.route,    (route) -> setOptions "url", route
+      $scope.$watch opts.formData, (value) -> setOptions "formData", value
+      $scope.$watch opts.options,  (value) -> element.fileupload "option", value
 ]).
 
 directive("macUploadPreviews", ["$rootScope", ($rootScope) ->
   restrict:   "A"
   require:    ["macUploadPreviews", "macUpload"]
   controller: ["$scope", "$attrs", "$parse", ($scope, $attrs, $parse) ->
-    @previews = (value) ->
-      previewsGet = $parse $attrs.macUploadPreviews
-      previewsSet = previewsGet.assign
+    previewsGet = $parse $attrs.macUploadPreviews
+    previewsSet = previewsGet.assign
 
+    @previews = (value) ->
       if value?
         previewsSet $scope, value
       else
@@ -153,6 +158,9 @@ directive("macUploadPreviews", ["$rootScope", ($rootScope) ->
 
     @getByFilename = (filename) ->
       previews = @previews() or []
+      # NOTE: This is mainly used by progress update which update the progress
+      # of the last uploaded item. A backward loop is used to optimize this
+      # lookup
       for i in [previews.length - 1..0] by -1
         preview = previews[i]
         return preview if preview.fileName is filename
@@ -172,7 +180,7 @@ directive("macUploadPreviews", ["$rootScope", ($rootScope) ->
           callback? newFile
 
         if file.constructor?.name is "File"
-          reader = new FileReader
+          reader         = new FileReader
           reader.onload  = (event) => pushToPreviews.apply this, [event, "load"]
           reader.onerror = (event) => pushToPreviews.apply this, [event, "error"]
 
