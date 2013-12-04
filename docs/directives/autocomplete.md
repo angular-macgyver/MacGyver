@@ -9,7 +9,7 @@ A directive for providing suggestions while typing into the field
 ### Parameters
 **ng-model**  
 Type: `String`  
-Assignable angular expression to data-bind to  
+Assignable angular expression to data-bind to (required)  
   
 **mac-placeholder**  
 Type: `String`  

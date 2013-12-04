@@ -18,7 +18,7 @@ Type: `Boolean`
 Allow modal to resize on window resize event (default true)  
   
 **mac-modal-open**  
-Type: `Function`  
+Type: `Expr`  
 Callback when the modal is opened  
   
 **mac-modal-topOffset**  
@@ -38,7 +38,7 @@ Type: `String`
 Modal ID to trigger  
   
 **mac-modal-data**  
-Type: `Object`  
+Type: `Expr`  
 Extra data to pass along  
   
 

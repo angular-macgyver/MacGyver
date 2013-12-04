@@ -30,7 +30,7 @@ Model for autocomplete
   
 **mac-tag-autocomplete-selected**  
 Type: `Array`  
-The list of elements selected by the user  
+The list of elements selected by the user (required)  
   
 **mac-tag-autocomplete-query**  
 Type: `String`  
