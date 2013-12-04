@@ -8,7 +8,7 @@ A directive for providing suggestions while typing into the field
 @dependencies
 - mac-menu
 
-@param {String} ng-model Assignable angular expression to data-bind to
+@param {String} ng-model Assignable angular expression to data-bind to (required)
 @param {String} mac-placeholder Placeholder text
 @param {String} mac-autocomplete-url Url to fetch autocomplete dropdown list data. URL may include GET params e.g. "/users?nocache=1"
 @param {Expression} mac-autocomplete-source Local data source
@@ -36,8 +36,9 @@ angular.module("Mac").directive "macAutocomplete", [
   "$timeout"
   "$parse"
   "$rootScope"
+  "$document"
   "keys"
-  ($animate, $http, $filter, $compile, $timeout, $parse, $rootScope, keys) ->
+  ($animate, $http, $filter, $compile, $timeout, $parse, $rootScope, $document, keys) ->
     restrict:    "E"
     templateUrl: "template/autocomplete.html"
     replace:     true
@@ -58,8 +59,11 @@ angular.module("Mac").directive "macAutocomplete", [
 
       currentAutocomplete = []
       timeoutId           = null
-      onSelectBool        = false
+      # NOTE: onSelectBool is used to prevent parser from firing when an item
+      # is selected in the menu
+      onSelectBool = false
 
+      # NOTE: An isolate scope is created to prevent rootScope pollution
       $menuScope       = $rootScope.$new(true)
       $menuScope.items = []
       $menuScope.index = 0
@@ -74,7 +78,7 @@ angular.module("Mac").directive "macAutocomplete", [
       $compile(menuEl) $menuScope
 
       ctrl.$parsers.push (value) ->
-        # If value is more than an empty string,
+        # NOTE: If value is more than an empty string,
         # autocomplete is enabled and not 'onSelect' cycle
         if value and not disabled($scope) and not onSelectBool
           $timeout.cancel timeoutId if timeoutId?
@@ -91,35 +95,49 @@ angular.module("Mac").directive "macAutocomplete", [
 
         return value
 
-      #
-      # @function
-      # @name appendMenu
-      # @description
-      # Adding menu to DOM
-      #
+      ###
+      @name clickHandler
+      @description
+      Create a click handler function to make sure directive is unbinding
+      the correct handler
+      ###
+      clickHandler = -> reset(true)
+
+      ###
+      @function
+      @name appendMenu
+      @description
+      Adding menu to DOM
+      ###
       appendMenu = ->
         if inside
-          element.after menuEl
+          $animate.enter menuEl, undefined, element
         else
-          angular.element(document.body).append menuEl
+          $animate.enter menuEl, angular.element(document.body)
 
-      #
-      # @function
-      # @name reset
-      # @description
-      # Resetting autocomplete
-      #
-      reset = ->
-        $menuScope.items = []
-        $menuScope.index = 0
-        menuEl.remove()
+        $document.bind "click", clickHandler
 
-      #
-      # @function
-      # @name positionMenu
-      # @description
-      # Calculate the style include position and width for menu
-      #
+      ###
+      @function
+      @name reset
+      @description
+      Resetting autocomplete
+      ###
+      reset = (invokeApply = false) ->
+        $animate.leave menuEl, ->
+          $menuScope.items = []
+          $menuScope.index = 0
+
+          $document.unbind "click", clickHandler
+
+        $scope.$apply() if invokeApply
+
+      ###
+      @function
+      @name positionMenu
+      @description
+      Calculate the style include position and width for menu
+      ###
       positionMenu = ->
         if $menuScope.items.length > 0
           $menuScope.style          = element.offset()
@@ -133,13 +151,13 @@ angular.module("Mac").directive "macAutocomplete", [
 
           appendMenu()
 
-      #
-      # @function
-      # @name updateItem
-      # @description
-      # Update list of items getting passed to menu
-      # @param {Array} data Array of data
-      #
+      ###
+      @function
+      @name updateItem
+      @description
+      Update list of items getting passed to menu
+      @param {Array} data Array of data
+      ###
       updateItem = (data = []) ->
         if data.length > 0
           currentAutocomplete = data
@@ -148,13 +166,13 @@ angular.module("Mac").directive "macAutocomplete", [
             label = value = item[labelKey] or item
             $menuScope.items.push {label, value}
 
-      #
-      # @function
-      # @name queryData
-      # @description
-      # Used for querying data
-      # @param {String} query Search query
-      #
+      ###
+      @function
+      @name queryData
+      @description
+      Used for querying data
+      @param {String} query Search query
+      ###
       queryData = (query) ->
         url = autocompleteUrl $scope
 
@@ -174,7 +192,7 @@ angular.module("Mac").directive "macAutocomplete", [
               positionMenu()
             .error (data, status, headers, config) ->
               onError $scope, {data, status, headers}
-        else
+        else if attrs.macAutocompleteSource?
           updateItem $filter("filter")(source($scope), query)
           positionMenu()
 
@@ -208,19 +226,13 @@ angular.module("Mac").directive "macAutocomplete", [
 
         return true
 
-      angular.element(document).bind "click", (event) ->
-        if $menuScope.items.length > 0
-          $scope.$apply -> reset()
+      $scope.$on "$destroy", -> reset()
 
-      $scope.$on "$destroy", ->
-        # Remove menu on body when autocomplete is removed
-        menuEl.remove()
-
-      #
-      # @event
-      # @name reset-mac-autocomplete
-      # @description
-      # Event to reset autocomplete
-      #
+      ###
+      @event
+      @name reset-mac-autocomplete
+      @description
+      Event to reset autocomplete
+      ###
       $scope.$on "reset-mac-autocomplete", -> reset()
 ]
