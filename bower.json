@@ -32,14 +32,14 @@
     ".gitignore"
   ],
   "devDependencies": {
-    "angular": "1.2.2",
-    "angular-mocks": "1.2.2",
+    "angular-mocks": ">=1.2.2",
     "underscore.string": "~2.3.3",
     "jquery": "~2.0.3",
     "jquery-file-upload": "~8.8.2",
     "jquery.ui": "~1.10.3"
   },
   "dependencies": {
-    "angular-animate": "1.2.2"
+    "angular": ">=1.2.2",
+    "angular-animate": ">=1.2.2"
   }
 }
