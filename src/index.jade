@@ -93,13 +93,13 @@ block append content
             mac-modal      = "test-modal"
             mac-modal-data = "macGyverSeasonOne"
           ) Show Modal
-        pre.prettyprint.linenums(ng-non-bindable)
-          = '<mac-modal id="test-modal" mac-modal-keyboard>\n'
-          = '  <div ng-controller="modalController" class="modal-content">\n'
-          = '    <h1>Just another modal</h1>\n'
-          = '  </div>\n'
-          = '</mac-modal>\n'
-          = '<button mac-modal="test-modal" mac-modal-data="maGyverSeasonOne" class="btn">Show Modal</button>\n'
+        pre.prettyprint.linenums.
+          &lt;mac-modal id=&quot;test-modal&quot; mac-modal-keyboard&gt;
+            &lt;div ng-controller=&quot;modalController&quot; class=&quot;modal-content&quot;&gt;
+              &lt;h1&gt;Just another modal&lt;/h1&gt;
+            &lt;/div&gt;
+          &lt;/mac-modal&gt;
+          &lt;button mac-modal=&quot;test-modal&quot; mac-modal-data=&quot;maGyverSeasonOne&quot; class=&quot;btn&quot;&gt;Show Modal&lt;/button&gt;
 
       section#scrollspy(mac-scroll-spy-anchor)
         @@include("docs/html/services/scroll_spy.html")
@@ -108,26 +108,26 @@ block append content
         .docs-example The nav to the left and this documentation page is probably the best example
 
         h4 Scroll spy element
-        pre.prettyprint.linenums(ng-non-bindable)
-          = '<body mac-scroll-spy mac-scroll-spy-offset="10"></body>'
+        pre.prettyprint.linenums.
+          &lt;body mac-scroll-spy mac-scroll-spy-offset=&quot;10&quot;&gt;&lt;/body&gt;
 
         h4 Scroll spy target
-        pre.prettyprint.linenums(ng-non-bindable)
-          = '<ul class="nav nav-list docs-sidenav">\n'
-          = '  <li mac-scroll-spy-target="modal"><a href="#modal">Modal</a></li>\n'
-          = '  <li mac-scroll-spy-target="scrollspy"><a href="#scrollspy">Scroll Spy</a></li>\n'
-          = '</ul>\n'
+        pre.prettyprint.linenums.
+          &lt;ul class=&quot;nav nav-list docs-sidenav&quot;&gt;
+            &lt;li mac-scroll-spy-target=&quot;modal&quot;&gt;&lt;a href=&quot;#modal&quot;&gt;Modal&lt;/a&gt;&lt;/li&gt;
+            &lt;li mac-scroll-spy-target=&quot;scrollspy&quot;&gt;&lt;a href=&quot;#scrollspy&quot;&gt;Scroll Spy&lt;/a&gt;&lt;/li&gt;
+          &lt;/ul&gt;
 
         h5 Scroll spy anchor
-        pre.prettyprint.linenums(ng-non-bindable)
-          = '<section id="modal" mac-scroll-spy-anchor></section>'
+        pre.prettyprint.linenums.
+          &lt;section id=&quot;modal&quot; mac-scroll-spy-anchor&gt;&lt;/section&gt;
 
       section#affix(mac-scroll-spy-anchor)
         @@include("docs/html/directives/affix.html")
         h3 Example
         .docs-example The nav to the left uses mac-affix
-        pre.prettyprint.linenums(ng-non-bindable)
-          = '<div mac-affix>Nav content</div>'
+        pre.prettyprint.linenums.
+          &lt;div mac-affix&gt;Nav content&lt;/div&gt;
 
       section#tooltip(mac-scroll-spy-anchor)
         @@include("docs/html/directives/tooltip.html")
@@ -138,8 +138,8 @@ block append content
             li: a(mac-tooltip="Tooltip on bottom", mac-tooltip-direction="bottom") Tooltip on bottom
             li: a(mac-tooltip="Tooltip on left", mac-tooltip-direction="left") Tooltip on left
             li: a(mac-tooltip="Tooltip on right", mac-tooltip-direction="right") Tooltip on right
-        pre.prettyprint.linenums(ng-non-bindable)
-          = '<a href="#" mac-tooltip="Tooltip on bottom" mac-tooltip-direction="bottom">Tooltip on bottom</a>'
+        pre.prettyprint.linenums.
+          &lt;a href=&quot;#&quot; mac-tooltip=&quot;Tooltip on bottom&quot; mac-tooltip-direction=&quot;bottom&quot;&gt;Tooltip on bottom&lt;/a&gt;
 
       section#menu(mac-scroll-spy-anchor)
         @@include("docs/html/directives/menu.html")
@@ -162,13 +162,13 @@ block append content
             mac-placeholder             = "'Autocomplete'"
             ng-model                    = "autocompleteQuery"
           )
-        pre.prettyprint.linenums(ng-non-bindable)
-          = '<mac-autocomplete\n'
-          = '  mac-autocomplete-url="autocompleteUrl"\n'
-          = '  mac-autocomplete-query="q"\n'
-          = '  mac-autocomplete-on-success="onSuccess(data)"\n'
-          = '  mac-placeholder="\'Autocomplete\'">\n'
-          = '</mac-autocomplete>\n'
+        pre.prettyprint.linenums.
+          &lt;mac-autocomplete
+            mac-autocomplete-url=&quot;autocompleteUrl&quot;
+            mac-autocomplete-query=&quot;q&quot;
+            mac-autocomplete-on-success=&quot;onSuccess(data)&quot;
+            mac-placeholder=&quot;\'Autocomplete\'&quot;&gt;
+          &lt;/mac-autocomplete&gt;
 
         h3 Example with autocomplete using source
         .docs-example
@@ -177,11 +177,11 @@ block append content
             ng-model                = "autocompleteSourceQuery"
             mac-placeholder         = "'Type something...'"
           )
-        pre.prettyprint.linenums(ng-non-bindable)
-          = '<mac-autocomplete\n'
-          = '  mac-autocomplete-source="[\'hello\', \'world\']"\n'
-          = '  mac-placeholder="\'Autocomplete\'">\n'
-          = '</mac-autocomplete>\n'
+        pre.prettyprint.linenums.
+          &lt;mac-autocomplete
+            mac-autocomplete-source=&quot;[\'hello\', \'world\']&quot;
+            mac-placeholder=&quot;\'Autocomplete\'&quot;&gt;
+          &lt;/mac-autocomplete&gt;
 
       section#tag-autocomplete(mac-scroll-spy-anchor)
         @@include("docs/html/directives/tag_autocomplete.html")
@@ -196,16 +196,16 @@ block append content
             mac-tag-autocomplete-placeholder = "tagAutocompletePlaceholder"
             mac-tag-autocomplete-model       = "tagAutocompleteModel"
           )
-        pre.prettyprint.linenums(ng-non-bindable)
-          = '<mac-autocomplete\n'
-          = '  mac-autocomplete-url="autocompleteUrl"\n'
-          = '  mac-autocomplete-query="q"\n'
-          = '  mac-tag-autocomplete-selected="tagAutocompleteSelected"\n'
-          = '  mac-tag-autocomplete-value="id"\n'
-          = '  mac-tag-autocomplete-label="name"\n'
-          = '  mac-autocomplete-placeholder="\'Autocomplete\'"\n'
-          = '  mac-autocomplete-model="tagAutocompleteModel">\n'
-          = '</mac-autocomplete>\n'
+        pre.prettyprint.linenums.
+          &lt;mac-autocomplete
+            mac-autocomplete-url=&quot;autocompleteUrl&quot;
+            mac-autocomplete-query=&quot;q&quot;
+            mac-tag-autocomplete-selected=&quot;tagAutocompleteSelected&quot;
+            mac-tag-autocomplete-value=&quot;id&quot;
+            mac-tag-autocomplete-label=&quot;name&quot;
+            mac-autocomplete-placeholder=&quot;\'Autocomplete\'&quot;
+            mac-autocomplete-model=&quot;tagAutocompleteModel&quot;&gt;
+          &lt;/mac-autocomplete&gt;
 
         h3 Example with autocomplete disabled
         .docs-example
@@ -216,14 +216,14 @@ block append content
             mac-tag-autocomplete-label       = ""
             mac-tag-autocomplete-disabled    = "true"
           )
-        pre.prettyprint.linenums(ng-non-bindable)
-          = '<mac-tag-autocomplete\n'
-          = '  mac-tag-autocomplete-selected="tagAutocompleteDisabledSelected"\n'
-          = '  mac-tag-autocomplete-placeholder="tagAutocompletePlaceholder"\n'
-          = '  mac-tag-autocomplete-value=""\n'
-          = '  mac-tag-autocomplete-label=""\n'
-          = '  mac-tag-autocomplete-disabled="true">\n'
-          = '</mac-tag-autocomplete>\n'
+        pre.prettyprint.linenums.
+          &lt;mac-tag-autocomplete
+            mac-tag-autocomplete-selected=&quot;tagAutocompleteDisabledSelected&quot;
+            mac-tag-autocomplete-placeholder=&quot;tagAutocompletePlaceholder&quot;
+            mac-tag-autocomplete-value=&quot;&quot;
+            mac-tag-autocomplete-label=&quot;&quot;
+            mac-tag-autocomplete-disabled=&quot;true&quot;&gt;
+          &lt;/mac-tag-autocomplete&gt;
 
         h3 Example with custom actions on events
         .docs-example
@@ -239,19 +239,19 @@ block append content
             mac-tag-autocomplete-disabled    = "true"
             mac-tag-autocomplete-model       = "tagAutocompleteModel"
           )
-        pre.prettyprint.linenums(ng-non-bindable)
-          = '<mac-tag-autocomplete\n'
-          = '  mac-tag-autocomplete-selected="tagAutocompleteEvents"\n'
-          = '  mac-tag-autocomplete-placeholder="tagAutocompletePlaceholder"\n'
-          = '  mac-tag-autocomplete-value="key"\n'
-          = '  mac-tag-autocomplete-label="key"\n'
-          = '  mac-tag-autocomplete-on-enter="tagAutocompleteOnSelected(item)"\n'
-          = '  mac-tag-autocomplete-events="blur,keyup"\n'
-          = '  mac-tag-autocomplete-on-blur="tagAutocompleteOnBlur($event, item)"\n'
-          = '  mac-tag-autocomplete-on-keyup="tagAutocompleteOnKeyup()"\n'
-          = '  mac-tag-autocomplete-disabled="true"\n'
-          = '  mac-tag-autocomplete-model="tagAutocompleteModel">\n'
-          = '</mac-tag-autocomplete>\n'
+        pre.prettyprint.linenums.
+          &lt;mac-tag-autocomplete
+            mac-tag-autocomplete-selected=&quot;tagAutocompleteEvents&quot;
+            mac-tag-autocomplete-placeholder=&quot;tagAutocompletePlaceholder&quot;
+            mac-tag-autocomplete-value=&quot;key&quot;
+            mac-tag-autocomplete-label=&quot;key&quot;
+            mac-tag-autocomplete-on-enter=&quot;tagAutocompleteOnSelected(item)&quot;
+            mac-tag-autocomplete-events=&quot;blur,keyup&quot;
+            mac-tag-autocomplete-on-blur=&quot;tagAutocompleteOnBlur($event, item)&quot;
+            mac-tag-autocomplete-on-keyup=&quot;tagAutocompleteOnKeyup()&quot;
+            mac-tag-autocomplete-disabled=&quot;true&quot;
+            mac-tag-autocomplete-model=&quot;tagAutocompleteModel&quot;&gt;
+          &lt;/mac-tag-autocomplete&gt;
 
       section#datepicker(mac-scroll-spy-anchor)
         @@include("docs/html/directives/datepicker.html")
@@ -262,8 +262,8 @@ block append content
             mac-datepicker-model    = "startDate"
             mac-datepicker-min-date = "minDate"
           )
-        pre.prettyprint.linenums(ng-non-bindable)
-          = '<mac-datepicker mac-datepicker-id="input-start-date" mac-datepicker-model="startDate"></mac-datepicker>'
+        pre.prettyprint.linenums.
+          &lt;mac-datepicker mac-datepicker-id=&quot;input-start-date&quot; mac-datepicker-model=&quot;startDate&quot;&gt;&lt;/mac-datepicker&gt;
 
       section#time-input(mac-scroll-spy-anchor)
         @@include("docs/html/directives/time.html")
@@ -274,28 +274,28 @@ block append content
             mac-time-model   = "myStartTime"
             mac-time-default = "11:59 PM"
           )
-        pre.prettyprint.linenums(ng-non-bindable)
-          = '<mac-time\n'
-          = '  mac-time-id="input-start-time"\n'
-          = '  mac-time-model="myStartTime"\n'
-          = '  mac-time-default="11:59 PM">\n'
-          = '</mac-time>\n'
+        pre.prettyprint.linenums.
+          &lt;mac-time
+            mac-time-id=&quot;input-start-time&quot;
+            mac-time-model=&quot;myStartTime&quot;
+            mac-time-default=&quot;11:59 PM&quot;&gt;
+          &lt;/mac-time&gt;
 
       section#spinner(mac-scroll-spy-anchor)
         @@include("docs/html/directives/spinner.html")
         h3 Example
         .docs-example
           mac-spinner
-        pre.prettyprint.linenums(ng-non-bindable)
-          = '<mac-spinner></mac-spinner>'
+        pre.prettyprint.linenums.
+          &lt;mac-spinner&gt;&lt;/mac-spinner&gt;
 
       section#cspinner(mac-scroll-spy-anchor)
         @@include("docs/html/directives/cspinner.html")
         h3 Example
         .docs-example
           mac-cspinner
-        pre.prettyprint.linenums(ng-non-bindable)
-          = '<mac-cspinner></mac-cspinner>'
+        pre.prettyprint.linenums.
+          &lt;mac-cspinner&gt;&lt;/mac-cspinner&gt;
 
       section#file-upload(mac-scroll-spy-anchor)
         @@include("docs/html/directives/file_upload.html")
@@ -322,29 +322,29 @@ block append content
               img(ng-src="{{previewImage(preview)}}")
               span {{preview.fileName}}
 
-        pre.prettyprint.linenums(ng-non-bindable)
-          = '<input type="file"\n'
-          = '  name="files[]"\n'
-          = '  ng-disabled="!fileUploaderEnabled"\n'
-          = '  multiple="multiple"\n'
-          = '  mac-upload="mac-upload"\n'
-          = '  mac-upload-route="uploadRoute"\n'
-          = '  mac-upload-success="fileUploadSuccess($data, $status)"\n'
-          = '  mac-upload-error="fileUploadError($response, $data, $status)"\n'
-          = '  mac-upload-submit="fileUploadSubmit($event, $data)"\n'
-          = '  mac-upload-drop-zone=".example-hit-area"\n'
-          = '  mac-upload-previews="uploadPreviews"/>\n'
-          = '<ul>\n'
-          = '  <li ng-repeat="preview in uploadPreviews">\n'
-          = '    <img ng-src="{{previewImage(preview)}}"/>\n'
-          = '    <span>{{preview.fileName}}</span>\n'
-          = '  </li>\n'
-          = '</ul>\n'
+        pre.prettyprint.linenums.
+          &lt;input type=&quot;file&quot;
+            name=&quot;files[]&quot;
+            ng-disabled=&quot;!fileUploaderEnabled&quot;
+            multiple=&quot;multiple&quot;
+            mac-upload=&quot;mac-upload&quot;
+            mac-upload-route=&quot;uploadRoute&quot;
+            mac-upload-success=&quot;fileUploadSuccess($data, $status)&quot;
+            mac-upload-error=&quot;fileUploadError($response, $data, $status)&quot;
+            mac-upload-submit=&quot;fileUploadSubmit($event, $data)&quot;
+            mac-upload-drop-zone=&quot;.example-hit-area&quot;
+            mac-upload-previews=&quot;uploadPreviews&quot;/&gt;
+          &lt;ul&gt;
+            &lt;li ng-repeat=&quot;preview in uploadPreviews&quot;&gt;
+              &lt;img ng-src=&quot;{{previewImage(preview)}}&quot;/&gt;
+              &lt;span&gt;{{preview.fileName}}&lt;/span&gt;
+            &lt;/li&gt;
+          &lt;/ul&gt;
 
       section#placeholder(mac-scroll-spy-anchor)
         @@include("docs/html/directives/placeholder.html")
         h3 Example
         .docs-example
           input(type="text", mac-placeholder="tagAutocompletePlaceholder")
-        pre.prettyprint.linenums(ng-non-bindable)
-          = '<input type="text" mac-placeholder="placeholderVariable">'
+        pre.prettyprint.linenums.
+          &lt;input type=&quot;text&quot; mac-placeholder=&quot;placeholderVariable&quot;&gt;

@@ -74,117 +74,117 @@ block append content
 
       section#pluralize(mac-scroll-spy-anchor)
         h3 pluralize
-        pre.prettyprint(ng-non-bindable)
-          | util.pluralize("apple", 5)
-          | => "apples"
-          | util.pluralize("apple", 10, true)
-          | => "10 apples"
+        pre.prettyprint.
+          util.pluralize("apple", 5)
+          =&gt; "apples"
+          util.pluralize("apple", 10, true)
+          =&gt; "10 apples"
 
       section#capitalize(mac-scroll-spy-anchor)
         h3 capitalize
         p Converts first leter of the string to uppercase (Underscore string proxy)
-        pre.prettyprint(ng-non-bindable)
-          | util.capitalize("lowercase")
-          | => "Lowercase"
+        pre.prettyprint.
+          util.capitalize("lowercase")
+          =&gt; "Lowercase"
 
       section#uncapitalize(mac-scroll-spy-anchor)
         h3 uncapitalize
-        pre.prettyprint(ng-non-bindable)
-          | util.uncapitalize("UPPERCASE")
-          | => "uPPERCASE"
+        pre.prettyprint.
+          util.uncapitalize("UPPERCASE")
+          =&gt; "uPPERCASE"
 
       section#toCamelCase(mac-scroll-spy-anchor)
         h3 toCamelCase
-        pre.prettyprint(ng-non-bindable)
-          | util.toCamelCase("a-string-with-dashes")
-          | => "aStringWithDashes"
+        pre.prettyprint.
+          util.toCamelCase("a-string-with-dashes")
+          =&gt; "aStringWithDashes"
 
       section#toSnakeCase(mac-scroll-spy-anchor)
         h3 toSnakeCase
-        pre.prettyprint(ng-non-bindable)
-          | util.toSnakeCase("just another string")
-          | => "just_another_string"
+        pre.prettyprint.
+          util.toSnakeCase("just another string")
+          =&gt; "just_another_string"
 
       section#convertKeysToCamelCase(mac-scroll-spy-anchor)
         h3 convertKeysToCamelCase
         p Convert all the keys in an object to camel case
-        pre.prettyprint(ng-non-bindable)
-          | util.toSnakeCase({'hello-world': 'test'})
-          | => {'helloWorld': 'test'}
+        pre.prettyprint.
+          util.toSnakeCase({'hello-world': 'test'})
+          =&gt; {'helloWorld': 'test'}
 
       section#convertKeysToSnakeCase(mac-scroll-spy-anchor)
         h3 convertKeysToSnakeCase
         p Convert all the keys in an object to snake case
-        pre.prettyprint(ng-non-bindable)
-          | util.toSnakeCase({'helloWorld': 'test'})
-          | => {'hello_world': 'test'}
+        pre.prettyprint.
+          util.toSnakeCase({'helloWorld': 'test'})
+          =&gt; {'hello_world': 'test'}
 
       section#pythagoras(mac-scroll-spy-anchor)
         h3 Pythagoras
-        pre.prettyprint(ng-non-bindable)
-          | util.pyth(3, 4)
-          | => 5
+        pre.prettyprint.
+          util.pyth(3, 4)
+          =&gt; 5
 
       section#degrees(mac-scroll-spy-anchor)
         h3 Radian to Degrees
-        pre.prettyprint(ng-non-bindable)
-          | util.degrees(Math.PI)
-          | => 180
+        pre.prettyprint.
+          util.degrees(Math.PI)
+          =&gt; 180
 
       section#radian(mac-scroll-spy-anchor)
         h3 Degrees to Radian
-        pre.prettyprint(ng-non-bindable)
-          | util.radian(180)
-          | => Math.PI
+        pre.prettyprint.
+          util.radian(180)
+          =&gt; Math.PI
 
       section#hex2rgb(mac-scroll-spy-anchor)
         h3 HEX to RGB
         p Convert HEX color into RGB values
-        pre.prettyprint(ng-non-bindable)
-          | util.hex2rgb("#5331DE")
-          | => {r: 83, g: 49, b: 222}
+        pre.prettyprint.
+          util.hex2rgb("#5331DE")
+          =&gt; {r: 83, g: 49, b: 222}
 
       section#validateUrl(mac-scroll-spy-anchor)
         h3 validateUrl
         p Parse url and break it into different components
-        pre.prettyprint(ng-non-bindable)
-          | util.validateUrl("http://www.example.com/macgyver/episodes")
-          | => {domain: "com"
-          |     name: "example"
-          |     path: "/macgyver/episodes"
-          |     port: undefined
-          |     protocol: "http://"
-          |     subdomain: "www"
-          |     url: "http://www.example.com/macgyver/episodes"}
+        pre.prettyprint.
+          util.validateUrl("http://www.example.com/macgyver/episodes")
+          =&gt; {domain: "com"
+              name: "example"
+              path: "/macgyver/episodes"
+              port: undefined
+              protocol: "http://"
+              subdomain: "www"
+              url: "http://www.example.com/macgyver/episodes"}
 
       section#validateEmail(mac-scroll-spy-anchor)
         h3 validateEmail
-        pre.prettyprint(ng-non-bindable)
-          | util.validateEmail("user@example.com")
-          | => true
+        pre.prettyprint.
+          util.validateEmail("user@example.com")
+          =&gt; true
 
       section#getQueryString(mac-scroll-spy-anchor)
         h3 getQueryString
-        pre.prettyprint(ng-non-bindable)
-          | util.getQueryString("http://www.example.com/macgyver?season=1&episode=3&time=12:23", "episode")
-          | => 3
+        pre.prettyprint.
+          util.getQueryString("http://www.example.com/macgyver?season=1&amp;episode=3&amp;time=12:23", "episode")
+          =&gt; 3
 
       section#parseUrlPath(mac-scroll-spy-anchor)
         h3 parseUrlPath
-        pre.prettyprint(ng-non-bindable)
-          | util.parseUrlPath("http://www.example.com/macgyver?season=1&episode=3&time=12:23")
-          | => {fullPath: "http://www.example.com/macgyver?season=1&episode=3&time=12:23",
-          |     path: "http://www.example.com",
-          |     pathComponents: [
-          |       "http:",
-          |       "",
-          |       "www.example.com",
-          |       "macgyver"
-          |     ],
-          |     verb: "macgyver",
-          |     queries: {
-          |       season: "1",
-          |       episode: "3",
-          |       time: "12:23"
-          |     }
-          |   }
+        pre.prettyprint.
+          util.parseUrlPath("http://www.example.com/macgyver?season=1&amp;episode=3&amp;time=12:23")
+          =&gt; {fullPath: "http://www.example.com/macgyver?season=1&amp;episode=3&amp;time=12:23",
+              path: "http://www.example.com",
+              pathComponents: [
+                "http:",
+                "",
+                "www.example.com",
+                "macgyver"
+              ],
+              verb: "macgyver",
+              queries: {
+                season: "1",
+                episode: "3",
+                time: "12:23"
+              }
+            }

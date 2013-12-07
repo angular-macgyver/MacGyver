@@ -25,8 +25,8 @@ block append content
           p {{ "this_Is_aTestFor_Underscore_string" | underscoreString: "humanize" }}
           p {{ "Truncating: lorem ipsum dolor sit amet, consectetur adipiscing elit." | underscoreString: "truncate": 42 }}
           p {{ "Pruning: lorem ipsum dolor sit amet, consectetur adipiscing elit." | underscoreString: "prune": 42: "... (show more)" }}
-        pre.prettyprint.linenums(ng-non-bindable)
-          = '<p>{{ "this_Is_aTestFor_Underscore_string" | underscoreString: "humanize" }}</p>'
+        pre.prettyprint.linenums.
+          &lt;p&gt;{{ &quot;this_Is_aTestFor_Underscore_string&quot; | underscoreString: &quot;humanize&quot; }}&lt;/p&gt;
 
       section#pluralize-filter(mac-scroll-spy-anchor)
         @@include("docs/html/filters/pluralize.html")
@@ -37,8 +37,8 @@ block append content
             dd {{"person" | pluralize:1}}
             dt Multiple
             dd {{"person" | pluralize:1500}}
-        pre.prettyprint.linenums(ng-non-bindable)
-          = '{{"person" | pluralize:1500}}'
+        pre.prettyprint.linenums.
+          {{&quot;person&quot; | pluralize:1500}}
 
       section#timestamp-filter(mac-scroll-spy-anchor)
         @@include("docs/html/filters/timestamp.html")
@@ -51,13 +51,13 @@ block append content
             dd {{ oneDayAgo | timestamp }}
             dt Now - 3 days
             dd {{ threeDaysAgo | timestamp }}
-        pre.prettyprint.linenums(ng-non-bindable)
-          = '{{ fiveMinAgo | timestamp }}'
+        pre.prettyprint.linenums.
+          {{ fiveMinAgo | timestamp }}
 
       section#list-filter(mac-scroll-spy-anchor)
         @@include("docs/html/filters/list.html")
         h3 Example
         .docs-example
           p {{ ["item1", "item2", "item3", "item4"] | list }}
-        pre.prettyprint.linenums(ng-non-bindable)
-          = '{{ ["item1", "item2", "item3", "item4"] | list }}'
+        pre.prettyprint.linenums.
+          {{ [&quot;item1&quot;, &quot;item2&quot;, &quot;item3&quot;, &quot;item4&quot;] | list }}
