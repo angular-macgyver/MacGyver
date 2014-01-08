@@ -149,7 +149,9 @@ jqLiteExtend =
       element["scrollTop"] = value
 
 extendjQuery = ->
-  return if window.jQuery?
+  # NOTE: Make sure Angular element is using jQuery
+  # MacGyver breaks when Angular to initialized before jQuery
+  return if window.jQuery? and angular.element::offset?
 
   jqLite = angular.element
 
