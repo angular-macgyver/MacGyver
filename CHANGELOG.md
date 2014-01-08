@@ -1,3 +1,69 @@
+# v0.2.0 (2014/1/8)
+## Bug Fixes
+- **bower.json:** Fixed bower versioning
+  ([f2914bff](https://github.com/StartTheShift/MacGyver/commit/f2914bff4ac458ddfdcf1569eec5317f8f7faac3))
+- **jqLite:** Make sure jqLite is extended correctly
+  ([10cec981](https://github.com/StartTheShift/MacGyver/commit/10cec9818c984b2ea93082b71d8a2978982e2b20))
+- **macModal:** Fixed mac-modal firing $digest cycle
+  ([bfa9b376](https://github.com/StartTheShift/MacGyver/commit/bfa9b3765e9438be87a3e2d78323c78ccc729585),
+   [#138](https://github.com/StartTheShift/MacGyver/issues/138))
+- **macTagAutocomplete:**
+  - Fixed placeholder not updating correctly without source
+  ([c9611f08](https://github.com/StartTheShift/MacGyver/commit/c9611f08bcb53ac3b34d7c85239aed3238a3fdb3))
+  - Make sure only to watch selected and source when using source
+  ([ce3d0237](https://github.com/StartTheShift/MacGyver/commit/ce3d02377a13793552e6243804c96e2086221f74))
+- **macUpload:** Fixed upload progress not updating and controller not getting set
+  ([e8267f6e](https://github.com/StartTheShift/MacGyver/commit/e8267f6e8a97d9f3b7235ac785d6c478d0dd6839))
+
+## Features
+- **core:** Add ngAnimate detection and add to Mac automatically
+  ([be1ddb1c](https://github.com/StartTheShift/MacGyver/commit/be1ddb1c6c31270935678d7c7f7391bb2e5d72b1))
+- **macModal:**
+  - Use $animate to show and hide mac-modal
+  ([6a7373d1](https://github.com/StartTheShift/MacGyver/commit/6a7373d140678be9938a4ad6f4ee15f3337eb243))
+  - Using $animate to handle DOM manipulation. Destroy scope or hide modal after hide animation complete. Completely isolate modal scope.
+Related #124
+  ([11d35aad](https://github.com/StartTheShift/MacGyver/commit/11d35aad599bb05e7ac1e115077f0758d3e74231))
+- **util:** Added trim to util library
+  ([ed920966](https://github.com/StartTheShift/MacGyver/commit/ed9209663b350879611043e6855c1d9d20935a2d))
+
+## Optimizations
+- **macAffix:** Switched to use $document and $window. Better top and bottom offset validation
+  ([0393bbcb](https://github.com/StartTheShift/MacGyver/commit/0393bbcbe8e7eb3ea7b2278032023e1d304e5fd3))
+- **macAutocomplete:** Using $animate to create and remove menu. Better handle on click binding.
+  ([1c421a17](https://github.com/StartTheShift/MacGyver/commit/1c421a175fbc7c67283ad69760d7e64397ea4014))
+- **macCspinner:** Use $timeout
+  ([86818225](https://github.com/StartTheShift/MacGyver/commit/86818225c984cb295f9d4bdaaca3a7a51d6738a3))
+- **macMenu:** Cleaned up mac-menu dependencies
+  ([af7332f5](https://github.com/StartTheShift/MacGyver/commit/af7332f559b2c7ae5012948ded496efe6286bff0))
+- **macModal:** Refactored modal directive and service. Converted modal directive to isolated scope but transcluded content is using parent scope instead. This prevent modal `close` function ending up in parent scope. Cleaned up modal stylus. Removed modal service from modal scope. Fixed modal test.
+  ([658ea764](https://github.com/StartTheShift/MacGyver/commit/658ea764f850c0ef621338cbb4fb06ea83baea6e))
+- **macScrollSpy:** Clean up and make sure listeners are not binded multiple times
+  ([2583617d](https://github.com/StartTheShift/MacGyver/commit/2583617d9eda5142b1044afc4eb4d84bd4772a02))
+- **macSpinner:**
+  - Improve performance when compiling spinner
+  ([a8c2b3ae](https://github.com/StartTheShift/MacGyver/commit/a8c2b3aec19274e2519a2907e513898a833fbb6b))
+  - Switched to use $animate
+  ([70538b39](https://github.com/StartTheShift/MacGyver/commit/70538b3997793bbeb2d0cb5188271020b406a449))
+- **macTagAutocomplete:**
+  - Switched to use ng-keydown and some code cleanup
+  ([b1a97ad5](https://github.com/StartTheShift/MacGyver/commit/b1a97ad5d53c05130498f50402537839890341d2))
+  - Use watchCollection to update source correctly
+  ([5a696ec7](https://github.com/StartTheShift/MacGyver/commit/5a696ec7cf545a225bc93355b9ae1ab4e00ab667))
+- **macTime:** Switched to use AngularJS events
+  ([b86c7186](https://github.com/StartTheShift/MacGyver/commit/b86c7186c6cf14bcba74e57f3933541af4cd6a15))
+- **macUpload:** Optimized getting and setting previews. Switched to use $document. Make sure drag and drop timeout getting cancel correctly
+  ([2132afa3](https://github.com/StartTheShift/MacGyver/commit/2132afa37bd2a4c666a572e3510e233470e3eaee))
+
+## Breaking Changes
+- **macAutocomplete:**  Changed autocomplete event from resetAutocomplete to reset-mac-autocomplete  Related to #124
+  ([e4f2021e](https://github.com/StartTheShift/MacGyver/commit/e4f2021e12224e75693d9d230001f5d363c290fd))
+- **macModal:**  mac-modal-content is completely removed and should switch to use mac-modal-data instead
+  ([0f604bd1](https://github.com/StartTheShift/MacGyver/commit/0f604bd180901ad6ce16c5e2d138ab77c0f41950))
+- **macTagInput:**  Mac-tag-input is removed from MacGyver as it has been a proxy to mac-tag-autocomplete. When switching to mac-tag-autocomplete, DOM attributes should also be updated. - Use mac-tag-autocomplete-source for mac-tag-input-tags - Use mac-tag-autocomplete-selected for mac-tag-input-selected - Use mac-tag-autocomplete-placeholder for mac-tag-input-placeholder - Use mac-tag-autocomplete-value for mac-tag-input-value - Use mac-tag-autocomplete-label for mac-tag-input-label
+  ([3b74cd82](https://github.com/StartTheShift/MacGyver/commit/3b74cd82b3c247a886b4f10fb6bd42f5f96527fb))
+
+
 # v0.1.25 (2013/11/12)
 ## Bug Fixes
 - **macDatepicker:** Fixed changing datepicker text input does not update model

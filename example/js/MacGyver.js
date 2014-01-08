@@ -1,6 +1,13 @@
-var augmentWidthOrHeight, core_pnum, cssExpand, extendjQuery, getStyles, getWidthOrHeight, getWindow, isWindow, jqLiteExtend, rnumnonpx;
+var augmentWidthOrHeight, core_pnum, cssExpand, extendjQuery, getStyles, getWidthOrHeight, getWindow, isWindow, jqLiteExtend, modules, rnumnonpx;
 
-angular.module("Mac", ["Mac.Util"]);
+modules = ["Mac.Util"];
+
+try {
+  angular.module("ngAnimate");
+  modules.push("ngAnimate");
+} catch (_error) {}
+
+angular.module("Mac", modules);
 
 /*
 @chalk overview
@@ -166,7 +173,7 @@ jqLiteExtend = {
 
 extendjQuery = function() {
   var jqLite;
-  if (window.jQuery != null) {
+  if ((window.jQuery != null) && (angular.element.prototype.offset != null)) {
     return;
   }
   jqLite = angular.element;
@@ -8004,105 +8011,121 @@ $.widget("ui.sortable", $.ui.mouse, {
 @description
 Fix the component at a certain position
 
-@param {Expr} mac-affix-disabled To unpin element
-@param {Expr} mac-affix-top      Top offset (default 0)
-@param {Expr} mac-affix-bottom   Bottom offset (default 0)
+@param {Expr}  mac-affix-disabled To unpin element (default false)
+@param {Expr}  mac-affix-top      Top offset (default 0)
+@param {Expr}  mac-affix-bottom   Bottom offset (default 0)
+@param {Event} refresh-mac-affix  To update the position of affixed element
 */
 
-angular.module("Mac").directive("macAffix", function() {
-  return {
-    link: function($scope, element, attrs) {
-      var defaults, disabled, getPosition, lastAffix, offset, position, scrollEvent, unpin, windowEl;
-      defaults = {
-        top: 0,
-        bottom: 0,
-        disabled: false,
-        classes: "affix affix-top affix-bottom"
-      };
-      offset = {
-        top: defaults.top,
-        bottom: defaults.bottom
-      };
-      position = {
-        top: 0,
-        left: 0
-      };
-      disabled = defaults.disabled;
-      lastAffix = null;
-      unpin = null;
-      windowEl = angular.element(window);
-      if (attrs.macAffixTop != null) {
-        offset.top = $scope.$eval(attrs.macAffixTop) || defaults.top;
-        $scope.$watch(attrs.macAffixTop, function(value) {
-          if (value != null) {
-            return offset.top = value;
+angular.module("Mac").directive("macAffix", [
+  "$document", "$window", function($document, $window) {
+    return {
+      link: function($scope, element, attrs) {
+        var defaults, disabled, lastAffix, offset, position, scrollEvent, setOffset, unpin, windowEl;
+        defaults = {
+          top: 0,
+          bottom: 0,
+          disabled: false,
+          classes: "affix affix-top affix-bottom"
+        };
+        offset = {
+          top: defaults.top,
+          bottom: defaults.bottom
+        };
+        position = element.offset();
+        disabled = defaults.disabled;
+        lastAffix = null;
+        unpin = null;
+        windowEl = angular.element($window);
+        /*
+        @name setOffset
+        @description
+        Update top or bottom offset. This function will make sure the value is
+        an integer and use default value
+        @param {String} key Offset key
+        @param {String|Integer} value Update value
+        @param {Bool} useDefault
+        */
+
+        setOffset = function(key, value, useDefault) {
+          if (useDefault == null) {
+            useDefault = false;
           }
-        });
-      }
-      if (attrs.macAffixBottom != null) {
-        offset.bottom = $scope.$eval(attrs.macAffixBottom) || defaults.bottom;
-        $scope.$watch(attrs.macAffixBottom, function(value) {
-          if (value != null) {
-            return offset.bottom = value;
+          if (useDefault && (value == null)) {
+            value = defaults[key];
           }
-        });
-      }
-      (getPosition = function() {
-        return position = element.offset();
-      })();
-      scrollEvent = function() {
-        var affix, scrollHeight, scrollTop;
-        if (element[0].offsetHeight <= 0 && element[0].offsetWidth <= 0) {
-          return;
+          if ((value != null) && !isNaN(+value)) {
+            return offset[key] = +value;
+          }
+        };
+        if (attrs.macAffixTop != null) {
+          setOffset("top", $scope.$eval(attrs.macAffixTop), true);
+          $scope.$watch(attrs.macAffixTop, function(value) {
+            return setOffset("top", value);
+          });
         }
-        scrollTop = windowEl.scrollTop();
-        scrollHeight = angular.element(document).height();
-        affix = (unpin != null) && scrollTop + unpin <= position.top ? false : position.top + element.height() >= scrollHeight - offset.bottom ? "bottom" : scrollTop <= offset.top ? "top" : false;
-        if (affix === lastAffix) {
-          return;
+        if (attrs.macAffixBottom != null) {
+          setOffset("bottom", $scope.$eval(attrs.macAffixBottom), true);
+          $scope.$watch(attrs.macAffixBottom, function(value) {
+            return setOffset("bottom", value);
+          });
         }
-        lastAffix = affix;
-        if (unpin) {
-          element.css("top", "");
-        }
-        element.removeClass(defaults.classes).addClass("affix" + (affix ? "-" + affix : ""));
-        if (affix === "bottom") {
-          unpin = position.top - scrollTop;
-          element.css("top", document.body.offsetHeight - offset.bottom - element.height());
-        } else {
-          unpin = null;
-        }
-        return true;
-      };
-      if (attrs.macAffixDisabled != null) {
-        disabled = $scope.$eval(attrs.macAffixDisabled) || defaults.disabled;
-        $scope.$watch(attrs.macAffixDisabled, function(value) {
-          var action;
-          if ((value == null) || value === disabled) {
+        scrollEvent = function() {
+          var affix, scrollHeight, scrollTop;
+          if (element[0].offsetHeight <= 0 && element[0].offsetWidth <= 0) {
             return;
           }
-          disabled = value;
-          action = value ? "unbind" : "bind";
-          windowEl[action]("scroll", scrollEvent);
-          if (disabled) {
-            lastAffix = null;
-            unpin = null;
-            return element.css("top", "").removeClass(defaults.classes);
-          } else {
-            return scrollEvent();
+          scrollTop = windowEl.scrollTop();
+          scrollHeight = $document.height();
+          affix = (unpin != null) && scrollTop + unpin <= position.top ? false : position.top + element.height() >= scrollHeight - offset.bottom ? "bottom" : scrollTop <= offset.top ? "top" : false;
+          if (affix === lastAffix) {
+            return;
           }
+          lastAffix = affix;
+          if (unpin) {
+            element.css("top", "");
+          }
+          element.removeClass(defaults.classes).addClass("affix" + (affix ? "-" + affix : ""));
+          if (affix === "bottom") {
+            unpin = position.top - scrollTop;
+            element.css("top", $document[0].body.offsetHeight - offset.bottom - element.height());
+          } else {
+            unpin = null;
+          }
+          return true;
+        };
+        if (attrs.macAffixDisabled != null) {
+          disabled = $scope.$eval(attrs.macAffixDisabled) || defaults.disabled;
+          $scope.$watch(attrs.macAffixDisabled, function(value) {
+            var action;
+            if ((value == null) || value === disabled) {
+              return;
+            }
+            disabled = value;
+            action = value ? "unbind" : "bind";
+            windowEl[action]("scroll", scrollEvent);
+            if (disabled) {
+              lastAffix = null;
+              unpin = null;
+              return element.css("top", "").removeClass(defaults.classes);
+            } else {
+              return scrollEvent();
+            }
+          });
+        }
+        if (!disabled) {
+          windowEl.bind("scroll", scrollEvent);
+        }
+        $scope.$on("refresh-mac-affix", function() {
+          return position = element.offset();
+        });
+        return $scope.$on("$destroy", function() {
+          return windowEl.unbind("scroll", scrollEvent);
         });
       }
-      if (!disabled) {
-        windowEl.bind("scroll", scrollEvent);
-      }
-      $scope.$on("refresh-mac-affix", getPosition);
-      return $scope.$on("$destroy", function() {
-        return windowEl.unbind("scroll", scrollEvent);
-      });
-    }
-  };
-});
+    };
+  }
+]);
 
 /*
 @chalk overview
@@ -8114,7 +8137,7 @@ A directive for providing suggestions while typing into the field
 @dependencies
 - mac-menu
 
-@param {String} ng-model Assignable angular expression to data-bind to
+@param {String} ng-model Assignable angular expression to data-bind to (required)
 @param {String} mac-placeholder Placeholder text
 @param {String} mac-autocomplete-url Url to fetch autocomplete dropdown list data. URL may include GET params e.g. "/users?nocache=1"
 @param {Expression} mac-autocomplete-source Local data source
@@ -8135,14 +8158,14 @@ A directive for providing suggestions while typing into the field
 */
 
 angular.module("Mac").directive("macAutocomplete", [
-  "$http", "$filter", "$compile", "$timeout", "$parse", "$rootScope", "keys", function($http, $filter, $compile, $timeout, $parse, $rootScope, keys) {
+  "$animate", "$http", "$filter", "$compile", "$timeout", "$parse", "$rootScope", "$document", "keys", function($animate, $http, $filter, $compile, $timeout, $parse, $rootScope, $document, keys) {
     return {
       restrict: "E",
       templateUrl: "template/autocomplete.html",
       replace: true,
       require: "ngModel",
       link: function($scope, element, attrs, ctrl) {
-        var $menuScope, appendMenu, autocompleteUrl, currentAutocomplete, delay, disabled, inside, labelKey, menuEl, onError, onSelect, onSelectBool, onSuccess, positionMenu, queryData, queryKey, reset, source, timeoutId, updateItem;
+        var $menuScope, appendMenu, autocompleteUrl, clickHandler, currentAutocomplete, delay, disabled, inside, labelKey, menuEl, onError, onSelect, onSelectBool, onSuccess, positionMenu, queryData, queryKey, reset, source, timeoutId, updateItem;
         labelKey = attrs.macAutocompleteLabel || "name";
         queryKey = attrs.macAutocompleteQuery || "q";
         delay = +(attrs.macAutocompleteDelay || 800);
@@ -8156,7 +8179,7 @@ angular.module("Mac").directive("macAutocomplete", [
         currentAutocomplete = [];
         timeoutId = null;
         onSelectBool = false;
-        $menuScope = $rootScope.$new();
+        $menuScope = $rootScope.$new(true);
         $menuScope.items = [];
         $menuScope.index = 0;
         menuEl = angular.element("<mac-menu></mac-menu>");
@@ -8169,10 +8192,10 @@ angular.module("Mac").directive("macAutocomplete", [
         $compile(menuEl)($menuScope);
         ctrl.$parsers.push(function(value) {
           if (value && !disabled($scope) && !onSelectBool) {
+            if (timeoutId != null) {
+              $timeout.cancel(timeoutId);
+            }
             if (delay > 0) {
-              if (timeoutId != null) {
-                $timeout.cancel(timeoutId);
-              }
               timeoutId = $timeout(function() {
                 return queryData(value);
               }, delay);
@@ -8185,18 +8208,58 @@ angular.module("Mac").directive("macAutocomplete", [
           onSelectBool = false;
           return value;
         });
+        /*
+        @name clickHandler
+        @description
+        Create a click handler function to make sure directive is unbinding
+        the correct handler
+        */
+
+        clickHandler = function() {
+          return reset(true);
+        };
+        /*
+        @function
+        @name appendMenu
+        @description
+        Adding menu to DOM
+        */
+
         appendMenu = function() {
           if (inside) {
-            return element.after(menuEl);
+            $animate.enter(menuEl, void 0, element);
           } else {
-            return angular.element(document.body).append(menuEl);
+            $animate.enter(menuEl, angular.element(document.body));
+          }
+          return $document.bind("click", clickHandler);
+        };
+        /*
+        @function
+        @name reset
+        @description
+        Resetting autocomplete
+        */
+
+        reset = function(invokeApply) {
+          if (invokeApply == null) {
+            invokeApply = false;
+          }
+          $animate.leave(menuEl, function() {
+            $menuScope.items = [];
+            $menuScope.index = 0;
+            return $document.unbind("click", clickHandler);
+          });
+          if (invokeApply) {
+            return $scope.$apply();
           }
         };
-        reset = function() {
-          $menuScope.items = [];
-          $menuScope.index = 0;
-          return menuEl.remove();
-        };
+        /*
+        @function
+        @name positionMenu
+        @description
+        Calculate the style include position and width for menu
+        */
+
         positionMenu = function() {
           if ($menuScope.items.length > 0) {
             $menuScope.style = element.offset();
@@ -8211,6 +8274,14 @@ angular.module("Mac").directive("macAutocomplete", [
             return appendMenu();
           }
         };
+        /*
+        @function
+        @name updateItem
+        @description
+        Update list of items getting passed to menu
+        @param {Array} data Array of data
+        */
+
         updateItem = function(data) {
           var item, label, value, _i, _len, _results;
           if (data == null) {
@@ -8231,6 +8302,14 @@ angular.module("Mac").directive("macAutocomplete", [
             return _results;
           }
         };
+        /*
+        @function
+        @name queryData
+        @description
+        Used for querying data
+        @param {String} query Search query
+        */
+
         queryData = function(query) {
           var options, url;
           url = autocompleteUrl($scope);
@@ -8260,7 +8339,7 @@ angular.module("Mac").directive("macAutocomplete", [
                 headers: headers
               });
             });
-          } else {
+          } else if (attrs.macAutocompleteSource != null) {
             updateItem($filter("filter")(source($scope), query));
             return positionMenu();
           }
@@ -8305,17 +8384,17 @@ angular.module("Mac").directive("macAutocomplete", [
           }
           return true;
         });
-        angular.element(document).bind("click", function(event) {
-          if ($menuScope.items.length > 0) {
-            return $scope.$apply(function() {
-              return reset();
-            });
-          }
-        });
         $scope.$on("$destroy", function() {
-          return menuEl.remove();
+          return reset();
         });
-        return $scope.$on("resetAutocomplete", function() {
+        /*
+        @event
+        @name reset-mac-autocomplete
+        @description
+        Event to reset autocomplete
+        */
+
+        return $scope.$on("reset-mac-autocomplete", function() {
           return reset();
         });
       }
@@ -8344,7 +8423,7 @@ This spinner requires much less CPU/GPU resources than CSS spinner
 */
 
 angular.module("Mac").directive("macCspinner", [
-  "util", function(util) {
+  "$timeout", "util", function($timeout, util) {
     return {
       restrict: "E",
       replace: "true",
@@ -8418,7 +8497,9 @@ angular.module("Mac").directive("macCspinner", [
           spinning = false;
           stop = function() {
             spinning = false;
-            return clearTimeout(intervalID);
+            if (intervalID != null) {
+              return $timeout.cancel(intervalID);
+            }
           };
           start = function() {
             var drawFn, rotate;
@@ -8438,7 +8519,7 @@ angular.module("Mac").directive("macCspinner", [
                 if (!startCycle && element[0].offsetHeight <= 0 && element[0].offsetWidth <= 0) {
                   return stop();
                 }
-                return intervalID = setTimeout(drawFn, opts.speed);
+                return intervalID = $timeout(drawFn, opts.speed, false);
               }
             })(true);
           };
@@ -8446,7 +8527,7 @@ angular.module("Mac").directive("macCspinner", [
             $scope.$watch(attrs.macCspinnerSpin, function(value) {
               if (value && !spinning) {
                 return start();
-              } else if (!value && spinning) {
+              } else {
                 return stop();
               }
             });
@@ -8810,6 +8891,7 @@ angular.module("Mac").directive("macWindowResize", [
 Directive for proxying jQuery file upload
 
 @dependencies
+- jQuery
 - jQuery file upload
 
 @param {String}     mac-upload-route      File upload route
@@ -8818,21 +8900,20 @@ Directive for proxying jQuery file upload
 @param {Function}   mac-upload-error      Upload error callback
 @param {Function}   mac-upload-always     Callback for completed (success, abort or error) requests
 @param {Expression} mac-upload-previews   List of uploaded files {Array}
-@param {Function}   mac-upload-progress   Upload progress callback
+@param {Function}   mac-upload-progress   Upload progress callback (requires mac-upload-previews)
 @param {String}     mac-upload-drop-zone  The selector that we can drop files onto
 @param {Expression} mac-upload-form-data  Additional form data {Array|Object|Function|FormData}
 @param {Expression} mac-upload-options    Additional options to pass to jquery fileupload
 */
 
 angular.module("Mac").directive("macUpload", [
-  "$rootScope", "$parse", "$timeout", "util", function($rootScope, $parse, $timeout, util) {
+  "$rootScope", "$parse", "$timeout", "$document", "util", function($rootScope, $parse, $timeout, $document, util) {
     return {
       require: ["macUpload", "?macUploadPreviews"],
       controller: ["$scope", function() {}],
       link: function($scope, element, attrs, ctrls) {
         var applyCallback, defaults, dragoverTimeout, dropZone, extraOptions, options, opts, previewCtrl, setOptions, uploadCtrl;
-        uploadCtrl = ctrls[0];
-        previewCtrl = ctrls[1];
+        uploadCtrl = ctrls[0], previewCtrl = ctrls[1];
         defaults = {
           route: "",
           dropZone: null,
@@ -8851,11 +8932,11 @@ angular.module("Mac").directive("macUpload", [
           }
         };
         applyCallback = function(action, $event, $data) {
-          var callbackFn;
-          callbackFn = $parse(opts[action]);
-          if (callbackFn != null) {
+          var capitalized;
+          capitalized = util.capitalize(action);
+          if (attrs["macUpload" + capitalized] != null) {
             return $scope.$apply(function() {
-              var $response, $status, $xhr, args, err, responseText, _ref, _ref1;
+              var $response, $status, $xhr, err, responseText, _ref, _ref1;
               $xhr = $data.jqXHR;
               $status = (_ref = $data.jqXHR) != null ? _ref.status : void 0;
               responseText = ((_ref1 = $data.jqXHR) != null ? _ref1.responseText : void 0) || "";
@@ -8865,14 +8946,13 @@ angular.module("Mac").directive("macUpload", [
                 err = _error;
                 $response = responseText;
               }
-              args = {
+              return $parse(opts[action])($scope, {
                 $event: $event,
                 $data: $data,
                 $status: $status,
                 $xhr: $xhr,
                 $response: $response
-              };
-              return callbackFn($scope, args);
+              });
             });
           }
         };
@@ -8910,12 +8990,12 @@ angular.module("Mac").directive("macUpload", [
           }
         };
         if (opts.dropZone != null) {
-          angular.element(document).bind("drop dragover", function(event) {
+          $document.bind("drop dragover", function(event) {
             return event.preventDefault();
           });
           dragoverTimeout = null;
           dropZone = element.parents(opts.dropZone);
-          angular.element(document).bind("dragover", function(event) {
+          $document.bind("dragover", function(event) {
             var method, node;
             if (dragoverTimeout != null) {
               $timeout.cancel(dragoverTimeout);
@@ -8925,7 +9005,7 @@ angular.module("Mac").directive("macUpload", [
             dropZone[method]("droppable");
             return dragoverTimeout = $timeout(function() {
               if (dragoverTimeout != null) {
-                clearTimeout(dragoverTimeout);
+                $timeout.cancel(dragoverTimeout);
               }
               return dropZone.removeClass("droppable");
             }, 250, false);
@@ -8959,10 +9039,10 @@ angular.module("Mac").directive("macUpload", [
       require: ["macUploadPreviews", "macUpload"],
       controller: [
         "$scope", "$attrs", "$parse", function($scope, $attrs, $parse) {
+          var previewsGet, previewsSet;
+          previewsGet = $parse($attrs.macUploadPreviews);
+          previewsSet = previewsGet.assign;
           this.previews = function(value) {
-            var previewsGet, previewsSet;
-            previewsGet = $parse($attrs.macUploadPreviews);
-            previewsSet = previewsGet.assign;
             if (value != null) {
               return previewsSet($scope, value);
             } else {
@@ -9018,38 +9098,31 @@ angular.module("Mac").directive("macUpload", [
             return _results;
           };
         }
-      ],
-      link: function($scope, element, attrs, ctrls) {
-        var previewCtrl;
-        return previewCtrl = ctrls[0];
-      }
+      ]
     };
   }
 ]).directive("macUploadProgress", [
   function() {
     return {
       restrict: "A",
-      require: ["macUploadProgress", "?macUploadPreviews"],
+      require: ["macUploadProgress", "macUploadPreviews"],
       controller: [
         "$scope", function($scope) {
-          var updateProgress;
-          updateProgress = function(data) {
-            var preview;
-            preview = this.getByFilename(data.files[0].name);
-            return preview != null ? preview.progress = parseInt(data.loaded / data.total * 100, 10) : void 0;
+          this.updatePreviewCtrl = function(ctrl) {
+            return ctrl.updateProgress = function(data) {
+              var preview;
+              if ((preview = this.getByFilename(data.files[0].name)) != null) {
+                return preview.progress = parseInt(data.loaded / data.total * 100, 10);
+              }
+            };
           };
-          return this.updatePreviewCtrl = function(ctrl) {
-            return ctrl.updateProgress = updateProgress;
-          };
+          return this;
         }
       ],
       link: function($scope, element, attrs, ctrls) {
         var previewsCtrl, progressCtrl;
-        progressCtrl = ctrls[0];
-        previewsCtrl = ctrls[1];
-        if ((progressCtrl != null) && (typeof previewCtrl !== "undefined" && previewCtrl !== null)) {
-          return progressCtrl != null ? progressCtrl.updatePreviewCtrl(previewsCtrl) : void 0;
-        }
+        progressCtrl = ctrls[0], previewsCtrl = ctrls[1];
+        return progressCtrl.updatePreviewCtrl(previewsCtrl);
       }
     };
   }
@@ -9221,7 +9294,7 @@ A directive for creating a menu with multiple items
 */
 
 angular.module("Mac").directive("macMenu", [
-  "$parse", function($parse) {
+  function() {
     return {
       restrict: "EA",
       replace: true,
@@ -9254,41 +9327,60 @@ angular.module("Mac").directive("macMenu", [
   }
 ]);
 
+/*
+@chalk overview
+@name mac-modal (element)
+@description
+Element directive to define the modal dialog. Modal content is transcluded into a
+modal template
+
+@param {Boolean} mac-modal-keyboard      Allow closing modal with keyboard (default false)
+@param {Boolean} mac-modal-overlay-close Allow closing modal when clicking on overlay (default false)
+@param {Boolean} mac-modal-resize        Allow modal to resize on window resize event (default true)
+@param {Expr}    mac-modal-open          Callback when the modal is opened
+@param {Integer} mac-modal-topOffset     Top offset when the modal is larger than window height (default 20)
+*/
+
 angular.module("Mac").directive("macModal", [
-  "$rootScope", "$parse", "modal", "modalViews", "util", function($rootScope, $parse, modal, modalViews, util) {
+  "$parse", "modal", "modalViews", "util", function($parse, modal, modalViews, util) {
     return {
       restrict: "E",
-      templateUrl: "template/modal.html",
+      template: modal.modalTemplate,
       replace: true,
       transclude: true,
-      compile: function(element, attrs, transclude) {
-        return function($scope, element, attrs) {
-          var opts, registerModal;
-          opts = util.extendAttributes("macModal", modalViews.defaults, attrs);
-          registerModal = function(id) {
-            if ((id != null) && id) {
-              opts.callback = function() {
-                if (opts.open != null) {
-                  return $parse(opts.open)($scope);
-                }
-              };
-              return modal.register(id, element, opts);
-            }
-          };
-          $scope.modal = modal;
-          $scope.closeOverlay = function($event) {
-            if (opts.overlayClose && angular.element($event.target).hasClass("modal-overlay")) {
-              return modal.hide();
-            }
-          };
-          if (attrs.id) {
-            return registerModal(attrs.id);
-          } else {
-            return attrs.$observe("macModal", function(id) {
-              return registerModal(id);
-            });
+      scope: {
+        open: "&macModalOpen"
+      },
+      link: function($scope, element, attrs, controller, transclude) {
+        var opts, registerModal;
+        transclude($scope.$parent, function(clone) {
+          var wrapper;
+          wrapper = angular.element(element[0].getElementsByClassName("modal-content-wrapper"));
+          wrapper.html("");
+          return wrapper.append(clone);
+        });
+        opts = util.extendAttributes("macModal", modalViews.defaults, attrs);
+        registerModal = function(id) {
+          if ((id != null) && id) {
+            opts.callback = $scope.open;
+            return modal.register(id, element, opts);
           }
         };
+        $scope.close = function($event, force) {
+          if (force == null) {
+            force = false;
+          }
+          if (force || (opts.overlayClose && angular.element($event.target).hasClass("modal-overlay"))) {
+            return modal.hide();
+          }
+        };
+        if (attrs.id) {
+          return registerModal(attrs.id);
+        } else {
+          return attrs.$observe("macModal", function(id) {
+            return registerModal(id);
+          });
+        }
       }
     };
   }
@@ -9299,7 +9391,7 @@ angular.module("Mac").directive("macModal", [
       link: function($scope, element, attrs) {
         if (attrs.macModal) {
           element.bind("click", function() {
-            var dataVar, modalScope;
+            var data, modalScope;
             modalScope = false;
             if ((attrs.macModalScope != null) && attrs.macModalScope) {
               modalScope = $parse(attrs.macModalScope)($scope);
@@ -9307,11 +9399,12 @@ angular.module("Mac").directive("macModal", [
             if (!((modalScope != null) && (modalScope.$new != null))) {
               modalScope = $scope;
             }
-            dataVar = attrs.macModalContent || attrs.macModalData;
-            return modal.show(attrs.macModal, {
-              data: $parse(dataVar)($scope),
+            data = $parse(attrs.macModalData)($scope) || {};
+            modal.show(attrs.macModal, {
+              data: data,
               scope: modalScope
             });
+            return modalScope.$apply();
           });
         }
       }
@@ -9437,12 +9530,12 @@ Element to spy scroll event on
 */
 
 angular.module("Mac").directive("macScrollSpy", [
-  "scrollSpy", "scrollSpyDefaults", "util", function(scrollSpy, defaults, util) {
+  "$window", "scrollSpy", "scrollSpyDefaults", "util", function($window, scrollSpy, defaults, util) {
     return {
       link: function($scope, element, attrs) {
         var options, spyElement;
         options = util.extendAttributes("macScrollSpy", defaults, attrs);
-        spyElement = element[0].tagName === "BODY" ? angular.element(window) : element;
+        spyElement = element[0].tagName === "BODY" ? angular.element($window) : element;
         return spyElement.bind("scroll", function($event) {
           var anchors, i, maxScroll, scrollHeight, scrollTop, _i, _ref;
           scrollTop = spyElement.scrollTop() + options.offset;
@@ -9470,77 +9563,75 @@ angular.module("Mac").directive("macScrollSpy", [
 ]).directive("macScrollSpyAnchor", [
   "scrollSpy", function(scrollSpy) {
     return {
-      compile: function(element, attrs) {
-        var id, interpolate, observeKey;
+      link: function($scope, element, attrs) {
+        var id, observeKey, registered, registering;
         id = attrs.id || attrs.macScrollSpyAnchor;
-        observeKey = attrs.id ? "id" : "macScrollSpyAnchor";
+        registered = false;
         if (!id) {
           throw new Error("Missing scroll spy anchor id");
         }
-        interpolate = id.match(/{{(.*)}}/);
-        return function($scope, element, attrs) {
-          var registering;
-          registering = function() {
-            if (!id) {
-              return;
-            }
-            scrollSpy.register(id, element);
-            return $scope.$on("$destroy", function() {
+        registering = function() {
+          scrollSpy.register(id, element);
+          if (!registered) {
+            $scope.$on("$destroy", function() {
               return scrollSpy.unregister(id);
             });
-          };
-          $scope.$on("refresh-scroll-spy", registering);
-          if (interpolate) {
-            return attrs.$observe(observeKey, function(value) {
+          }
+          return registered = true;
+        };
+        $scope.$on("refresh-scroll-spy", registering);
+        if (/{{(.*)}}/.test(id)) {
+          observeKey = attrs.id ? "id" : "macScrollSpyAnchor";
+          return attrs.$observe(observeKey, function(value) {
+            if ((value != null) && value) {
               id = value;
               return registering();
-            });
-          } else {
-            return registering();
-          }
-        };
+            }
+          });
+        } else {
+          return registering();
+        }
       }
     };
   }
 ]).directive("macScrollSpyTarget", [
   "scrollSpy", function(scrollSpy) {
     return {
-      compile: function(element, attrs) {
-        var highlightClass, interpolate, target;
+      link: function($scope, element, attrs) {
+        var highlightClass, register, registered, target;
         target = attrs.macScrollSpyTarget;
         highlightClass = attrs.macScrollSpyTargetClass || "active";
+        registered = false;
         if (!target) {
           throw new Error("Missing scroll spy target name");
         }
-        interpolate = target.match(/{{(.*)}}/);
-        return function($scope, element, attrs) {
-          var register;
-          register = function(id) {
-            var callback;
-            if (!id) {
-              return;
-            }
-            callback = function(active) {
-              var action;
-              action = id === active.id ? "addClass" : "removeClass";
-              return element[action](highlightClass);
-            };
-            if (scrollSpy.active != null) {
-              callback(scrollSpy.active);
-            }
+        register = function(id) {
+          var callback;
+          if (!id) {
+            return;
+          }
+          callback = function(active) {
+            var action;
+            action = id === active.id ? "addClass" : "removeClass";
+            return element[action](highlightClass);
+          };
+          if (scrollSpy.active != null) {
+            callback(scrollSpy.active);
+          }
+          if (!registered) {
             scrollSpy.addListener(callback);
             return $scope.$on("$destroy", function() {
               return scrollSpy.removeListener(callback);
             });
-          };
-          if (interpolate) {
-            return attrs.$observe("macScrollSpyTarget", function(value) {
-              return register(value);
-            });
-          } else {
-            return register(target);
           }
         };
+        if (/{{(.*)}}/.test(target)) {
+          return attrs.$observe("macScrollSpyTarget", function(value) {
+            return register(value);
+          });
+        } else {
+          return register(target);
+        }
       }
     };
   }
@@ -9565,7 +9656,7 @@ angular.module("Mac").directive("macSpinner", [
       replace: true,
       template: "<div class=\"mac-spinner\"></div>",
       compile: function(element, attrs) {
-        var bar, degree, delay, i, prefixes, styl, vendor, _i;
+        var animateCss, bar, degree, delay, i, prefixes, styl, transformCss, vendor, _i;
         prefixes = ["webkit", "Moz", "ms", "O"];
         vendor = function(el, name) {
           var prefix, _i, _len;
@@ -9578,13 +9669,15 @@ angular.module("Mac").directive("macSpinner", [
           }
           return name;
         };
+        animateCss = vendor(element[0], "animation");
+        transformCss = vendor(element[0], "transform");
         for (i = _i = 0; _i <= 9; i = ++_i) {
           delay = i * 0.1 - 1 + (!i);
           degree = i * 36;
           styl = {};
           bar = angular.element("<div class=\"bar\"></div>");
-          styl[vendor(bar[0], "animation")] = "fade 1s linear infinite " + delay + "s";
-          styl[vendor(bar[0], "transform")] = "rotate(" + degree + "deg) translate(0, 130%)";
+          styl[animateCss] = "fade 1s linear infinite " + delay + "s";
+          styl[transformCss] = "rotate(" + degree + "deg) translate(0, 130%)";
           bar.css(styl);
           element.append(bar);
         }
@@ -10388,7 +10481,7 @@ A directive for generating tag input with autocomplete support on text input
 @param {String}  mac-tag-autocomplete-value       The value to be sent back upon selection (default "id")
 @param {String}  mac-tag-autocomplete-label       The label to display to the users (default "name")
 @param {Expr}    mac-tag-autocomplete-model       Model for autocomplete
-@param {Array}   mac-tag-autocomplete-selected    The list of elements selected by the user
+@param {Array}   mac-tag-autocomplete-selected    The list of elements selected by the user (required)
 @param {String}  mac-tag-autocomplete-query       The query parameter on GET command (defualt "q")
 @param {Integer} mac-tag-autocomplete-delay       Time delayed on fetching autocomplete data after keyup  (default 800)
 @param {String}  mac-tag-autocomplete-placeholder Placeholder text of the text input (default "")
@@ -10443,8 +10536,7 @@ angular.module("Mac").directive("macTagAutocomplete", [
         };
         if (attrs.macTagAutocompleteUrl != null) {
           attrsObject["mac-autocomplete-url"] = "url";
-        } else if (attrs.macTagAutocompleteSource != null) {
-          useSource = true;
+        } else if (useSource = attrs.macTagAutocompleteSource != null) {
           attrsObject["mac-autocomplete-source"] = "autocompleteSource";
         }
         textInput.attr(attrsObject);
@@ -10480,6 +10572,7 @@ angular.module("Mac").directive("macTagAutocomplete", [
               _results = [];
               for (_i = 0, _len = _ref.length; _i < _len; _i++) {
                 name = _ref[_i];
+                name = util.trim(name);
                 capitalized = util.capitalize(name);
                 eventFn = attrs["macTagAutocompleteOn" + capitalized];
                 if (!(eventFn && name !== "keydown")) {
@@ -10490,11 +10583,9 @@ angular.module("Mac").directive("macTagAutocomplete", [
                     var expression;
                     expression = $parse(eventFn);
                     return $scope.$apply(function() {
-                      var item;
-                      item = $scope.textInput;
                       return expression($scope.$parent, {
                         $event: $event,
-                        item: item
+                        item: $scope.textInput
                       });
                     });
                   });
@@ -10502,7 +10593,7 @@ angular.module("Mac").directive("macTagAutocomplete", [
               }
               return _results;
             }
-          }, 0);
+          }, 0, false);
           updateAutocompleteSource = function() {
             var difference, item, selectedValues, sourceValues, _ref;
             $scope.autocompletePlaceholder = ((_ref = $scope.selected) != null ? _ref.length : void 0) ? "" : $scope.placeholder;
@@ -10554,9 +10645,9 @@ angular.module("Mac").directive("macTagAutocomplete", [
             })();
           };
           if (useSource) {
-            $scope.$watch("source", updateAutocompleteSource, true);
+            $scope.$watchCollection("source", updateAutocompleteSource);
           }
-          $scope.$watch("selected", updateAutocompleteSource, true);
+          $scope.$watchCollection("selected", updateAutocompleteSource);
           $scope.onKeyDown = function($event) {
             var stroke, _base;
             stroke = $event.which || $event.keyCode;
@@ -10624,46 +10715,6 @@ angular.module("Mac").directive("macTagAutocomplete", [
           return $scope.$on("mac-tag-autocomplete-clear-input", function() {
             return $scope.textInput = "";
           });
-        };
-      }
-    };
-  }
-]);
-
-/*
-@chalk overview
-@name Tag Input
-@description
-A directive for generating tag input.
-
-@param {String} mac-tag-input-tags         The list of elements to populate the select input
-@param {String} mac-tag-input-selected     The list of elements selected by the user
-@param {String} mac-tag-input-placeholder  Placeholder text for tag input                    (default "")
-@param {String} mac-tag-input-value        The value to be sent back upon selection          (default "id")
-@param {String} mac-tag-input-label        The label to display to the users                 (default "name")
-*/
-
-angular.module("Mac").directive("macTagInput", [
-  function() {
-    return {
-      restrict: "E",
-      templateUrl: "template/tag_input.html",
-      transclude: true,
-      replace: true,
-      scope: {
-        selected: "=macTagInputSelected",
-        items: "=macTagInputTags"
-      },
-      compile: function(element, attrs) {
-        var textKey, valueKey;
-        valueKey = attrs.macTagInputValue || "id";
-        textKey = attrs.macTagInputLabel || "name";
-        angular.element(element[0].getElementsByClassName("mac-autocomplete")).attr({
-          "mac-tag-autocomplete-value": valueKey,
-          "mac-tag-autocomplete-label": textKey
-        });
-        return function($scope, element, attrs) {
-          return $scope.placeholder = attrs.macTagInputPlaceholder || "";
         };
       }
     };
@@ -10916,6 +10967,12 @@ Tooltip directive
 @param {String}  mac-tooltip-trigger   How tooltip is triggered (default 'hover')
 @param {Boolean} mac-tooltip-inside    Should the tooltip be appended inside element (default false)
 @param {Expr}    mac-tooltip-disabled  Disable and enable tooltip
+*/
+
+/*
+NOTE: This directive does not use $animate to append and remove DOM element or
+  add and remove classes in order to optimize showing tooltips by eliminating
+  the need for firing a $digest cycle.
 */
 
 angular.module("Mac").directive("macTooltip", [
@@ -11612,12 +11669,12 @@ There are multiple components used by modal.
 */
 
 angular.module("Mac").service("modal", [
-  "$rootScope", "$timeout", "$templateCache", "$compile", "$http", "$controller", "modalViews", "keys", function($rootScope, $timeout, $templateCache, $compile, $http, $controller, modalViews, keys) {
+  "$rootScope", "$animate", "$templateCache", "$compile", "$http", "$controller", "modalViews", "keys", function($rootScope, $animate, $templateCache, $compile, $http, $controller, modalViews, keys) {
     return {
       registered: modalViews.registered,
       waiting: null,
       opened: null,
-      modalTemplate: '<div ng-click="closeOverlay($event)" class="modal-overlay hide"><div class="modal"><a ng-click="modal.hide()" class="close-modal"></a><div class="modal-content-wrapper"></div></div></div>',
+      modalTemplate: "<div ng-click=\"close($event)\" class=\"modal-overlay hide\">\n  <div class=\"modal\">\n    <a ng-click=\"close($event, true)\" class=\"close-modal\"></a>\n    <div class=\"modal-content-wrapper\"></div>\n  </div>\n</div>",
       show: function(id, triggerOptions) {
         var modalObject, options, path, renderModal, showModal, template,
           _this = this;
@@ -11631,33 +11688,32 @@ angular.module("Mac").service("modal", [
           options = modalObject.options;
           angular.extend(options, triggerOptions);
           showModal = function(element) {
-            element.removeClass("hide");
-            $timeout(function() {
-              return element.addClass("visible");
-            }, 0, false);
-            _this.opened = {
-              id: id,
-              element: element,
-              options: options
-            };
-            _this.resize(_this.opened);
-            _this.bindingEvents();
-            if (typeof options.callback === "function") {
-              options.callback();
-            }
-            $rootScope.$broadcast("modalWasShown", id);
-            return _this.clearWaiting();
+            return $animate.removeClass(element, "hide", function() {
+              return $animate.addClass(element, "visible", function() {
+                _this.opened = {
+                  id: id,
+                  element: element,
+                  options: options
+                };
+                _this.resize(_this.opened);
+                _this.bindingEvents();
+                if (typeof options.callback === "function") {
+                  options.callback();
+                }
+                $rootScope.$broadcast("modalWasShown", id);
+                return _this.clearWaiting();
+              });
+            });
           };
           if (options.moduleMethod != null) {
-            renderModal = function(template, invokeApply) {
+            renderModal = function(template) {
               var element, viewScope, wrapper;
-              if (invokeApply == null) {
-                invokeApply = true;
-              }
               viewScope = options.scope ? options.scope.$new() : $rootScope.$new(true);
-              viewScope.modal = _this;
-              viewScope.closeOverlay = function($event) {
-                if (options.overlayClose && angular.element($event.target).hasClass("modal-overlay")) {
+              viewScope.close = function($event, force) {
+                if (force == null) {
+                  force = false;
+                }
+                if (force || (options.overlayClose && angular.element($event.target).hasClass("modal-overlay"))) {
                   return _this.hide();
                 }
               };
@@ -11672,11 +11728,9 @@ angular.module("Mac").service("modal", [
               element = angular.element(_this.modalTemplate).attr(options.attributes);
               wrapper = angular.element(element[0].getElementsByClassName("modal-content-wrapper"));
               wrapper.html(template);
-              angular.element(document.body).append($compile(element)(viewScope));
-              showModal(element);
-              if (invokeApply) {
-                return $rootScope.$apply();
-              }
+              $animate.enter(element, angular.element(document.body));
+              $compile(element)(viewScope);
+              return showModal(element);
             };
             if ((path = options.templateUrl)) {
               template = $templateCache.get(path);
@@ -11685,7 +11739,7 @@ angular.module("Mac").service("modal", [
               } else {
                 return $http.get(path).then(function(resp) {
                   $templateCache.put(path, resp.data);
-                  return renderModal(resp.data, false);
+                  return renderModal(resp.data);
                 }, function() {
                   throw Error("Failed to load template: " + path);
                 });
@@ -11730,23 +11784,24 @@ angular.module("Mac").service("modal", [
         });
       },
       hide: function(callback) {
-        var element, id, options, _ref;
+        var element, id, options, _ref,
+          _this = this;
         if (this.opened == null) {
           return;
         }
         _ref = this.opened, id = _ref.id, options = _ref.options, element = _ref.element;
-        element.removeClass("visible");
-        $timeout(function() {
-          return element.addClass("hide");
-        }, 250, false);
-        this.bindingEvents("unbind");
-        this.opened = null;
-        if (options.moduleMethod) {
-          element.scope().$destroy();
-          element.remove();
-        }
-        $rootScope.$broadcast("modalWasHidden", id);
-        return typeof callback === "function" ? callback() : void 0;
+        return $animate.removeClass(element, "visible", function() {
+          _this.bindingEvents("unbind");
+          _this.opened = null;
+          if (options.moduleMethod) {
+            element.scope().$destroy();
+            $animate.leave(element);
+          } else {
+            $animate.addClass(element, "hide");
+          }
+          $rootScope.$broadcast("modalWasHidden", id);
+          return callback && callback();
+        });
       },
       bindingEvents: function(action) {
         var escapeKeyHandler, options, resizeHandler,
@@ -12390,7 +12445,7 @@ angular.module("Mac.Util", []).factory("util", [
         if (includeCount == null) {
           includeCount = false;
         }
-        if (!angular.isString(string) || string.trim().length === 0) {
+        if (!angular.isString(string) || this.trim(string).length === 0) {
           return string;
         }
         if (includeCount && isNaN(+count)) {
@@ -12430,6 +12485,15 @@ angular.module("Mac.Util", []).factory("util", [
           return pluralizedString;
         }
       },
+      trim: function(string) {
+        var str;
+        str = String(string) || "";
+        if (String.prototype.trim != null) {
+          return str.trim();
+        } else {
+          return str.replace(/^\s+|\s+$/gm, "");
+        }
+      },
       capitalize: function(string) {
         var str;
         str = String(string) || "";
@@ -12444,7 +12508,7 @@ angular.module("Mac.Util", []).factory("util", [
         if (string == null) {
           string = "";
         }
-        return string.trim().replace(/[-_\s]+(.)?/g, function(match, c) {
+        return this.trim(string).replace(/[-_\s]+(.)?/g, function(match, c) {
           return c.toUpperCase();
         });
       },
@@ -12452,7 +12516,7 @@ angular.module("Mac.Util", []).factory("util", [
         if (string == null) {
           string = "";
         }
-        return string.trim().replace(/([a-z\d])([A-Z]+)/g, "$1_$2").replace(/[-\s]+/g, "_").toLowerCase();
+        return this.trim(string).replace(/([a-z\d])([A-Z]+)/g, "$1_$2").replace(/[-\s]+/g, "_").toLowerCase();
       },
       convertKeysToCamelCase: function(object) {
         var key, result, value;

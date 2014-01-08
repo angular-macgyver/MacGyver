@@ -1,6 +1,6 @@
 {
   "name": "MacGyver",
-  "version": "0.1.25",
+  "version": "0.2.0",
   "main": [
     "lib/img/ui-bg_flat_0_aaaaaa_40x100.png",
     "lib/img/ui-bg_glass_75_ffffff_1x400.png",
