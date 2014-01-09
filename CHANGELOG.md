@@ -1,3 +1,9 @@
+# v0.1.26 (2014/1/9)
+## Features
+- **macAutocomplete:** mac-autocomplete-source can now accept multiple types including custom callback
+  ([989caa29](https://github.com/StartTheShift/MacGyver/commit/989caa294ffebe7c253b82ba87cf11846cc98ba6))
+
+
 # v0.1.25 (2013/11/12)
 ## Bug Fixes
 - **macDatepicker:** Fixed changing datepicker text input does not update model

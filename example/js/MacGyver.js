@@ -8117,7 +8117,16 @@ A directive for providing suggestions while typing into the field
 @param {String} ng-model Assignable angular expression to data-bind to
 @param {String} mac-placeholder Placeholder text
 @param {String} mac-autocomplete-url Url to fetch autocomplete dropdown list data. URL may include GET params e.g. "/users?nocache=1"
-@param {Expression} mac-autocomplete-source Local data source
+@param {Expression} mac-autocomplete-source Data to use.
+Source support multiple types:
+- Array: An array can be used for local data and there are two supported formats:
+  - An array of strings: ["Item1", "Item2"]
+  - An array of objects with mac-autocomplete-label key: [{name:"Item1"}, {name:"Item2"}]
+- String: Using a string as the source is the same as passing the variable into mac-autocomplete-url
+- Function: A callback when querying for data. The callback receive two arguments:
+  - {String} Value currently in the text input
+  - {Function} A response callback which expects a single argument, data to user. The data will be
+  populated on the menu and the menu will adjust accordingly
 @param {Boolean} mac-autocomplete-disabled Boolean value if autocomplete should be disabled
 @param {Function} mac-autocomplete-on-select Function called when user select on an item
        - `selected` - {Object} The item selected
@@ -8142,7 +8151,7 @@ angular.module("Mac").directive("macAutocomplete", [
       replace: true,
       require: "ngModel",
       link: function($scope, element, attrs, ctrl) {
-        var $menuScope, appendMenu, autocompleteUrl, currentAutocomplete, delay, disabled, inside, labelKey, menuEl, onError, onSelect, onSelectBool, onSuccess, positionMenu, queryData, queryKey, reset, source, timeoutId, updateItem;
+        var $menuScope, appendMenu, autocompleteUrl, currentAutocomplete, delay, disabled, getData, inside, labelKey, menuEl, onError, onSelect, onSelectBool, onSuccess, positionMenu, queryData, queryKey, reset, source, timeoutId, updateItem;
         labelKey = attrs.macAutocompleteLabel || "name";
         queryKey = attrs.macAutocompleteQuery || "q";
         delay = +(attrs.macAutocompleteDelay || 800);
@@ -8212,57 +8221,65 @@ angular.module("Mac").directive("macAutocomplete", [
           }
         };
         updateItem = function(data) {
-          var item, label, value, _i, _len, _results;
+          var item, label, value, _i, _len;
           if (data == null) {
             data = [];
           }
           if (data.length > 0) {
             currentAutocomplete = data;
             $menuScope.items = [];
-            _results = [];
             for (_i = 0, _len = data.length; _i < _len; _i++) {
               item = data[_i];
               label = value = item[labelKey] || item;
-              _results.push($menuScope.items.push({
+              $menuScope.items.push({
                 label: label,
                 value: value
-              }));
+              });
             }
-            return _results;
+            return positionMenu();
           }
         };
+        getData = function(url, query) {
+          var options;
+          options = {
+            method: "GET",
+            url: url,
+            params: {}
+          };
+          options.params[queryKey] = query;
+          return $http(options).success(function(data, status, headers, config) {
+            var dataList;
+            dataList = onSuccess($scope, {
+              data: data,
+              status: status,
+              headers: headers
+            });
+            if (dataList == null) {
+              dataList = data.data;
+            }
+            return updateItem(dataList);
+          }).error(function(data, status, headers, config) {
+            return onError($scope, {
+              data: data,
+              status: status,
+              headers: headers
+            });
+          });
+        };
         queryData = function(query) {
-          var options, url;
+          var sourceData, url;
           url = autocompleteUrl($scope);
           if (url) {
-            options = {
-              method: "GET",
-              url: url,
-              params: {}
-            };
-            options.params[queryKey] = query;
-            return $http(options).success(function(data, status, headers, config) {
-              var dataList;
-              dataList = onSuccess($scope, {
-                data: data,
-                status: status,
-                headers: headers
-              });
-              if (dataList == null) {
-                dataList = data.data;
-              }
-              updateItem(dataList);
-              return positionMenu();
-            }).error(function(data, status, headers, config) {
-              return onError($scope, {
-                data: data,
-                status: status,
-                headers: headers
-              });
-            });
+            return getData(url, query);
           } else {
-            updateItem($filter("filter")(source($scope), query));
-            return positionMenu();
+            sourceData = source($scope);
+            if (angular.isArray(sourceData)) {
+              return updateItem($filter("filter")(sourceData, query));
+            } else if (angular.isString(sourceData)) {
+              return getData(sourceData, query);
+            } else if (angular.isFunction(sourceData)) {
+              return sourceData(query, updateItem);
+            }
           }
         };
         $menuScope.select = function(index) {
