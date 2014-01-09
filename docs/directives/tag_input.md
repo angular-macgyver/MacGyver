@@ -3,6 +3,7 @@ Tag Input
 ===
 A directive for generating tag input.  
   
+  
 ### Parameters
 **mac-tag-input-tags**  
 Type: `String`  

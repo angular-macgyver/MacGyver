@@ -17,13 +17,9 @@
 <p><strong>mac-tag-autocomplete-placeholder</strong><br>Type: <code>String</code><br>Placeholder text of the text input (default &quot;&quot;)  </p>
 <p><strong>mac-tag-autocomplete-disabled</strong><br>Type: <code>Boolean</code><br>If autocomplete is enabled or disabled (default false)  </p>
 <p><strong>mac-tag-autocomplete-on-enter</strong><br>Type: <code>Expr</code><br>When autocomplete is disabled, this function is called on enter, Should return either string, object or boolean. If false, item is not added  </p>
-<ul>
-<li><code>item</code> - {String} User input  </li>
-</ul>
+<pre><code>    - `item` - {String} User input  </code></pre>
 <p><strong>mac-tag-autocomplete-events</strong><br>Type: <code>String</code><br>A CSV list of events to attach functions to  </p>
 <p><strong>mac-tag-autocomplete-on-</strong><br>Type: <code>Expr</code><br>Function to be called when specified event is fired  </p>
-<ul>
-<li><code>event</code> - {Object} jQuery event  </li>
-<li><code>value</code> - {String} Value in the input text  </li>
-</ul>
+<pre><code>    - `event` - {Object} jQuery event  
+    - `value` - {String} Value in the input text  </code></pre>
 <p><strong>mac-tag-autocomplete-clear-input</strong><br>Type: <code>Event</code><br>$broadcast message; clears text input when received  </p>

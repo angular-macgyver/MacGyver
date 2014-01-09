@@ -4,6 +4,7 @@ Canvas Spinner
 A directive for generating a canvas spinner  
 This spinner requires much less CPU/GPU resources than CSS spinner  
   
+  
 ### Parameters
 **mac-cspinner-width**  
 Type: `Integer`  

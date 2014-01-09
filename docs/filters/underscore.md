@@ -3,6 +3,7 @@ Underscore string
 ===
 Proxy filter for calling underscore string function  
   
+  
 ### Parameters
 **string**  
 Type: `String`  

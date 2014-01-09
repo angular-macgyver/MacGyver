@@ -3,6 +3,7 @@ Placeholder
 ===
 Dynamically fill out the placeholder text of input  
   
+  
 ### Parameters
 **mac-placeholder**  
 Type: `String`  

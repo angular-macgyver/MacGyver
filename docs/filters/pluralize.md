@@ -3,6 +3,7 @@ Pluralize
 ===
 Pluralizes the given string. It's a simple proxy to the pluralize function on util.  
   
+  
 ### Parameters
 **string**  
 Type: `String`  

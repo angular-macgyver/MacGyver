@@ -3,9 +3,11 @@ Datepicker
 ===
 A directive for creating a datepicker on text input using jquery ui  
   
+  
 ### Dependencies
 - jQuery  
 - jQuery datepicker  
+  
 
 ### Parameters
 **mac-datepicker-id**  
@@ -20,14 +22,14 @@ Clearing model by setting it to null or '' will clear the input field
 **mac-datepicker-on-select**  
 Type: `Function`  
 Function called before setting the value to the model  
-- `date` - {String} Selected date from the datepicker  
-- `instance` - {Object} Datepicker instance  
+  - `date` - {String} Selected date from the datepicker  
+  - `instance` - {Object} Datepicker instance  
   
 **mac-datepicker-on-close**  
 Type: `String`  
 Function called before closing datepicker  
-- `date` - {String} Selected date from the datepicker  
-- `instance` - {Object} Datepicker instance  
+  - `date` - {String} Selected date from the datepicker  
+  - `instance` - {Object} Datepicker instance  
   
 **mac-datepicker-append-text**  
 Type: `String`  

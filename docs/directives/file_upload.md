@@ -3,8 +3,10 @@ File upload
 ===
 Directive for proxying jQuery file upload  
   
+  
 ### Dependencies
 - jQuery file upload  
+  
 
 ### Parameters
 **mac-upload-route**  

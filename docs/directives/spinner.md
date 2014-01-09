@@ -3,6 +3,7 @@ Spinner
 ===
 A directive for generating spinner  
   
+  
 ### Parameters
 **mac-spinner-size**  
 Type: `Integer`  
