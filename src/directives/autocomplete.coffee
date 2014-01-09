@@ -11,7 +11,16 @@ A directive for providing suggestions while typing into the field
 @param {String} ng-model Assignable angular expression to data-bind to
 @param {String} mac-placeholder Placeholder text
 @param {String} mac-autocomplete-url Url to fetch autocomplete dropdown list data. URL may include GET params e.g. "/users?nocache=1"
-@param {Expression} mac-autocomplete-source Local data source
+@param {Expression} mac-autocomplete-source Data to use.
+Source support multiple types:
+- Array: An array can be used for local data and there are two supported formats:
+  - An array of strings: ["Item1", "Item2"]
+  - An array of objects with mac-autocomplete-label key: [{name:"Item1"}, {name:"Item2"}]
+- String: Using a string as the source is the same as passing the variable into mac-autocomplete-url
+- Function: A callback when querying for data. The callback receive two arguments:
+  - {String} Value currently in the text input
+  - {Function} A response callback which expects a single argument, data to user. The data will be
+  populated on the menu and the menu will adjust accordingly
 @param {Boolean} mac-autocomplete-disabled Boolean value if autocomplete should be disabled
 @param {Function} mac-autocomplete-on-select Function called when user select on an item
        - `selected` - {Object} The item selected
@@ -147,6 +156,31 @@ angular.module("Mac").directive "macAutocomplete", [
             label = value = item[labelKey] or item
             $menuScope.items.push {label, value}
 
+          positionMenu()
+
+      #
+      # @function
+      # @name getData
+      # @description
+      # GET request to fetch data from server, update menu items and position
+      # menu
+      # @param {String} url URL to fetch data from
+      getData = (url, query) ->
+        options =
+          method: "GET"
+          url:    url
+          params: {}
+        options.params[queryKey] = query
+
+        $http(options)
+          .success (data, status, headers, config) ->
+            dataList  = onSuccess $scope, {data, status, headers}
+            dataList ?= data.data
+
+            updateItem dataList
+          .error (data, status, headers, config) ->
+            onError $scope, {data, status, headers}
+
       #
       # @function
       # @name queryData
@@ -158,24 +192,18 @@ angular.module("Mac").directive "macAutocomplete", [
         url = autocompleteUrl $scope
 
         if url
-          options =
-            method: "GET"
-            url:    url
-            params: {}
-          options.params[queryKey] = query
-
-          $http(options)
-            .success (data, status, headers, config) ->
-              dataList  = onSuccess $scope, {data, status, headers}
-              dataList ?= data.data
-
-              updateItem dataList
-              positionMenu()
-            .error (data, status, headers, config) ->
-              onError $scope, {data, status, headers}
+          getData url, query
         else
-          updateItem $filter("filter")(source($scope), query)
-          positionMenu()
+          sourceData = source $scope
+
+          if angular.isArray(sourceData)
+            updateItem $filter("filter")(sourceData, query)
+
+          else if angular.isString(sourceData)
+            getData sourceData, query
+
+          else if angular.isFunction(sourceData)
+            sourceData query, updateItem
 
       $menuScope.select = (index) ->
         selected = currentAutocomplete[index]
