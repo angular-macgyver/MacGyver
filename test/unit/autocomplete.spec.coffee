@@ -46,6 +46,11 @@ describe "Mac autocomplete", ->
       expect($(".mac-menu").length).toBe 0
 
   describe "source", ->
+    $httpBackend = null
+
+    beforeEach inject (_$httpBackend_) ->
+      $httpBackend = _$httpBackend_
+
     it "should use local array", ->
       $rootScope.source = data
       $rootScope.test   = ""
@@ -67,6 +72,30 @@ describe "Mac autocomplete", ->
       $rootScope.$digest()
 
       changeInputValue element, "f"
+      expect($(".mac-menu-item").text() == "foo").toBe true
+
+    it "should use a url string and work exactly like mac-autocomplete-url", ->
+      $httpBackend.when("GET", "/api/autocomplete?q=f").respond({data})
+
+      $rootScope.source = "/api/autocomplete"
+
+      element = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-source='source' mac-autocomplete-delay='0'></mac-autocomplete>") $rootScope
+      $rootScope.$digest()
+
+      changeInputValue element, "f"
+      $rootScope.$digest()
+
+      $httpBackend.flush()
+
+    it "should use a callback function", ->
+      $rootScope.source = (query, callback) -> callback ["foo"]
+
+      element = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-source='source' mac-autocomplete-delay='0'></mac-autocomplete>") $rootScope
+      $rootScope.$digest()
+
+      changeInputValue element, "f"
+      $rootScope.$digest()
+
       expect($(".mac-menu-item").text() == "foo").toBe true
 
   describe "label", ->
