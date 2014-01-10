@@ -8,12 +8,23 @@
 <p><strong>ng-model</strong><br>Type: <code>String</code><br>Assignable angular expression to data-bind to (required)  </p>
 <p><strong>mac-placeholder</strong><br>Type: <code>String</code><br>Placeholder text  </p>
 <p><strong>mac-autocomplete-url</strong><br>Type: <code>String</code><br>Url to fetch autocomplete dropdown list data. URL may include GET params e.g. &quot;/users?nocache=1&quot;  </p>
-<p><strong>mac-autocomplete-source</strong><br>Type: <code>Expression</code><br>Local data source  </p>
+<p><strong>mac-autocomplete-source</strong><br>Type: <code>Expression</code><br>Data to use.<br>Source support multiple types:  </p>
+<ul>
+<li>Array: An array can be used for local data and there are two supported formats:  <ul>
+<li>An array of strings: [&quot;Item1&quot;, &quot;Item2&quot;]  </li>
+<li>An array of objects with mac-autocomplete-label key: [{name:&quot;Item1&quot;}, {name:&quot;Item2&quot;}]  </li>
+</ul>
+</li>
+<li>String: Using a string as the source is the same as passing the variable into mac-autocomplete-url  </li>
+<li>Function: A callback when querying for data. The callback receive two arguments:  <ul>
+<li>{String} Value currently in the text input  </li>
+<li>{Function} A response callback which expects a single argument, data to user. The data will be<br>populated on the menu and the menu will adjust accordingly  </li>
+</ul>
+</li>
+</ul>
 <p><strong>mac-autocomplete-disabled</strong><br>Type: <code>Boolean</code><br>Boolean value if autocomplete should be disabled  </p>
 <p><strong>mac-autocomplete-on-select</strong><br>Type: <code>Function</code><br>Function called when user select on an item  </p>
-<ul>
-<li><code>selected</code> - {Object} The item selected  </li>
-</ul>
+<pre><code>   - `selected` - {Object} The item selected  </code></pre>
 <p><strong>mac-autocomplete-on-success</strong><br>Type: <code>Function</code><br>function called on success ajax request  </p>
 <ul>
 <li><code>data</code> - {Object} Data returned from the request  </li>
