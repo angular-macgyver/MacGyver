@@ -3,6 +3,7 @@ Pause Typing
 ===
 macPauseTyping directive allow user to specify custom behavior after user stops typing for more than (delay) milliseconds  
   
+  
 ### Parameters
 **mac-pause-typing**  
 Type: `Expression`  

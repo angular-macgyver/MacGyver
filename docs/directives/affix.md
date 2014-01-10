@@ -3,6 +3,7 @@ mac-affix
 ===
 Fix the component at a certain position  
   
+  
 ### Parameters
 **mac-affix-disabled**  
 Type: `Expr`  

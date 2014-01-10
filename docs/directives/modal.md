@@ -4,6 +4,7 @@ mac-modal (element)
 Element directive to define the modal dialog. Modal content is transcluded into a  
 modal template  
   
+  
 ### Parameters
 **mac-modal-keyboard**  
 Type: `Boolean`  

@@ -3,6 +3,7 @@ List
 ===
 List filter. Use for converting arrays into a string  
   
+  
 ### Parameters
 **list**  
 Type: `Array`  

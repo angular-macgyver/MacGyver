@@ -3,6 +3,7 @@ Tooltip
 ===
 Tooltip directive  
   
+  
 ### Parameters
 **mac-tooltip**  
 Type: `String`  

@@ -4,6 +4,7 @@ Events
 A directive for handling basic html events (e.g., blur, keyup, focus, etc.)  
 Currently MacGyver has blur, focus, keydown, keyup, mouseenter and mouseleave  
   
+  
 ### Parameters
 **mac-blur**  
 Type: `Expression`  

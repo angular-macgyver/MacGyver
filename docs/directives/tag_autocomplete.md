@@ -3,9 +3,11 @@ Tag Autocomplete
 ===
 A directive for generating tag input with autocomplete support on text input  
   
+  
 ### Dependencies
 - mac-autocomplete  
 - mac-menu  
+  
 
 ### Parameters
 **mac-tag-autocomplete-url**  
@@ -51,7 +53,7 @@ If autocomplete is enabled or disabled (default false)
 **mac-tag-autocomplete-on-enter**  
 Type: `Expr`  
 When autocomplete is disabled, this function is called on enter, Should return either string, object or boolean. If false, item is not added  
-- `item` - {String} User input  
+        - `item` - {String} User input  
   
 **mac-tag-autocomplete-events**  
 Type: `String`  
@@ -60,8 +62,9 @@ A CSV list of events to attach functions to
 **mac-tag-autocomplete-on-**  
 Type: `Expr`  
 Function to be called when specified event is fired  
-- `event` - {Object} jQuery event  
-- `value` - {String} Value in the input text  
+        - `event` - {Object} jQuery event  
+        - `value` - {String} Value in the input text  
+  
   
 **mac-tag-autocomplete-clear-input**  
 Type: `Event`  
