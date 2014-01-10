@@ -71,7 +71,7 @@ module.controller "ExampleController", [
   $scope.uploadRoute         = "/test_upload"
   $scope.fileUploaderEnabled = true
   $scope.uploadPreviews      = []
-  $scope.previewImage        = (preview) ->
+  $scope.previewImage        = (preview = {}) ->
     if /image./.test(preview.type)  then preview.fileData else "/img/file_icon.png"
   $scope.previewProgress = (preview) ->
     return width: "#{preview.progress}%"
