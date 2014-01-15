@@ -13,7 +13,7 @@ List of items to display in the menu
 **mac-menu-select**  
 Type: `Function`  
 Callback on select  
-        - `index` - {Integer} Item index  
+- `index` - {Integer} Item index  
   
 **mac-menu-style**  
 Type: `Object`  

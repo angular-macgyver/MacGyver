@@ -8,7 +8,7 @@ A directive for creating a menu with multiple items
 @param {Expression} mac-menu-items List of items to display in the menu
         Each item should have a `label` key as display text
 @param {Function} mac-menu-select Callback on select
-        - `index` - {Integer} Item index
+- `index` - {Integer} Item index
 @param {Object} mac-menu-style Styles apply to the menu
 @param {Expression} mac-menu-index Index of selected item
 ###
