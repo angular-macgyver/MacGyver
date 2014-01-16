@@ -22,6 +22,16 @@ module.exports = (grunt) ->
       src: "<%= buildConf.example %>"
 
     deployAppJs:
+      options:
+        banner:"""/**
+                   * MacGyver v<%= pkg.version %>
+                   * @link <%= pkg.homepage %>
+                   * @license <%= pkg.license[0].type %>
+                   */
+                  (function(window, angular, undefined) {
+
+                """
+        footer: "\n})(window, window.angular);"
       dest: "lib/<%= pkg.name.toLowerCase() %>.js"
       src: "<%= buildConf.full %>"
 
