@@ -18,6 +18,8 @@
 ## Features
 - **core:** Add ngAnimate detection and add to Mac automatically
   ([be1ddb1c](https://github.com/StartTheShift/MacGyver/commit/be1ddb1c6c31270935678d7c7f7391bb2e5d72b1))
+- **macAutocomplete:** mac-autocomplete-source can now accept multiple types including custom callback
+  ([a9aa4c50](https://github.com/StartTheShift/MacGyver/commit/a9aa4c50fa56df7f050d005a1f637c323c023e84))
 - **macModal:**
   - Use $animate to show and hide mac-modal
   ([6a7373d1](https://github.com/StartTheShift/MacGyver/commit/6a7373d140678be9938a4ad6f4ee15f3337eb243))
