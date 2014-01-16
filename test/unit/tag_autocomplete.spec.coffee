@@ -69,7 +69,7 @@ describe "Mac tag autocomplete", ->
       textInput = $(".mac-autocomplete", element)
       expect(textInput.attr("mac-autocomplete-url")).toBe "url"
 
-    it "should set the url attribute on mac-autocomplete", ->
+    it "should set the source attribute on mac-autocomplete", ->
       $rootScope.source = ["test", "test1", "test2"]
       element = $compile("<mac-tag-autocomplete mac-tag-autocomplete-source='source'></mac-tag-autocomplete>") $rootScope
       $rootScope.$digest()
