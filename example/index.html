@@ -133,7 +133,9 @@
 <h3 id="parameters">Parameters</h3>
 <p><strong>mac-menu-items</strong><br>Type: <code>Expression</code><br>List of items to display in the menu<br>        Each item should have a <code>label</code> key as display text  </p>
 <p><strong>mac-menu-select</strong><br>Type: <code>Function</code><br>Callback on select  </p>
-<pre><code>    - `index` - {Integer} Item index  </code></pre>
+<ul>
+<li><code>index</code> - {Integer} Item index  </li>
+</ul>
 <p><strong>mac-menu-style</strong><br>Type: <code>Object</code><br>Styles apply to the menu  </p>
 <p><strong>mac-menu-index</strong><br>Type: <code>Expression</code><br>Index of selected item  </p>
 <h3>Example</h3><div class="docs-example"><mac-menu mac-menu-items="menuItems" mac-menu-select="selectingMenuItem(index)"></mac-menu><div>Current selected item: {{selectedItem}}</div></div></section><section id="autocomplete" mac-scroll-spy-anchor><h1 id="autocomplete">Autocomplete</h1>
