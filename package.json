@@ -2,7 +2,7 @@
   "author": "SHIFT",
   "name": "MacGyver",
   "description": "A library of shared directives",
-  "version": "0.1.26",
+  "version": "0.1.27",
   "homepage": "http://starttheshift.github.io/MacGyver",
   "repository": {
     "type": "git",

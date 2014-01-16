@@ -10400,8 +10400,19 @@ A directive for generating tag input with autocomplete support on text input
 - mac-autocomplete
 - mac-menu
 
-@param {String}  mac-tag-autocomplete-url         Url to fetch autocomplete dropdown list data
-@param {String}  mac-tag-autocomplete-source      List of elements to populate autocomplete
+@param {String}  mac-tag-autocomplete-url         Url to fetch autocomplete dropdown list data.
+mac-tag-autocomplete-url and mac-tag-autocomplete-source cannot be used together. Url
+will always take priority over mac-tag-autocomplete-source.
+@param {String}  mac-tag-autocomplete-source      Data to use.
+Source support multiple types:
+- Array: An array can be used for local data and there are two supported formats:
+  - An array of strings: ["Item1", "Item2"]
+  - An array of objects with mac-autocomplete-label key: [{name:"Item1"}, {name:"Item2"}]
+- String: Using a string as the source is the same as passing the variable into mac-autocomplete-url
+- Function: A callback when querying for data. The callback receive two arguments:
+  - {String} Value currently in the text input
+  - {Function} A response callback which expects a single argument, data to user. The data will be
+  populated on the menu and the menu will adjust accordingly
 @param {String}  mac-tag-autocomplete-value       The value to be sent back upon selection (default "id")
 @param {String}  mac-tag-autocomplete-label       The label to display to the users (default "name")
 @param {Expr}    mac-tag-autocomplete-model       Model for autocomplete
@@ -10411,11 +10422,11 @@ A directive for generating tag input with autocomplete support on text input
 @param {String}  mac-tag-autocomplete-placeholder Placeholder text of the text input (default "")
 @param {Boolean} mac-tag-autocomplete-disabled    If autocomplete is enabled or disabled (default false)
 @param {Expr}    mac-tag-autocomplete-on-enter    When autocomplete is disabled, this function is called on enter, Should return either string, object or boolean. If false, item is not added
-        - `item` - {String} User input
+- `item` - {String} User input
 @param {String}  mac-tag-autocomplete-events      A CSV list of events to attach functions to
 @param {Expr}    mac-tag-autocomplete-on-         Function to be called when specified event is fired
-        - `event` - {Object} jQuery event
-        - `value` - {String} Value in the input text
+- `event` - {Object} jQuery event
+- `value` - {String} Value in the input text
 
 @param {Event} mac-tag-autocomplete-clear-input $broadcast message; clears text input when received
 */
@@ -10468,7 +10479,9 @@ angular.module("Mac").directive("macTagAutocomplete", [
         return function($scope, element, attrs) {
           var updateAutocompleteSource;
           $scope.textInput = "";
-          $scope.autocompleteSource = [];
+          if (useSource) {
+            $scope.autocompleteSource = angular.isArray($scope.source) ? [] : $scope.source;
+          }
           if (attrs.macTagAutocompleteModel != null) {
             $scope.$watch("textInput", function(value) {
               return $scope.model = value;
@@ -10523,7 +10536,7 @@ angular.module("Mac").directive("macTagAutocomplete", [
           updateAutocompleteSource = function() {
             var difference, item, selectedValues, sourceValues, _ref;
             $scope.autocompletePlaceholder = ((_ref = $scope.selected) != null ? _ref.length : void 0) ? "" : $scope.placeholder;
-            if (!useSource) {
+            if (!(useSource && angular.isArray($scope.source))) {
               return;
             }
             sourceValues = (function() {
@@ -10570,7 +10583,7 @@ angular.module("Mac").directive("macTagAutocomplete", [
               return _results;
             })();
           };
-          if (useSource) {
+          if (useSource && angular.isArray($scope.source)) {
             $scope.$watch("source", updateAutocompleteSource, true);
           }
           $scope.$watch("selected", updateAutocompleteSource, true);

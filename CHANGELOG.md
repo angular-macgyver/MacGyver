@@ -1,3 +1,9 @@
+# v0.1.27 (2014/1/16)
+## Features
+- **macTagAutocomplete:** Source accepts multiple types including custom callback
+  ([3e3aea33](https://github.com/StartTheShift/MacGyver/commit/3e3aea336958615deb4b85b0439c7edd2d2e32e2))
+
+
 # v0.1.26 (2014/1/9)
 ## Features
 - **macAutocomplete:** mac-autocomplete-source can now accept multiple types including custom callback
