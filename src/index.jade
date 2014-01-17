@@ -52,6 +52,9 @@ block append content
         li(mac-scroll-spy-target="tooltip"): a(href="#tooltip")
           i.icon-chevron-right
           | Tooltip
+        li(mac-scroll-spy-target="popover"): a(href="#popover")
+          i.icon-chevron-right
+          | Popover
         li(mac-scroll-spy-target="menu"): a(href="#menu")
           i.icon-chevron-right
           | Menu
@@ -143,6 +146,68 @@ block append content
             li: a(mac-tooltip="Tooltip on right", mac-tooltip-direction="right") Tooltip on right
         pre.prettyprint.linenums.
           &lt;a href=&quot;#&quot; mac-tooltip=&quot;Tooltip on bottom&quot; mac-tooltip-direction=&quot;bottom&quot;&gt;Tooltip on bottom&lt;/a&gt;
+
+      section#popover(mac-scroll-spy-anchor)
+        @@include("docs/html/services/popover.html")
+        @@include("docs/html/directives/popover.html")
+        h3 Example
+        .docs-example
+          ul.nav.nav-pills
+            li: a(
+                mac-popover = "testPopover"
+              ) Above left
+            li: a(
+                mac-popover = "testPopover2"
+              ) Above right
+            li: a(
+                mac-popover = "testPopover3"
+              ) Below left
+            li: a(
+                mac-popover = "testPopover4"
+              ) Below right
+            li: a(
+                mac-popover = "testPopover5"
+              ) Middle left
+            li: a(
+                mac-popover = "testPopover6"
+              ) Middle right
+
+          mac-popover(
+            id                = "testPopover"
+            mac-popover-title = "Test Popover Title"
+            mac-popover-header
+            ng-cloak
+          ) Open a popover
+          mac-popover(
+            id                    = "testPopover2"
+            mac-popover-direction = "above right"
+            ng-cloak
+          ) Open a popover
+          mac-popover(
+            id                    = "testPopover3"
+            mac-popover-direction = "below left"
+            ng-cloak
+          ) Open a popover
+          mac-popover(
+            id                    = "testPopover4"
+            mac-popover-direction = "below right"
+            ng-cloak
+          ) Open a popover
+          mac-popover(
+            id                    = "testPopover5"
+            mac-popover-direction = "middle left"
+            mac-popover-title = "Test Popover Title"
+            ng-cloak
+          ) Open a popover
+          mac-popover(
+            id                    = "testPopover6"
+            mac-popover-direction = "middle right"
+            ng-cloak
+          ) Open a popover
+        pre.prettyprint.linenums.
+          &lt;a mac-popover=&quot;testPopover&quot;&gt;Open test popover&lt;/a&gt;
+
+          &lt;mac-popover id=&quot;testPopover&quot; &gt;Open a popover&lt;/mac-popover&gt;
 
       section#menu(mac-scroll-spy-anchor)
         @@include("docs/html/directives/menu.html")

@@ -23,7 +23,9 @@
     "tmp/app/directives/focus_on_event.js",
     "tmp/app/directives/menu.js",
     "tmp/app/services/modal.js",
+    "tmp/app/services/popover.js",
     "tmp/app/directives/modal.js",
+    "tmp/app/directives/popover.js",
     "tmp/app/directives/placeholder.js",
     "tmp/app/services/scroll_spy.js",
     "tmp/app/directives/scroll_spy.js",
@@ -85,6 +87,7 @@
       "tmp/css/icons.css",
       "tmp/css/menu.css",
       "tmp/css/modal.css",
+      "tmp/css/popover.css",
       "tmp/css/spinner.css",
       "tmp/css/tag_autocomplete.css",
       "tmp/css/tooltip.css"

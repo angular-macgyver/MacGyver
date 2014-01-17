@@ -1,0 +1,175 @@
+.mac-popover
+  position         absolute
+  top              0
+  left             0
+  background       #FFF
+  box-shadow       0 3px 6px rgba(0,0,0,0.2)
+  border           1px solid #d1d3d8
+  box-sizing       border-box
+  transform        scale3d(0,0,0)
+  opacity          0
+  transform-origin left top
+  visibility       hidden
+  border-radius    3px
+  z-index          2
+
+  &.fixed
+    position fixed
+
+  &.visible
+    opacity    1
+    visibility visible
+    transform  scale3d(1,1,1)
+    transition transform .1s ease-out, opacity .1s ease-in, visibility .1s ease-out
+
+  &.ng-leave
+    transition transform .1s ease-out, opacity .1s ease-in, visibility .1s ease-out
+
+    &.ng-leave-active
+      opacity    0
+      transform  scale3d(0,0,0)
+      visibility hidden
+
+  .tip
+    display       block
+    width         0
+    height        0
+    border-bottom 9px solid #d1d3d8
+    //-Transparent doesn't work in FireFox, so we use RGBA for now
+    border-left   9px solid rgba(255,255,255,0)
+    border-right  9px solid rgba(255,255,255,0)
+    position      absolute
+    top           -9px
+    left          15px
+
+    &:after
+      content       ''
+      display       block
+      width         0
+      height        0
+      border-bottom 8px solid #FFF
+      border-left   8px solid rgba(255,255,255,0)
+      border-right  8px solid rgba(255,255,255,0)
+      position      absolute
+      top           1px
+      left          -8px
+
+
+  &.above
+    transform-origin left bottom
+    .tip
+      top           auto
+      bottom        -9px
+      border-top    9px solid #d1d3d8
+      border-bottom 0
+      &:after
+        top           auto
+        bottom        1px
+        border-top    8px solid #FFF
+        border-bottom 0
+    &.right
+      transform-origin right bottom
+      .tip
+        left  auto
+        right 15px
+
+  &.below
+    &.right
+      transform-origin right top
+      .tip
+        left  auto
+        right 15px
+
+  &.middle
+    .tip
+      top           50%
+      margin-top    -9px
+      border-top    9px solid rgba(255,255,255,0)
+      border-bottom 9px solid rgba(255,255,255,0)
+
+      &:after
+        border-top    8px solid rgba(255,255,255,0)
+        border-bottom 8px solid rgba(255,255,255,0)
+        top           -8px
+
+    &.right
+      transform-origin left center
+      .tip
+        border-left  0
+        border-right 9px solid #d1d3d8
+        left         -9px
+
+        &:after
+          border-left  0
+          border-right 8px solid #FFF
+          left         1px
+
+    &.left
+      transform-origin right center
+      .tip
+        border-right 0
+        border-left  9px solid #d1d3d8
+        right        -9px
+        left         auto
+
+        &:after
+          border-right 0
+          border-left  8px solid #FFF
+          right        1px
+          left         auto
+
+  .popover-header
+    background #eaecf1
+    display    none
+
+    .title
+      font-size    13px
+      font-weight  bold
+      line-height  33px
+      padding-left 10px
+      padding-top  1px
+      user-select  none
+      overflow     ellipsis
+      margin-right 40px
+    .close
+      float   right
+      margin  7px 10px 0 0
+      display none
+
+  .popover-content
+    max-height 415px
+    overflow-y auto
+    overflow-x hidden
+    position   relative
+
+  .popover-footer
+    display none
+
+  &.footer
+    padding-bottom 42px
+
+    .popover-footer
+      display    block
+      position   absolute
+      bottom     0
+      left       0
+      right      0
+      padding    10px
+      box-shadow 0 -1px 5px rgba(0,0,0,0.15)
+
+  &.header
+    .popover-header
+      display block
+
+    &.below
+      .tip:after
+        border-bottom 8px solid #eaecf1
+
+    &.middle
+      &.left
+        .tip:after
+          border-left 8px solid #eaecf1
+
+      &.right
+        .tip:after
+          border-right 8px solid #eaecf1
