@@ -1,3 +1,9 @@
+# v0.1.28 (2014/1/20)
+## Bug Fixes
+- **macTagAutocomplete:** Fixed source not getting set properly compiling on top of another directive
+  ([0776dc69](https://github.com/StartTheShift/MacGyver/commit/0776dc69869d384b200c3157536a3d7622b1f7c2))
+
+
 # v0.1.27 (2014/1/16)
 ## Features
 - **macTagAutocomplete:** Source accepts multiple types including custom callback
