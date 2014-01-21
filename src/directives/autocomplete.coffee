@@ -23,15 +23,15 @@ Source support multiple types:
   populated on the menu and the menu will adjust accordingly
 @param {Boolean} mac-autocomplete-disabled Boolean value if autocomplete should be disabled
 @param {Function} mac-autocomplete-on-select Function called when user select on an item
-       - `selected` - {Object} The item selected
+- `selected` - {Object} The item selected
 @param {Function} mac-autocomplete-on-success function called on success ajax request
-  - `data` - {Object} Data returned from the request
-  - `status` - {Number} The status code of the response
-  - `header` - {Object} Header of the response
-  @param {Function} mac-autocomplete-on-error Function called on ajax request error
-  - `data` - {Object} Data returned from the request
-  - `status` - {Number} The status code of the response
-  - `header` - {Object} Header of the response
+- `data` - {Object} Data returned from the request
+- `status` - {Number} The status code of the response
+- `header` - {Object} Header of the response
+@param {Function} mac-autocomplete-on-error Function called on ajax request error
+- `data` - {Object} Data returned from the request
+- `status` - {Number} The status code of the response
+- `header` - {Object} Header of the response
 @param {String}  mac-autocomplete-label The label to display to the users (default "name")
 @param {String}  mac-autocomplete-query The query parameter on GET command (default "q")
 @param {Integer} mac-autocomplete-delay Delay on fetching autocomplete data after keyup (default 800)

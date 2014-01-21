@@ -41,21 +41,21 @@ Boolean value if autocomplete should be disabled
 **mac-autocomplete-on-select**  
 Type: `Function`  
 Function called when user select on an item  
-       - `selected` - {Object} The item selected  
+- `selected` - {Object} The item selected  
   
 **mac-autocomplete-on-success**  
 Type: `Function`  
 function called on success ajax request  
-  - `data` - {Object} Data returned from the request  
-  - `status` - {Number} The status code of the response  
-  - `header` - {Object} Header of the response  
+- `data` - {Object} Data returned from the request  
+- `status` - {Number} The status code of the response  
+- `header` - {Object} Header of the response  
   
 **mac-autocomplete-on-error**  
 Type: `Function`  
 Function called on ajax request error  
-  - `data` - {Object} Data returned from the request  
-  - `status` - {Number} The status code of the response  
-  - `header` - {Object} Header of the response  
+- `data` - {Object} Data returned from the request  
+- `status` - {Number} The status code of the response  
+- `header` - {Object} Header of the response  
   
 **mac-autocomplete-label**  
 Type: `String`  
