@@ -87,9 +87,8 @@ angular.module("Mac").directive "macTagAutocomplete", [
       ($scope, element, attrs) ->
         # Variable for input element
         $scope.textInput = ""
-        if useSource
-          $scope.autocompleteSource =
-            if angular.isArray($scope.source) then [] else $scope.source
+        $scope.autocompleteSource =
+          if angular.isArray($scope.source) then [] else $scope.source
 
         if attrs.macTagAutocompleteModel?
           $scope.$watch "textInput", (value) -> $scope.model     = value
@@ -126,7 +125,10 @@ angular.module("Mac").directive "macTagAutocomplete", [
           $scope.autocompletePlaceholder =
             if $scope.selected?.length then "" else $scope.placeholder
 
-          return unless useSource and angular.isArray($scope.source)
+          unless useSource and angular.isArray($scope.source)
+            $scope.autocompleteSource = $scope.source
+            return
+
           sourceValues   = (item[valueKey] for item in ($scope.source or []))
           selectedValues = (item[valueKey] for item in ($scope.selected or []))
           difference     = (item for item in sourceValues when item not in selectedValues)
@@ -135,8 +137,9 @@ angular.module("Mac").directive "macTagAutocomplete", [
             (item for item in ($scope.source or []) when item[valueKey] in difference)
 
         # Switch to use watchCollections when upgrading to AngularJS 1.2
-        if useSource and angular.isArray($scope.source)
-          $scope.$watch "source", updateAutocompleteSource, true
+        if useSource
+          equalityCheck = angular.isArray($scope.source)
+          $scope.$watch "source", updateAutocompleteSource, equalityCheck
         $scope.$watch "selected", updateAutocompleteSource, true
 
         $scope.onKeyDown = ($event) ->
