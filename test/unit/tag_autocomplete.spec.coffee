@@ -77,6 +77,14 @@ describe "Mac tag autocomplete", ->
       textInput = $(".mac-autocomplete", element)
       expect(textInput.attr("mac-autocomplete-source")).toBe "autocompleteSource"
 
+    it "should have the same source function as the parent scope", ->
+      $rootScope.source = jasmine.createSpy "source"
+      element = $compile("<mac-tag-autocomplete mac-tag-autocomplete-source='source'></mac-tag-autocomplete>") $rootScope
+      $rootScope.$digest()
+      $rootScope.$$childHead.autocompleteSource()
+
+      expect($rootScope.source).toHaveBeenCalled()
+
     xit "should focus on autocomplete when click on tag autocomplete", ->
       $rootScope.source = ["test", "test1", "test2"]
       element           = $compile("<mac-tag-autocomplete mac-tag-autocomplete-source='source'></mac-tag-autocomplete>") $rootScope

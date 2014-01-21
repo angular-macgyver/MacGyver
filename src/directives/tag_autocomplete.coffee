@@ -3,7 +3,8 @@
 @name Tag Autocomplete
 
 @description
-A directive for generating tag input with autocomplete support on text input
+A directive for generating tag input with autocomplete support on text input.
+Tag autocomplete has priority 800
 
 @dependencies
 - mac-autocomplete
@@ -49,6 +50,7 @@ angular.module("Mac").directive "macTagAutocomplete", [
     restrict:    "E"
     templateUrl: "template/tag_autocomplete.html"
     replace:     true
+    priority:    800
     scope:
       url:         "=macTagAutocompleteUrl"
       placeholder: "=macTagAutocompletePlaceholder"
@@ -86,9 +88,8 @@ angular.module("Mac").directive "macTagAutocomplete", [
       ($scope, element, attrs) ->
         # Variable for input element
         $scope.textInput = ""
-        if useSource
-          $scope.autocompleteSource =
-            if angular.isArray($scope.source) then [] else $scope.source
+        $scope.autocompleteSource =
+          if angular.isArray($scope.source) then [] else $scope.source
 
         # NOTE: Proxy is created to prevent tag autocomplete from breaking
         # when user did not specify model
@@ -129,7 +130,10 @@ angular.module("Mac").directive "macTagAutocomplete", [
           $scope.autocompletePlaceholder =
             if $scope.selected?.length then "" else $scope.placeholder
 
-          return unless useSource and angular.isArray($scope.source)
+          unless useSource and angular.isArray($scope.source)
+            $scope.autocompleteSource = $scope.source
+            return
+
           sourceValues   = (item[valueKey] for item in ($scope.source or []))
           selectedValues = (item[valueKey] for item in ($scope.selected or []))
           difference     = (item for item in sourceValues when item not in selectedValues)
@@ -137,8 +141,11 @@ angular.module("Mac").directive "macTagAutocomplete", [
           $scope.autocompleteSource =
             (item for item in ($scope.source or []) when item[valueKey] in difference)
 
-        if useSource and angular.isArray($scope.source)
-          $scope.$watchCollection "source", updateAutocompleteSource
+        if useSource
+          # NOTE: Watcher on source is added for string and function type to make sure
+          # scope value is copied correctly into this scope
+          watchFn = if angular.isArray($scope.source) then "$watchCollection" else "$watch"
+          $scope[watchFn] "source", updateAutocompleteSource
 
         $scope.$watchCollection "selected", updateAutocompleteSource
 
