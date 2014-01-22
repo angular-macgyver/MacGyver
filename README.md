@@ -13,11 +13,12 @@ Duct Tape and a Swiss Army Knife. Angular helpers for all your friends!
  - File Upload
  - Menu
  - Modal
+ - Placeholder
+ - Popover (In development)
  - Scroll Spy
  - Spinner
  - Table
  - Tag Autocomplete
- - Tag Input
  - Time Input
  - Tooltip
 
