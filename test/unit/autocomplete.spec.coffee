@@ -98,6 +98,18 @@ describe "Mac autocomplete", ->
 
       expect($(".mac-menu-item").text() == "foo").toBe true
 
+    it "should use a callback function returned by an invoked function", ->
+      $rootScope.source = (val) ->
+        return (query, callback) -> callback [val]
+
+      element = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-source='source(\"foo\")' mac-autocomplete-delay='0'></mac-autocomplete>") $rootScope
+      $rootScope.$digest()
+
+      changeInputValue element, "f"
+      $rootScope.$digest()
+
+      expect($(".mac-menu-item").text() == "foo").toBe true
+
   describe "label", ->
     it "should use default 'name' label", ->
       $rootScope.source = [
