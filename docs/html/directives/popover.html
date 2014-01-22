@@ -1,9 +1,8 @@
 <h1 id="mac-popover-attribute-">mac-popover (attribute)</h1>
-<p>Mac popover trigger directive  </p>
+<p>Mac popover trigger directive. Without using mac-popover-child-popover, the last<br>popover will be closed automatically  </p>
 <h3 id="parameters">Parameters</h3>
 <p><strong>mac-popover</strong><br>Type: <code>String</code><br>ID of the popover to show  </p>
 <p><strong>mac-popover-fixed</strong><br>Type: <code>Boolean</code><br>Determine if the popover is fixed  </p>
-<p><strong>mac-popover-content</strong><br>Type: <code>String</code><br>Extra variable to get passed in on popoverWasShown  </p>
 <p><strong>mac-popover-child-popover</strong><br>Type: <code>Boolean</code><br>If the popover is child of another popover (default false)  </p>
 <p><strong>mac-popover-offset-x</strong><br>Type: <code>Integer</code><br>Extra x offset (default 0)  </p>
 <p><strong>mac-popover-offset-y</strong><br>Type: <code>Integer</code><br>Extra y offset (default 0)  </p>
@@ -14,8 +13,6 @@
 <li>focus: Popover shows when focus on input element  </li>
 </ul>
 <p><strong>mac-popover-exclude</strong><br>Type: <code>String</code><br>CSV of popover id that can&#39;t be shown at the same time  </p>
-<p><strong>mac-popover-scope</strong><br>Type: <code>Boolean</code><br>Use the scope of the trigger instead of rootScope  </p>
-<p><strong>mac-popover-click-mouseleave</strong><br>Type: <code>Bool</code><br>Popover autoclose after 2 seconds after mouseleave  </p>
 <h2 id="mac-popover-element-">mac-popover(element)</h2>
 <p>Element directive to define popover  </p>
 <h3 id="parameters">Parameters</h3>
@@ -23,4 +20,9 @@
 <p><strong>mac-popover-refresh-on</strong><br>Type: <code>String</code><br>Event to update popover size and position  </p>
 <p><strong>mac-popover-footer</strong><br>Type: <code>Bool</code><br>Show footer or not  </p>
 <p><strong>mac-popover-header</strong><br>Type: <code>Bool</code><br>Show header or not  </p>
-<p><strong>direction</strong><br>Type: <code>String</code><br>Popover direction  </p>
+<p><strong>mac-popover-title</strong><br>Type: <code>String</code><br>Popover title  </p>
+<p><strong>direction</strong><br>Type: <code>String</code><br>Popover direction (default &quot;above left&quot;)  </p>
+<ul>
+<li>above, below or middle - Place the popover above, below or center align the trigger element  </li>
+<li>left or right  - Place tip on the left or right of the popover  </li>
+</ul>

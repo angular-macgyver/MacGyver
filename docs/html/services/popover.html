@@ -23,13 +23,23 @@
 <li>{String} id Popover id  </li>
 <li>{DOM Element} popover Popover DOM element  </li>
 <li>{DOM Element} element Trigger DOM element  </li>
-<li>{Object} attribute Attributes on trigger element  </li>
 <li>{Object} options Additional options  </li>
 <li>Returns {Object} The new popover object  </li>
 </ul>
 <p><strong>pop</strong><br>Type: <code>Function</code><br>Get and remove the last popover from list  </p>
 <ul>
 <li>Returns {Object} Last element from popoverList  </li>
+</ul>
+<p><strong>show</strong><br>Type: <code>Function</code><br>Show and position a registered popover  </p>
+<ul>
+<li>{String} id Popover id  </li>
+<li>{DOM Element} element Element that trigger the popover  </li>
+<li>{Object} options Additional options for popover  </li>
+</ul>
+<p><strong>getById</strong><br>Type: <code>Function</code><br>Get opened popover object by id  </p>
+<ul>
+<li>{String} id Popover id  </li>
+<li>Returns {Object} Opened popover object  </li>
 </ul>
 <p><strong>resize</strong><br>Type: <code>Function</code><br>Update size and position of an opened popover  </p>
 <ul>
@@ -39,8 +49,13 @@
 </ul>
 </li>
 </ul>
-<h3 id="todo">TODO</h3>
+<p><strong>hide</strong><br>Type: <code>Function</code><br>Hide a certain popover. If no selector is provided, the<br>last opened popover is hidden  </p>
 <ul>
-<li>refactor <code>show</code> function  </li>
-<li>refactor <code>resize</code> function  </li>
+<li>{DOM Element|String} selector Support multiple type input:  <ul>
+<li>DOM Element: Popover trigger element  </li>
+<li>String: Popover ID  </li>
 </ul>
+</li>
+<li>{Function} callback Callback after popover is hidden  </li>
+</ul>
+<p><strong>hideAll</strong><br>Type: <code>Function</code><br>Hide all popovers  </p>

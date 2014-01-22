@@ -43,7 +43,6 @@ Add a new popover to opened list
 - {String} id Popover id  
 - {DOM Element} popover Popover DOM element  
 - {DOM Element} element Trigger DOM element  
-- {Object} attribute Attributes on trigger element  
 - {Object} options Additional options  
 - Returns {Object} The new popover object  
   
@@ -54,6 +53,21 @@ Get and remove the last popover from list
 - Returns {Object} Last element from popoverList  
   
   
+**show**  
+Type: `Function`  
+Show and position a registered popover  
+- {String} id Popover id  
+- {DOM Element} element Element that trigger the popover  
+- {Object} options Additional options for popover  
+  
+  
+**getById**  
+Type: `Function`  
+Get opened popover object by id  
+- {String} id Popover id  
+- Returns {Object} Opened popover object  
+  
+  
 **resize**  
 Type: `Function`  
 Update size and position of an opened popover  
@@ -62,9 +76,19 @@ Update size and position of an opened popover
   - String: Popover ID  
   
   
-
-### TODO
-- refactor `show` function  
-- refactor `resize` function  
+**hide**  
+Type: `Function`  
+Hide a certain popover. If no selector is provided, the  
+last opened popover is hidden  
+- {DOM Element|String} selector Support multiple type input:  
+  - DOM Element: Popover trigger element  
+  - String: Popover ID  
+- {Function} callback Callback after popover is hidden  
+  
+  
+**hideAll**  
+Type: `Function`  
+Hide all popovers  
+  
   
 

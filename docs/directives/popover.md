@@ -1,7 +1,8 @@
 
 mac-popover (attribute)
 ===
-Mac popover trigger directive  
+Mac popover trigger directive. Without using mac-popover-child-popover, the last  
+popover will be closed automatically  
   
   
 ### Parameters
@@ -12,10 +13,6 @@ ID of the popover to show
 **mac-popover-fixed**  
 Type: `Boolean`  
 Determine if the popover is fixed  
-  
-**mac-popover-content**  
-Type: `String`  
-Extra variable to get passed in on popoverWasShown  
   
 **mac-popover-child-popover**  
 Type: `Boolean`  
@@ -39,14 +36,6 @@ Trigger option, click | hover | manual (default click)
 **mac-popover-exclude**  
 Type: `String`  
 CSV of popover id that can't be shown at the same time  
-  
-**mac-popover-scope**  
-Type: `Boolean`  
-Use the scope of the trigger instead of rootScope  
-  
-**mac-popover-click-mouseleave**  
-Type: `Bool`  
-Popover autoclose after 2 seconds after mouseleave  
   
 
 
@@ -72,8 +61,14 @@ Show footer or not
 Type: `Bool`  
 Show header or not  
   
+**mac-popover-title**  
+Type: `String`  
+Popover title  
+  
 **direction**  
 Type: `String`  
-Popover direction  
+Popover direction (default "above left")  
+- above, below or middle - Place the popover above, below or center align the trigger element  
+- left or right  - Place tip on the left or right of the popover  
   
 
