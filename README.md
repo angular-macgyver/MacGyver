@@ -43,6 +43,8 @@ To install via bower, make sure you have bower installed and then run:
 
     bower install angular-macgyver
 
+More bower repositories can be found at [Angular MacGyver](https://github.com/angular-macgyver)
+
 Once you have MacGyver in your project, just include "Mac" as a dependency in your Angular application and you’re good to go.
 
     angular.module("myModule", ["Mac"])
