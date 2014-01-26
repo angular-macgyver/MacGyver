@@ -17,7 +17,8 @@ angular.module("Mac").factory "MacTableController", ["Table", (Table) ->
     hasReorderableColumns: false
 
     makeTable: (columns) ->
-      @table = @scope.table = new Table columns
+      @table         = @scope.table = new Table columns
+      @table.$parent = @scope.$parent
 ]
 
 angular.module("Mac").directive "macTable", [ "MacTableController", (MacTableController) ->

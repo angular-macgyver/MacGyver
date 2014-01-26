@@ -306,6 +306,10 @@ describe "Table View", ->
       it "Should set the width automatically", ->
         expect(element.find("[mac-cell-template]").first().attr("width")).toBe "50%"
 
+      describe "Scope References", ->
+        it "Stores the parent scope on the table object", ->
+          expect(element.scope().table.$parent).toBe scope
+
       describe "Section Controllers", ->
 
         beforeEach inject (TableSectionController) ->
