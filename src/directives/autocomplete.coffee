@@ -48,7 +48,7 @@ angular.module("Mac").directive "macAutocomplete", [
   "$document"
   "keys"
   ($animate, $http, $filter, $compile, $timeout, $parse, $rootScope, $document, keys) ->
-    restrict:    "E"
+    restrict:    "EA"
     templateUrl: "template/autocomplete.html"
     replace:     true
     require:     "ngModel"
