@@ -1,3 +1,20 @@
+# v0.2.1 (2014/1/27)
+## Bug Fixes
+- **macTagAutocomplete:** Fixed source not getting set properly compiling on top of another directive
+  ([b7ac7af9](https://github.com/StartTheShift/MacGyver/commit/b7ac7af95fb5f6d5a91e013cec2e3cabd92c1b08))
+
+## Features
+- **macAutocomplete:** Support attribute declaration style
+  ([8cb89a21](https://github.com/StartTheShift/MacGyver/commit/8cb89a211175de798fd33cb665ac15be30f36279))
+- **macPopover:** Added mac-popover to MacGyver. Includes popover service to keep track of all registered and opened popover. Includes multiple popover directives for creating popover and popover trigger.
+  ([66c715e6](https://github.com/StartTheShift/MacGyver/commit/66c715e687d59b902cc95f8da9496cb8d30a741f))
+- **macTable:** Storing parent scope on table object
+  ([585243e7](https://github.com/StartTheShift/MacGyver/commit/585243e7d2e676b9798ca7d9babe60609da9dcfc),
+   [#145](https://github.com/StartTheShift/MacGyver/issues/145))
+- **macTagAutocomplete:** Source accepts multiple types including custom callback
+  ([7f6d138d](https://github.com/StartTheShift/MacGyver/commit/7f6d138dc67ad393ca1883a3d3b87ede59f58e8e))
+
+
 # v0.2.0 (2014/1/8)
 ## Bug Fixes
 - **bower.json:** Fixed bower versioning
