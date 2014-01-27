@@ -14,7 +14,7 @@ Duct Tape and a Swiss Army Knife. Angular helpers for all your friends!
  - Menu
  - Modal
  - Placeholder
- - Popover (In development)
+ - Popover
  - Scroll Spy
  - Spinner
  - Table
