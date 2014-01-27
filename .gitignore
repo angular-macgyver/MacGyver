@@ -3,3 +3,6 @@
 # Except these files
 !.gitignore
 !/example/
+!/example/**/*
+
+.DS_Store
