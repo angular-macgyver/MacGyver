@@ -6,7 +6,7 @@ module.exports = (grunt) ->
   #
   grunt.config "karma",
     options:
-      configFile: "test/karma.conf.js"
+      configFile: "test/karma.conf.coffee"
     unit:
       background: true
     travis:
