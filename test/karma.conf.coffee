@@ -1,5 +1,43 @@
 module.exports = (config) ->
   config.set
+    sauceLabs:
+      startConnect: true
+      testName: "MacGyver"
+
+    customLaunchers:
+      SL_Chrome:
+        base: "SauceLabs"
+        browserName: "chrome"
+
+      SL_Firefox:
+        base: 'SauceLabs',
+        browserName: 'firefox',
+        version: '26'
+
+      SL_Safari:
+        base: 'SauceLabs',
+        browserName: 'safari',
+        platform: 'OS X 10.9',
+        version: '7'
+
+      SL_IE_9:
+        base: 'SauceLabs',
+        browserName: 'internet explorer',
+        platform: 'Windows 2008',
+        version: '9'
+
+      SL_IE_10:
+        base: 'SauceLabs',
+        browserName: 'internet explorer',
+        platform: 'Windows 2012',
+        version: '10'
+
+      SL_IE_11:
+        base: 'SauceLabs',
+        browserName: 'internet explorer',
+        platform: 'Windows 8.1',
+        version: '11'
+
     # base path, that will be used to resolve files and exclude
     basePath: "../example"
     frameworks: ["jasmine"]
@@ -39,20 +77,11 @@ module.exports = (config) ->
       "../test/unit/*.spec.coffee"
     ]
 
-    # list of files to exclude
-    exclude: []
-
     # use dots reporter, as travis terminal does not support escaping sequences
     # possible values: 'dots', 'progress'
     # CLI --reporters progress
     reporters: ["progress"]
 
-    # web server port
-    port: 9100
-
-    # enable / disable colors in the output (reporters and logs)
-    # CLI --colors --no-colors
-    colors: true
     logLevel: config.LOG_INFO
     autoWatch: true
     browsers: ["PhantomJS"]
@@ -63,10 +92,11 @@ module.exports = (config) ->
       "../**/*.coffee": "coffee"
       "**/*.html": "html2js"
 
-    plugins: [
-      "karma-jasmine"
-      "karma-chrome-launcher"
-      "karma-phantomjs-launcher"
-      "karma-ng-html2js-preprocessor"
-      "karma-coffee-preprocessor"
-    ]
+  if process.env.TRAVIS
+    buildLabel = "TRAVIS ##{process.env.TRAVIS_BUILD_NUMBER} (#{process.env.TRAVIS_BUILD_ID})"
+
+    config.sauceLabs.build            = buildLabel
+    config.sauceLabs.startConnect     = false
+    config.sauceLabs.tunnelIdentifier = process.env.TRAVIS_JOB_NUMBER
+
+    config.transports = ["xhr-polling"]
