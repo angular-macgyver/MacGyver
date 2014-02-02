@@ -23,7 +23,7 @@ CONNECT_STDERR="$LOGS_DIR/sauce-connect.stderr"
 # Get Connect and start it
 mkdir -p $CONNECT_DIR
 cd $CONNECT_DIR
-curl $CONNECT_URL -o $CONNECT_DOWNLOAD 2> /dev/null 1> /dev/null
+curl $CONNECT_URL -o $CONNECT_DOWNLOAD
 unzip $CONNECT_DOWNLOAD > /dev/null
 rm $CONNECT_DOWNLOAD
 
@@ -43,3 +43,8 @@ echo "  $CONNECT_STDOUT"
 echo "  $CONNECT_STDERR"
 java -jar Sauce-Connect.jar $ARGS $SAUCE_USERNAME $SAUCE_ACCESS_KEY \
   --logfile $CONNECT_LOG 2> $CONNECT_STDERR 1> $CONNECT_STDOUT &
+
+# Wait for Connect to be ready before exiting
+while [ ! -f $BROWSER_PROVIDER_READY_FILE ]; do
+  sleep .5
+done
