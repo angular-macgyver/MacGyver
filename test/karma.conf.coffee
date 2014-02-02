@@ -87,7 +87,6 @@ module.exports = (config) ->
     browsers: ["PhantomJS"]
     captureTimeout: 30000
     singleRun: false
-    reportSlowerThan: 500
     preprocessors:
       "../**/*.coffee": "coffee"
       "**/*.html": "html2js"
@@ -100,3 +99,24 @@ module.exports = (config) ->
     config.sauceLabs.tunnelIdentifier = process.env.TRAVIS_JOB_NUMBER
 
     config.transports = ["xhr-polling"]
+
+  # Taken from AngularJS karma-shared.conf.js
+  # Terrible hack to workaround inflexibility of log4js:
+  # - ignore web-server's 404 warnings,
+  log4js            = require("../node_modules/karma/node_modules/log4js")
+  layouts           = require("../node_modules/karma/node_modules/log4js/lib/layouts")
+  originalConfigure = log4js.configure
+
+  log4js.configure = (log4jsConfig) ->
+    consoleAppender = log4jsConfig.appenders.shift()
+    originalResult = originalConfigure.call(log4js, log4jsConfig)
+    layout = layouts.layout(consoleAppender.layout.type, consoleAppender.layout)
+    log4js.addAppender (log) ->
+      msg = log.data[0]
+
+      # ignore web-server's 404s
+      return if log.categoryName is "web-server" and log.level.levelStr is config.LOG_WARN
+
+      console.log layout(log)
+
+    originalResult
