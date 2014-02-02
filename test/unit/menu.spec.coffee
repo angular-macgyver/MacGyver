@@ -40,7 +40,7 @@ describe "Mac menu", ->
     element = $compile("<mac-menu mac-menu-items='items' mac-menu-style='style'></mac-menu>") $rootScope
     $rootScope.$digest()
 
-    expect(element.css("color")).toBe("red")
+    expect(element[0].style.color).toBe("red")
 
   it "should fire select callback", ->
     callback         = jasmine.createSpy "select"
