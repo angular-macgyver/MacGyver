@@ -12,7 +12,7 @@ module.exports = (grunt) ->
     travis:
       autoWatch: false
       singleRun: true
-      browsers: ["SL_Chrome", "SL_Firefox", "SL_Safari", "SL_IE_9"]
+      browsers: ["SL_Chrome", "SL_Firefox", "SL_Safari"]
       reporters: ["dots"]
     build:
       options:
