@@ -38,4 +38,5 @@ describe "Mac Spinner", ->
       element = $compile("<mac-spinner mac-spinner-color='#123123'></mac-spinner>") $rootScope
       $rootScope.$digest()
 
-      expect($(".bar", element).css("background")).toBe "rgb(18, 49, 35)"
+      # FF extends background style to 'none repeat scroll 0% 0% rgb(18, 49, 35)'
+      expect($(".bar", element).css("background").indexOf("rgb(18, 49, 35)")).not.toBe -1
