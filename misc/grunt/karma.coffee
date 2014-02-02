@@ -9,7 +9,6 @@ module.exports = (grunt) ->
       configFile: "test/karma.conf.coffee"
     unit:
       background: true
-      autoWatch:  true
     travis:
       browsers: ["SL_Chrome", "SL_Firefox", "SL_Safari"]
       reporters: ["dots"]
