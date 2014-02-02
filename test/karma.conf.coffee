@@ -83,10 +83,7 @@ module.exports = (config) ->
     reporters: ["progress"]
 
     logLevel: config.LOG_INFO
-    autoWatch: true
     browsers: ["PhantomJS"]
-    captureTimeout: 30000
-    singleRun: false
     preprocessors:
       "../**/*.coffee": "coffee"
       "**/*.html": "html2js"

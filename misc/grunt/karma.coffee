@@ -9,12 +9,13 @@ module.exports = (grunt) ->
       configFile: "test/karma.conf.coffee"
     unit:
       background: true
+      autoWatch:  true
     travis:
-      autoWatch: false
-      singleRun: true
       browsers: ["SL_Chrome", "SL_Firefox", "SL_Safari"]
       reporters: ["dots"]
+      singleRun: true
     build:
+      singleRun: true
       options:
         files: [
           "../vendor/bower/jquery/jquery.js"
@@ -25,5 +26,3 @@ module.exports = (grunt) ->
           "../test/vendor/browserTrigger.js"
           "../test/unit/*.spec.coffee"
         ]
-      autoWatch: false
-      singleRun: true
