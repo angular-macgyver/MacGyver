@@ -250,6 +250,10 @@ angular.module("Mac").directive "macAutocomplete", [
             $scope.$apply ->
               if $menuScope.items.length > 0
                 $menuScope.select $menuScope.index
+
+                # Prevent event from propagating up and possibly causing a form
+                # submission.
+                event.preventDefault()
           when keys.ESCAPE
             $scope.$apply -> reset()
 
