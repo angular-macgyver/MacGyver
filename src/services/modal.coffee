@@ -96,16 +96,20 @@ angular.module("Mac").service("modal", [
         # if modal is created thru module method "modal"
         if options.moduleMethod?
           renderModal = (template) =>
-            viewScope =
-              if options.scope then options.scope.$new() else $rootScope.$new(true)
-            viewScope.close = ($event, force = false) =>
-              if force or (options.overlayClose and
-                  angular.element($event.target).hasClass("modal-overlay"))
-                @hide()
+            # Scope allows either a scope or an object:
+            # - Scope - Use the scope to compile modal
+            # - Object - Creates a new "isolate" scope and extend the isolate
+            # scope with data being passed in
+            #
+            # Use the scope passed in
+            if isScope(options.scope)
+              viewScope = options.scope
 
-            if options.controller
-              $controller options.controller,
-                $scope: viewScope
+            # Create an isolated scope and extend scope with value pass in
+            else
+              viewScope = $rootScope.$new(true)
+              if angular.isObject options.scope
+                angular.extend viewScope, options.scope
 
             angular.extend options.attributes, {id}
             element = angular.element(@modalTemplate).attr options.attributes
@@ -118,6 +122,19 @@ angular.module("Mac").service("modal", [
               element.bind "click", ($event) ->
                 if angular.element($event.target).hasClass("modal-overlay")
                   viewScope.$apply => @hide()
+
+            if options.controller
+              # Modal controller has the following locals:
+              # - $scope - Current scope associated with the element
+              # - $element - Current modal element
+              # - macModalOptions - Modal options
+              #
+              # macModalOptions is added to give user more information in the
+              # controller when compiling modal
+              $controller options.controller,
+                $scope:          viewScope
+                $element:        element
+                macModalOptions: options
 
             $animate.enter element, angular.element(document.body)
             $compile(element) viewScope
