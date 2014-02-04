@@ -53,9 +53,9 @@ angular.module("Mac").service("modal", [
     opened: null
 
     modalTemplate: """
-      <div ng-click="close($event)" class="modal-overlay hide">
+      <div class="modal-overlay hide">
         <div class="modal">
-          <a ng-click="close($event, true)" class="close-modal"></a>
+          <a mac-modal-close class="close-modal"></a>
           <div class="modal-content-wrapper"></div>
         </div>
       </div>
@@ -113,6 +113,11 @@ angular.module("Mac").service("modal", [
               element[0].getElementsByClassName("modal-content-wrapper")
             )
             wrapper.html template
+
+            if options.overlayClose
+              element.bind "click", ($event) ->
+                if angular.element($event.target).hasClass("modal-overlay")
+                  viewScope.$apply => @hide()
 
             $animate.enter element, angular.element(document.body)
             $compile(element) viewScope

@@ -22,34 +22,25 @@ angular.module("Mac").directive("macModal", [
     replace:    true
     transclude: true
 
-    # NOTE: Isolated scope to prevent adding `close` function to parent
-    # scope. Transcluded content is currently using parent scope.
-    scope:
-      open: "&macModalOpen"
-
     # NOTE: As of AngularJS 1.2.2, transclude function is on the link
     # function instead of compile
     link: ($scope, element, attrs, controller, transclude) ->
-      # NOTE: Similiar to ngTransclude directive but the scope is
-      # parent scope
-      transclude $scope.$parent, (clone) ->
-        wrapper = angular.element(
+      transclude $scope, (clone) ->
+        angular.element(
           element[0].getElementsByClassName "modal-content-wrapper"
-        )
-        wrapper.html ""
-        wrapper.append clone
+        ).replaceWith clone
 
       opts = util.extendAttributes "macModal", modalViews.defaults, attrs
 
+      if opts.overlayClose
+        element.on "click", ($event) ->
+          if angular.element($event.target).hasClass("modal-overlay")
+            $scope.$apply -> modal.hide()
+
       registerModal = (id) ->
         if id? and id
-          opts.callback = $scope.open
+          opts.callback = $parse(attrs.macModalOpen)($scope)
           modal.register id, element, opts
-
-      $scope.close = ($event, force = false) ->
-        if force or (opts.overlayClose and
-            angular.element($event.target).hasClass("modal-overlay"))
-          modal.hide()
 
       if attrs.id
         registerModal attrs.id
@@ -65,7 +56,7 @@ angular.module("Mac").directive("macModal", [
 # @param {String} mac-modal    Modal ID to trigger
 # @param {Expr} mac-modal-data Extra data to pass along
 #
-directive "macModal", [
+directive("macModal", [
   "$parse"
   "modal"
   ($parse, modal) ->
@@ -84,4 +75,13 @@ directive "macModal", [
             scope: modalScope
           modalScope.$apply()
       return
+]).
+
+directive "macModalClose", [
+  "modal"
+  (modal) ->
+    restrict: "A"
+    link:     ($scope, element, attrs) ->
+      element.bind "click", ->
+        $scope.$apply -> modal.hide()
 ]
