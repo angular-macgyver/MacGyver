@@ -30,6 +30,9 @@ getStyles = (element) ->
 isWindow = (obj) ->
   return obj and obj.document and obj.location and obj.alert and obj.setInterval
 
+isScope = (obj) ->
+  return obj and obj.$evalAsync? and obj.$watch?
+
 getWindow = (element) ->
   if isWindow(element) then element else element.nodeType is 9 and element.defaultView
 
