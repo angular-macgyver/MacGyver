@@ -1,3 +1,9 @@
+# v0.1.29 (2014/2/7)
+## Bug Fixes
+- **macModal:** Ported mac-modal bug fixes from master to 0.1.x. Fixed scoping instead and controller not having access to options on initialize. Fixed digest error when opening modal
+  ([48d56bd5](https://github.com/StartTheShift/MacGyver/commit/48d56bd5485799a8c3213f8f5d8ac24ad1603f51))
+
+
 # v0.1.28 (2014/1/20)
 ## Bug Fixes
 - **macTagAutocomplete:** Fixed source not getting set properly compiling on top of another directive
