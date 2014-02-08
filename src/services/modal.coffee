@@ -52,7 +52,14 @@ angular.module("Mac").service("modal", [
     # Current opened modal
     opened: null
 
-    modalTemplate: '<div ng-click="closeOverlay($event)" class="modal-overlay hide"><div class="modal"><a ng-click="modal.hide()" class="close-modal"></a><div class="modal-content-wrapper"></div></div></div>'
+    modalTemplate: """
+      <div class="modal-overlay hide">
+        <div class="modal">
+          <a mac-modal-close class="close-modal"></a>
+          <div class="modal-content-wrapper"></div>
+        </div>
+      </div>
+    """
 
     #
     # @name show
@@ -90,27 +97,49 @@ angular.module("Mac").service("modal", [
 
         # if modal is created thru module method "modal"
         if options.moduleMethod?
-          renderModal = (template, invokeApply = true) =>
-            viewScope =
-              if options.scope then options.scope.$new() else $rootScope.$new(true)
-            viewScope.modal        = this
-            viewScope.closeOverlay = ($event) =>
-              if options.overlayClose and
-                  angular.element($event.target).hasClass("modal-overlay")
-                @hide()
+          renderModal = (template) =>
+
+            # Scope allows either a scope or an object:
+            # - Scope - Use the scope to compile modal
+            # - Object - Creates a new "isolate" scope and extend the isolate
+            # scope with data being passed in
+            #
+            # Use the scope passed in
+            if isScope(options.scope)
+              viewScope = options.scope
+
+            # Create an isolated scope and extend scope with value pass in
+            else
+              viewScope = $rootScope.$new(true)
+              if angular.isObject options.scope
+                angular.extend viewScope, options.scope
 
             if options.controller
+              # Modal controller has the following locals:
+              # - $scope - Current scope associated with the element
+              # - $element - Current modal element
+              # - macModalOptions - Modal options
+              #
+              # macModalOptions is added to give user more information in the
+              # controller when compiling modal
               $controller options.controller,
-                $scope: viewScope
+                $scope:          viewScope
+                $element:        element
+                macModalOptions: options
 
             angular.extend options.attributes, {id}
             element = angular.element(@modalTemplate).attr options.attributes
             wrapper = angular.element element[0].getElementsByClassName("modal-content-wrapper")
             wrapper.html template
+
+            if options.overlayClose
+              element.bind "click", ($event) ->
+                if angular.element($event.target).hasClass("modal-overlay")
+                  viewScope.$apply => @hide()
+
             angular.element(document.body).append $compile(element) viewScope
 
             showModal element
-            $rootScope.$apply() if invokeApply
 
           if (path = options.templateUrl)
             template = $templateCache.get path
@@ -119,7 +148,7 @@ angular.module("Mac").service("modal", [
             else
               $http.get(path).then (resp) ->
                 $templateCache.put path, resp.data
-                renderModal resp.data, false
+                renderModal resp.data
               , ->
                 throw Error("Failed to load template: #{path}")
           else if (template = options.template)
@@ -179,7 +208,9 @@ angular.module("Mac").service("modal", [
       @opened = null
 
       if options.moduleMethod
-        element.scope().$destroy()
+        # Only destroy new isolated scope
+        unless isScope options.scope
+          element.scope().$destroy()
         element.remove()
 
       $rootScope.$broadcast "modalWasHidden", id

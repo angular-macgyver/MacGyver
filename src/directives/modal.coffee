@@ -25,25 +25,29 @@ angular.module("Mac").directive("macModal", [
 
     compile: (element, attrs, transclude) ->
       ($scope, element, attrs) ->
-        opts = util.extendAttributes "macModal", modalViews.defaults, attrs
+        opts         = util.extendAttributes "macModal", modalViews.defaults, attrs
+        registeredId = null
+
+        if opts.overlayClose
+          element.bind "click", ($event) ->
+            if angular.element($event.target).hasClass("modal-overlay")
+              $scope.$apply -> modal.hide()
 
         registerModal = (id) ->
           if id? and id
+            registeredId = id
             opts.callback = ->
               $parse(opts.open) $scope if opts.open?
 
             modal.register id, element, opts
 
-        $scope.modal        = modal
-        $scope.closeOverlay = ($event) ->
-          if opts.overlayClose and
-              angular.element($event.target).hasClass("modal-overlay")
-            modal.hide()
-
         if attrs.id
           registerModal attrs.id
         else
           attrs.$observe "macModal", (id) -> registerModal id
+
+        $scope.$on "$destroy", ->
+          modal.unregister registeredId if registeredId
 ]).
 
 #
@@ -54,7 +58,7 @@ angular.module("Mac").directive("macModal", [
 # @param {String} mac-modal Modal ID to trigger
 # @param {Object} mac-modal-data    Extra data to pass along
 #
-directive "macModal", [
+directive("macModal", [
   "$parse"
   "modal"
   ($parse, modal) ->
@@ -62,15 +66,20 @@ directive "macModal", [
     link: ($scope, element, attrs) ->
       if attrs.macModal
         element.bind "click", ->
-          modalScope = false
-          if attrs.macModalScope? and attrs.macModalScope
-            modalScope = $parse(attrs.macModalScope)($scope)
-          modalScope = $scope unless modalScope? and modalScope.$new?
-
-          # Deprecating mac-modal-content. Use mac-modal-data instead
-          dataVar = attrs.macModalContent or attrs.macModalData
-          modal.show attrs.macModal,
-            data:  $parse(dataVar) $scope
-            scope: modalScope
+          $scope.$apply ->
+            # Deprecating mac-modal-content. Use mac-modal-data instead
+            dataVar = attrs.macModalContent or attrs.macModalData
+            modal.show attrs.macModal,
+              data:  $parse(dataVar) $scope
+              scope: $scope
       return
+]).
+
+directive "macModalClose", [
+  "modal"
+  (modal) ->
+    restrict: "A"
+    link:     ($scope, element, attrs) ->
+      element.bind "click", ->
+        $scope.$apply -> modal.hide()
 ]

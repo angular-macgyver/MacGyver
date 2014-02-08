@@ -1,4 +1,4 @@
-.modal-overlay.hide(ng-click="closeOverlay($event)")
+.modal-overlay.hide
   .modal
-    a.close-modal(ng-click="modal.hide()")
+    a.close-modal(mac-modal-close)
     .modal-content-wrapper(ng-transclude)
