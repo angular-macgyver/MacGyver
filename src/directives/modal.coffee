@@ -30,7 +30,8 @@ angular.module("Mac").directive("macModal", [
           element[0].getElementsByClassName "modal-content-wrapper"
         ).replaceWith clone
 
-      opts = util.extendAttributes "macModal", modalViews.defaults, attrs
+      opts  = util.extendAttributes "macModal", modalViews.defaults, attrs
+      regId = null
 
       if opts.overlayClose
         element.on "click", ($event) ->
@@ -39,6 +40,7 @@ angular.module("Mac").directive("macModal", [
 
       registerModal = (id) ->
         if id? and id
+          regId         = id
           opts.callback = $parse(attrs.macModalOpen)($scope)
           modal.register id, element, opts
 
@@ -46,6 +48,10 @@ angular.module("Mac").directive("macModal", [
         registerModal attrs.id
       else
         attrs.$observe "macModal", (id) -> registerModal id
+
+      # NOTE: Remove from modal service when mac-modal directive is removed
+      # from DOM
+      $scope.$on "$destroy", -> modal.unregister regId if regId
 ]).
 
 #

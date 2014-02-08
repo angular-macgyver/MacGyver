@@ -106,6 +106,26 @@ describe "Mac modal", ->
 
       expect(modal.registered["test-modal"]).toBeDefined()
 
+    it "should unregister the modal when $scope is destroyed", ->
+      modalElement = $compile("<mac-modal id='test-modal'></mac-modal>") $rootScope
+      $rootScope.$digest()
+
+      $rootScope.$destroy()
+
+      expect(modal.registered["test-modal"]).not.toBeDefined()
+
+    it "should unregister the correct one", ->
+      scope        = $rootScope.$new()
+      scope1       = $rootScope.$new()
+      modalElement = $compile("<mac-modal id='test-modal'></mac-modal>") scope
+      modalElement = $compile("<mac-modal id='test-modal-1'></mac-modal>") scope1
+      $rootScope.$digest()
+
+      scope.$destroy()
+
+      expect(modal.registered["test-modal"]).not.toBeDefined()
+      expect(modal.registered["test-modal-1"]).toBeDefined()
+
     it "should close the modal was 'escape' key", ->
       opened       = false
       modalElement = $compile("<mac-modal id='test-modal' mac-modal-keyboard></mac-modal>") $rootScope
