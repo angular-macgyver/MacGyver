@@ -205,8 +205,12 @@ angular.module("Mac").service("modal", [
         @opened = null
 
         if options.moduleMethod
-          element.scope().$destroy()
+          # Only destroy new isolated scope
+          unless isScope options.scope
+            element.scope().$destroy()
+
           $animate.leave element
+
         else
           $animate.addClass element, "hide"
 
