@@ -83,3 +83,9 @@ module.exports = (grunt) ->
     "connect:example"
     "watch"
   ]
+
+  grunt.registerTask "e2e", "Compile all source code and run a test server", [
+    "compile"
+    "replace:src"
+    "connect:e2e"
+  ]

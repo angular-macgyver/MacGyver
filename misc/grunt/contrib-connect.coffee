@@ -31,3 +31,9 @@ module.exports = (grunt) ->
             connect.bodyParser()
             fileHandler
           ]
+
+    e2e:
+      options:
+        port:      9001
+        base:      ""
+        keepalive: true
