@@ -1,7 +1,6 @@
 # Path variables
 finalBuildPath = "lib/"
 componentFile  = "bower.json"
-server         = require "../../server"
 
 child   = require "child_process"
 
@@ -189,14 +188,3 @@ module.exports = (grunt) ->
       grunt.fail.fatal "Failed to tag" if error?
       grunt.log.writeln stdout
       done()
-
-  ###
-  @name server
-  @description Run a node/test server
-  ###
-  grunt.registerTask "server", "Run test server", ->
-    done = @async()
-
-    server.startServer 9001, "example"
-
-    done() unless grunt.option("keepalive")
