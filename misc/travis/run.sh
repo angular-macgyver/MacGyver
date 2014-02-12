@@ -5,8 +5,8 @@ set -e
 if [ $JOB = "unit" ]; then
   grunt test:unit
 elif [ $JOB = "e2e" ]; then
-  grunt test:e2e --sauceUser $SAUCE_USER \
-        --sauceKey $SAUCE_ACCESS_KEY \
+  grunt test:e2e --sauceUser=$SAUCE_USER \
+        --sauceKey=$SAUCE_ACCESS_KEY \
         --capabilities.tunnel-identifier=$TRAVIS_JOB_NUMBER \
         --capabilities.build=$TRAVIS_BUILD_NUMBER \
         --browser=$BROWSER
