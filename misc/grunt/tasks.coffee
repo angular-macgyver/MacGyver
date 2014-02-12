@@ -188,3 +188,37 @@ module.exports = (grunt) ->
       grunt.fail.fatal "Failed to tag" if error?
       grunt.log.writeln stdout
       done()
+
+  ###
+  @name protractor
+  @description
+  To run protractor. Following codes are taken from AngularJS, see:
+  https://github.com/angular/angular.js/blob/master/lib/grunt/utils.js#L155
+  ###
+  grunt.registerMultiTask "protractor", "Run Protractor integration tests", ->
+    done = @async()
+
+    sauceUser        = grunt.option "sauceUser"
+    sauceKey         = grunt.option "sauceKey"
+    tunnelIdentifier = grunt.option "capabilities.tunnel-identifier"
+    sauceBuild       = grunt.option "capabilities.build"
+    browser          = grunt.option "browser"
+
+    args = ["node_modules/protractor/bin/protractor", @data]
+    args.push "--sauceUser=#{sauceUser}" if sauceUser
+    args.push "--sauceKey=#{sauceKey}" if sauceKey
+    if tunnelIdentifier
+      args.push "--capabilities.tunnel-identifier=#{tunnelIdentifier}"
+    args.push "--capabilities.build=#{sauceBuild}" if sauceBuild
+
+    if browser
+      args.push "--browser=#{browser}"
+      args.push "--params.browser=#{browser}"
+
+    p = child.spawn "node", args
+    p.stdout.pipe process.stdout
+    p.stderr.pipe process.stderr
+    p.on "exit", (code) ->
+      if code isnt 0
+        grunt.fail.warn "Protractor test(s) failed. Exit code: #{code}"
+      done()
