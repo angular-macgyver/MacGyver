@@ -215,6 +215,9 @@ module.exports = (grunt) ->
       args.push "--browser=#{browser}"
       args.push "--params.browser=#{browser}"
 
+    unless process.env.TRAVIS
+      args.push "--seleniumAddress=http://localhost:4444/wd/hub"
+
     p = child.spawn "node", args
     p.stdout.pipe process.stdout
     p.stderr.pipe process.stderr
