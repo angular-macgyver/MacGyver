@@ -209,14 +209,12 @@ module.exports = (grunt) ->
     args.push "--sauceKey=#{sauceKey}" if sauceKey
     if tunnelIdentifier
       args.push "--capabilities.tunnel-identifier=#{tunnelIdentifier}"
-    args.push "--capabilities.build=#{sauceBuild}" if sauceBuild
+    if sauceBuild
+      args.push "--capabilities.build='TRAVIS ##{sauceBuild}'"
 
     if browser
       args.push "--browser=#{browser}"
       args.push "--params.browser=#{browser}"
-
-    unless process.env.TRAVIS
-      args.push "--seleniumAddress=http://localhost:4444/wd/hub"
 
     p = child.spawn "node", args
     p.stdout.pipe process.stdout
