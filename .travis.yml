@@ -17,5 +17,6 @@ before_script:
   - ./misc/sauce/sauce_connect_setup.sh
   - npm install -g bower grunt-cli
   - bower install
+  - ./misc/travis/wait_for_ready_file.sh
 script:
   - ./misc/travis/run.sh

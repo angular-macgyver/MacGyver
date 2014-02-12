@@ -43,8 +43,3 @@ echo "  $CONNECT_STDOUT"
 echo "  $CONNECT_STDERR"
 java -jar Sauce-Connect.jar $ARGS $SAUCE_USERNAME $SAUCE_ACCESS_KEY \
   --logfile $CONNECT_LOG 2> $CONNECT_STDERR 1> $CONNECT_STDOUT &
-
-# Wait for Connect to be ready before exiting
-while [ ! -f $BROWSER_PROVIDER_READY_FILE ]; do
-  sleep .5
-done
