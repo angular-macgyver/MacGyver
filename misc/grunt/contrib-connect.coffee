@@ -34,6 +34,5 @@ module.exports = (grunt) ->
 
     e2e:
       options:
-        port:      9001
-        base:      ""
-        keepalive: true
+        port: 9001
+        base: ""

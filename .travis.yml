@@ -1,14 +1,21 @@
 language: node_js
 node_js:
-- '0.10'
+  - '0.10'
 env:
+  matrix:
+    - JOB=unit
+    - JOB=e2e BROWSER=chrome
+    - JOB=e2e BROWSER=firefox
+    - JOB=e2e BROWSER=safari
   global:
-  - secure: NhWBAUqC6ZY2l1xt/9c5QYu7SYzs2BZ1+4sPOri9lWp2PYkDy18yK7JHuiY7BK41a/K+xcVoRwj5rqr8sCN0ur392t6Kejd8v1K78LmYxcYvsL50LDutpLnIbyTh55O/y4uXeSrheg5rdUrbec/3IJPRqkuNni+9BdXouQefsaQ=
-  - secure: gowpPC3pj1giWhCjdr6nZ61AtQousrHC/uWAhblFtJAFKZN6C7/CxKFww1UJlME30bwdSkaBjmy0IPGxoeHcuFBeu2iIWSlfSYZbHDLYQPHaAT9hTN6gc5EKEK5xwxTqf0OQSoJ6svyCTW7g3bAlaVvioBJtSKKvV+8kuO2CEJ0=
-  - LOGS_DIR: /tmp/sauce-build/logs
-  - BROWSER_PROVIDER_READY_FILE: /tmp/sauce-connect-ready
+    - secure: NhWBAUqC6ZY2l1xt/9c5QYu7SYzs2BZ1+4sPOri9lWp2PYkDy18yK7JHuiY7BK41a/K+xcVoRwj5rqr8sCN0ur392t6Kejd8v1K78LmYxcYvsL50LDutpLnIbyTh55O/y4uXeSrheg5rdUrbec/3IJPRqkuNni+9BdXouQefsaQ=
+    - secure: gowpPC3pj1giWhCjdr6nZ61AtQousrHC/uWAhblFtJAFKZN6C7/CxKFww1UJlME30bwdSkaBjmy0IPGxoeHcuFBeu2iIWSlfSYZbHDLYQPHaAT9hTN6gc5EKEK5xwxTqf0OQSoJ6svyCTW7g3bAlaVvioBJtSKKvV+8kuO2CEJ0=
+    - LOGS_DIR: /tmp/sauce-build/logs
+    - BROWSER_PROVIDER_READY_FILE: /tmp/sauce-connect-ready
 before_script:
-- mkdir -p $LOGS_DIR
-- ./misc/sauce/sauce_connect_setup.sh
-- npm install -g bower grunt-cli
-- bower install
+  - mkdir -p $LOGS_DIR
+  - ./misc/sauce/sauce_connect_setup.sh
+  - npm install -g bower grunt-cli
+  - bower install
+script:
+  - ./misc/travis/run.sh

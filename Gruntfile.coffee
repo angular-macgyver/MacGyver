@@ -84,8 +84,10 @@ module.exports = (grunt) ->
     "watch"
   ]
 
-  grunt.registerTask "e2e", "Compile all source code and run a test server", [
+  grunt.registerTask "test:unit", "Alias for karma:travis", ["karma:travis"]
+  grunt.registerTask "test:e2e", "Compile all source code, run a test server and run the end to end tests", [
     "compile"
     "replace:src"
     "connect:e2e"
+    "protractor:normal"
   ]
