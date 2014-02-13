@@ -1,6 +1,10 @@
-# MacGyver [![Build Status](https://travis-ci.org/StartTheShift/MacGyver.png?branch=master)](https://travis-ci.org/StartTheShift/MacGyver)
+# MacGyver
 
 Duct Tape and a Swiss Army Knife. Angular helpers for all your friends!
+
+[![Build Status](https://travis-ci.org/StartTheShift/MacGyver.png?branch=master)](https://travis-ci.org/StartTheShift/MacGyver) [![Selenium Test Status](https://saucelabs.com/buildstatus/macgyver-ci)](https://saucelabs.com/u/macgyver-ci)
+
+[![Selenium Test Status](https://saucelabs.com/browser-matrix/macgyver-ci.svg)](https://saucelabs.com/u/macgyver-ci)
 
 ## Current components ##
 
