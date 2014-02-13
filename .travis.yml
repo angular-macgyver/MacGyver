@@ -1,21 +1,21 @@
 language: node_js
 node_js:
-  - '0.10'
+- '0.10'
 env:
   matrix:
-    - JOB=unit
-    - JOB=e2e BROWSER=chrome
-    - JOB=e2e BROWSER=firefox
+  - JOB=unit
+  - JOB=e2e BROWSER=chrome
+  - JOB=e2e BROWSER=firefox
   global:
-    - secure: NhWBAUqC6ZY2l1xt/9c5QYu7SYzs2BZ1+4sPOri9lWp2PYkDy18yK7JHuiY7BK41a/K+xcVoRwj5rqr8sCN0ur392t6Kejd8v1K78LmYxcYvsL50LDutpLnIbyTh55O/y4uXeSrheg5rdUrbec/3IJPRqkuNni+9BdXouQefsaQ=
-    - secure: gowpPC3pj1giWhCjdr6nZ61AtQousrHC/uWAhblFtJAFKZN6C7/CxKFww1UJlME30bwdSkaBjmy0IPGxoeHcuFBeu2iIWSlfSYZbHDLYQPHaAT9hTN6gc5EKEK5xwxTqf0OQSoJ6svyCTW7g3bAlaVvioBJtSKKvV+8kuO2CEJ0=
-    - LOGS_DIR: /tmp/sauce-build/logs
-    - BROWSER_PROVIDER_READY_FILE: /tmp/sauce-connect-ready
+  - LOGS_DIR: /tmp/sauce-build/logs
+  - BROWSER_PROVIDER_READY_FILE: /tmp/sauce-connect-ready
+  - secure: bT+mOdqtwJJlj34zaljgzpcsxtEnamFSNDI0KEBXutj3rCwtMGVX2AGrfYSbMm+95BpL7AMzT1V8FgHTSdXKLqirToXwrT+EN5EQXid5fXK2RYMD9SVo8EmlFP7T4ux37M2eSccs7bIIwD/9CSYa30nbRB4XawWt0YtdtuxTXhw=
+  - secure: FmR5fmv2ljTdxbthTPwohxw2GiDLGqjCUhc4w7/pegakzJ+p+8F/zDsg9XcWE38N1UXcHNTjTzoh5HtptbEQMiHF7INXECObSwTJPdh7Trcq0KtxxcUWqo3wwv6st+2JnyPEf2BoQFXycfsA/djUw12qcXDwl422EttWbkoVS/Q=
 before_script:
-  - mkdir -p $LOGS_DIR
-  - ./misc/sauce/sauce_connect_setup.sh
-  - npm install -g bower grunt-cli
-  - bower install
-  - ./misc/travis/wait_for_ready_file.sh
+- mkdir -p $LOGS_DIR
+- ./misc/sauce/sauce_connect_setup.sh
+- npm install -g bower grunt-cli
+- bower install
+- ./misc/travis/wait_for_ready_file.sh
 script:
-  - ./misc/travis/run.sh
+- ./misc/travis/run.sh
