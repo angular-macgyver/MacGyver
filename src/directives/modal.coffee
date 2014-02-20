@@ -8,8 +8,12 @@ modal template
 @param {Boolean} mac-modal-keyboard      Allow closing modal with keyboard (default false)
 @param {Boolean} mac-modal-overlay-close Allow closing modal when clicking on overlay (default false)
 @param {Boolean} mac-modal-resize        Allow modal to resize on window resize event (default true)
-@param {Expr}    mac-modal-open          Callback when the modal is opened
 @param {Integer} mac-modal-topOffset     Top offset when the modal is larger than window height (default 20)
+@param {Expr}    mac-modal-open          Callback when the modal is opened
+@param {Expr}    mac-modal-before-show   Callback before showing the modal
+@param {Expr}    mac-modal-after-show    Callback when modal is visible with CSS transitions completed
+@param {Expr}    mac-modal-before-hide   Callback before hiding the modal
+@param {Expr}    mac-modal-after-hide    Callback when modal is hidden from the user with CSS transitions completed
 ###
 angular.module("Mac").directive("macModal", [
   "$parse"
@@ -38,10 +42,15 @@ angular.module("Mac").directive("macModal", [
           if angular.element($event.target).hasClass("modal-overlay")
             $scope.$apply -> modal.hide()
 
+      for callback in ["beforeShow", "afterShow", "beforeHide", "afterHide"]
+        key = "macModal#{util.capitalize(callback)}"
+        if attrs[key]? and attrs[key]
+          opts[callback] = $parse(attrs[key]) $scope
+
       registerModal = (id) ->
         if id? and id
-          regId         = id
-          opts.callback = $parse(attrs.macModalOpen)($scope)
+          regId     = id
+          opts.open = $parse(attrs.macModalOpen)($scope)
           modal.register id, element, opts
 
       if attrs.id

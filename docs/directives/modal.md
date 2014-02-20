@@ -18,13 +18,29 @@ Allow closing modal when clicking on overlay (default false)
 Type: `Boolean`  
 Allow modal to resize on window resize event (default true)  
   
+**mac-modal-topOffset**  
+Type: `Integer`  
+Top offset when the modal is larger than window height (default 20)  
+  
 **mac-modal-open**  
 Type: `Expr`  
 Callback when the modal is opened  
   
-**mac-modal-topOffset**  
-Type: `Integer`  
-Top offset when the modal is larger than window height (default 20)  
+**mac-modal-before-show**  
+Type: `Expr`  
+Callback before showing the modal  
+  
+**mac-modal-after-show**  
+Type: `Expr`  
+Callback when modal is visible with CSS transitions completed  
+  
+**mac-modal-before-hide**  
+Type: `Expr`  
+Callback before hiding the modal  
+  
+**mac-modal-after-hide**  
+Type: `Expr`  
+Callback when modal is hidden from the user with CSS transitions completed  
   
 
 

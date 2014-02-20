@@ -159,6 +159,48 @@ describe "Mac modal", ->
 
       expect(opened).toBe true
 
+    it "should execute beforeShow when showing the modal", ->
+      $rootScope.beforeShow = jasmine.createSpy "beforeShow"
+      modalElement          = $compile("<mac-modal id='test-modal' mac-modal-before-show='beforeShow()'></mac-modal>") $rootScope
+      $rootScope.$digest()
+
+      modal.show "test-modal"
+      $timeout.flush()
+
+      expect($rootScope.beforeShow).toHaveBeenCalled()
+
+    it "should execute afterShow when showing the modal", ->
+      $rootScope.afterShow = jasmine.createSpy "afterShow"
+      modalElement         = $compile("<mac-modal id='test-modal' mac-modal-after-show='afterShow()'></mac-modal>") $rootScope
+      $rootScope.$digest()
+
+      modal.show "test-modal"
+      $timeout.flush()
+
+      expect($rootScope.afterShow).toHaveBeenCalled()
+
+    it "should execute beforeHide when hiding the modal", ->
+      $rootScope.beforeHide = jasmine.createSpy "beforeHide"
+      modalElement          = $compile("<mac-modal id='test-modal' mac-modal-before-hide='beforeHide()'></mac-modal>") $rootScope
+      $rootScope.$digest()
+
+      modal.show "test-modal"
+      $timeout.flush()
+      modal.hide()
+
+      expect($rootScope.beforeHide).toHaveBeenCalled()
+
+    it "should execute afterHide when hiding the modal", ->
+      $rootScope.afterHide = jasmine.createSpy "afterHide"
+      modalElement         = $compile("<mac-modal id='test-modal' mac-modal-after-hide='afterHide()'></mac-modal>") $rootScope
+      $rootScope.$digest()
+
+      modal.show "test-modal"
+      $timeout.flush()
+      modal.hide()
+
+      expect($rootScope.afterHide).toHaveBeenCalled()
+
     it "should close the modal after hiding the modal", ->
       modalElement = $compile("<mac-modal id='test-modal'></mac-modal>") $rootScope
       $rootScope.$digest()

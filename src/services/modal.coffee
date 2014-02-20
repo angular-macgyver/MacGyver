@@ -79,6 +79,8 @@ angular.module("Mac").service("modal", [
         # Extend options from trigger with modal options
         angular.extend options, triggerOptions
 
+        options.beforeShow?()
+
         showModal = (element) =>
           $animate.removeClass element, "hide", =>
             $animate.addClass element, "visible", =>
@@ -88,7 +90,8 @@ angular.module("Mac").service("modal", [
               @resize @opened
               @bindingEvents()
 
-              options.callback?()
+              options.open?()
+              options.afterShow?()
 
               $rootScope.$broadcast "modalWasShown", id
               @clearWaiting()
@@ -199,6 +202,7 @@ angular.module("Mac").service("modal", [
       return unless @opened?
 
       {id, options, element} = @opened
+      options.beforeHide?()
 
       $animate.removeClass element, "visible", =>
         @bindingEvents "unbind"
@@ -213,6 +217,8 @@ angular.module("Mac").service("modal", [
 
         else
           $animate.addClass element, "hide"
+
+        options.afterHide?()
 
         $rootScope.$broadcast "modalWasHidden", id
 
@@ -283,9 +289,13 @@ provider("modalViews", ->
     keyboard:     false
     overlayClose: false
     resize:       true
-    open:         null
+    open:         angular.noop
     topOffset:    20
     attributes:   {}
+    beforeShow:   angular.noop
+    afterShow:    angular.noop
+    beforeHide:   angular.noop
+    afterHide:    angular.noop
   @$get = -> this
   return this
 ).
@@ -300,6 +310,10 @@ provider("modalViews", ->
 # @param {String}   templateUrl       URL to load modal template
 # @param {String|Function} controller Controller for the modal
 # @param {Object}   attributes        Extra attributes to add to modal
+# @param {Function} beforeShow        Callback before showing the modal
+# @param {Function} afterShow         Callback when modal is visible with CSS transitions completed
+# @param {Function} beforeHide        Callback before hiding the modal
+# @param {Function} afterHide         Callback when modal is hidden from the user with CSS transitions completed
 #
 # angular.module("Mac").modal("myModal", {
 #   controller: "myController"
