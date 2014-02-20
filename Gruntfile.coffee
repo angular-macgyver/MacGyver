@@ -89,6 +89,8 @@ module.exports = (grunt) ->
     "clean"
     "coffee"
     "concatDeploy"
+    "stylus"
+    "concat:css"
     "clean"
     "replace:src"
     "connect:e2e"
