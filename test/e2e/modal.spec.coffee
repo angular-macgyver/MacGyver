@@ -38,7 +38,8 @@ describe "Mac Modal e2e test", ->
     button = element(By.id("open-overlay-btn"))
     button.click()
 
-    modal = element(By.id("overlay-modal"))
-    modal.click()
+    driver = protractor.getInstance().driver
+    modal  = driver.findElement(By.id("overlay-modal"))
+    driver.executeScript("arguments[0].click()", modal).then ->
+      expect(modal.isDisplayed()).toBeFalsy()
 
-    expect(modal.isDisplayed()).toBeFalsy()
