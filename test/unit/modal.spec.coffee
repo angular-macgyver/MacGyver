@@ -28,16 +28,6 @@ describe "Mac modal", ->
       modal.unregister "test-modal"
       expect(modal.registered["test-modal"]).not.toBeDefined()
 
-    it "should show the registered modal", ->
-      element = $("<div></div>")
-      modal.register "test-modal", element, {}, angular.noop
-
-      modal.show "test-modal"
-      $timeout.flush()
-
-      expect(element.hasClass "visible").toBe true
-      expect(modal.opened.id).toBe "test-modal"
-
     it "should update the waiting object", ->
       modal.show "test-modal"
 
@@ -79,13 +69,12 @@ describe "Mac modal", ->
 
       expect(openedId).toBe "test-modal"
 
-    it "should hide the modal", ->
+    it "should broadcast modalWasHidden after hiding the modal", ->
       closedId = ""
       element  = $("<div></div>")
       element.append $templateCache.get("template/modal.html")
 
-      $rootScope.$on "modalWasHidden", (event, id) ->
-        closedId = id
+      $rootScope.$on "modalWasHidden", (event, id) -> closedId = id
 
       modal.register "test-modal", element, {}, angular.noop
       modal.show "test-modal"
@@ -94,8 +83,6 @@ describe "Mac modal", ->
       modal.hide()
       $timeout.flush()
 
-      expect(element.hasClass("visible")).toBe false
-      expect(element.hasClass("hide")).toBe true
       expect(modal.opened).toBe null
       expect(closedId).toBe "test-modal"
 
@@ -125,28 +112,6 @@ describe "Mac modal", ->
 
       expect(modal.registered["test-modal"]).not.toBeDefined()
       expect(modal.registered["test-modal-1"]).toBeDefined()
-
-    it "should close the modal was 'escape' key", ->
-      opened       = false
-      modalElement = $compile("<mac-modal id='test-modal' mac-modal-keyboard></mac-modal>") $rootScope
-      $rootScope.$digest()
-
-      modal.show "test-modal"
-      $timeout.flush()
-
-      $(document).trigger $.Event("keydown", {which: keys.ESCAPE})
-      expect(modalElement.hasClass("visible")).toBe false
-
-    it "should close the modal after clicking on overlay", ->
-      opened       = false
-      modalElement = $compile("<mac-modal id='test-modal' mac-modal-overlay-close></mac-modal>") $rootScope
-      $rootScope.$digest()
-
-      modal.show "test-modal"
-      $timeout.flush()
-
-      modalElement.click()
-      expect(modalElement.hasClass("visible")).toBe false
 
     it "should execute callback when opening the modal", ->
       opened            = false
@@ -200,17 +165,6 @@ describe "Mac modal", ->
       modal.hide()
 
       expect($rootScope.afterHide).toHaveBeenCalled()
-
-    it "should close the modal after hiding the modal", ->
-      modalElement = $compile("<mac-modal id='test-modal'></mac-modal>") $rootScope
-      $rootScope.$digest()
-
-      modal.show "test-modal"
-      $timeout.flush()
-
-      modal.hide()
-
-      expect(modalElement.hasClass("visible")).toBe false
 
   describe "modal trigger", ->
     it "should bind a click event to trigger a modal", ->

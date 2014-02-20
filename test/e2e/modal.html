@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html class="no-js">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+
+        <link rel="stylesheet" href="/example/css/macgyver.css">
+    </head>
+    <body ng-app="Mac">
+
+        <mac-modal id = "test-modal">
+            <span>Test</span>
+        </mac-modal>
+
+        <button mac-modal="test-modal" id="open-btn">Open</button>
+
+        <mac-modal id = "keyboard-modal" mac-modal-keyboard>
+            <span>Test</span>
+        </mac-modal>
+
+        <button mac-modal="keyboard-modal" id="open-keyboard-btn">Open</button>
+
+        <input type="text" id="fake-document" />
+
+        <mac-modal id = "overlay-modal" mac-modal-overlay-close>
+            <span>Test</span>
+        </mac-modal>
+
+        <button mac-modal="overlay-modal" id="open-overlay-btn">Open</button>
+
+        <script src="/vendor/bower/jquery/jquery.js"></script>
+        <script src="/vendor/bower/angular/angular.js"></script>
+        <script src="/vendor/bower/angular-animate/angular-animate.js"></script>
+        <script src="/lib/macgyver.js"></script>
+    </body>
+</html>
