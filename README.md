@@ -67,23 +67,23 @@ MacGyver requires a few node modules and bower packages for development environm
 
 The easiest way to install all requirements,
 
-  `./init-project`
+    ./init-project
 
 ### Install all through npm ###
 
-  `npm install`
+    npm install
 
-#### Install bower ####
+#### Install Bower ####
 
-  `sudo npm -g install bower`
+    sudo npm -g install bower
 
 #### Install Grunt ####
 
-  `sudo npm -g install grunt-cli`
+    sudo npm -g install grunt-cli
 
-#### Scripts dependencies
+#### Install script dependencies
 
-  `bower install`
+    bower install
 
 #### Starting Grunt
 To compile source code and run unit tests while developing:
