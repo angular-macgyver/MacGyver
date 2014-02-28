@@ -1,3 +1,10 @@
+# v0.1.30 (2014/2/28)
+## Breaking Changes
+- **build:**  Underscore.string is not compiled into MacGyver and in order for underscore.string filter to work, user must externally include that library
+  ([467fb317](https://github.com/StartTheShift/MacGyver/commit/467fb31771a017877e186453ebd517ff09ab42ce),
+   [#156](https://github.com/StartTheShift/MacGyver/issues/156))
+
+
 # v0.1.29 (2014/2/7)
 ## Bug Fixes
 - **macModal:** Ported mac-modal bug fixes from master to 0.1.x. Fixed scoping instead and controller not having access to options on initialize. Fixed digest error when opening modal
@@ -229,5 +236,3 @@ Close #134
   ([0096f558](https://github.com/StartTheShift/MacGyver/commit/0096f558847c4b52335ca9c5add340998845c696))
 - **server:** Switched from express to connect
   ([b2179a8c](https://github.com/StartTheShift/MacGyver/commit/b2179a8c38677dbefbcb8c35f4dd20fdc18ca788))
-
-
