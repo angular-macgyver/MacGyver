@@ -2,14 +2,12 @@
   "example": [
     "tmp/app/main.js",
     "tmp/jqueryui.js",
-    "vendor/bower/underscore.string/lib/underscore.string.js",
     "vendor/bower/jquery-file-upload/js/jquery.fileupload.js",
     "tmp/app/**/*.js"
   ],
   "full": [
     "tmp/app/main.js",
     "tmp/jqueryui.js",
-    "vendor/bower/underscore.string/lib/underscore.string.js",
     "vendor/bower/jquery-file-upload/js/jquery.fileupload.js",
     "tmp/app/**/*.js",
     "!tmp/app/example_controller/*.js"
@@ -35,12 +33,10 @@
     "tmp/app/directives/tooltip.js"
   ],
   "filters": [
-    "tmp/app/filters/*.js",
-    "!tmp/app/filters/underscore.string.js"
+    "tmp/app/filters/*.js"
   ],
   "underscoreFilter": [
-    "vendor/bower/underscore.string/lib/underscore.string.js",
-    "tmp/app/filters/underscore.string.js"
+    "tmp/app/filters/underscore.js"
   ],
   "table": [
     "vendor/bower/jquery.ui/ui/jquery.ui.core.js",
