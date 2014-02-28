@@ -1,3 +1,31 @@
+# v0.2.2 (2014/2/28)
+## Bug Fixes
+- **macAutocomplete:** Don't allow ENTER in autocomplete to propagate up.
+This was causing accidental form submissions.
+  ([7c8f93ce](https://github.com/StartTheShift/MacGyver/commit/7c8f93cea114d894bb737df03d1c1683fc8ef3e8))
+- **macModal:** Fixed scope getting destroyed when closing modal
+  ([29ac5216](https://github.com/StartTheShift/MacGyver/commit/29ac52167962209263e010372308d043029886a8))
+- **modal:** Fixed mac-modal directive not cleaning up when being removed from DOM
+  ([f2b3efb9](https://github.com/StartTheShift/MacGyver/commit/f2b3efb92337e6fd53ef3f08adbc8be1f7f399ef))
+
+## Features
+- **macModal:** Added callbacks for before and after showing modal and before and after hiding modal
+  ([c133c3a6](https://github.com/StartTheShift/MacGyver/commit/c133c3a64db76bfa32b72799d1786fa2c4d3253d),
+   [#154](https://github.com/StartTheShift/MacGyver/issues/154))
+
+## Optimizations
+- **macModal:**
+  - Cleaned up how scope is included with mac-modal trigger and updated how scope is created on compile
+  ([e7bf3439](https://github.com/StartTheShift/MacGyver/commit/e7bf343960a65dba51f971186dfc5315e1f19233))
+  - Add mac-modal-close to handle closing modal to remove a function used by  modal to close. Changed mac-modal directive to use the same parent scope.
+  ([2992e359](https://github.com/StartTheShift/MacGyver/commit/2992e3592d2bb8a887a1a5619c194b9bf627eb0e))
+
+## Breaking Changes
+- **build:**  Underscore.string is not compiled into MacGyver and in order for underscore.string filter to work, user must externally include that library
+  ([df95c21b](https://github.com/StartTheShift/MacGyver/commit/df95c21b80d3140765e16996274c325286ece144),
+   [#156](https://github.com/StartTheShift/MacGyver/issues/156))
+
+
 # v0.2.1 (2014/1/27)
 ## Bug Fixes
 - **macTagAutocomplete:** Fixed source not getting set properly compiling on top of another directive
@@ -290,5 +318,3 @@ Close #134
   ([0096f558](https://github.com/StartTheShift/MacGyver/commit/0096f558847c4b52335ca9c5add340998845c696))
 - **server:** Switched from express to connect
   ([b2179a8c](https://github.com/StartTheShift/MacGyver/commit/b2179a8c38677dbefbcb8c35f4dd20fdc18ca788))
-
-
