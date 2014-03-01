@@ -140,7 +140,20 @@ angular.module("Mac").
 
         addPopover = ->
           showPopover = (template) ->
-            viewScope = (options.scope or $rootScope).$new()
+            # Scope allows either a scope or an object:
+            # - Scope - Use the scope to compile modal
+            # - Object - Creates a new "isolate" scope and extend the isolate
+            # scope with data being passed in
+            #
+            # Use the scope passed in
+            if isScope(options.scope)
+              viewScope = options.scope
+
+            # Create an isolated scope and extend scope with value pass in
+            else
+                viewScope = $rootScope.$new true
+                if angular.isObject options.scope
+                  angular.extend viewScope, options.scope
 
             # Bind refresh on listener to popover
             if popoverOptions.refreshOn
