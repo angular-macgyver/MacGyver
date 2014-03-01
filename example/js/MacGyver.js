@@ -8885,7 +8885,7 @@ angular.module("Mac").directive("macPopover", [
               }
             }
             options.scope = scope;
-            return popover.show(id, element, attrs, options);
+            return popover.show(id, element, options);
           }, delay);
           return true;
         };
@@ -11593,7 +11593,14 @@ angular.module("Mac").provider("popoverViews", function() {
           var path, showPopover, template;
           showPopover = function(template) {
             var popover, popoverObj, viewScope;
-            viewScope = (options.scope || $rootScope).$new();
+            if (isScope(options.scope)) {
+              viewScope = options.scope;
+            } else {
+              viewScope = $rootScope.$new(true);
+              if (angular.isObject(options.scope)) {
+                angular.extend(viewScope, options.scope);
+              }
+            }
             if (popoverOptions.refreshOn) {
               viewScope.$on(popoverOptions.refreshOn, function() {
                 return service.resize(id);
@@ -11803,7 +11810,9 @@ angular.module("Mac").provider("popoverViews", function() {
         return $animate.leave(popoverObj.popover, function() {
           $animate.removeClass(popoverObj.element, "active");
           $rootScope.$broadcast("popoverWasHidden", popoverObj.id);
-          removeScope.$destroy();
+          if (!isScope(popoverObj.options.scope)) {
+            removeScope.$destroy();
+          }
           return typeof callback === "function" ? callback() : void 0;
         });
       },

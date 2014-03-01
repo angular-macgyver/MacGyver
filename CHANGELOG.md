@@ -1,3 +1,16 @@
+# v0.2.3 (2014/2/28)
+## Bug Fixes
+- **macPopover:**
+  - Prevent scope from getting destroy when using parent scope
+  ([c9334171](https://github.com/StartTheShift/MacGyver/commit/c9334171cfe8ca2de4218dea8359810742b56b42))
+  - Fixed mac-popover trigger not opening popover correctly
+  ([b0de3a62](https://github.com/StartTheShift/MacGyver/commit/b0de3a62a862ea04de023135d40c5acbd0f25c9f))
+
+## Optimizations
+- **macPopover:** Fixed how scope is created when compiling popover. Instead of cloning scope, popover will now use the scope passed in or create a new scope using rootScope.
+  ([c5c5fb2a](https://github.com/StartTheShift/MacGyver/commit/c5c5fb2a08da945552d719fd51b776de86b7d177))
+
+
 # v0.2.2 (2014/2/28)
 ## Bug Fixes
 - **macAutocomplete:** Don't allow ENTER in autocomplete to propagate up.
