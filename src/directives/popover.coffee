@@ -56,7 +56,7 @@ angular.module("Mac").
               return true if element[0] is last.element[0]
 
             options.scope = scope
-            popover.show id, element, attrs, options
+            popover.show id, element, options
           , delay
 
           return true
