@@ -119,6 +119,7 @@ describe "Popover", ->
     describe "hide popover", ->
       trigger  = $("<a>Click me</a>")
       callback = null
+      destroy  = jasmine.createSpy("destroy")
 
       beforeEach ->
         popover.register "test",
@@ -127,6 +128,7 @@ describe "Popover", ->
 
         callback = jasmine.createSpy("event")
         $rootScope.$on "popoverBeforeHide", callback
+        $rootScope.$on "$destroy", destroy
 
         popover.show "test", trigger, {scope: $rootScope}
         $rootScope.$digest()
@@ -175,6 +177,12 @@ describe "Popover", ->
         $rootScope.$digest()
 
         expect(trigger.hasClass("active")).toBeFalsy()
+
+      it "should not destroy scope", ->
+        popover.hide "test"
+        $rootScope.$digest()
+
+        expect(destroy).not.toHaveBeenCalled()
 
   describe "popover directive", ->
     $compile = null

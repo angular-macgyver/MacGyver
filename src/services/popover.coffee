@@ -336,7 +336,8 @@ angular.module("Mac").
           $animate.removeClass popoverObj.element, "active"
           $rootScope.$broadcast "popoverWasHidden", popoverObj.id
 
-          removeScope.$destroy()
+          unless isScope popoverObj.options.scope
+            removeScope.$destroy()
 
           callback?()
 
