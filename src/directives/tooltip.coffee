@@ -37,11 +37,15 @@ angular.module("Mac").directive "macTooltip", [
 
       opts = util.extendAttributes "macTooltip", defaults, attrs
 
-      showTip = (event) ->
+      showTip = ->
         return true if disabled or not text
 
         tip =
           if opts.inside then element else angular.element(document.body)
+
+        ## Check if the tooltip still exist, remove if it does
+        removeTip(0)
+
         tooltip = angular.element """<div class="tooltip #{opts.direction}"><div class="tooltip-message">#{text}</div></div>"""
         tip.append tooltip
 
@@ -84,16 +88,17 @@ angular.module("Mac").directive "macTooltip", [
         tooltip.addClass "visible"
         return true
 
-      removeTip = (event) ->
+      removeTip = (delay = 100) ->
         if tooltip?
           tooltip.removeClass "visible"
           $timeout ->
-            tooltip.remove()
-          , 100, false
+            tooltip?.remove()
+            tooltip = null
+          , delay, false
         return true
 
-      toggle = (event) ->
-        if tooltip? then removeTip(event) else showTip(event)
+      toggle = ->
+        if tooltip? then removeTip() else showTip()
 
       attrs.$observe "macTooltip", (value) ->
         if value?
@@ -108,7 +113,7 @@ angular.module("Mac").directive "macTooltip", [
                 element.bind "click", toggle
               when "hover"
                 element.bind "mouseenter", showTip
-                element.bind "mouseleave click", removeTip
+                element.bind "mouseleave click", -> removeTip()
 
             enabled = true
 
@@ -117,5 +122,5 @@ angular.module("Mac").directive "macTooltip", [
           disabled = value
 
       scope.$on "$destroy", ->
-        removeTip() if tooltip?
+        removeTip(0) if tooltip?
 ]
