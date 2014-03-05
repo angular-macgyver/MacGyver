@@ -94,10 +94,12 @@ Gives element it is on a click event that selects the row it shares a scope with
 macTable, macTableSection, macTableSectionSelectedModels
 ###
 angular.module("Mac").directive "macTableSelectable", [
-  "$document",
+  "$document"
+  "$window"
   "keys"
   (
     $document
+    $window
     keys
   ) ->
     # Share the multiselect variable among all instances, toggled on shift up
@@ -116,6 +118,9 @@ angular.module("Mac").directive "macTableSelectable", [
         shiftselect = false
       if event.which is keys.COMMAND
         commandselect = false
+
+    angular.element($window).bind "focus", (event) ->
+      shiftselect = commandselect = false
 
     class SelectHandleController
       constructor: (@scope, @element, @attrs) ->
