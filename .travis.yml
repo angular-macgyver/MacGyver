@@ -9,8 +9,8 @@ env:
   global:
   - LOGS_DIR: /tmp/sauce-build/logs
   - BROWSER_PROVIDER_READY_FILE: /tmp/sauce-connect-ready
-  - secure: bT+mOdqtwJJlj34zaljgzpcsxtEnamFSNDI0KEBXutj3rCwtMGVX2AGrfYSbMm+95BpL7AMzT1V8FgHTSdXKLqirToXwrT+EN5EQXid5fXK2RYMD9SVo8EmlFP7T4ux37M2eSccs7bIIwD/9CSYa30nbRB4XawWt0YtdtuxTXhw=
-  - secure: FmR5fmv2ljTdxbthTPwohxw2GiDLGqjCUhc4w7/pegakzJ+p+8F/zDsg9XcWE38N1UXcHNTjTzoh5HtptbEQMiHF7INXECObSwTJPdh7Trcq0KtxxcUWqo3wwv6st+2JnyPEf2BoQFXycfsA/djUw12qcXDwl422EttWbkoVS/Q=
+  - SAUCE_USERNAME: macgyver-ci
+  - SAUCE_ACCESS_KEY: 5aa3c19a-1374-439d-8777-cfd7521eb740
 before_script:
 - mkdir -p $LOGS_DIR
 - ./misc/sauce/sauce_connect_setup.sh
