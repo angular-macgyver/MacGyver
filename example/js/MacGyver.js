@@ -9797,7 +9797,7 @@ macTable, macTableSection, macTableSectionSelectedModels
 
 
 angular.module("Mac").directive("macTableSelectable", [
-  "$document", "keys", function($document, keys) {
+  "$document", "$window", "keys", function($document, $window, keys) {
     var SelectHandleController, commandselect, shiftselect,
       _this = this;
     shiftselect = false;
@@ -9817,6 +9817,9 @@ angular.module("Mac").directive("macTableSelectable", [
       if (event.which === keys.COMMAND) {
         return commandselect = false;
       }
+    });
+    angular.element($window).bind("focus", function(event) {
+      return shiftselect = commandselect = false;
     });
     SelectHandleController = (function() {
       function SelectHandleController(scope, element, attrs) {
@@ -10525,12 +10528,13 @@ angular.module("Mac").directive("macTooltip", [
           inside: false
         };
         opts = util.extendAttributes("macTooltip", defaults, attrs);
-        showTip = function(event) {
+        showTip = function() {
           var elementSize, offset, tip, tooltipSize;
           if (disabled || !text) {
             return true;
           }
           tip = opts.inside ? element : angular.element(document.body);
+          removeTip(0);
           tooltip = angular.element("<div class=\"tooltip " + opts.direction + "\"><div class=\"tooltip-message\">" + text + "</div></div>");
           tip.append(tooltip);
           offset = opts.inside ? {
@@ -10578,20 +10582,26 @@ angular.module("Mac").directive("macTooltip", [
           tooltip.addClass("visible");
           return true;
         };
-        removeTip = function(event) {
+        removeTip = function(delay) {
+          if (delay == null) {
+            delay = 100;
+          }
           if (tooltip != null) {
             tooltip.removeClass("visible");
             $timeout(function() {
-              return tooltip.remove();
-            }, 100, false);
+              if (tooltip != null) {
+                tooltip.remove();
+              }
+              return tooltip = null;
+            }, delay, false);
           }
           return true;
         };
-        toggle = function(event) {
+        toggle = function() {
           if (tooltip != null) {
-            return removeTip(event);
+            return removeTip();
           } else {
-            return showTip(event);
+            return showTip();
           }
         };
         attrs.$observe("macTooltip", function(value) {
@@ -10608,7 +10618,9 @@ angular.module("Mac").directive("macTooltip", [
                   break;
                 case "hover":
                   element.bind("mouseenter", showTip);
-                  element.bind("mouseleave click", removeTip);
+                  element.bind("mouseleave click", function() {
+                    return removeTip();
+                  });
               }
               return enabled = true;
             }
@@ -10621,7 +10633,7 @@ angular.module("Mac").directive("macTooltip", [
         }
         return scope.$on("$destroy", function() {
           if (tooltip != null) {
-            return removeTip();
+            return removeTip(0);
           }
         });
       }

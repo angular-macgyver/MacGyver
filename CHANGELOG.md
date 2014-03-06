@@ -1,3 +1,12 @@
+# v0.2.4 (2014/3/6)
+## Bug Fixes
+- **macTableSelectable:** Reset selection controls when window regains focus
+  ([bc42a805](https://github.com/StartTheShift/MacGyver/commit/bc42a805f4cdacd449cfa49f5a8682731de08689))
+- **macTooltip:** Fixed multiple tooltips getting appended to body when triggering it multiple times in a short period of time
+  ([a45c75b7](https://github.com/StartTheShift/MacGyver/commit/a45c75b7203fd859aa0f0a4def6ca160fcd2a6d2),
+   [#157](https://github.com/StartTheShift/MacGyver/issues/157))
+
+
 # v0.2.3 (2014/2/28)
 ## Bug Fixes
 - **macPopover:**
