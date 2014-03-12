@@ -1,3 +1,9 @@
+# v0.2.5 (2014/3/12)
+## Features
+- **macModal:** Added option to disable positioning by modal service
+  ([527d3aee](https://github.com/StartTheShift/MacGyver/commit/527d3aee1e1ced8c13846bb0e9062ae2b212216c))
+
+
 # v0.2.4 (2014/3/6)
 ## Bug Fixes
 - **macTableSelectable:** Reset selection controls when window regains focus
