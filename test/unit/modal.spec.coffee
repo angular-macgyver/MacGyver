@@ -44,12 +44,23 @@ describe "Mac modal", ->
       element = $("<div></div>")
       element.append $templateCache.get("template/modal.html")
 
-      modal.register "test-modal", element, {}, angular.noop
+      modal.register "test-modal", element, {position: true}
       modal.show "test-modal"
       $timeout.flush()
 
       modalElement = $(".modal", element)
       expect(modalElement.attr("style")).toBeDefined()
+
+    it "should not resize the modal by setting modal style", ->
+      element = $("<div></div>")
+      element.append $templateCache.get("template/modal.html")
+
+      modal.register "test-modal", element, {position: false}
+      modal.show "test-modal"
+      $timeout.flush()
+
+      modalElement = $(".modal", element)
+      expect(modalElement.attr("style")).not.toBeDefined()
 
     it "should broadcast modalWasShown", ->
       called   = false
@@ -57,7 +68,7 @@ describe "Mac modal", ->
       element  = $("<div></div>")
       element.append $templateCache.get("template/modal.html")
 
-      modal.register "test-modal", element, {}, angular.noop
+      modal.register "test-modal", element, {}
 
       $rootScope.$on "modalWasShown", (event, id) ->
         openedId = id
@@ -76,7 +87,7 @@ describe "Mac modal", ->
 
       $rootScope.$on "modalWasHidden", (event, id) -> closedId = id
 
-      modal.register "test-modal", element, {}, angular.noop
+      modal.register "test-modal", element, {}
       modal.show "test-modal"
       $timeout.flush()
 

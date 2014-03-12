@@ -176,6 +176,8 @@ angular.module("Mac").service("modal", [
       element = modalObject.element
       options = modalObject.options
 
+      return unless options.position
+
       modal  = angular.element(element[0].getElementsByClassName "modal").attr "style", ""
       height = modal.outerHeight()
       width  = modal.outerWidth()
@@ -289,6 +291,7 @@ provider("modalViews", ->
     keyboard:     false
     overlayClose: false
     resize:       true
+    position:     true
     open:         angular.noop
     topOffset:    20
     attributes:   {}
@@ -314,6 +317,7 @@ provider("modalViews", ->
 # @param {Function} afterShow         Callback when modal is visible with CSS transitions completed
 # @param {Function} beforeHide        Callback before hiding the modal
 # @param {Function} afterHide         Callback when modal is hidden from the user with CSS transitions completed
+# @param {Boolean}  position          Calculate size and position with JS (default true)
 #
 # angular.module("Mac").modal("myModal", {
 #   controller: "myController"
