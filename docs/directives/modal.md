@@ -42,6 +42,10 @@ Callback before hiding the modal
 Type: `Expr`  
 Callback when modal is hidden from the user with CSS transitions completed  
   
+**mac-modal-position**  
+Type: `Boolean`  
+Calculate size and position with JS (default true)  
+  
 
 
 mac-modal (attribute)
