@@ -8718,6 +8718,7 @@ modal template
 @param {Expr}    mac-modal-after-show    Callback when modal is visible with CSS transitions completed
 @param {Expr}    mac-modal-before-hide   Callback before hiding the modal
 @param {Expr}    mac-modal-after-hide    Callback when modal is hidden from the user with CSS transitions completed
+@param {Boolean} mac-modal-position      Calculate size and position with JS (default true)
 */
 
 angular.module("Mac").directive("macModal", [
@@ -11333,6 +11334,9 @@ angular.module("Mac").service("modal", [
         }
         element = modalObject.element;
         options = modalObject.options;
+        if (!options.position) {
+          return;
+        }
         modal = angular.element(element[0].getElementsByClassName("modal")).attr("style", "");
         height = modal.outerHeight();
         width = modal.outerWidth();
@@ -11441,6 +11445,7 @@ angular.module("Mac").service("modal", [
     keyboard: false,
     overlayClose: false,
     resize: true,
+    position: true,
     open: angular.noop,
     topOffset: 20,
     attributes: {},
