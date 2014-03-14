@@ -210,7 +210,7 @@ module.exports = (grunt) ->
     if tunnelIdentifier
       args.push "--capabilities.tunnel-identifier=#{tunnelIdentifier}"
     if sauceBuild
-      args.push "--capabilities.build='TRAVIS ##{sauceBuild}'"
+      args.push "--capabilities.build=TRAVIS ##{sauceBuild}"
 
     if browser
       args.push "--browser=#{browser}"
