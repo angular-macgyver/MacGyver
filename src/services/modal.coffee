@@ -122,7 +122,7 @@ angular.module("Mac").service("modal", [
             wrapper.html template
 
             if options.overlayClose
-              element.bind "click", ($event) ->
+              element.bind "click", ($event) =>
                 if angular.element($event.target).hasClass("modal-overlay")
                   viewScope.$apply => @hide()
 
