@@ -1,3 +1,9 @@
+# v0.2.6 (2014/3/14)
+## Bug Fixes
+- **macModal:** Fixed not able to close modal when clicking on overlay
+  ([f281a28e](https://github.com/StartTheShift/MacGyver/commit/f281a28ed482133200dd58641689c1edca7af031))
+
+
 # v0.2.5 (2014/3/12)
 ## Features
 - **macModal:** Added option to disable positioning by modal service

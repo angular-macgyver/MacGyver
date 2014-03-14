@@ -11280,7 +11280,6 @@ angular.module("Mac").service("modal", [
               wrapper.html(template);
               if (options.overlayClose) {
                 element.bind("click", function($event) {
-                  var _this = this;
                   if (angular.element($event.target).hasClass("modal-overlay")) {
                     return viewScope.$apply(function() {
                       return _this.hide();
