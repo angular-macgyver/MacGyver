@@ -42,10 +42,32 @@
       height   20px
       width    1px
 
-    .close-modal
-      position absolute
-      top      -5px
-      right    -5px
+    .mac-close-modal
+      position      absolute
+      top           -5px
+      right         -5px
+      width         18px
+      height        18px
+      border-radius 9px
+      display       block
+      background    #bdc0c7
+      cursor        pointer
+
+      &:before, &:after
+        content    ''
+        display    block
+        width      2px
+        height     10px
+        background #fff
+        position   absolute
+        top        4px
+        left       8px
+
+      &:before
+        transform rotate(-45deg)
+
+      &:after
+        transform rotate(45deg)
 
     .mac-modal-content
       padding 20px
