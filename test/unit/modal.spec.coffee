@@ -21,7 +21,7 @@ describe "Mac modal", ->
       element = $("<div></div>")
       modal.register "test-modal", element, {}
       expect(modal.registered["test-modal"]).toBeDefined()
-$
+
     it "should unregister a modal element", ->
       element = $("<div></div>")
       modal.register "test-modal", element, {}
@@ -48,7 +48,7 @@ $
       modal.show "test-modal"
       $timeout.flush()
 
-      modalElement = $(".modal", element)
+      modalElement = $(".mac-modal", element)
       expect(modalElement.attr("style")).toBeDefined()
 
     it "should not resize the modal by setting modal style", ->
