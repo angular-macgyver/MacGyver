@@ -21,7 +21,7 @@ describe "Mac modal", ->
       element = $("<div></div>")
       modal.register "test-modal", element, {}
       expect(modal.registered["test-modal"]).toBeDefined()
-
+$
     it "should unregister a modal element", ->
       element = $("<div></div>")
       modal.register "test-modal", element, {}
@@ -223,7 +223,7 @@ describe "Mac modal", ->
         topOffset: 10
 
     afterEach ->
-      angular.element(".modal-overlay").remove()
+      angular.element(".mac-modal-overlay").remove()
 
     it "should register a new modal", ->
       expect(modal.registered["testing"]).toBeDefined()
@@ -248,7 +248,7 @@ describe "Mac modal", ->
       modal.show "testing"
 
       $timeout.flush()
-      contentText = angular.element(".modal-content-wrapper").text()
+      contentText = angular.element(".mac-modal-content-wrapper").text()
       expect(contentText).toBe "Test Modal Content"
 
     it "should remove modal on hide", ->

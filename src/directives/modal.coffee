@@ -32,7 +32,7 @@ angular.module("Mac").directive("macModal", [
     link: ($scope, element, attrs, controller, transclude) ->
       transclude $scope, (clone) ->
         angular.element(
-          element[0].getElementsByClassName "modal-content-wrapper"
+          element[0].getElementsByClassName "mac-modal-content-wrapper"
         ).replaceWith clone
 
       opts  = util.extendAttributes "macModal", modalViews.defaults, attrs
@@ -40,7 +40,7 @@ angular.module("Mac").directive("macModal", [
 
       if opts.overlayClose
         element.on "click", ($event) ->
-          if angular.element($event.target).hasClass("modal-overlay")
+          if angular.element($event.target).hasClass("mac-modal-overlay")
             $scope.$apply -> modal.hide()
 
       for callback in ["beforeShow", "afterShow", "beforeHide", "afterHide", "open"]
