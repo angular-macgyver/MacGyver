@@ -1,63 +1,61 @@
 extends layout
 
+block append nav
+  ul.nav.nav-list.docs-sidenav(mac-affix)
+    li(mac-scroll-spy-target="underscore-string"): a(href="#underscore-string")
+      i.icon-chevron-right
+      | Underscore String Filter
+    li(mac-scroll-spy-target="pluralize-filter"): a(href="#pluralize-filter")
+      i.icon-chevron-right
+      | Pluralize Filter
+    li(mac-scroll-spy-target="timestamp-filter"): a(href="#timestamp-filter")
+      i.icon-chevron-right
+      | Timestamp Filter
+    li(mac-scroll-spy-target="list-filter"): a(href="#list-filter")
+      i.icon-chevron-right
+      | List Filter
+
 block append content
-  .row.content(ng-controller='ExampleController')
-    #nav.span3
-      ul.nav.nav-list.docs-sidenav(mac-affix)
-        li(mac-scroll-spy-target="underscore-string"): a(href="#underscore-string")
-          i.icon-chevron-right
-          | Underscore String Filter
-        li(mac-scroll-spy-target="pluralize-filter"): a(href="#pluralize-filter")
-          i.icon-chevron-right
-          | Pluralize Filter
-        li(mac-scroll-spy-target="timestamp-filter"): a(href="#timestamp-filter")
-          i.icon-chevron-right
-          | Timestamp Filter
-        li(mac-scroll-spy-target="list-filter"): a(href="#list-filter")
-          i.icon-chevron-right
-          | List Filter
+  section#underscore-string(mac-scroll-spy-anchor)
+    @@include("docs/html/filters/underscore.html")
+    h3 Example
+    .docs-example
+      p {{ "this_Is_aTestFor_Underscore_string" | underscoreString: "humanize" }}
+      p {{ "Truncating: lorem ipsum dolor sit amet, consectetur adipiscing elit." | underscoreString: "truncate": 42 }}
+      p {{ "Pruning: lorem ipsum dolor sit amet, consectetur adipiscing elit." | underscoreString: "prune": 42: "... (show more)" }}
+    pre.prettyprint.linenums.
+      &lt;p&gt;{{ &quot;this_Is_aTestFor_Underscore_string&quot; | underscoreString: &quot;humanize&quot; }}&lt;/p&gt;
 
-    #example.span9
-      section#underscore-string(mac-scroll-spy-anchor)
-        @@include("docs/html/filters/underscore.html")
-        h3 Example
-        .docs-example
-          p {{ "this_Is_aTestFor_Underscore_string" | underscoreString: "humanize" }}
-          p {{ "Truncating: lorem ipsum dolor sit amet, consectetur adipiscing elit." | underscoreString: "truncate": 42 }}
-          p {{ "Pruning: lorem ipsum dolor sit amet, consectetur adipiscing elit." | underscoreString: "prune": 42: "... (show more)" }}
-        pre.prettyprint.linenums.
-          &lt;p&gt;{{ &quot;this_Is_aTestFor_Underscore_string&quot; | underscoreString: &quot;humanize&quot; }}&lt;/p&gt;
+  section#pluralize-filter(mac-scroll-spy-anchor)
+    @@include("docs/html/filters/pluralize.html")
+    h3 Example
+    .docs-example
+      dl.dl-horizontal
+        dt Single
+        dd {{"person" | pluralize:1}}
+        dt Multiple
+        dd {{"person" | pluralize:1500}}
+    pre.prettyprint.linenums.
+      {{&quot;person&quot; | pluralize:1500}}
 
-      section#pluralize-filter(mac-scroll-spy-anchor)
-        @@include("docs/html/filters/pluralize.html")
-        h3 Example
-        .docs-example
-          dl.dl-horizontal
-            dt Single
-            dd {{"person" | pluralize:1}}
-            dt Multiple
-            dd {{"person" | pluralize:1500}}
-        pre.prettyprint.linenums.
-          {{&quot;person&quot; | pluralize:1500}}
+  section#timestamp-filter(mac-scroll-spy-anchor)
+    @@include("docs/html/filters/timestamp.html")
+    h3 Example
+    .docs-example
+      dl.dl-horizontal
+        dt Now - 5 minutes
+        dd {{ fiveMinAgo | timestamp }}
+        dt Now - 1 day
+        dd {{ oneDayAgo | timestamp }}
+        dt Now - 3 days
+        dd {{ threeDaysAgo | timestamp }}
+    pre.prettyprint.linenums.
+      {{ fiveMinAgo | timestamp }}
 
-      section#timestamp-filter(mac-scroll-spy-anchor)
-        @@include("docs/html/filters/timestamp.html")
-        h3 Example
-        .docs-example
-          dl.dl-horizontal
-            dt Now - 5 minutes
-            dd {{ fiveMinAgo | timestamp }}
-            dt Now - 1 day
-            dd {{ oneDayAgo | timestamp }}
-            dt Now - 3 days
-            dd {{ threeDaysAgo | timestamp }}
-        pre.prettyprint.linenums.
-          {{ fiveMinAgo | timestamp }}
-
-      section#list-filter(mac-scroll-spy-anchor)
-        @@include("docs/html/filters/list.html")
-        h3 Example
-        .docs-example
-          p {{ ["item1", "item2", "item3", "item4"] | list }}
-        pre.prettyprint.linenums.
-          {{ [&quot;item1&quot;, &quot;item2&quot;, &quot;item3&quot;, &quot;item4&quot;] | list }}
+  section#list-filter(mac-scroll-spy-anchor)
+    @@include("docs/html/filters/list.html")
+    h3 Example
+    .docs-example
+      p {{ ["item1", "item2", "item3", "item4"] | list }}
+    pre.prettyprint.linenums.
+      {{ [&quot;item1&quot;, &quot;item2&quot;, &quot;item3&quot;, &quot;item4&quot;] | list }}

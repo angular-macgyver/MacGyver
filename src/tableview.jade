@@ -1,151 +1,148 @@
 extends layout
 
 block append content
-  .row.content
-    #example.span12(ng-controller='ExampleController')
+  section#table-view
+    h2 Table View
+    .docs-example
+      h3 Dynamic Columns
 
-      section#table-view
-        h2 Table View
-        .docs-example
-          h3 Dynamic Columns
+      table.table.mac-table-default(
+        mac-table
+        mac-table-columns="dynamic"
+        mac-table-resizable-columns=""
+        mac-table-reorderable-columns=""
+      )
+        thead(mac-table-section="header", mac-table-section-blank-row)
+          tr(mac-table-row)
+            th(mac-cell-template="No.", mac-column-width="5%")
+              span {{cell.column.colName}}
 
+            th(mac-cell-template="Title", mac-column-width="35%")
+              span {{cell.column.colName}}
+
+            th(mac-cell-template="", mac-column-width="auto")
+              span {{cell.column.colName}}
+
+        tbody(
+          mac-table-section        = "body"
+          mac-table-section-models = "macGyverSeasonOne"
+        )
+          tr(mac-table-row)
+            td(mac-cell-template="")
+              span {{cell.value()}}
+
+    pre.prettyprint.linenums.
+      &lt;table mac-table  mac-table-columns=&quot;dynamic&quot; mac-table-resizable-columns mac-table-reorderable-columns class=&quot;table mac-table-default&quot;&gt;
+        &lt;thead mac-table-section=&quot;header&quot; mac-table-section-blank-row&gt;
+          &lt;tr mac-table-row&gt;
+            &lt;th mac-cell-template=&quot;No.&quot; mac-column-width=&quot;5%&quot;&gt;&lt;span&gt;{{cell.column.colName}}&lt;/span&gt;&lt;/th&gt;
+            &lt;th mac-cell-template=&quot;Title&quot; mac-column-width=&quot;35%&quot;&gt;&lt;span&gt;{{cell.column.colName}}&lt;/span&gt;&lt;/th&gt;
+            &lt;th mac-cell-template=&quot;&quot; mac-column-width=&quot;auto&quot;&gt;&lt;span&gt;{{cell.column.colName}}&lt;/span&gt;&lt;/th&gt;
+          &lt;/tr&gt;
+        &lt;/thead&gt;
+        &lt;tbody mac-table-section=&quot;body&quot; mac-table-section-models=&quot;macGyverSeasonOne&quot;&gt;
+          &lt;tr mac-table-row&gt;
+            &lt;td mac-cell-template=&quot;&quot;&gt;&lt;span&gt;{{cell.value()}}&lt;/span&gt;&lt;/td&gt;
+          &lt;/tr&gt;
+        &lt;/tbody&gt;
+      &lt;/table&gt;
+
+    pre.prettyprint.linenums.
+      $scope.macGyverSeasonOne = [
+        {
+          \'No.\': \'1\',
+          \'Title\': \'&quot;Pilot&quot;\',
+          \'Directed by\': \'Jerrold Freedman\',
+          \'Written by\': \'Thackary Pallor\',
+          \'Original air date\': \'September 29, 1986\'
+        }, { ...]
+
+    .docs-example
+      h3 Filtered and Selectable Rows
+
+      .row
+        .span6
           table.table.mac-table-default(
             mac-table
-            mac-table-columns="dynamic"
+            mac-table-columns="['No.', 'Title', 'Original air date']"
             mac-table-resizable-columns=""
             mac-table-reorderable-columns=""
           )
             thead(mac-table-section="header", mac-table-section-blank-row)
               tr(mac-table-row)
-                th(mac-cell-template="No.", mac-column-width="5%")
-                  span {{cell.column.colName}}
-
-                th(mac-cell-template="Title", mac-column-width="35%")
-                  span {{cell.column.colName}}
-
                 th(mac-cell-template="", mac-column-width="auto")
                   span {{cell.column.colName}}
 
             tbody(
-              mac-table-section        = "body"
-              mac-table-section-models = "macGyverSeasonOne"
+              mac-table-section                 = "body"
+              mac-table-section-models          = "macGyverSeasonOne | filter: query"
+              mac-table-section-selected-models = "$parent.$parent.selectedModels"
             )
-              tr(mac-table-row)
+              tr(
+                mac-table-row
+                ng-class = "{selected: row.selected}"
+              )
+                td(mac-cell-template="No.", mac-table-selectable="true")
+                  span {{cell.value()}}
                 td(mac-cell-template="")
                   span {{cell.value()}}
 
-        pre.prettyprint.linenums.
-          &lt;table mac-table  mac-table-columns=&quot;dynamic&quot; mac-table-resizable-columns mac-table-reorderable-columns class=&quot;table mac-table-default&quot;&gt;
-            &lt;thead mac-table-section=&quot;header&quot; mac-table-section-blank-row&gt;
-              &lt;tr mac-table-row&gt;
-                &lt;th mac-cell-template=&quot;No.&quot; mac-column-width=&quot;5%&quot;&gt;&lt;span&gt;{{cell.column.colName}}&lt;/span&gt;&lt;/th&gt;
-                &lt;th mac-cell-template=&quot;Title&quot; mac-column-width=&quot;35%&quot;&gt;&lt;span&gt;{{cell.column.colName}}&lt;/span&gt;&lt;/th&gt;
-                &lt;th mac-cell-template=&quot;&quot; mac-column-width=&quot;auto&quot;&gt;&lt;span&gt;{{cell.column.colName}}&lt;/span&gt;&lt;/th&gt;
-              &lt;/tr&gt;
-            &lt;/thead&gt;
-            &lt;tbody mac-table-section=&quot;body&quot; mac-table-section-models=&quot;macGyverSeasonOne&quot;&gt;
-              &lt;tr mac-table-row&gt;
-                &lt;td mac-cell-template=&quot;&quot;&gt;&lt;span&gt;{{cell.value()}}&lt;/span&gt;&lt;/td&gt;
-              &lt;/tr&gt;
-            &lt;/tbody&gt;
-          &lt;/table&gt;
+        .table-view-example__selectable-columns.span4
 
-        pre.prettyprint.linenums.
-          $scope.macGyverSeasonOne = [
-            {
-              \'No.\': \'1\',
-              \'Title\': \'&quot;Pilot&quot;\',
-              \'Directed by\': \'Jerrold Freedman\',
-              \'Written by\': \'Thackary Pallor\',
-              \'Original air date\': \'September 29, 1986\'
-            }, { ...]
+          input(type="text", ng-model="query", placeholder="Search")
 
-        .docs-example
-          h3 Filtered and Selectable Rows
+          ul.nav-pills.table-view-example__selectable-columns__actions
+            li: a(href="", ng-click="selectAll()") Select All
+            li: a(href="", ng-click="unselectAll()") Unselect All
+            li: a(href="", ng-click="selectRandom()") Select Random
 
-          .row
-            .span6
-              table.table.mac-table-default(
-                mac-table
-                mac-table-columns="['No.', 'Title', 'Original air date']"
-                mac-table-resizable-columns=""
-                mac-table-reorderable-columns=""
-              )
-                thead(mac-table-section="header", mac-table-section-blank-row)
-                  tr(mac-table-row)
-                    th(mac-cell-template="", mac-column-width="auto")
-                      span {{cell.column.colName}}
+          div(ng-show="selectedModels.length")
+            h5 You've selected
+            ul
+              li(ng-repeat="model in selectedModels | orderBy:'Title'")
+                span {{model["Title"]}}
 
-                tbody(
-                  mac-table-section                 = "body"
-                  mac-table-section-models          = "macGyverSeasonOne | filter: query"
-                  mac-table-section-selected-models = "$parent.$parent.selectedModels"
-                )
-                  tr(
-                    mac-table-row
-                    ng-class = "{selected: row.selected}"
-                  )
-                    td(mac-cell-template="No.", mac-table-selectable="true")
-                      span {{cell.value()}}
-                    td(mac-cell-template="")
-                      span {{cell.value()}}
+    pre.prettyprint.linenums.
+      &lt;table
+          mac-table
+          mac-table-columns=&quot;[\'No.\', \'Title\', \'Original air date\']&quot;
+          mac-table-resizable-columns
+          mac-table-reorderable-columns
+          class=&quot;table mac-table-default&quot;&gt;
+        &lt;thead mac-table-section=&quot;header&quot; mac-table-section-blank-row&gt;
+          &lt;tr mac-table-row&gt;
+            &lt;th mac-cell-template=&quot;&quot; mac-column-width=&quot;auto&quot;&gt;&lt;span&gt;{{cell.column.colName}}&lt;/span&gt;&lt;/th&gt;
+          &lt;/tr&gt;
+        &lt;/thead&gt;
+        &lt;tbody
+            mac-table-section=&quot;body&quot;
+            mac-table-section-models=&quot;macGyverSeasonOne | filter: query&quot;
+            mac-table-section-selected-models=&quot;$parent.$parent.selectedModels&quot;&gt;
+          &lt;tr
+              mac-table-row
+              ng-class = &quot;{selected: row.selected}&quot;&gt;
+            &lt;td mac-cell-template=&quot;No.&quot; mac-table-selectable=&quot;true&quot;&gt;&lt;span&gt;{{cell.value()}}&lt;/span&gt;&lt;/td&gt;
+            &lt;td mac-cell-template=&quot;&quot;&gt;&lt;span&gt;{{cell.value()}}&lt;/span&gt;&lt;/td&gt;
+          &lt;/tr&gt;
+        &lt;/tbody&gt;
+      &lt;/table&gt;
 
-            .table-view-example__selectable-columns.span4
+    pre.prettyprint.linenums.
+      $scope.selectedModels = []
 
-              input(type="text", ng-model="query", placeholder="Search")
+      $scope.unselectAll = -&gt;
+        $scope.selectedModels = []
 
-              ul.nav-pills.table-view-example__selectable-columns__actions
-                li: a(href="", ng-click="selectAll()") Select All
-                li: a(href="", ng-click="unselectAll()") Unselect All
-                li: a(href="", ng-click="selectRandom()") Select Random
+      $scope.selectAll = -&gt;
+        $scope.selectedModels = $scope.macGyverSeasonOne.slice 0
 
-              div(ng-show="selectedModels.length")
-                h5 You've selected
-                ul
-                  li(ng-repeat="model in selectedModels | orderBy:'Title'")
-                    span {{model["Title"]}}
+      $scope.selectRandom = -&gt;
+        length = $scope.macGyverSeasonOne.length
+        models = []
+        for i in [1..(length / 2)]
+          index = Math.floor Math.random() * length
+          model = $scope.macGyverSeasonOne[index]
+          models.push model unless model in models
 
-        pre.prettyprint.linenums.
-          &lt;table
-              mac-table
-              mac-table-columns=&quot;[\'No.\', \'Title\', \'Original air date\']&quot;
-              mac-table-resizable-columns
-              mac-table-reorderable-columns
-              class=&quot;table mac-table-default&quot;&gt;
-            &lt;thead mac-table-section=&quot;header&quot; mac-table-section-blank-row&gt;
-              &lt;tr mac-table-row&gt;
-                &lt;th mac-cell-template=&quot;&quot; mac-column-width=&quot;auto&quot;&gt;&lt;span&gt;{{cell.column.colName}}&lt;/span&gt;&lt;/th&gt;
-              &lt;/tr&gt;
-            &lt;/thead&gt;
-            &lt;tbody
-                mac-table-section=&quot;body&quot;
-                mac-table-section-models=&quot;macGyverSeasonOne | filter: query&quot;
-                mac-table-section-selected-models=&quot;$parent.$parent.selectedModels&quot;&gt;
-              &lt;tr
-                  mac-table-row
-                  ng-class = &quot;{selected: row.selected}&quot;&gt;
-                &lt;td mac-cell-template=&quot;No.&quot; mac-table-selectable=&quot;true&quot;&gt;&lt;span&gt;{{cell.value()}}&lt;/span&gt;&lt;/td&gt;
-                &lt;td mac-cell-template=&quot;&quot;&gt;&lt;span&gt;{{cell.value()}}&lt;/span&gt;&lt;/td&gt;
-              &lt;/tr&gt;
-            &lt;/tbody&gt;
-          &lt;/table&gt;
-
-        pre.prettyprint.linenums.
-          $scope.selectedModels = []
-
-          $scope.unselectAll = -&gt;
-            $scope.selectedModels = []
-
-          $scope.selectAll = -&gt;
-            $scope.selectedModels = $scope.macGyverSeasonOne.slice 0
-
-          $scope.selectRandom = -&gt;
-            length = $scope.macGyverSeasonOne.length
-            models = []
-            for i in [1..(length / 2)]
-              index = Math.floor Math.random() * length
-              model = $scope.macGyverSeasonOne[index]
-              models.push model unless model in models
-
-            $scope.selectedModels = models
+        $scope.selectedModels = models
 

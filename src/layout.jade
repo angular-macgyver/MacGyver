@@ -3,8 +3,7 @@ html
   head
       meta(charset='utf-8')
       title MacGyver Example
-      link(href='//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css', rel='stylesheet')
-      link(href='//fonts.googleapis.com/css?family=Montserrat', rel='stylesheet', type='text/css')
+      link(href='//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css', rel='stylesheet')
       link(href='css/vendor.css', rel='stylesheet')
       link(href='css/macgyver.css', rel='stylesheet')
 
@@ -22,14 +21,40 @@ html
     block header
 
     .container
-      block content
+      .row.content(ng-controller='ExampleController')
+        #example.col-md-9.col-xs-12
+          block content
+
+        #nav.col-md-3.col-xs-12
+          block nav
 
     footer.footer
+      ul.footer-links
+        li
+          iframe(
+            src               = "http://ghbtns.com/github-btn.html?user=StartTheShift&repo=MacGyver&type=watch&count=true"
+            allowtransparency = "true"
+            frameborder       = "0"
+            scrolling         = "0"
+            width             = "110"
+            height            = "20"
+          )
+        li
+          iframe(
+            src               = "http://ghbtns.com/github-btn.html?user=StartTheShift&repo=MacGyver&type=fork&count=true"
+            allowtransparency = "true"
+            frameborder       = "0"
+            scrolling         = "0"
+            width             = "95"
+            height            = "20"
+          )
+
       .container
         p Built by the Dev team at&nbsp;
           a(href="http://www.shift.com") SHIFT.com
         p Code licensed under&nbsp;
           a(href="https://github.com/StartTheShift/MacGyver/blob/master/LICENSE") MIT
+
       ul.footer-links
         li Currently @@version
         li ·

@@ -7,15 +7,12 @@ body
 
 h1
   &.hero
-    color                  #363636
-    font-size              60px
-    font-weight            500
-    text-align             center
-    margin-bottom          22px
-    -moz-font-smoothing    antialiased
-    -webkit-font-smoothing antialiased
-    font-smoothing         antialiased
-    text-shadow            0 1px 1px rgba(0,0,0,0.15)
+    color         #363636
+    font-size     60px
+    font-weight   500
+    text-align    center
+    margin-bottom 22px
+    text-shadow   0 1px 1px rgba(0,0,0,0.15)
 
 section
   padding-top 29px
@@ -26,7 +23,6 @@ section
     border-bottom  1px solid #eeeeee
 
 #top-nav
-  font-family      'Montserrat', sans-serif
   background-color #363636
   position         fixed
   top              0
@@ -84,12 +80,6 @@ section
   .macgyver-links
     margin 0px auto 30px auto
 
-  .github-info
-    padding          10px 0px
-    background-color #f5f5f5
-    border-top       1px solid #ddd
-    border-bottom    1px solid #ddd
-
 .keycode-list
   margin-left 0px
   list-style  none
@@ -129,45 +119,23 @@ section
 
 // Side nav
 .docs-sidenav
-  width            220px
-  margin           30px 0px 0px
-  padding          0px
-  background-color #fff
-  border-radius    6px
-  box-shadow       0 1px 4px rgba(0,0,0,.065)
-  transform        rotateX(0) rotateY(0)
-
-  &.affix
-    top 54px
+  margin    30px 0px 0px 0px
+  transform rotateX(0) rotateY(0)
 
   li
     a
-      display block
-      margin  0 0 -1px
-      padding 8px 14px
-      border  1px solid #e5e5e5
+      color   #363636
+      padding 4px 15px
 
-    &:first-child
-      a
-        border-radius  6px 6px 0 0
-    &:last-child
-      a
-        border-radius  0 0 6px 6px
+    &.active
+      a, a:hover
+        border-color #f9f9f9
+        border-left  2px solid #363636
 
-    .icon-chevron-right
-      float        right
-      margin-top   2px
-      margin-right -6px
-      opacity      .25
-
-  .active
-    a
-      position    relative
-      z-index     2
-      padding     9px 15px
-      border      0
-      text-shadow 0 1px 0 rgba(0,0,0,.15)
-      box-shadow  inset 1px 0 0 rgba(0,0,0,.1), inset -1px 0 0 rgba(0,0,0,.1)
+@media (min-width: 992px)
+  .docs-sidenav
+    &.affix
+      top 54px
 
 .footer
   text-align       center
@@ -280,44 +248,3 @@ ol.linenums li
   color        #bebec5
   line-height  20px
   text-shadow  0 1px 0 #fff
-
-/* Desktop large
-------------------------- */
-@media (min-width: 1200px)
-  .docs-sidenav
-    width 258px
-
-  .docs-sidenav > li > a
-    width 230px \9 /* Override the previous IE8-9 hack */
-
-/* Desktop
-------------------------- */
-@media (max-width: 980px)
-
-  /* When affixed, space properly */
-  .docs-sidenav
-    top          0
-    width        218px
-    margin-top   30px
-    margin-right 0
-
-/* Tablet to desktop
-------------------------- */
-@media (min-width: 768px) and (max-width: 979px)
-  /* Adjust sidenav width */
-  .docs-sidenav
-    width      166px
-    margin-top 20px
-
-/* Tablet
-------------------------- */
-@media (max-width: 767px)
-  /* Sidenav */
-  .docs-sidenav
-    width         auto
-    margin-bottom 20px
-
-    &.affix
-      position static
-      width    auto
-      top      0

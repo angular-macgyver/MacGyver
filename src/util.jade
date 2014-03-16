@@ -1,190 +1,187 @@
 extends layout
 
+block append nav
+  ul.nav.nav-list.docs-sidenav(mac-affix)
+    li(mac-scroll-spy-target="element"): a(href="#element")
+      i.icon-chevron-right
+      | Angular element
+    li(mac-scroll-spy-target="keys"): a(href="#keys")
+      i.icon-chevron-right
+      | Character code enum
+    li(mac-scroll-spy-target="pluralize"): a(href="#pluralize")
+      i.icon-chevron-right
+      | Pluralize
+    li(mac-scroll-spy-target="capitalize"): a(href="#capitalize")
+      i.icon-chevron-right
+      | Capitalize
+    li(mac-scroll-spy-target="uncapitalize"): a(href="#uncapitalize")
+      i.icon-chevron-right
+      | Uncapitalize
+    li(mac-scroll-spy-target="toCamelCase"): a(href="#toCamelCase")
+      i.icon-chevron-right
+      | toCamelCase
+    li(mac-scroll-spy-target="toSnakeCase"): a(href="#toSnakeCase")
+      i.icon-chevron-right
+      | toSnakeCase
+    li(mac-scroll-spy-target="convertKeysToCamelCase"): a(href="#convertKeysToCamelCase")
+      i.icon-chevron-right
+      | convertKeysToCamelCase
+    li(mac-scroll-spy-target="convertKeysToSnakeCase"): a(href="#convertKeysToSnakeCase")
+      i.icon-chevron-right
+      | convertKeysToSnakeCase
+    li(mac-scroll-spy-target="pythagoras"): a(href="#pythagoras")
+      i.icon-chevron-right
+      | Pythagoras
+    li(mac-scroll-spy-target="degrees"): a(href="#degrees")
+      i.icon-chevron-right
+      | Radian to Degrees
+    li(mac-scroll-spy-target="radian"): a(href="#radian")
+      i.icon-chevron-right
+      | Degrees to Radian
+    li(mac-scroll-spy-target="hex2rgb"): a(href="#hex2rgb")
+      i.icon-chevron-right
+      | HEX to RGB
+    li(mac-scroll-spy-target="validateUrl"): a(href="#validateUrl")
+      i.icon-chevron-right
+      | validateUrl
+    li(mac-scroll-spy-target="validateEmail"): a(href="#validateEmail")
+      i.icon-chevron-right
+      | validateEmail
+    li(mac-scroll-spy-target="getQueryString"): a(href="#getQueryString")
+      i.icon-chevron-right
+      | getQueryString
+    li(mac-scroll-spy-target="parseUrlPath"): a(href="#parseUrlPath")
+      i.icon-chevron-right
+      | parseUrlPath
+
 block append content
-  .row.content(ng-controller='ExampleController')
-    #nav.span3
-      ul.nav.nav-list.docs-sidenav(mac-affix)
-        li(mac-scroll-spy-target="element"): a(href="#element")
-          i.icon-chevron-right
-          | Angular element
-        li(mac-scroll-spy-target="keys"): a(href="#keys")
-          i.icon-chevron-right
-          | Character code enum
-        li(mac-scroll-spy-target="pluralize"): a(href="#pluralize")
-          i.icon-chevron-right
-          | Pluralize
-        li(mac-scroll-spy-target="capitalize"): a(href="#capitalize")
-          i.icon-chevron-right
-          | Capitalize
-        li(mac-scroll-spy-target="uncapitalize"): a(href="#uncapitalize")
-          i.icon-chevron-right
-          | Uncapitalize
-        li(mac-scroll-spy-target="toCamelCase"): a(href="#toCamelCase")
-          i.icon-chevron-right
-          | toCamelCase
-        li(mac-scroll-spy-target="toSnakeCase"): a(href="#toSnakeCase")
-          i.icon-chevron-right
-          | toSnakeCase
-        li(mac-scroll-spy-target="convertKeysToCamelCase"): a(href="#convertKeysToCamelCase")
-          i.icon-chevron-right
-          | convertKeysToCamelCase
-        li(mac-scroll-spy-target="convertKeysToSnakeCase"): a(href="#convertKeysToSnakeCase")
-          i.icon-chevron-right
-          | convertKeysToSnakeCase
-        li(mac-scroll-spy-target="pythagoras"): a(href="#pythagoras")
-          i.icon-chevron-right
-          | Pythagoras
-        li(mac-scroll-spy-target="degrees"): a(href="#degrees")
-          i.icon-chevron-right
-          | Radian to Degrees
-        li(mac-scroll-spy-target="radian"): a(href="#radian")
-          i.icon-chevron-right
-          | Degrees to Radian
-        li(mac-scroll-spy-target="hex2rgb"): a(href="#hex2rgb")
-          i.icon-chevron-right
-          | HEX to RGB
-        li(mac-scroll-spy-target="validateUrl"): a(href="#validateUrl")
-          i.icon-chevron-right
-          | validateUrl
-        li(mac-scroll-spy-target="validateEmail"): a(href="#validateEmail")
-          i.icon-chevron-right
-          | validateEmail
-        li(mac-scroll-spy-target="getQueryString"): a(href="#getQueryString")
-          i.icon-chevron-right
-          | getQueryString
-        li(mac-scroll-spy-target="parseUrlPath"): a(href="#parseUrlPath")
-          i.icon-chevron-right
-          | parseUrlPath
+  section#element(mac-scroll-spy-anchor)
+    @@include("docs/html/main.html")
 
+  section#keys(mac-scroll-spy-anchor)
+    h3 Character code enum
+    p MacGyver comes with character code enum for easy reference and increase
+      | readability. With dependency injection, just inject "keys" to gain access.
+    ul.keycode-list
+      li(
+        ng-repeat = "item in keys | orderBy:code"
+      )
+        b {{item.key}}
+        |  - {{item.code}}
 
-    #example.span9
-      section#element(mac-scroll-spy-anchor)
-        @@include("docs/html/main.html")
+  section#pluralize(mac-scroll-spy-anchor)
+    h3 pluralize
+    pre.prettyprint.
+      util.pluralize("apple", 5)
+      =&gt; "apples"
+      util.pluralize("apple", 10, true)
+      =&gt; "10 apples"
 
-      section#keys(mac-scroll-spy-anchor)
-        h3 Character code enum
-        p MacGyver comes with character code enum for easy reference and increase
-          | readability. With dependency injection, just inject "keys" to gain access.
-        ul.keycode-list
-          li(
-            ng-repeat = "item in keys | orderBy:code"
-          )
-            b {{item.key}}
-            |  - {{item.code}}
+  section#capitalize(mac-scroll-spy-anchor)
+    h3 capitalize
+    p Converts first leter of the string to uppercase (Underscore string proxy)
+    pre.prettyprint.
+      util.capitalize("lowercase")
+      =&gt; "Lowercase"
 
-      section#pluralize(mac-scroll-spy-anchor)
-        h3 pluralize
-        pre.prettyprint.
-          util.pluralize("apple", 5)
-          =&gt; "apples"
-          util.pluralize("apple", 10, true)
-          =&gt; "10 apples"
+  section#uncapitalize(mac-scroll-spy-anchor)
+    h3 uncapitalize
+    pre.prettyprint.
+      util.uncapitalize("UPPERCASE")
+      =&gt; "uPPERCASE"
 
-      section#capitalize(mac-scroll-spy-anchor)
-        h3 capitalize
-        p Converts first leter of the string to uppercase (Underscore string proxy)
-        pre.prettyprint.
-          util.capitalize("lowercase")
-          =&gt; "Lowercase"
+  section#toCamelCase(mac-scroll-spy-anchor)
+    h3 toCamelCase
+    pre.prettyprint.
+      util.toCamelCase("a-string-with-dashes")
+      =&gt; "aStringWithDashes"
 
-      section#uncapitalize(mac-scroll-spy-anchor)
-        h3 uncapitalize
-        pre.prettyprint.
-          util.uncapitalize("UPPERCASE")
-          =&gt; "uPPERCASE"
+  section#toSnakeCase(mac-scroll-spy-anchor)
+    h3 toSnakeCase
+    pre.prettyprint.
+      util.toSnakeCase("just another string")
+      =&gt; "just_another_string"
 
-      section#toCamelCase(mac-scroll-spy-anchor)
-        h3 toCamelCase
-        pre.prettyprint.
-          util.toCamelCase("a-string-with-dashes")
-          =&gt; "aStringWithDashes"
+  section#convertKeysToCamelCase(mac-scroll-spy-anchor)
+    h3 convertKeysToCamelCase
+    p Convert all the keys in an object to camel case
+    pre.prettyprint.
+      util.toSnakeCase({'hello-world': 'test'})
+      =&gt; {'helloWorld': 'test'}
 
-      section#toSnakeCase(mac-scroll-spy-anchor)
-        h3 toSnakeCase
-        pre.prettyprint.
-          util.toSnakeCase("just another string")
-          =&gt; "just_another_string"
+  section#convertKeysToSnakeCase(mac-scroll-spy-anchor)
+    h3 convertKeysToSnakeCase
+    p Convert all the keys in an object to snake case
+    pre.prettyprint.
+      util.toSnakeCase({'helloWorld': 'test'})
+      =&gt; {'hello_world': 'test'}
 
-      section#convertKeysToCamelCase(mac-scroll-spy-anchor)
-        h3 convertKeysToCamelCase
-        p Convert all the keys in an object to camel case
-        pre.prettyprint.
-          util.toSnakeCase({'hello-world': 'test'})
-          =&gt; {'helloWorld': 'test'}
+  section#pythagoras(mac-scroll-spy-anchor)
+    h3 Pythagoras
+    pre.prettyprint.
+      util.pyth(3, 4)
+      =&gt; 5
 
-      section#convertKeysToSnakeCase(mac-scroll-spy-anchor)
-        h3 convertKeysToSnakeCase
-        p Convert all the keys in an object to snake case
-        pre.prettyprint.
-          util.toSnakeCase({'helloWorld': 'test'})
-          =&gt; {'hello_world': 'test'}
+  section#degrees(mac-scroll-spy-anchor)
+    h3 Radian to Degrees
+    pre.prettyprint.
+      util.degrees(Math.PI)
+      =&gt; 180
 
-      section#pythagoras(mac-scroll-spy-anchor)
-        h3 Pythagoras
-        pre.prettyprint.
-          util.pyth(3, 4)
-          =&gt; 5
+  section#radian(mac-scroll-spy-anchor)
+    h3 Degrees to Radian
+    pre.prettyprint.
+      util.radian(180)
+      =&gt; Math.PI
 
-      section#degrees(mac-scroll-spy-anchor)
-        h3 Radian to Degrees
-        pre.prettyprint.
-          util.degrees(Math.PI)
-          =&gt; 180
+  section#hex2rgb(mac-scroll-spy-anchor)
+    h3 HEX to RGB
+    p Convert HEX color into RGB values
+    pre.prettyprint.
+      util.hex2rgb("#5331DE")
+      =&gt; {r: 83, g: 49, b: 222}
 
-      section#radian(mac-scroll-spy-anchor)
-        h3 Degrees to Radian
-        pre.prettyprint.
-          util.radian(180)
-          =&gt; Math.PI
+  section#validateUrl(mac-scroll-spy-anchor)
+    h3 validateUrl
+    p Parse url and break it into different components
+    pre.prettyprint.
+      util.validateUrl("http://www.example.com/macgyver/episodes")
+      =&gt; {domain: "com"
+          name: "example"
+          path: "/macgyver/episodes"
+          port: undefined
+          protocol: "http://"
+          subdomain: "www"
+          url: "http://www.example.com/macgyver/episodes"}
 
-      section#hex2rgb(mac-scroll-spy-anchor)
-        h3 HEX to RGB
-        p Convert HEX color into RGB values
-        pre.prettyprint.
-          util.hex2rgb("#5331DE")
-          =&gt; {r: 83, g: 49, b: 222}
+  section#validateEmail(mac-scroll-spy-anchor)
+    h3 validateEmail
+    pre.prettyprint.
+      util.validateEmail("user@example.com")
+      =&gt; true
 
-      section#validateUrl(mac-scroll-spy-anchor)
-        h3 validateUrl
-        p Parse url and break it into different components
-        pre.prettyprint.
-          util.validateUrl("http://www.example.com/macgyver/episodes")
-          =&gt; {domain: "com"
-              name: "example"
-              path: "/macgyver/episodes"
-              port: undefined
-              protocol: "http://"
-              subdomain: "www"
-              url: "http://www.example.com/macgyver/episodes"}
+  section#getQueryString(mac-scroll-spy-anchor)
+    h3 getQueryString
+    pre.prettyprint.
+      util.getQueryString("http://www.example.com/macgyver?season=1&amp;episode=3&amp;time=12:23", "episode")
+      =&gt; 3
 
-      section#validateEmail(mac-scroll-spy-anchor)
-        h3 validateEmail
-        pre.prettyprint.
-          util.validateEmail("user@example.com")
-          =&gt; true
-
-      section#getQueryString(mac-scroll-spy-anchor)
-        h3 getQueryString
-        pre.prettyprint.
-          util.getQueryString("http://www.example.com/macgyver?season=1&amp;episode=3&amp;time=12:23", "episode")
-          =&gt; 3
-
-      section#parseUrlPath(mac-scroll-spy-anchor)
-        h3 parseUrlPath
-        pre.prettyprint.
-          util.parseUrlPath("http://www.example.com/macgyver?season=1&amp;episode=3&amp;time=12:23")
-          =&gt; {fullPath: "http://www.example.com/macgyver?season=1&amp;episode=3&amp;time=12:23",
-              path: "http://www.example.com",
-              pathComponents: [
-                "http:",
-                "",
-                "www.example.com",
-                "macgyver"
-              ],
-              verb: "macgyver",
-              queries: {
-                season: "1",
-                episode: "3",
-                time: "12:23"
-              }
-            }
+  section#parseUrlPath(mac-scroll-spy-anchor)
+    h3 parseUrlPath
+    pre.prettyprint.
+      util.parseUrlPath("http://www.example.com/macgyver?season=1&amp;episode=3&amp;time=12:23")
+      =&gt; {fullPath: "http://www.example.com/macgyver?season=1&amp;episode=3&amp;time=12:23",
+          path: "http://www.example.com",
+          pathComponents: [
+            "http:",
+            "",
+            "www.example.com",
+            "macgyver"
+          ],
+          verb: "macgyver",
+          queries: {
+            season: "1",
+            episode: "3",
+            time: "12:23"
+          }
+        }

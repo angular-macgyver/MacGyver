@@ -9,413 +9,387 @@ block append header
       li: a(href="https://github.com/StartTheShift/MacGyver/issues") Issues
       li Version @@version
 
-    span
-      a(href="http://starttheshift.github.io/MacGyver/example/0.1.28/") MacGyver 0.1.28 docs have moved
-
-    .github-info
-      ul
-        li
-          iframe(
-            src               = "http://ghbtns.com/github-btn.html?user=StartTheShift&repo=MacGyver&type=watch&count=true"
-            allowtransparency = "true"
-            frameborder       = "0"
-            scrolling         = "0"
-            width             = "110"
-            height            = "20"
-          )
-        li
-          iframe(
-            src               = "http://ghbtns.com/github-btn.html?user=StartTheShift&repo=MacGyver&type=fork&count=true"
-            allowtransparency = "true"
-            frameborder       = "0"
-            scrolling         = "0"
-            width             = "95"
-            height            = "20"
-          )
+block append nav
+  ul.nav.nav-list.docs-sidenav(
+    mac-affix
+    mac-affix-top = "294"
+  )
+    li(mac-scroll-spy-target="modal"): a(href="#modal")
+      i.icon-chevron-right
+      | Modal
+    li(mac-scroll-spy-target="scrollspy"): a(href="#scrollspy")
+      i.icon-chevron-right
+      | Scroll Spy
+    li(mac-scroll-spy-target="affix"): a(href="#affix")
+      i.icon-chevron-right
+      | Affix
+    li(mac-scroll-spy-target="tooltip"): a(href="#tooltip")
+      i.icon-chevron-right
+      | Tooltip
+    li(mac-scroll-spy-target="popover"): a(href="#popover")
+      i.icon-chevron-right
+      | Popover
+    li(mac-scroll-spy-target="menu"): a(href="#menu")
+      i.icon-chevron-right
+      | Menu
+    li(mac-scroll-spy-target="autocomplete"): a(href="#autocomplete")
+      i.icon-chevron-right
+      | Autocomplete
+    li(mac-scroll-spy-target="tag-autocomplete"): a(href="#tag-autocomplete")
+      i.icon-chevron-right
+      | Tag Autocomplete
+    li(mac-scroll-spy-target="datepicker"): a(href="#datepicker")
+      i.icon-chevron-right
+      | Date Picker
+    li(mac-scroll-spy-target="time-input"): a(href="#time-input")
+      i.icon-chevron-right
+      | Time Input
+    li(mac-scroll-spy-target="spinner"): a(href="#spinner")
+      i.icon-chevron-right
+      | Spinner
+    li(mac-scroll-spy-target="cspinner"): a(href="#cspinner")
+      i.icon-chevron-right
+      | Canvas Spinner
+    li(mac-scroll-spy-target="file-upload"): a(href="#file-upload")
+      i.icon-chevron-right
+      | File Upload
+    li(mac-scroll-spy-target="placeholder"): a(href="#placeholder")
+      i.icon-chevron-right
+      | Placeholder
 
 block append content
-  .row.content(ng-controller='ExampleController')
-    #nav.span3
-      ul.nav.nav-list.docs-sidenav(
-        mac-affix
-        mac-affix-top = "188"
+  section#modal(mac-scroll-spy-anchor)
+    @@include("docs/html/services/modal.html")
+    @@include("docs/html/directives/modal.html")
+    h3 Example
+    .docs-example
+      mac-modal#test-modal(
+        mac-modal-keyboard
+        ng-cloak
       )
-        li(mac-scroll-spy-target="modal"): a(href="#modal")
-          i.icon-chevron-right
-          | Modal
-        li(mac-scroll-spy-target="scrollspy"): a(href="#scrollspy")
-          i.icon-chevron-right
-          | Scroll Spy
-        li(mac-scroll-spy-target="affix"): a(href="#affix")
-          i.icon-chevron-right
-          | Affix
-        li(mac-scroll-spy-target="tooltip"): a(href="#tooltip")
-          i.icon-chevron-right
-          | Tooltip
-        li(mac-scroll-spy-target="popover"): a(href="#popover")
-          i.icon-chevron-right
-          | Popover
-        li(mac-scroll-spy-target="menu"): a(href="#menu")
-          i.icon-chevron-right
-          | Menu
-        li(mac-scroll-spy-target="autocomplete"): a(href="#autocomplete")
-          i.icon-chevron-right
-          | Autocomplete
-        li(mac-scroll-spy-target="tag-autocomplete"): a(href="#tag-autocomplete")
-          i.icon-chevron-right
-          | Tag Autocomplete
-        li(mac-scroll-spy-target="datepicker"): a(href="#datepicker")
-          i.icon-chevron-right
-          | Date Picker
-        li(mac-scroll-spy-target="time-input"): a(href="#time-input")
-          i.icon-chevron-right
-          | Time Input
-        li(mac-scroll-spy-target="spinner"): a(href="#spinner")
-          i.icon-chevron-right
-          | Spinner
-        li(mac-scroll-spy-target="cspinner"): a(href="#cspinner")
-          i.icon-chevron-right
-          | Canvas Spinner
-        li(mac-scroll-spy-target="file-upload"): a(href="#file-upload")
-          i.icon-chevron-right
-          | File Upload
-        li(mac-scroll-spy-target="placeholder"): a(href="#placeholder")
-          i.icon-chevron-right
-          | Placeholder
+        .mac-modal-content(ng-controller="modalController")
+          h1 Just another modal
+      button.btn(
+        mac-modal      = "test-modal"
+        mac-modal-data = "macGyverSeasonOne"
+      ) Show Modal
+    pre.prettyprint.linenums.
+      &lt;mac-modal id=&quot;test-modal&quot; mac-modal-keyboard&gt;
+        &lt;div ng-controller=&quot;modalController&quot; class=&quot;modal-content&quot;&gt;
+          &lt;h1&gt;Just another modal&lt;/h1&gt;
+        &lt;/div&gt;
+      &lt;/mac-modal&gt;
+      &lt;button mac-modal=&quot;test-modal&quot; mac-modal-data=&quot;maGyverSeasonOne&quot; class=&quot;btn&quot;&gt;Show Modal&lt;/button&gt;
 
-    #example.span9
-      section#modal(mac-scroll-spy-anchor)
-        @@include("docs/html/services/modal.html")
-        @@include("docs/html/directives/modal.html")
-        h3 Example
-        .docs-example
-          mac-modal#test-modal(
-            mac-modal-keyboard
-            ng-cloak
+  section#scrollspy(mac-scroll-spy-anchor)
+    @@include("docs/html/services/scroll_spy.html")
+    @@include("docs/html/directives/scroll_spy.html")
+    h3 Example
+    .docs-example The nav to the left and this documentation page is probably the best example
+
+    h4 Scroll spy element
+    pre.prettyprint.linenums.
+      &lt;body mac-scroll-spy mac-scroll-spy-offset=&quot;10&quot;&gt;&lt;/body&gt;
+
+    h4 Scroll spy target
+    pre.prettyprint.linenums.
+      &lt;ul class=&quot;nav nav-list docs-sidenav&quot;&gt;
+        &lt;li mac-scroll-spy-target=&quot;modal&quot;&gt;&lt;a href=&quot;#modal&quot;&gt;Modal&lt;/a&gt;&lt;/li&gt;
+        &lt;li mac-scroll-spy-target=&quot;scrollspy&quot;&gt;&lt;a href=&quot;#scrollspy&quot;&gt;Scroll Spy&lt;/a&gt;&lt;/li&gt;
+      &lt;/ul&gt;
+
+    h5 Scroll spy anchor
+    pre.prettyprint.linenums.
+      &lt;section id=&quot;modal&quot; mac-scroll-spy-anchor&gt;&lt;/section&gt;
+
+  section#affix(mac-scroll-spy-anchor)
+    @@include("docs/html/directives/affix.html")
+    h3 Example
+    .docs-example The nav to the left uses mac-affix
+    pre.prettyprint.linenums.
+      &lt;div mac-affix&gt;Nav content&lt;/div&gt;
+
+  section#tooltip(mac-scroll-spy-anchor)
+    @@include("docs/html/directives/tooltip.html")
+    h3 Example
+    .docs-example
+      ul.nav.nav-pills
+        li: a(mac-tooltip="Tooltip on top") Tooltip on top
+        li: a(mac-tooltip="Tooltip on bottom", mac-tooltip-direction="bottom") Tooltip on bottom
+        li: a(mac-tooltip="Tooltip on left", mac-tooltip-direction="left") Tooltip on left
+        li: a(mac-tooltip="Tooltip on right", mac-tooltip-direction="right") Tooltip on right
+    pre.prettyprint.linenums.
+      &lt;a href=&quot;#&quot; mac-tooltip=&quot;Tooltip on bottom&quot; mac-tooltip-direction=&quot;bottom&quot;&gt;Tooltip on bottom&lt;/a&gt;
+
+  section#popover(mac-scroll-spy-anchor)
+    @@include("docs/html/services/popover.html")
+    @@include("docs/html/directives/popover.html")
+    h3 Example
+    .docs-example
+      ul.nav.nav-pills
+        li: a(
+            mac-popover = "testPopover"
+          ) Above left
+        li: a(
+            mac-popover = "testPopover2"
+          ) Above right
+        li: a(
+            mac-popover = "testPopover3"
+          ) Below left
+        li: a(
+            mac-popover = "testPopover4"
+          ) Below right
+        li: a(
+            mac-popover = "testPopover5"
+          ) Middle left
+        li: a(
+            mac-popover = "testPopover6"
+          ) Middle right
+
+      mac-popover(
+        id                = "testPopover"
+        mac-popover-title = "Test Popover Title"
+        mac-popover-header
+        ng-cloak
+      ) Open a popover
+      mac-popover(
+        id                    = "testPopover2"
+        mac-popover-direction = "above right"
+        ng-cloak
+      ) Open a popover
+      mac-popover(
+        id                    = "testPopover3"
+        mac-popover-direction = "below left"
+        ng-cloak
+      ) Open a popover
+      mac-popover(
+        id                    = "testPopover4"
+        mac-popover-direction = "below right"
+        ng-cloak
+      ) Open a popover
+      mac-popover(
+        id                    = "testPopover5"
+        mac-popover-direction = "middle left"
+        mac-popover-title = "Test Popover Title"
+        ng-cloak
+      ) Open a popover
+      mac-popover(
+        id                    = "testPopover6"
+        mac-popover-direction = "middle right"
+        ng-cloak
+      ) Open a popover
+    pre.prettyprint.linenums.
+      &lt;a mac-popover=&quot;testPopover&quot;&gt;Open test popover&lt;/a&gt;
+
+      &lt;mac-popover id=&quot;testPopover&quot; &gt;Open a popover&lt;/mac-popover&gt;
+
+  section#menu(mac-scroll-spy-anchor)
+    @@include("docs/html/directives/menu.html")
+    h3 Example
+    .docs-example
+      mac-menu(
+        mac-menu-items  = "menuItems"
+        mac-menu-select = "selectingMenuItem(index)"
+      )
+      div Current selected item: {{selectedItem}}
+
+  section#autocomplete(mac-scroll-spy-anchor)
+    @@include("docs/html/directives/autocomplete.html")
+    h3 Example
+    .docs-example
+      mac-autocomplete(
+        mac-autocomplete-url        = "autocompleteUrl"
+        mac-autocomplete-query      = "q"
+        mac-autocomplete-on-success = "onSuccess(data)"
+        mac-placeholder             = "'Autocomplete'"
+        ng-model                    = "autocompleteQuery"
+      )
+    pre.prettyprint.linenums.
+      &lt;mac-autocomplete
+        mac-autocomplete-url=&quot;autocompleteUrl&quot;
+        mac-autocomplete-query=&quot;q&quot;
+        mac-autocomplete-on-success=&quot;onSuccess(data)&quot;
+        mac-placeholder=&quot;\'Autocomplete\'&quot;&gt;
+      &lt;/mac-autocomplete&gt;
+
+    h3 Example with autocomplete using source
+    .docs-example
+      mac-autocomplete(
+        mac-autocomplete-source = "['hello', 'world']"
+        ng-model                = "autocompleteSourceQuery"
+        mac-placeholder         = "'Type something...'"
+      )
+    pre.prettyprint.linenums.
+      &lt;mac-autocomplete
+        mac-autocomplete-source=&quot;[\'hello\', \'world\']&quot;
+        mac-placeholder=&quot;\'Autocomplete\'&quot;&gt;
+      &lt;/mac-autocomplete&gt;
+
+  section#tag-autocomplete(mac-scroll-spy-anchor)
+    @@include("docs/html/directives/tag_autocomplete.html")
+    h3 Example
+    .docs-example
+      mac-tag-autocomplete(
+        mac-tag-autocomplete-url         = "autocompleteUrl"
+        mac-tag-autocomplete-query       = "q"
+        mac-tag-autocomplete-selected    = "tagAutocompleteSelected"
+        mac-tag-autocomplete-value       = "id"
+        mac-tag-autocomplete-label       = "name"
+        mac-tag-autocomplete-placeholder = "tagAutocompletePlaceholder"
+        mac-tag-autocomplete-model       = "tagAutocompleteModel"
+      )
+    pre.prettyprint.linenums.
+      &lt;mac-tag-autocomplete
+        mac-tag-autocomplete-url=&quot;autocompleteUrl&quot;
+        mac-tag-autocomplete-query=&quot;q&quot;
+        mac-tag-autocomplete-selected=&quot;tagAutocompleteSelected&quot;
+        mac-tag-autocomplete-value=&quot;id&quot;
+        mac-tag-autocomplete-label=&quot;name&quot;
+        mac-tag-autocomplete-placeholder=&quot;\'Autocomplete\'&quot;
+        mac-tag-autocomplete-model=&quot;tagAutocompleteModel&quot;&gt;
+      &lt;/mac-tag-autocomplete&gt;
+
+    h3 Example with autocomplete disabled
+    .docs-example
+      mac-tag-autocomplete(
+        mac-tag-autocomplete-selected    = "tagAutocompleteDisabledSelected"
+        mac-tag-autocomplete-placeholder = "tagAutocompletePlaceholder"
+        mac-tag-autocomplete-value       = ""
+        mac-tag-autocomplete-label       = ""
+        mac-tag-autocomplete-disabled    = "true"
+      )
+    pre.prettyprint.linenums.
+      &lt;mac-tag-autocomplete
+        mac-tag-autocomplete-selected=&quot;tagAutocompleteDisabledSelected&quot;
+        mac-tag-autocomplete-placeholder=&quot;tagAutocompletePlaceholder&quot;
+        mac-tag-autocomplete-value=&quot;&quot;
+        mac-tag-autocomplete-label=&quot;&quot;
+        mac-tag-autocomplete-disabled=&quot;true&quot;&gt;
+      &lt;/mac-tag-autocomplete&gt;
+
+    h3 Example with custom actions on events
+    .docs-example
+      mac-tag-autocomplete(
+        mac-tag-autocomplete-selected    = "tagAutocompleteEvents"
+        mac-tag-autocomplete-placeholder = "tagAutocompletePlaceholder"
+        mac-tag-autocomplete-value       = "key"
+        mac-tag-autocomplete-label       = "key"
+        mac-tag-autocomplete-on-enter    = "tagAutocompleteOnSelected(item)"
+        mac-tag-autocomplete-events      = "blur,keyup"
+        mac-tag-autocomplete-on-blur     = "tagAutocompleteOnBlur($event, item)"
+        mac-tag-autocomplete-on-keyup    = "tagAutocompleteOnKeyup()"
+        mac-tag-autocomplete-disabled    = "true"
+        mac-tag-autocomplete-model       = "tagAutocompleteModel"
+      )
+    pre.prettyprint.linenums.
+      &lt;mac-tag-autocomplete
+        mac-tag-autocomplete-selected=&quot;tagAutocompleteEvents&quot;
+        mac-tag-autocomplete-placeholder=&quot;tagAutocompletePlaceholder&quot;
+        mac-tag-autocomplete-value=&quot;key&quot;
+        mac-tag-autocomplete-label=&quot;key&quot;
+        mac-tag-autocomplete-on-enter=&quot;tagAutocompleteOnSelected(item)&quot;
+        mac-tag-autocomplete-events=&quot;blur,keyup&quot;
+        mac-tag-autocomplete-on-blur=&quot;tagAutocompleteOnBlur($event, item)&quot;
+        mac-tag-autocomplete-on-keyup=&quot;tagAutocompleteOnKeyup()&quot;
+        mac-tag-autocomplete-disabled=&quot;true&quot;
+        mac-tag-autocomplete-model=&quot;tagAutocompleteModel&quot;&gt;
+      &lt;/mac-tag-autocomplete&gt;
+
+  section#datepicker(mac-scroll-spy-anchor)
+    @@include("docs/html/directives/datepicker.html")
+    h3 Example
+    .docs-example
+      mac-datepicker(
+        mac-datepicker-id       = "input-start-date"
+        mac-datepicker-model    = "startDate"
+        mac-datepicker-min-date = "minDate"
+      )
+    pre.prettyprint.linenums.
+      &lt;mac-datepicker mac-datepicker-id=&quot;input-start-date&quot; mac-datepicker-model=&quot;startDate&quot;&gt;&lt;/mac-datepicker&gt;
+
+  section#time-input(mac-scroll-spy-anchor)
+    @@include("docs/html/directives/time.html")
+    h3 Example
+    .docs-example
+      mac-time(
+        mac-time-id      = "input-start-time"
+        mac-time-model   = "myStartTime"
+        mac-time-default = "11:59 PM"
+      )
+    pre.prettyprint.linenums.
+      &lt;mac-time
+        mac-time-id=&quot;input-start-time&quot;
+        mac-time-model=&quot;myStartTime&quot;
+        mac-time-default=&quot;11:59 PM&quot;&gt;
+      &lt;/mac-time&gt;
+
+  section#spinner(mac-scroll-spy-anchor)
+    @@include("docs/html/directives/spinner.html")
+    h3 Example
+    .docs-example
+      mac-spinner
+    pre.prettyprint.linenums.
+      &lt;mac-spinner&gt;&lt;/mac-spinner&gt;
+
+  section#cspinner(mac-scroll-spy-anchor)
+    @@include("docs/html/directives/cspinner.html")
+    h3 Example
+    .docs-example
+      mac-cspinner
+    pre.prettyprint.linenums.
+      &lt;mac-cspinner&gt;&lt;/mac-cspinner&gt;
+
+  section#file-upload(mac-scroll-spy-anchor)
+    div.alert.alert-error File upload will be moved to a separate module in v0.3.0.&nbsp;
+      a(href="https://github.com/angular-macgyver/angular-macgyver-upload") New macUpload module can be found here.
+
+    @@include("docs/html/directives/file_upload.html")
+    h3 Example
+    .docs-example.example-hit-area
+      form(action="...", method="post", enctype="multipart/form-data", name="upload-example")
+        span.mac-upload.btn.fileinput-button
+          span Upload
+          input(
+            type                 = "file"
+            name                 = "files[]"
+            multiple
+            mac-upload
+            ng-disabled          = "!fileUploaderEnabled"
+            mac-upload-route     = "uploadRoute"
+            mac-upload-success   = "fileUploadSuccess($data, $status)"
+            mac-upload-error     = "fileUploadError($response, $data, $status)"
+            mac-upload-submit    = "fileUploadSubmit($event, $data)"
+            mac-upload-drop-zone = ".example-hit-area"
+            mac-upload-previews  = "uploadPreviews"
           )
-            .modal-content(ng-controller="modalController")
-              h1 Just another modal
-          button.btn(
-            mac-modal      = "test-modal"
-            mac-modal-data = "macGyverSeasonOne"
-          ) Show Modal
-        pre.prettyprint.linenums.
-          &lt;mac-modal id=&quot;test-modal&quot; mac-modal-keyboard&gt;
-            &lt;div ng-controller=&quot;modalController&quot; class=&quot;modal-content&quot;&gt;
-              &lt;h1&gt;Just another modal&lt;/h1&gt;
-            &lt;/div&gt;
-          &lt;/mac-modal&gt;
-          &lt;button mac-modal=&quot;test-modal&quot; mac-modal-data=&quot;maGyverSeasonOne&quot; class=&quot;btn&quot;&gt;Show Modal&lt;/button&gt;
+      ul
+        li(ng-repeat="preview in uploadPreviews")
+          img(ng-src="{{previewImage(preview)}}")
+          span {{preview.fileName}}
 
-      section#scrollspy(mac-scroll-spy-anchor)
-        @@include("docs/html/services/scroll_spy.html")
-        @@include("docs/html/directives/scroll_spy.html")
-        h3 Example
-        .docs-example The nav to the left and this documentation page is probably the best example
+    pre.prettyprint.linenums.
+      &lt;input type=&quot;file&quot;
+        name=&quot;files[]&quot;
+        ng-disabled=&quot;!fileUploaderEnabled&quot;
+        multiple=&quot;multiple&quot;
+        mac-upload=&quot;mac-upload&quot;
+        mac-upload-route=&quot;uploadRoute&quot;
+        mac-upload-success=&quot;fileUploadSuccess($data, $status)&quot;
+        mac-upload-error=&quot;fileUploadError($response, $data, $status)&quot;
+        mac-upload-submit=&quot;fileUploadSubmit($event, $data)&quot;
+        mac-upload-drop-zone=&quot;.example-hit-area&quot;
+        mac-upload-previews=&quot;uploadPreviews&quot;/&gt;
+      &lt;ul&gt;
+        &lt;li ng-repeat=&quot;preview in uploadPreviews&quot;&gt;
+          &lt;img ng-src=&quot;{{previewImage(preview)}}&quot;/&gt;
+          &lt;span&gt;{{preview.fileName}}&lt;/span&gt;
+        &lt;/li&gt;
+      &lt;/ul&gt;
 
-        h4 Scroll spy element
-        pre.prettyprint.linenums.
-          &lt;body mac-scroll-spy mac-scroll-spy-offset=&quot;10&quot;&gt;&lt;/body&gt;
-
-        h4 Scroll spy target
-        pre.prettyprint.linenums.
-          &lt;ul class=&quot;nav nav-list docs-sidenav&quot;&gt;
-            &lt;li mac-scroll-spy-target=&quot;modal&quot;&gt;&lt;a href=&quot;#modal&quot;&gt;Modal&lt;/a&gt;&lt;/li&gt;
-            &lt;li mac-scroll-spy-target=&quot;scrollspy&quot;&gt;&lt;a href=&quot;#scrollspy&quot;&gt;Scroll Spy&lt;/a&gt;&lt;/li&gt;
-          &lt;/ul&gt;
-
-        h5 Scroll spy anchor
-        pre.prettyprint.linenums.
-          &lt;section id=&quot;modal&quot; mac-scroll-spy-anchor&gt;&lt;/section&gt;
-
-      section#affix(mac-scroll-spy-anchor)
-        @@include("docs/html/directives/affix.html")
-        h3 Example
-        .docs-example The nav to the left uses mac-affix
-        pre.prettyprint.linenums.
-          &lt;div mac-affix&gt;Nav content&lt;/div&gt;
-
-      section#tooltip(mac-scroll-spy-anchor)
-        @@include("docs/html/directives/tooltip.html")
-        h3 Example
-        .docs-example
-          ul.nav.nav-pills
-            li: a(mac-tooltip="Tooltip on top") Tooltip on top
-            li: a(mac-tooltip="Tooltip on bottom", mac-tooltip-direction="bottom") Tooltip on bottom
-            li: a(mac-tooltip="Tooltip on left", mac-tooltip-direction="left") Tooltip on left
-            li: a(mac-tooltip="Tooltip on right", mac-tooltip-direction="right") Tooltip on right
-        pre.prettyprint.linenums.
-          &lt;a href=&quot;#&quot; mac-tooltip=&quot;Tooltip on bottom&quot; mac-tooltip-direction=&quot;bottom&quot;&gt;Tooltip on bottom&lt;/a&gt;
-
-      section#popover(mac-scroll-spy-anchor)
-        @@include("docs/html/services/popover.html")
-        @@include("docs/html/directives/popover.html")
-        h3 Example
-        .docs-example
-          ul.nav.nav-pills
-            li: a(
-                mac-popover = "testPopover"
-              ) Above left
-            li: a(
-                mac-popover = "testPopover2"
-              ) Above right
-            li: a(
-                mac-popover = "testPopover3"
-              ) Below left
-            li: a(
-                mac-popover = "testPopover4"
-              ) Below right
-            li: a(
-                mac-popover = "testPopover5"
-              ) Middle left
-            li: a(
-                mac-popover = "testPopover6"
-              ) Middle right
-
-          mac-popover(
-            id                = "testPopover"
-            mac-popover-title = "Test Popover Title"
-            mac-popover-header
-            ng-cloak
-          ) Open a popover
-          mac-popover(
-            id                    = "testPopover2"
-            mac-popover-direction = "above right"
-            ng-cloak
-          ) Open a popover
-          mac-popover(
-            id                    = "testPopover3"
-            mac-popover-direction = "below left"
-            ng-cloak
-          ) Open a popover
-          mac-popover(
-            id                    = "testPopover4"
-            mac-popover-direction = "below right"
-            ng-cloak
-          ) Open a popover
-          mac-popover(
-            id                    = "testPopover5"
-            mac-popover-direction = "middle left"
-            mac-popover-title = "Test Popover Title"
-            ng-cloak
-          ) Open a popover
-          mac-popover(
-            id                    = "testPopover6"
-            mac-popover-direction = "middle right"
-            ng-cloak
-          ) Open a popover
-        pre.prettyprint.linenums.
-          &lt;a mac-popover=&quot;testPopover&quot;&gt;Open test popover&lt;/a&gt;
-
-          &lt;mac-popover id=&quot;testPopover&quot; &gt;Open a popover&lt;/mac-popover&gt;
-
-      section#menu(mac-scroll-spy-anchor)
-        @@include("docs/html/directives/menu.html")
-        h3 Example
-        .docs-example
-          mac-menu(
-            mac-menu-items  = "menuItems"
-            mac-menu-select = "selectingMenuItem(index)"
-          )
-          div Current selected item: {{selectedItem}}
-
-      section#autocomplete(mac-scroll-spy-anchor)
-        @@include("docs/html/directives/autocomplete.html")
-        h3 Example
-        .docs-example
-          mac-autocomplete(
-            mac-autocomplete-url        = "autocompleteUrl"
-            mac-autocomplete-query      = "q"
-            mac-autocomplete-on-success = "onSuccess(data)"
-            mac-placeholder             = "'Autocomplete'"
-            ng-model                    = "autocompleteQuery"
-          )
-        pre.prettyprint.linenums.
-          &lt;mac-autocomplete
-            mac-autocomplete-url=&quot;autocompleteUrl&quot;
-            mac-autocomplete-query=&quot;q&quot;
-            mac-autocomplete-on-success=&quot;onSuccess(data)&quot;
-            mac-placeholder=&quot;\'Autocomplete\'&quot;&gt;
-          &lt;/mac-autocomplete&gt;
-
-        h3 Example with autocomplete using source
-        .docs-example
-          mac-autocomplete(
-            mac-autocomplete-source = "['hello', 'world']"
-            ng-model                = "autocompleteSourceQuery"
-            mac-placeholder         = "'Type something...'"
-          )
-        pre.prettyprint.linenums.
-          &lt;mac-autocomplete
-            mac-autocomplete-source=&quot;[\'hello\', \'world\']&quot;
-            mac-placeholder=&quot;\'Autocomplete\'&quot;&gt;
-          &lt;/mac-autocomplete&gt;
-
-      section#tag-autocomplete(mac-scroll-spy-anchor)
-        @@include("docs/html/directives/tag_autocomplete.html")
-        h3 Example
-        .docs-example
-          mac-tag-autocomplete(
-            mac-tag-autocomplete-url         = "autocompleteUrl"
-            mac-tag-autocomplete-query       = "q"
-            mac-tag-autocomplete-selected    = "tagAutocompleteSelected"
-            mac-tag-autocomplete-value       = "id"
-            mac-tag-autocomplete-label       = "name"
-            mac-tag-autocomplete-placeholder = "tagAutocompletePlaceholder"
-            mac-tag-autocomplete-model       = "tagAutocompleteModel"
-          )
-        pre.prettyprint.linenums.
-          &lt;mac-tag-autocomplete
-            mac-tag-autocomplete-url=&quot;autocompleteUrl&quot;
-            mac-tag-autocomplete-query=&quot;q&quot;
-            mac-tag-autocomplete-selected=&quot;tagAutocompleteSelected&quot;
-            mac-tag-autocomplete-value=&quot;id&quot;
-            mac-tag-autocomplete-label=&quot;name&quot;
-            mac-tag-autocomplete-placeholder=&quot;\'Autocomplete\'&quot;
-            mac-tag-autocomplete-model=&quot;tagAutocompleteModel&quot;&gt;
-          &lt;/mac-tag-autocomplete&gt;
-
-        h3 Example with autocomplete disabled
-        .docs-example
-          mac-tag-autocomplete(
-            mac-tag-autocomplete-selected    = "tagAutocompleteDisabledSelected"
-            mac-tag-autocomplete-placeholder = "tagAutocompletePlaceholder"
-            mac-tag-autocomplete-value       = ""
-            mac-tag-autocomplete-label       = ""
-            mac-tag-autocomplete-disabled    = "true"
-          )
-        pre.prettyprint.linenums.
-          &lt;mac-tag-autocomplete
-            mac-tag-autocomplete-selected=&quot;tagAutocompleteDisabledSelected&quot;
-            mac-tag-autocomplete-placeholder=&quot;tagAutocompletePlaceholder&quot;
-            mac-tag-autocomplete-value=&quot;&quot;
-            mac-tag-autocomplete-label=&quot;&quot;
-            mac-tag-autocomplete-disabled=&quot;true&quot;&gt;
-          &lt;/mac-tag-autocomplete&gt;
-
-        h3 Example with custom actions on events
-        .docs-example
-          mac-tag-autocomplete(
-            mac-tag-autocomplete-selected    = "tagAutocompleteEvents"
-            mac-tag-autocomplete-placeholder = "tagAutocompletePlaceholder"
-            mac-tag-autocomplete-value       = "key"
-            mac-tag-autocomplete-label       = "key"
-            mac-tag-autocomplete-on-enter    = "tagAutocompleteOnSelected(item)"
-            mac-tag-autocomplete-events      = "blur,keyup"
-            mac-tag-autocomplete-on-blur     = "tagAutocompleteOnBlur($event, item)"
-            mac-tag-autocomplete-on-keyup    = "tagAutocompleteOnKeyup()"
-            mac-tag-autocomplete-disabled    = "true"
-            mac-tag-autocomplete-model       = "tagAutocompleteModel"
-          )
-        pre.prettyprint.linenums.
-          &lt;mac-tag-autocomplete
-            mac-tag-autocomplete-selected=&quot;tagAutocompleteEvents&quot;
-            mac-tag-autocomplete-placeholder=&quot;tagAutocompletePlaceholder&quot;
-            mac-tag-autocomplete-value=&quot;key&quot;
-            mac-tag-autocomplete-label=&quot;key&quot;
-            mac-tag-autocomplete-on-enter=&quot;tagAutocompleteOnSelected(item)&quot;
-            mac-tag-autocomplete-events=&quot;blur,keyup&quot;
-            mac-tag-autocomplete-on-blur=&quot;tagAutocompleteOnBlur($event, item)&quot;
-            mac-tag-autocomplete-on-keyup=&quot;tagAutocompleteOnKeyup()&quot;
-            mac-tag-autocomplete-disabled=&quot;true&quot;
-            mac-tag-autocomplete-model=&quot;tagAutocompleteModel&quot;&gt;
-          &lt;/mac-tag-autocomplete&gt;
-
-      section#datepicker(mac-scroll-spy-anchor)
-        @@include("docs/html/directives/datepicker.html")
-        h3 Example
-        .docs-example
-          mac-datepicker(
-            mac-datepicker-id       = "input-start-date"
-            mac-datepicker-model    = "startDate"
-            mac-datepicker-min-date = "minDate"
-          )
-        pre.prettyprint.linenums.
-          &lt;mac-datepicker mac-datepicker-id=&quot;input-start-date&quot; mac-datepicker-model=&quot;startDate&quot;&gt;&lt;/mac-datepicker&gt;
-
-      section#time-input(mac-scroll-spy-anchor)
-        @@include("docs/html/directives/time.html")
-        h3 Example
-        .docs-example
-          mac-time(
-            mac-time-id      = "input-start-time"
-            mac-time-model   = "myStartTime"
-            mac-time-default = "11:59 PM"
-          )
-        pre.prettyprint.linenums.
-          &lt;mac-time
-            mac-time-id=&quot;input-start-time&quot;
-            mac-time-model=&quot;myStartTime&quot;
-            mac-time-default=&quot;11:59 PM&quot;&gt;
-          &lt;/mac-time&gt;
-
-      section#spinner(mac-scroll-spy-anchor)
-        @@include("docs/html/directives/spinner.html")
-        h3 Example
-        .docs-example
-          mac-spinner
-        pre.prettyprint.linenums.
-          &lt;mac-spinner&gt;&lt;/mac-spinner&gt;
-
-      section#cspinner(mac-scroll-spy-anchor)
-        @@include("docs/html/directives/cspinner.html")
-        h3 Example
-        .docs-example
-          mac-cspinner
-        pre.prettyprint.linenums.
-          &lt;mac-cspinner&gt;&lt;/mac-cspinner&gt;
-
-      section#file-upload(mac-scroll-spy-anchor)
-        div.alert.alert-error File upload will be moved to a separate module in v0.3.0.&nbsp;
-          a(href="https://github.com/angular-macgyver/angular-macgyver-upload") New macUpload module can be found here.
-
-        @@include("docs/html/directives/file_upload.html")
-        h3 Example
-        .docs-example.example-hit-area
-          form(action="...", method="post", enctype="multipart/form-data", name="upload-example")
-            span.mac-upload.btn.fileinput-button
-              span Upload
-              input(
-                type                 = "file"
-                name                 = "files[]"
-                multiple
-                mac-upload
-                ng-disabled          = "!fileUploaderEnabled"
-                mac-upload-route     = "uploadRoute"
-                mac-upload-success   = "fileUploadSuccess($data, $status)"
-                mac-upload-error     = "fileUploadError($response, $data, $status)"
-                mac-upload-submit    = "fileUploadSubmit($event, $data)"
-                mac-upload-drop-zone = ".example-hit-area"
-                mac-upload-previews  = "uploadPreviews"
-              )
-          ul
-            li(ng-repeat="preview in uploadPreviews")
-              img(ng-src="{{previewImage(preview)}}")
-              span {{preview.fileName}}
-
-        pre.prettyprint.linenums.
-          &lt;input type=&quot;file&quot;
-            name=&quot;files[]&quot;
-            ng-disabled=&quot;!fileUploaderEnabled&quot;
-            multiple=&quot;multiple&quot;
-            mac-upload=&quot;mac-upload&quot;
-            mac-upload-route=&quot;uploadRoute&quot;
-            mac-upload-success=&quot;fileUploadSuccess($data, $status)&quot;
-            mac-upload-error=&quot;fileUploadError($response, $data, $status)&quot;
-            mac-upload-submit=&quot;fileUploadSubmit($event, $data)&quot;
-            mac-upload-drop-zone=&quot;.example-hit-area&quot;
-            mac-upload-previews=&quot;uploadPreviews&quot;/&gt;
-          &lt;ul&gt;
-            &lt;li ng-repeat=&quot;preview in uploadPreviews&quot;&gt;
-              &lt;img ng-src=&quot;{{previewImage(preview)}}&quot;/&gt;
-              &lt;span&gt;{{preview.fileName}}&lt;/span&gt;
-            &lt;/li&gt;
-          &lt;/ul&gt;
-
-      section#placeholder(mac-scroll-spy-anchor)
-        @@include("docs/html/directives/placeholder.html")
-        h3 Example
-        .docs-example
-          input(type="text", mac-placeholder="tagAutocompletePlaceholder")
-        pre.prettyprint.linenums.
-          &lt;input type=&quot;text&quot; mac-placeholder=&quot;placeholderVariable&quot;&gt;
+  section#placeholder(mac-scroll-spy-anchor)
+    @@include("docs/html/directives/placeholder.html")
+    h3 Example
+    .docs-example
+      input(type="text", mac-placeholder="tagAutocompletePlaceholder")
+    pre.prettyprint.linenums.
+      &lt;input type=&quot;text&quot; mac-placeholder=&quot;placeholderVariable&quot;&gt;

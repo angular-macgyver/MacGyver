@@ -1,77 +1,75 @@
 extends layout
 
+block append nav
+  ul.nav.nav-list.docs-sidenav(mac-affix)
+    li(mac-scroll-spy-target="events"): a(href="#events")
+      i.icon-chevron-right
+      | Events
+    li(mac-scroll-spy-target="keydowns"): a(href="#keydowns")
+      i.icon-chevron-right
+      | Keydown events
+    li(mac-scroll-spy-target="pause-typing"): a(href="#pause-typing")
+      i.icon-chevron-right
+      | Pause Typing
+    li(mac-scroll-spy-target="window-resize"): a(href="#window-resize")
+      i.icon-chevron-right
+      | Window Resize
+
 block append content
-  .row.content(ng-controller='ExampleController')
-    #nav.span3
-      ul.nav.nav-list.docs-sidenav(mac-affix)
-        li(mac-scroll-spy-target="events"): a(href="#events")
-          i.icon-chevron-right
-          | Events
-        li(mac-scroll-spy-target="keydowns"): a(href="#keydowns")
-          i.icon-chevron-right
-          | Keydown events
-        li(mac-scroll-spy-target="pause-typing"): a(href="#pause-typing")
-          i.icon-chevron-right
-          | Pause Typing
-        li(mac-scroll-spy-target="window-resize"): a(href="#window-resize")
-          i.icon-chevron-right
-          | Window Resize
+  section#events(mac-scroll-spy-anchor)
+    h1 Events
+    p Most of MacGyver event directives have been deprecated since the latest
+      |  AngularJS include multiple event directives
+    ul
+      li: a(href="http://docs.angularjs.org/api/ng.directive:ngBlur") ngBlur
+      li: a(href="http://docs.angularjs.org/api/ng.directive:ngFocus") ngFocus
+      li: a(href="http://docs.angularjs.org/api/ng.directive:ngKeydown") ngKeydown
+      li: a(href="http://docs.angularjs.org/api/ng.directive:ngKeyup") ngKeyup
+      li: a(href="http://docs.angularjs.org/api/ng.directive:ngMouseenter") ngMouseenter
+      li: a(href="http://docs.angularjs.org/api/ng.directive:ngMouseleave") ngMouseleave
 
-    #example.span9
-      section#events(mac-scroll-spy-anchor)
-        h1 Events
-        p Most of MacGyver event directives have been deprecated since the latest
-          |  AngularJS include multiple event directives
-        ul
-          li: a(href="http://docs.angularjs.org/api/ng.directive:ngBlur") ngBlur
-          li: a(href="http://docs.angularjs.org/api/ng.directive:ngFocus") ngFocus
-          li: a(href="http://docs.angularjs.org/api/ng.directive:ngKeydown") ngKeydown
-          li: a(href="http://docs.angularjs.org/api/ng.directive:ngKeyup") ngKeyup
-          li: a(href="http://docs.angularjs.org/api/ng.directive:ngMouseenter") ngMouseenter
-          li: a(href="http://docs.angularjs.org/api/ng.directive:ngMouseleave") ngMouseleave
+  section#keydowns(mac-scroll-spy-anchor)
+    @@include("docs/html/directives/events/keydown.html")
 
-      section#keydowns(mac-scroll-spy-anchor)
-        @@include("docs/html/directives/events/keydown.html")
+    h3 Example
+    .docs-example
+      input(
+        type               = "text"
+        placeholder        = "keydown"
+        mac-keydown-enter  = "eventKeydown = 'enter'"
+        mac-keydown-escape = "eventKeydown = 'escape'"
+        mac-keydown-space  = "eventKeydown = 'space'"
+        mac-keydown-left   = "eventKeydown = 'left'"
+        mac-keydown-up     = "eventKeydown = 'up'"
+        mac-keydown-right  = "eventKeydown = 'right'"
+        mac-keydown-down   = "eventKeydown = 'down'"
+      )
+      div Key pressed: {{eventKeydown}}
+    pre.prettyprint.linenums.
+      &lt;input type=&quot;text&quot;
+         placeholder=&quot;keydown&quot;
+         mac-keydown-enter=&quot;eventKeydown = 'enter'&quot;
+         mac-keydown-escape=&quot;eventKeydown = 'escape'&quot;
+         mac-keydown-space=&quot;eventKeydown = 'space'&quot;
+         mac-keydown-left=&quot;eventKeydown = 'left'&quot;
+         mac-keydown-up=&quot;eventKeydown = 'up'&quot;
+         mac-keydown-right=&quot;eventKeydown = 'right'&quot;
+         mac-keydown-down=&quot;eventKeydown = 'down'&quot;/&gt;
 
-        h3 Example
-        .docs-example
-          input(
-            type               = "text"
-            placeholder        = "keydown"
-            mac-keydown-enter  = "eventKeydown = 'enter'"
-            mac-keydown-escape = "eventKeydown = 'escape'"
-            mac-keydown-space  = "eventKeydown = 'space'"
-            mac-keydown-left   = "eventKeydown = 'left'"
-            mac-keydown-up     = "eventKeydown = 'up'"
-            mac-keydown-right  = "eventKeydown = 'right'"
-            mac-keydown-down   = "eventKeydown = 'down'"
-          )
-          div Key pressed: {{eventKeydown}}
-        pre.prettyprint.linenums.
-          &lt;input type=&quot;text&quot;
-             placeholder=&quot;keydown&quot;
-             mac-keydown-enter=&quot;eventKeydown = 'enter'&quot;
-             mac-keydown-escape=&quot;eventKeydown = 'escape'&quot;
-             mac-keydown-space=&quot;eventKeydown = 'space'&quot;
-             mac-keydown-left=&quot;eventKeydown = 'left'&quot;
-             mac-keydown-up=&quot;eventKeydown = 'up'&quot;
-             mac-keydown-right=&quot;eventKeydown = 'right'&quot;
-             mac-keydown-down=&quot;eventKeydown = 'down'&quot;/&gt;
+  section#pause-typing(mac-scroll-spy-anchor)
+    @@include("docs/html/directives/events/pause_typing.html")
 
-      section#pause-typing(mac-scroll-spy-anchor)
-        @@include("docs/html/directives/events/pause_typing.html")
+    h3 Example
+    .docs-example
+      input(type='text', mac-pause-typing="afterPausing($event)")
+      div value: {{pauseTypingModel}}
 
-        h3 Example
-        .docs-example
-          input(type='text', mac-pause-typing="afterPausing($event)")
-          div value: {{pauseTypingModel}}
+    pre.prettyprint.linenums.
+      &lt;input type=&quot;text&quot; mac-pause-typing=&quot;afterPausing($event)&quot;&gt;
 
-        pre.prettyprint.linenums.
-          &lt;input type=&quot;text&quot; mac-pause-typing=&quot;afterPausing($event)&quot;&gt;
+  section#window-resize(mac-scroll-spy-anchor)
+    @@include("docs/html/directives/events/window_resize.html")
 
-      section#window-resize(mac-scroll-spy-anchor)
-        @@include("docs/html/directives/events/window_resize.html")
-
-        h3 Example
-        .docs-example
-          div(mac-window-resize="windowResizing($event)") Current width: {{windowWidth}}
+    h3 Example
+    .docs-example
+      div(mac-window-resize="windowResizing($event)") Current width: {{windowWidth}}
