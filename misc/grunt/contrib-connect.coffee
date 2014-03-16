@@ -11,6 +11,7 @@ module.exports = (grunt) ->
     example:
       options:
         port:       9001
+        hostname:   "0.0.0.0"
         base:       "example"
         middleware: (connect, options) ->
           fileHandler = (req, res, next) ->
