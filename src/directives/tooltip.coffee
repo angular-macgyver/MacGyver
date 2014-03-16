@@ -46,7 +46,7 @@ angular.module("Mac").directive "macTooltip", [
         ## Check if the tooltip still exist, remove if it does
         removeTip(0)
 
-        tooltip = angular.element """<div class="tooltip #{opts.direction}"><div class="tooltip-message">#{text}</div></div>"""
+        tooltip = angular.element """<div class="mac-tooltip #{opts.direction}"><div class="tooltip-message">#{text}</div></div>"""
         tip.append tooltip
 
         # Only get element offset when not adding tooltip within the element.

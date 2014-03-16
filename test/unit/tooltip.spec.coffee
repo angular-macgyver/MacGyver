@@ -10,7 +10,7 @@ describe "Mac Tooltip", ->
     $timeout   = _$timeout_
 
   afterEach ->
-    $(".tooltip").remove()
+    $(".mac-tooltip").remove()
 
   describe "Basic Initialization", ->
 
@@ -19,7 +19,7 @@ describe "Mac Tooltip", ->
       $rootScope.$digest()
       tip.trigger "mouseenter"
 
-      expect($(".tooltip").length).toBe 1
+      expect($(".mac-tooltip").length).toBe 1
 
     it "should display the correct message", ->
       tip = $compile("<div mac-tooltip='hello world'></div>") $rootScope
@@ -35,19 +35,19 @@ describe "Mac Tooltip", ->
       $rootScope.$digest()
       tip.trigger "mouseenter"
 
-      expect($(".tooltip").length).toBe 1
+      expect($(".mac-tooltip").length).toBe 1
 
       tip.trigger "mouseleave"
       $timeout.flush()
 
-      expect($(".tooltip").length).toBe 0
+      expect($(".mac-tooltip").length).toBe 0
 
     it "should show and hide on click", ->
       tip = $compile("<div mac-tooltip='test' mac-tooltip-trigger='click'></div>") $rootScope
       $rootScope.$digest()
       # show
       tip.trigger "click"
-      expect($(".tooltip").length).toBe 1
+      expect($(".mac-tooltip").length).toBe 1
 
       # hide
       tip.trigger "click"
@@ -69,7 +69,7 @@ describe "Mac Tooltip", ->
 
       tip.trigger "mouseenter"
 
-      expect($(".tooltip").hasClass "top").toBe true
+      expect($(".mac-tooltip").hasClass "top").toBe true
 
     it "should set the direction to bottom", ->
       tip = $compile("<div mac-tooltip='test' mac-tooltip-direction='bottom'></div>") $rootScope
@@ -77,7 +77,7 @@ describe "Mac Tooltip", ->
 
       tip.trigger "mouseenter"
 
-      expect($(".tooltip").hasClass "bottom").toBe true
+      expect($(".mac-tooltip").hasClass "bottom").toBe true
 
   describe "disabled", ->
 
@@ -86,14 +86,14 @@ describe "Mac Tooltip", ->
       $rootScope.$digest()
 
       tip.trigger "mouseenter"
-      expect($(".tooltip").length).toBe 0
+      expect($(".mac-tooltip").length).toBe 0
 
     it "should create a tooltip", ->
       tip = $compile("<div mac-tooltip='test' mac-tooltip-disabled='false'></div>") $rootScope
       $rootScope.$digest()
 
       tip.trigger "mouseenter"
-      expect($(".tooltip").length).toBe 1
+      expect($(".mac-tooltip").length).toBe 1
 
   describe "Inside", ->
 
@@ -103,7 +103,7 @@ describe "Mac Tooltip", ->
 
       tip.trigger "mouseenter"
 
-      expect($(".tooltip", tip).length).toBe 1
+      expect($(".mac-tooltip", tip).length).toBe 1
 
     it "should not append tooltip inside of trigger", ->
       tip = $compile("<div mac-tooltip='test'></div>") $rootScope
@@ -111,4 +111,4 @@ describe "Mac Tooltip", ->
 
       tip.trigger "mouseenter"
 
-      expect($(".tooltip", tip).length).toBe 0
+      expect($(".mac-tooltip", tip).length).toBe 0
