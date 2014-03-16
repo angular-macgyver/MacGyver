@@ -59,13 +59,7 @@ module.exports = (config) ->
       "../vendor/bower/angular-animate/angular-animate.js"
 
       # Template
-      "template/*.html",
-
-      # Application Code
-      pattern: "../src/example_controller/*.coffee"
-      watched: false
-      included: false
-      served: false
+      "template/*.html"
 
       # Test Code
       "../src/main.coffee"
@@ -77,16 +71,18 @@ module.exports = (config) ->
       "../test/unit/*.spec.coffee"
     ]
 
-    # use dots reporter, as travis terminal does not support escaping sequences
-    # possible values: 'dots', 'progress'
-    # CLI --reporters progress
-    reporters: ["progress"]
+    exclude: [
+      "../src/example_controller/*.coffee"
+    ]
 
+    reporters: ["progress"]
     logLevel: config.LOG_INFO
     browsers: ["PhantomJS"]
     preprocessors:
       "../**/*.coffee": "coffee"
       "**/*.html": "html2js"
+
+    plugins: ["karma-*"]
 
   if process.env.TRAVIS
     buildLabel = "TRAVIS ##{process.env.TRAVIS_BUILD_NUMBER} (#{process.env.TRAVIS_BUILD_ID})"
