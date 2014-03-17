@@ -2,9 +2,6 @@ extends layout
 
 block append nav
   ul.nav.nav-list.docs-sidenav(mac-affix)
-    li(mac-scroll-spy-target="events"): a(href="#events")
-      i.icon-chevron-right
-      | Events
     li(mac-scroll-spy-target="keydowns"): a(href="#keydowns")
       i.icon-chevron-right
       | Keydown events
@@ -16,18 +13,6 @@ block append nav
       | Window Resize
 
 block append content
-  section#events(mac-scroll-spy-anchor)
-    h1 Events
-    p Most of MacGyver event directives have been deprecated since the latest
-      |  AngularJS include multiple event directives
-    ul
-      li: a(href="http://docs.angularjs.org/api/ng.directive:ngBlur") ngBlur
-      li: a(href="http://docs.angularjs.org/api/ng.directive:ngFocus") ngFocus
-      li: a(href="http://docs.angularjs.org/api/ng.directive:ngKeydown") ngKeydown
-      li: a(href="http://docs.angularjs.org/api/ng.directive:ngKeyup") ngKeyup
-      li: a(href="http://docs.angularjs.org/api/ng.directive:ngMouseenter") ngMouseenter
-      li: a(href="http://docs.angularjs.org/api/ng.directive:ngMouseleave") ngMouseleave
-
   section#keydowns(mac-scroll-spy-anchor)
     @@include("docs/html/directives/events/keydown.html")
 
