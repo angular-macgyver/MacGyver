@@ -59,7 +59,7 @@ describe "Mac modal", ->
       modal.show "test-modal"
       $timeout.flush()
 
-      modalElement = $(".modal", element)
+      modalElement = $(".mac-modal", element)
       expect(modalElement.attr("style")).not.toBeDefined()
 
     it "should broadcast modalWasShown", ->
