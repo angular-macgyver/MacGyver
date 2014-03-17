@@ -73,7 +73,7 @@ block append content
         mac-modal      = "test-modal"
         mac-modal-data = "macGyverSeasonOne"
       ) Show Modal
-    pre.prettyprint.linenums.
+    pre.prettyprint.
       &lt;mac-modal id=&quot;test-modal&quot; mac-modal-keyboard&gt;
         &lt;div ng-controller=&quot;modalController&quot; class=&quot;modal-content&quot;&gt;
           &lt;h1&gt;Just another modal&lt;/h1&gt;
@@ -88,25 +88,25 @@ block append content
     .docs-example The nav to the left and this documentation page is probably the best example
 
     h4 Scroll spy element
-    pre.prettyprint.linenums.
+    pre.prettyprint.
       &lt;body mac-scroll-spy mac-scroll-spy-offset=&quot;10&quot;&gt;&lt;/body&gt;
 
     h4 Scroll spy target
-    pre.prettyprint.linenums.
+    pre.prettyprint.
       &lt;ul class=&quot;nav nav-list docs-sidenav&quot;&gt;
         &lt;li mac-scroll-spy-target=&quot;modal&quot;&gt;&lt;a href=&quot;#modal&quot;&gt;Modal&lt;/a&gt;&lt;/li&gt;
         &lt;li mac-scroll-spy-target=&quot;scrollspy&quot;&gt;&lt;a href=&quot;#scrollspy&quot;&gt;Scroll Spy&lt;/a&gt;&lt;/li&gt;
       &lt;/ul&gt;
 
     h5 Scroll spy anchor
-    pre.prettyprint.linenums.
+    pre.prettyprint.
       &lt;section id=&quot;modal&quot; mac-scroll-spy-anchor&gt;&lt;/section&gt;
 
   section#affix(mac-scroll-spy-anchor)
     @@include("docs/html/directives/affix.html")
     h3 Example
     .docs-example The nav to the left uses mac-affix
-    pre.prettyprint.linenums.
+    pre.prettyprint.
       &lt;div mac-affix&gt;Nav content&lt;/div&gt;
 
   section#tooltip(mac-scroll-spy-anchor)
@@ -118,7 +118,7 @@ block append content
         li: a(mac-tooltip="Tooltip on bottom", mac-tooltip-direction="bottom") Tooltip on bottom
         li: a(mac-tooltip="Tooltip on left", mac-tooltip-direction="left") Tooltip on left
         li: a(mac-tooltip="Tooltip on right", mac-tooltip-direction="right") Tooltip on right
-    pre.prettyprint.linenums.
+    pre.prettyprint.
       &lt;a href=&quot;#&quot; mac-tooltip=&quot;Tooltip on bottom&quot; mac-tooltip-direction=&quot;bottom&quot;&gt;Tooltip on bottom&lt;/a&gt;
 
   section#popover(mac-scroll-spy-anchor)
@@ -178,7 +178,7 @@ block append content
         mac-popover-direction = "middle right"
         ng-cloak
       ) Open a popover
-    pre.prettyprint.linenums.
+    pre.prettyprint.
       &lt;a mac-popover=&quot;testPopover&quot;&gt;Open test popover&lt;/a&gt;
 
       &lt;mac-popover id=&quot;testPopover&quot; &gt;Open a popover&lt;/mac-popover&gt;
@@ -204,7 +204,7 @@ block append content
         mac-placeholder             = "'Autocomplete'"
         ng-model                    = "autocompleteQuery"
       )
-    pre.prettyprint.linenums.
+    pre.prettyprint.
       &lt;mac-autocomplete
         mac-autocomplete-url=&quot;autocompleteUrl&quot;
         mac-autocomplete-query=&quot;q&quot;
@@ -219,7 +219,7 @@ block append content
         ng-model                = "autocompleteSourceQuery"
         mac-placeholder         = "'Type something...'"
       )
-    pre.prettyprint.linenums.
+    pre.prettyprint.
       &lt;mac-autocomplete
         mac-autocomplete-source=&quot;[\'hello\', \'world\']&quot;
         mac-placeholder=&quot;\'Autocomplete\'&quot;&gt;
@@ -238,7 +238,7 @@ block append content
         mac-tag-autocomplete-placeholder = "tagAutocompletePlaceholder"
         mac-tag-autocomplete-model       = "tagAutocompleteModel"
       )
-    pre.prettyprint.linenums.
+    pre.prettyprint.
       &lt;mac-tag-autocomplete
         mac-tag-autocomplete-url=&quot;autocompleteUrl&quot;
         mac-tag-autocomplete-query=&quot;q&quot;
@@ -258,7 +258,7 @@ block append content
         mac-tag-autocomplete-label       = ""
         mac-tag-autocomplete-disabled    = "true"
       )
-    pre.prettyprint.linenums.
+    pre.prettyprint.
       &lt;mac-tag-autocomplete
         mac-tag-autocomplete-selected=&quot;tagAutocompleteDisabledSelected&quot;
         mac-tag-autocomplete-placeholder=&quot;tagAutocompletePlaceholder&quot;
@@ -281,7 +281,7 @@ block append content
         mac-tag-autocomplete-disabled    = "true"
         mac-tag-autocomplete-model       = "tagAutocompleteModel"
       )
-    pre.prettyprint.linenums.
+    pre.prettyprint.
       &lt;mac-tag-autocomplete
         mac-tag-autocomplete-selected=&quot;tagAutocompleteEvents&quot;
         mac-tag-autocomplete-placeholder=&quot;tagAutocompletePlaceholder&quot;
@@ -304,7 +304,7 @@ block append content
         mac-datepicker-model    = "startDate"
         mac-datepicker-min-date = "minDate"
       )
-    pre.prettyprint.linenums.
+    pre.prettyprint.
       &lt;mac-datepicker mac-datepicker-id=&quot;input-start-date&quot; mac-datepicker-model=&quot;startDate&quot;&gt;&lt;/mac-datepicker&gt;
 
   section#time-input(mac-scroll-spy-anchor)
@@ -316,7 +316,7 @@ block append content
         mac-time-model   = "myStartTime"
         mac-time-default = "11:59 PM"
       )
-    pre.prettyprint.linenums.
+    pre.prettyprint.
       &lt;mac-time
         mac-time-id=&quot;input-start-time&quot;
         mac-time-model=&quot;myStartTime&quot;
@@ -328,7 +328,7 @@ block append content
     h3 Example
     .docs-example
       mac-spinner
-    pre.prettyprint.linenums.
+    pre.prettyprint.
       &lt;mac-spinner&gt;&lt;/mac-spinner&gt;
 
   section#cspinner(mac-scroll-spy-anchor)
@@ -336,7 +336,7 @@ block append content
     h3 Example
     .docs-example
       mac-cspinner
-    pre.prettyprint.linenums.
+    pre.prettyprint.
       &lt;mac-cspinner&gt;&lt;/mac-cspinner&gt;
 
   section#file-upload(mac-scroll-spy-anchor)
@@ -367,7 +367,7 @@ block append content
           img(ng-src="{{previewImage(preview)}}")
           span {{preview.fileName}}
 
-    pre.prettyprint.linenums.
+    pre.prettyprint.
       &lt;input type=&quot;file&quot;
         name=&quot;files[]&quot;
         ng-disabled=&quot;!fileUploaderEnabled&quot;
@@ -391,5 +391,5 @@ block append content
     h3 Example
     .docs-example
       input(type="text", mac-placeholder="tagAutocompletePlaceholder")
-    pre.prettyprint.linenums.
+    pre.prettyprint.
       &lt;input type=&quot;text&quot; mac-placeholder=&quot;placeholderVariable&quot;&gt;
