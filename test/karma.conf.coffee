@@ -79,8 +79,8 @@ module.exports = (config) ->
     logLevel: config.LOG_INFO
     browsers: ["PhantomJS"]
     preprocessors:
-      "../**/*.coffee": "coffee"
-      "**/*.html": "html2js"
+      "../**/*.coffee": ["coffee"]
+      "**/*.html": ["ng-html2js"]
 
     plugins: ["karma-*"]
 
