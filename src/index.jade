@@ -50,12 +50,12 @@ block append nav
     li(mac-scroll-spy-target="cspinner"): a(href="#cspinner")
       i.icon-chevron-right
       | Canvas Spinner
-    li(mac-scroll-spy-target="file-upload"): a(href="#file-upload")
-      i.icon-chevron-right
-      | File Upload
     li(mac-scroll-spy-target="placeholder"): a(href="#placeholder")
       i.icon-chevron-right
       | Placeholder
+    li(mac-scroll-spy-target="file-upload"): a(href="#file-upload")
+      i.icon-chevron-right
+      | File Upload
 
 block append content
   section#modal(mac-scroll-spy-anchor)
@@ -339,53 +339,6 @@ block append content
     pre.prettyprint.
       &lt;mac-cspinner&gt;&lt;/mac-cspinner&gt;
 
-  section#file-upload(mac-scroll-spy-anchor)
-    div.alert.alert-error File upload will be moved to a separate module in v0.3.0.&nbsp;
-      a(href="https://github.com/angular-macgyver/angular-macgyver-upload") New macUpload module can be found here.
-
-    @@include("docs/html/directives/file_upload.html")
-    h3 Example
-    .docs-example.example-hit-area
-      form(action="...", method="post", enctype="multipart/form-data", name="upload-example")
-        span.mac-upload.btn.fileinput-button
-          span Upload
-          input(
-            type                 = "file"
-            name                 = "files[]"
-            multiple
-            mac-upload
-            ng-disabled          = "!fileUploaderEnabled"
-            mac-upload-route     = "uploadRoute"
-            mac-upload-success   = "fileUploadSuccess($data, $status)"
-            mac-upload-error     = "fileUploadError($response, $data, $status)"
-            mac-upload-submit    = "fileUploadSubmit($event, $data)"
-            mac-upload-drop-zone = ".example-hit-area"
-            mac-upload-previews  = "uploadPreviews"
-          )
-      ul
-        li(ng-repeat="preview in uploadPreviews")
-          img(ng-src="{{previewImage(preview)}}")
-          span {{preview.fileName}}
-
-    pre.prettyprint.
-      &lt;input type=&quot;file&quot;
-        name=&quot;files[]&quot;
-        ng-disabled=&quot;!fileUploaderEnabled&quot;
-        multiple=&quot;multiple&quot;
-        mac-upload=&quot;mac-upload&quot;
-        mac-upload-route=&quot;uploadRoute&quot;
-        mac-upload-success=&quot;fileUploadSuccess($data, $status)&quot;
-        mac-upload-error=&quot;fileUploadError($response, $data, $status)&quot;
-        mac-upload-submit=&quot;fileUploadSubmit($event, $data)&quot;
-        mac-upload-drop-zone=&quot;.example-hit-area&quot;
-        mac-upload-previews=&quot;uploadPreviews&quot;/&gt;
-      &lt;ul&gt;
-        &lt;li ng-repeat=&quot;preview in uploadPreviews&quot;&gt;
-          &lt;img ng-src=&quot;{{previewImage(preview)}}&quot;/&gt;
-          &lt;span&gt;{{preview.fileName}}&lt;/span&gt;
-        &lt;/li&gt;
-      &lt;/ul&gt;
-
   section#placeholder(mac-scroll-spy-anchor)
     @@include("docs/html/directives/placeholder.html")
     h3 Example
@@ -393,3 +346,8 @@ block append content
       input(type="text", mac-placeholder="tagAutocompletePlaceholder")
     pre.prettyprint.
       &lt;input type=&quot;text&quot; mac-placeholder=&quot;placeholderVariable&quot;&gt;
+
+  section#file-upload(mac-scroll-spy-anchor)
+    h1#file-upload File upload
+    .alert.alert-warning File upload has been moved to a separate module.&nbsp;
+      a(href="https://github.com/angular-macgyver/angular-macgyver-upload") Module can be found here

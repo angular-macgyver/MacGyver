@@ -51,12 +51,6 @@
     "vendor/bower/jquery.ui/ui/jquery.ui.datepicker.js",
     "tmp/app/directives/datepicker.js"
   ],
-  "fileupload": [
-    "vendor/bower/jquery.ui/ui/jquery.ui.core.js",
-    "vendor/bower/jquery.ui/ui/jquery.ui.widget.js",
-    "vendor/bower/jquery-file-upload/js/jquery.fileupload.js",
-    "tmp/app/directives/file_upload.js"
-  ],
   "jqueryui": [
     "vendor/bower/jquery.ui/ui/jquery.ui.core.js",
     "vendor/bower/jquery.ui/ui/jquery.ui.widget.js",
@@ -85,9 +79,6 @@
       "vendor/css/jquery-ui-1.10.0.custom.css",
       "tmp/css/mac-table-themes.css",
       "tmp/css/table_view.css"
-    ],
-    "fileupload": [
-      "tmp/css/file_upload.css"
     ],
     "datepicker": [
       "vendor/css/jquery-ui-1.10.0.custom.css",
