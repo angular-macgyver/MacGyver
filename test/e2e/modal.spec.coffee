@@ -18,7 +18,7 @@ describe "Mac Modal e2e test", ->
     browser.sleep 500
 
     modal    = element(By.id("test-modal"))
-    closeBtn = element(By.css("#test-modal .close-modal"))
+    closeBtn = element(By.css("#test-modal .mac-close-modal"))
 
     closeBtn.click()
 
