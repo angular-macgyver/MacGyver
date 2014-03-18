@@ -3,6 +3,7 @@
 set -e
 
 if [ $JOB = "unit" ]; then
+  grunt jade
   grunt test:unit
 elif [ $JOB = "e2e" ]; then
   grunt test:e2e --sauceUser=$SAUCE_USERNAME \
