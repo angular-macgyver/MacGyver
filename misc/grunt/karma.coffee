@@ -20,7 +20,7 @@ module.exports = (grunt) ->
           "../vendor/bower/jquery/jquery.js"
           "../vendor/bower/angular/angular.js"
           "template/*.html"
-          "../lib/macgyver-*.js"
+          "../lib/macgyver.js"
           "../vendor/bower/angular-mocks/angular-mocks.js"
           "../test/vendor/browserTrigger.js"
           "../test/unit/*.spec.coffee"
