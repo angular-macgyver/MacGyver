@@ -189,6 +189,7 @@ describe "Mac modal", ->
       expect($rootScope.afterHide).not.toHaveBeenCalled()
 
       modal.hide()
+      $timeout.flush()
 
       expect($rootScope.afterHide).toHaveBeenCalled()
 
