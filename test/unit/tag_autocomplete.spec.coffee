@@ -20,7 +20,7 @@ describe "Mac tag autocomplete", ->
       element = $compile("<mac-tag-autocomplete></mac-tag-autocomplete>") $rootScope
       $rootScope.$digest()
 
-      expect(element.hasClass("mac-tag-autocomplete")).toBe true
+      expect(element.hasClass("mac-tag-autocomplete")).toBeTruthy()
 
     it "should set default value and label attribute on mac-autocomplete", ->
       element = $compile("<mac-tag-autocomplete></mac-tag-autocomplete>") $rootScope
@@ -93,7 +93,7 @@ describe "Mac tag autocomplete", ->
       element.click()
 
       textInput = $(".mac-autocomplete", element)
-      expect(textInput.is(":focus")).toBe true
+      expect(textInput.is(":focus")).toBeTruthy()
 
     it "should model -> view", ->
       element = $compile("<mac-tag-autocomplete mac-tag-autocomplete-model='model'></mac-tag-autocomplete>") $rootScope
@@ -107,8 +107,7 @@ describe "Mac tag autocomplete", ->
 
   describe "binding events", ->
     it "should bind events to autocomplete", ->
-      called           = false
-      $rootScope.keyup = -> called = true
+      $rootScope.keyup = jasmine.createSpy "keyup"
 
       element = $compile("<mac-tag-autocomplete mac-tag-autocomplete-events='keyup' mac-tag-autocomplete-on-keyup='keyup()'></mac-tag-autocomplete>") $rootScope
       $rootScope.$digest()
@@ -117,7 +116,7 @@ describe "Mac tag autocomplete", ->
       textInput = $(".mac-autocomplete", element)
       textInput.trigger "keyup", keyCode: keys.A
 
-      expect(called).toBe true
+      expect($rootScope.keyup).toHaveBeenCalled()
 
   describe "selected variable", ->
     it "should filter out used tags", ->
@@ -183,8 +182,7 @@ describe "Mac tag autocomplete", ->
 
   describe "onKeyDown", ->
     it "should fire keydown callback", ->
-      called             = false
-      $rootScope.keydown = -> called = true
+      $rootScope.keydown = jasmine.createSpy "keydown"
 
       element = $compile("<mac-tag-autocomplete mac-tag-autocomplete-on-keydown='keydown()'></mac-tag-autocomplete>") $rootScope
       $rootScope.$digest()
@@ -192,7 +190,7 @@ describe "Mac tag autocomplete", ->
       textInput = $(".mac-autocomplete", element)
       browserTrigger textInput, "keydown"
 
-      expect(called).toBe true
+      expect($rootScope.keydown).toHaveBeenCalled()
 
     it "should remove the last tag", ->
       called              = false
@@ -240,4 +238,4 @@ describe "Mac tag autocomplete", ->
 
       $timeout.flush()
 
-      expect(called).toBe true
+      expect(called).toBeTruthy()
