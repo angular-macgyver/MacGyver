@@ -130,6 +130,7 @@ describe "Mac modal", ->
       modalElement      = $compile("<mac-modal id='test-modal' mac-modal-open='opened()'></mac-modal>") $rootScope
       $rootScope.$digest()
 
+      expect(opened).toBe false
       modal.show "test-modal"
       $timeout.flush()
 
@@ -139,6 +140,8 @@ describe "Mac modal", ->
       $rootScope.beforeShow = jasmine.createSpy "beforeShow"
       modalElement          = $compile("<mac-modal id='test-modal' mac-modal-before-show='beforeShow()'></mac-modal>") $rootScope
       $rootScope.$digest()
+
+      expect($rootScope.beforeShow).not.toHaveBeenCalled()
 
       modal.show "test-modal"
       $timeout.flush()
@@ -150,6 +153,8 @@ describe "Mac modal", ->
       modalElement         = $compile("<mac-modal id='test-modal' mac-modal-after-show='afterShow()'></mac-modal>") $rootScope
       $rootScope.$digest()
 
+      expect($rootScope.afterShow).not.toHaveBeenCalled()
+
       modal.show "test-modal"
       $timeout.flush()
 
@@ -160,7 +165,12 @@ describe "Mac modal", ->
       modalElement          = $compile("<mac-modal id='test-modal' mac-modal-before-hide='beforeHide()'></mac-modal>") $rootScope
       $rootScope.$digest()
 
+      expect($rootScope.beforeHide).not.toHaveBeenCalled()
+
       modal.show "test-modal"
+
+      expect($rootScope.beforeHide).not.toHaveBeenCalled()
+
       $timeout.flush()
       modal.hide()
 
@@ -171,8 +181,13 @@ describe "Mac modal", ->
       modalElement         = $compile("<mac-modal id='test-modal' mac-modal-after-hide='afterHide()'></mac-modal>") $rootScope
       $rootScope.$digest()
 
+      expect($rootScope.afterHide).not.toHaveBeenCalled()
+
       modal.show "test-modal"
       $timeout.flush()
+
+      expect($rootScope.afterHide).not.toHaveBeenCalled()
+
       modal.hide()
 
       expect($rootScope.afterHide).toHaveBeenCalled()
