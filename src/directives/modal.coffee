@@ -43,15 +43,13 @@ angular.module("Mac").directive("macModal", [
           if angular.element($event.target).hasClass("modal-overlay")
             $scope.$apply -> modal.hide()
 
-      for callback in ["beforeShow", "afterShow", "beforeHide", "afterHide"]
-        key = "macModal#{util.capitalize(callback)}"
-        if attrs[key]? and attrs[key]
-          opts[callback] = $parse(attrs[key]) $scope
+      for callback in ["beforeShow", "afterShow", "beforeHide", "afterHide", "open"]
+        key            = "macModal#{util.capitalize(callback)}"
+        opts[callback] = $parse(attrs[key]) or angular.noop
 
       registerModal = (id) ->
         if id? and id
-          regId     = id
-          opts.open = $parse(attrs.macModalOpen)($scope)
+          regId = id
           modal.register id, element, opts
 
       if attrs.id

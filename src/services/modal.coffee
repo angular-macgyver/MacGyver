@@ -75,29 +75,30 @@ angular.module("Mac").service("modal", [
       else if @registered[id]?
         modalObject = @registered[id]
         options     = modalObject.options
+        showOptions = {}
 
         # Extend options from trigger with modal options
-        angular.extend options, triggerOptions
-
-        options.beforeShow?()
+        angular.extend showOptions, options, triggerOptions
 
         showModal = (element) =>
+          showOptions.beforeShow element.scope()
+
           $animate.removeClass element, "hide", =>
             $animate.addClass element, "visible", =>
 
               # Update opened modal object
-              @opened = {id, element, options}
+              @opened = {id, element, options: showOptions}
               @resize @opened
               @bindingEvents()
 
-              options.open?()
-              options.afterShow?()
+              showOptions.open element.scope()
+              showOptions.afterShow element.scope()
 
               $rootScope.$broadcast "modalWasShown", id
               @clearWaiting()
 
         # if modal is created thru module method "modal"
-        if options.moduleMethod?
+        if showOptions.moduleMethod?
           renderModal = (template) =>
             # Scope allows either a scope or an object:
             # - Scope - Use the scope to compile modal
@@ -105,28 +106,28 @@ angular.module("Mac").service("modal", [
             # scope with data being passed in
             #
             # Use the scope passed in
-            if isScope(options.scope)
-              viewScope = options.scope
+            if isScope(showOptions.scope)
+              viewScope = showOptions.scope
 
             # Create an isolated scope and extend scope with value pass in
             else
               viewScope = $rootScope.$new(true)
-              if angular.isObject options.scope
-                angular.extend viewScope, options.scope
+              if angular.isObject showOptions.scope
+                angular.extend viewScope, showOptions.scope
 
-            angular.extend options.attributes, {id}
-            element = angular.element(@modalTemplate).attr options.attributes
+            angular.extend showOptions.attributes, {id}
+            element = angular.element(@modalTemplate).attr showOptions.attributes
             wrapper = angular.element(
               element[0].getElementsByClassName("modal-content-wrapper")
             )
             wrapper.html template
 
-            if options.overlayClose
+            if showOptions.overlayClose
               element.bind "click", ($event) =>
                 if angular.element($event.target).hasClass("modal-overlay")
                   viewScope.$apply => @hide()
 
-            if options.controller
+            if showOptions.controller
               # Modal controller has the following locals:
               # - $scope - Current scope associated with the element
               # - $element - Current modal element
@@ -134,17 +135,17 @@ angular.module("Mac").service("modal", [
               #
               # macModalOptions is added to give user more information in the
               # controller when compiling modal
-              $controller options.controller,
+              $controller showOptions.controller,
                 $scope:          viewScope
                 $element:        element
-                macModalOptions: options
+                macModalOptions: showOptions
 
             $animate.enter element, angular.element(document.body)
             $compile(element) viewScope
 
             showModal element
 
-          if (path = options.templateUrl)
+          if (path = showOptions.templateUrl)
             template = $templateCache.get path
             if template
               renderModal template
@@ -154,7 +155,7 @@ angular.module("Mac").service("modal", [
                 renderModal resp.data
               , ->
                 throw Error("Failed to load template: #{path}")
-          else if (template = options.template)
+          else if (template = showOptions.template)
             renderModal template
 
         # modal created using modal directive
@@ -204,7 +205,7 @@ angular.module("Mac").service("modal", [
       return unless @opened?
 
       {id, options, element} = @opened
-      options.beforeHide?()
+      options.beforeHide element.scope()
 
       $animate.removeClass element, "visible", =>
         @bindingEvents "unbind"
@@ -220,7 +221,7 @@ angular.module("Mac").service("modal", [
         else
           $animate.addClass element, "hide"
 
-        options.afterHide?()
+        options.afterHide element.scope()
 
         $rootScope.$broadcast "modalWasHidden", id
 
@@ -253,7 +254,10 @@ angular.module("Mac").service("modal", [
       if @registered[id]?
         throw new Error "Modal #{id} already registered"
 
-      @registered[id] = {id, element, options}
+      modalOpts = {}
+      angular.extend modalOpts, modalViews.defaults, options
+
+      @registered[id] = {id, element, options: modalOpts}
 
       if @waiting? and @waiting.id is id
         @show id, @waiting.options
