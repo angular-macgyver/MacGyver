@@ -8744,18 +8744,15 @@ angular.module("Mac").directive("macModal", [
             }
           });
         }
-        _ref = ["beforeShow", "afterShow", "beforeHide", "afterHide"];
+        _ref = ["beforeShow", "afterShow", "beforeHide", "afterHide", "open"];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           callback = _ref[_i];
           key = "macModal" + (util.capitalize(callback));
-          if ((attrs[key] != null) && attrs[key]) {
-            opts[callback] = $parse(attrs[key])($scope);
-          }
+          opts[callback] = $parse(attrs[key]) || angular.noop;
         }
         registerModal = function(id) {
           if ((id != null) && id) {
             regId = id;
-            opts.open = $parse(attrs.macModalOpen)($scope);
             return modal.register(id, element, opts);
           }
         };
@@ -11226,7 +11223,7 @@ angular.module("Mac").service("modal", [
       opened: null,
       modalTemplate: "<div class=\"modal-overlay hide\">\n  <div class=\"modal\">\n    <a mac-modal-close class=\"close-modal\"></a>\n    <div class=\"modal-content-wrapper\"></div>\n  </div>\n</div>",
       show: function(id, triggerOptions) {
-        var modalObject, options, path, renderModal, showModal, template,
+        var modalObject, options, path, renderModal, showModal, showOptions, template,
           _this = this;
         if (triggerOptions == null) {
           triggerOptions = {};
@@ -11236,49 +11233,44 @@ angular.module("Mac").service("modal", [
         } else if (this.registered[id] != null) {
           modalObject = this.registered[id];
           options = modalObject.options;
-          angular.extend(options, triggerOptions);
-          if (typeof options.beforeShow === "function") {
-            options.beforeShow();
-          }
+          showOptions = {};
+          angular.extend(showOptions, options, triggerOptions);
           showModal = function(element) {
+            showOptions.beforeShow(element.scope());
             return $animate.removeClass(element, "hide", function() {
               return $animate.addClass(element, "visible", function() {
                 _this.opened = {
                   id: id,
                   element: element,
-                  options: options
+                  options: showOptions
                 };
                 _this.resize(_this.opened);
                 _this.bindingEvents();
-                if (typeof options.open === "function") {
-                  options.open();
-                }
-                if (typeof options.afterShow === "function") {
-                  options.afterShow();
-                }
+                showOptions.open(element.scope());
+                showOptions.afterShow(element.scope());
                 $rootScope.$broadcast("modalWasShown", id);
                 return _this.clearWaiting();
               });
             });
           };
-          if (options.moduleMethod != null) {
+          if (showOptions.moduleMethod != null) {
             renderModal = function(template) {
               var element, viewScope, wrapper;
-              if (isScope(options.scope)) {
-                viewScope = options.scope;
+              if (isScope(showOptions.scope)) {
+                viewScope = showOptions.scope;
               } else {
                 viewScope = $rootScope.$new(true);
-                if (angular.isObject(options.scope)) {
-                  angular.extend(viewScope, options.scope);
+                if (angular.isObject(showOptions.scope)) {
+                  angular.extend(viewScope, showOptions.scope);
                 }
               }
-              angular.extend(options.attributes, {
+              angular.extend(showOptions.attributes, {
                 id: id
               });
-              element = angular.element(_this.modalTemplate).attr(options.attributes);
+              element = angular.element(_this.modalTemplate).attr(showOptions.attributes);
               wrapper = angular.element(element[0].getElementsByClassName("modal-content-wrapper"));
               wrapper.html(template);
-              if (options.overlayClose) {
+              if (showOptions.overlayClose) {
                 element.bind("click", function($event) {
                   if (angular.element($event.target).hasClass("modal-overlay")) {
                     return viewScope.$apply(function() {
@@ -11287,18 +11279,18 @@ angular.module("Mac").service("modal", [
                   }
                 });
               }
-              if (options.controller) {
-                $controller(options.controller, {
+              if (showOptions.controller) {
+                $controller(showOptions.controller, {
                   $scope: viewScope,
                   $element: element,
-                  macModalOptions: options
+                  macModalOptions: showOptions
                 });
               }
               $animate.enter(element, angular.element(document.body));
               $compile(element)(viewScope);
               return showModal(element);
             };
-            if ((path = options.templateUrl)) {
+            if ((path = showOptions.templateUrl)) {
               template = $templateCache.get(path);
               if (template) {
                 return renderModal(template);
@@ -11310,7 +11302,7 @@ angular.module("Mac").service("modal", [
                   throw Error("Failed to load template: " + path);
                 });
               }
-            } else if ((template = options.template)) {
+            } else if ((template = showOptions.template)) {
               return renderModal(template);
             }
           } else if (modalObject.element != null) {
@@ -11359,9 +11351,7 @@ angular.module("Mac").service("modal", [
           return;
         }
         _ref = this.opened, id = _ref.id, options = _ref.options, element = _ref.element;
-        if (typeof options.beforeHide === "function") {
-          options.beforeHide();
-        }
+        options.beforeHide(element.scope());
         return $animate.removeClass(element, "visible", function() {
           _this.bindingEvents("unbind");
           _this.opened = null;
@@ -11373,9 +11363,7 @@ angular.module("Mac").service("modal", [
           } else {
             $animate.addClass(element, "hide");
           }
-          if (typeof options.afterHide === "function") {
-            options.afterHide();
-          }
+          options.afterHide(element.scope());
           $rootScope.$broadcast("modalWasHidden", id);
           return callback && callback();
         });
@@ -11406,13 +11394,16 @@ angular.module("Mac").service("modal", [
         }
       },
       register: function(id, element, options) {
+        var modalOpts;
         if (this.registered[id] != null) {
           throw new Error("Modal " + id + " already registered");
         }
+        modalOpts = {};
+        angular.extend(modalOpts, modalViews.defaults, options);
         this.registered[id] = {
           id: id,
           element: element,
-          options: options
+          options: modalOpts
         };
         if ((this.waiting != null) && this.waiting.id === id) {
           return this.show(id, this.waiting.options);

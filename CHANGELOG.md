@@ -1,3 +1,10 @@
+# v0.2.7 (2014/3/26)
+## Bug Fixes
+- **macModal:** Fixed modal callbacks firing on page loads
+  ([240a7afb](https://github.com/StartTheShift/MacGyver/commit/240a7afbd5d1cc11a5d5c3d20da356a6dfd6f763),
+   [#162](https://github.com/StartTheShift/MacGyver/issues/162))
+
+
 # v0.2.6 (2014/3/14)
 ## Bug Fixes
 - **macModal:** Fixed not able to close modal when clicking on overlay
