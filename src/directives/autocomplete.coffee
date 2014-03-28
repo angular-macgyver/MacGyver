@@ -77,7 +77,7 @@ angular.module("Mac").directive "macAutocomplete", [
       $menuScope.items = []
       $menuScope.index = 0
 
-      menuEl = angular.element("<mac-menu></mac-menu>")
+      menuEl = angular.element(document.createElement("mac-menu"))
       menuEl.attr
         "mac-menu-items":  "items"
         "mac-menu-style":  "style"
