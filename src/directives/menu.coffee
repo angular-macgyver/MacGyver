@@ -62,9 +62,8 @@ angular.module("Mac").directive("macMenu", [
 directive("macMenuTransclude", [
   "$compile"
   ($compile) ->
-    require: ["^macMenu"]
-    link:    ($scope, element, attrs, ctrls, transclude) ->
-      transclude (clone) ->
+    link: ($scope, element, attrs, ctrls, transclude) ->
+      transclude $scope, (clone) ->
         element.empty()
         if clone.length is 0
           clone = $compile("<span>{{item.label}}</span>") $scope
