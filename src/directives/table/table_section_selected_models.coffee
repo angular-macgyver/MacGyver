@@ -171,6 +171,16 @@ angular.module("Mac").directive "macTableSelectable", [
       controllers[2].parentController = controllers[1]
 
       $element.on "click", (event) ->
+        # Cancel select if select evaluates to false
         return unless $scope.$eval $attrs.macTableSelectable
+
+        # Cancel select if the user is selecting text on this element
+        if $window.getSelection
+          selection = $window.getSelection()
+        else if $document.selection
+          selection = $document.selection.createRange()
+
+        return if selection.toString()
+
         controllers[2].selectRow($scope.row)
 ]
