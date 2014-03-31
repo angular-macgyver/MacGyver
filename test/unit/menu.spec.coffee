@@ -14,6 +14,21 @@ describe "Mac menu", ->
     $compile   = _$compile_
     $rootScope = _$rootScope_
 
+  describe "templating", ->
+    it "should use default template", ->
+      $rootScope.items = items
+      element = $compile("<mac-menu mac-menu-items='items'></mac-menu>") $rootScope
+      $rootScope.$digest()
+
+      expect($($(".mac-menu-item", element)[0]).text()).toBe "item1"
+
+    it "should use custom template", ->
+      $rootScope.items = items
+      element = $compile("<mac-menu mac-menu-items='items'><span>{{item.label}} {{$index}}</span></mac-menu>") $rootScope
+      $rootScope.$digest()
+
+      expect($($(".mac-menu-item", element)[0]).text()).toBe "item1 0"
+
   it "should show three items", ->
     $rootScope.items = items
     element = $compile("<mac-menu mac-menu-items='items'></mac-menu>") $rootScope

@@ -5,6 +5,20 @@
 @description
 A directive for creating a menu with multiple items
 
+Since macMenu is using ngRepeat, some ngRepeat properities along with `item` are exposed on the local scope of each template instance, including:
+
+| Variable  | Type    | Details                                                                     |
+|-----------|---------|-----------------------------------------------------------------------------|
+| `$index`  | Number  | iterator offset of the repeated element (0..length-1)                       |
+| `$first`  | Boolean | true if the repeated element is first in the iterator.                      |
+| `$middle` | Boolean | true if the repeated element is between the first and last in the iterator. |
+| `$last`   | Boolean | true if the repeated element is last in the iterator.                       |
+| `$even`   | Boolean | true if the iterator position `$index` is even (otherwise false).           |
+| `$odd`    | Boolean | true if the iterator position `$index` is odd (otherwise false).            |
+| `item`    | Object  | item object                                                                 |
+
+Template default to `item.label` if not defined
+
 @param {Expression} mac-menu-items List of items to display in the menu
         Each item should have a `label` key as display text
 @param {Function} mac-menu-select Callback on select
@@ -13,11 +27,13 @@ A directive for creating a menu with multiple items
 @param {Expression} mac-menu-index Index of selected item
 ###
 
-angular.module("Mac").directive "macMenu", [
+angular.module("Mac").directive("macMenu", [
   ->
     restrict:    "EA"
     replace:     true
     templateUrl: "template/menu.html"
+    transclude:  true
+    controller:  angular.noop
     scope:
       items:  "=macMenuItems"
       style:  "=macMenuStyle"
@@ -38,4 +54,19 @@ angular.module("Mac").directive "macMenu", [
       if attrs.macMenuIndex?
         $scope.$watch "pIndex", (value) ->
           $scope.index = parseInt(value)
-]
+]).
+
+#
+# INFO: Used internally by mac-menu
+#
+directive("macMenuTransclude", [
+  "$compile"
+  ($compile) ->
+    require: ["^macMenu"]
+    link:    ($scope, element, attrs, ctrls, transclude) ->
+      transclude (clone) ->
+        element.empty()
+        if clone.length is 0
+          clone = $compile("<span>{{item.label}}</span>") $scope
+        element.append clone
+])
