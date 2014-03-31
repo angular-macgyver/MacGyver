@@ -3,6 +3,20 @@ Menu
 ===
 A directive for creating a menu with multiple items  
   
+Since macMenu is using ngRepeat, some ngRepeat properities along with `item` are exposed on the local scope of each template instance, including:  
+  
+| Variable  | Type    | Details                                                                     |  
+|-----------|---------|-----------------------------------------------------------------------------|  
+| `$index`  | Number  | iterator offset of the repeated element (0..length-1)                       |  
+| `$first`  | Boolean | true if the repeated element is first in the iterator.                      |  
+| `$middle` | Boolean | true if the repeated element is between the first and last in the iterator. |  
+| `$last`   | Boolean | true if the repeated element is last in the iterator.                       |  
+| `$even`   | Boolean | true if the iterator position `$index` is even (otherwise false).           |  
+| `$odd`    | Boolean | true if the iterator position `$index` is odd (otherwise false).            |  
+| `item`    | Object  | item object                                                                 |  
+  
+Template default to `item.label` if not defined  
+  
   
 ### Parameters
 **mac-menu-items**  
