@@ -32,6 +32,13 @@ section h1{padding-bottom:9px;margin:20px 0;border-bottom:1px solid #eee}
 .footer .footer-links li{display:inline;padding:0 2px;}
 .footer .footer-links li:first-child{padding-left:0}
 .mac-tag-autocomplete{width:100%}
+table{padding:0;}
+table tr{border-top:1px solid #ccc;background-color:#fff;margin:0;padding:0;}
+table tr:nth-child(2n){background-color:#f8f8f8}
+table tr th{font-weight:bold;border:1px solid #ccc;text-align:left;margin:0;padding:6px 13px}
+table tr td{border:1px solid #ccc;text-align:left;margin:0;padding:6px 13px}
+table tr th:first-child,table tr td:first-child{margin-top:0}
+table tr th:last-child,table tr td:last-child{margin-bottom:0}
 .com{color:#93a1a1}
 .lit{color:#195f91}
 .pun,.opn,.clo{color:#93a1a1}

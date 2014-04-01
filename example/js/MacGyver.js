@@ -7519,9 +7519,10 @@ angular.module("Mac").directive("macAutocomplete", [
     return {
       restrict: "EA",
       templateUrl: "template/autocomplete.html",
+      transclude: true,
       replace: true,
       require: "ngModel",
-      link: function($scope, element, attrs, ctrl) {
+      link: function($scope, element, attrs, ctrl, transclude) {
         var $menuScope, appendMenu, autocompleteUrl, clickHandler, currentAutocomplete, delay, disabled, getData, inside, labelKey, menuEl, onError, onSelect, onSelectBool, onSuccess, positionMenu, queryData, queryKey, reset, source, timeoutId, updateItem;
         labelKey = attrs.macAutocompleteLabel || "name";
         queryKey = attrs.macAutocompleteQuery || "q";
@@ -7539,12 +7540,15 @@ angular.module("Mac").directive("macAutocomplete", [
         $menuScope = $rootScope.$new(true);
         $menuScope.items = [];
         $menuScope.index = 0;
-        menuEl = angular.element("<mac-menu></mac-menu>");
+        menuEl = angular.element(document.createElement("mac-menu"));
         menuEl.attr({
           "mac-menu-items": "items",
           "mac-menu-style": "style",
           "mac-menu-select": "select(index)",
           "mac-menu-index": "index"
+        });
+        transclude($menuScope, function(clone) {
+          return menuEl.append(clone);
         });
         $compile(menuEl)($menuScope);
         ctrl.$parsers.push(function(value) {
@@ -8660,6 +8664,20 @@ angular.module("Mac").factory("keys", function() {
 @description
 A directive for creating a menu with multiple items
 
+Since macMenu is using ngRepeat, some ngRepeat properities along with `item` are exposed on the local scope of each template instance, including:
+
+| Variable  | Type    | Details                                                                     |
+|-----------|---------|-----------------------------------------------------------------------------|
+| `$index`  | Number  | iterator offset of the repeated element (0..length-1)                       |
+| `$first`  | Boolean | true if the repeated element is first in the iterator.                      |
+| `$middle` | Boolean | true if the repeated element is between the first and last in the iterator. |
+| `$last`   | Boolean | true if the repeated element is last in the iterator.                       |
+| `$even`   | Boolean | true if the iterator position `$index` is even (otherwise false).           |
+| `$odd`    | Boolean | true if the iterator position `$index` is odd (otherwise false).            |
+| `item`    | Object  | item object                                                                 |
+
+Template default to `item.label` if not defined
+
 @param {Expression} mac-menu-items List of items to display in the menu
         Each item should have a `label` key as display text
 @param {Function} mac-menu-select Callback on select
@@ -8674,6 +8692,8 @@ angular.module("Mac").directive("macMenu", [
       restrict: "EA",
       replace: true,
       templateUrl: "template/menu.html",
+      transclude: true,
+      controller: angular.noop,
       scope: {
         items: "=macMenuItems",
         style: "=macMenuStyle",
@@ -8697,6 +8717,20 @@ angular.module("Mac").directive("macMenu", [
             return $scope.index = parseInt(value);
           });
         }
+      }
+    };
+  }
+]).directive("macMenuTransclude", [
+  "$compile", function($compile) {
+    return {
+      link: function($scope, element, attrs, ctrls, transclude) {
+        return transclude($scope, function(clone) {
+          element.empty();
+          if (clone.length === 0) {
+            clone = $compile("<span>{{item.label}}</span>")($scope);
+          }
+          return element.append(clone);
+        });
       }
     };
   }
@@ -9897,7 +9931,16 @@ angular.module("Mac").directive("macTableSelectable", [
       link: function($scope, $element, $attrs, controllers) {
         controllers[2].parentController = controllers[1];
         return $element.on("click", function(event) {
+          var selection;
           if (!$scope.$eval($attrs.macTableSelectable)) {
+            return;
+          }
+          if ($window.getSelection) {
+            selection = $window.getSelection();
+          } else if ($document.selection) {
+            selection = $document.selection.createRange();
+          }
+          if (selection.toString()) {
             return;
           }
           return controllers[2].selectRow($scope.row);
