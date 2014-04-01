@@ -15,6 +15,13 @@ Since macMenu is using ngRepeat, some ngRepeat properities along with `item` are
 | `$odd`    | Boolean | true if the iterator position `$index` is odd (otherwise false).            |  
 | `item`    | Object  | item object                                                                 |  
   
+To use custom templating  
+```  
+<mac-menu>  
+  <span> { {item.label}} </span>  
+</mac-menu>  
+```  
+  
 Template default to `item.label` if not defined  
   
   

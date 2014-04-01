@@ -1,5 +1,57 @@
 <h1 id="autocomplete">Autocomplete</h1>
 <p>A directive for providing suggestions while typing into the field  </p>
+<p>Autocomplete allows for custom html templating in the dropdown and some properpities are exposed on the local scope on each template instance, including:  </p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Type</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$index</code></td>
+<td>Number</td>
+<td>iterator offset of the repeated element (0..length-1)</td>
+</tr>
+<tr>
+<td><code>$first</code></td>
+<td>Boolean</td>
+<td>true if the repeated element is first in the iterator.</td>
+</tr>
+<tr>
+<td><code>$middle</code></td>
+<td>Boolean</td>
+<td>true if the repeated element is between the first and last in the iterator.</td>
+</tr>
+<tr>
+<td><code>$last</code></td>
+<td>Boolean</td>
+<td>true if the repeated element is last in the iterator.</td>
+</tr>
+<tr>
+<td><code>$even</code></td>
+<td>Boolean</td>
+<td>true if the iterator position <code>$index</code> is even (otherwise false).</td>
+</tr>
+<tr>
+<td><code>$odd</code></td>
+<td>Boolean</td>
+<td>true if the iterator position <code>$index</code> is odd (otherwise false).</td>
+</tr>
+<tr>
+<td><code>item</code></td>
+<td>Object</td>
+<td>item object with <code>value</code> and <code>label</code> if label-key is set</td>
+</tr>
+</tbody>
+</table>
+<p>To use custom templating  </p>
+<pre><code>&lt;mac-autocomplete mac-autocomplete-url=&quot;someUrl&quot; ng-model=&quot;model&quot;&gt;  
+  &lt;span&gt; { {item.label}} &lt;/span&gt;  
+&lt;/mac-autocomplete&gt;</code></pre>
+<p>Template default to <code>item.label</code> if not defined  </p>
 <h3 id="dependencies">Dependencies</h3>
 <ul>
 <li>mac-menu  </li>

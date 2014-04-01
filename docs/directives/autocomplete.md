@@ -3,6 +3,27 @@ Autocomplete
 ===
 A directive for providing suggestions while typing into the field  
   
+Autocomplete allows for custom html templating in the dropdown and some properpities are exposed on the local scope on each template instance, including:  
+  
+| Variable  | Type    | Details                                                                     |  
+|-----------|---------|-----------------------------------------------------------------------------|  
+| `$index`  | Number  | iterator offset of the repeated element (0..length-1)                       |  
+| `$first`  | Boolean | true if the repeated element is first in the iterator.                      |  
+| `$middle` | Boolean | true if the repeated element is between the first and last in the iterator. |  
+| `$last`   | Boolean | true if the repeated element is last in the iterator.                       |  
+| `$even`   | Boolean | true if the iterator position `$index` is even (otherwise false).           |  
+| `$odd`    | Boolean | true if the iterator position `$index` is odd (otherwise false).            |  
+| `item`    | Object  | item object with `value` and `label` if label-key is set                    |  
+  
+To use custom templating  
+```  
+<mac-autocomplete mac-autocomplete-url="someUrl" ng-model="model">  
+  <span> { {item.label}} </span>  
+</mac-autocomplete>  
+```  
+  
+Template default to `item.label` if not defined  
+  
   
 ### Dependencies
 - mac-menu  
