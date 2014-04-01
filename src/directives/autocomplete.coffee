@@ -50,10 +50,11 @@ angular.module("Mac").directive "macAutocomplete", [
   ($animate, $http, $filter, $compile, $timeout, $parse, $rootScope, $document, keys) ->
     restrict:    "EA"
     templateUrl: "template/autocomplete.html"
+    transclude:  true
     replace:     true
     require:     "ngModel"
 
-    link: ($scope, element, attrs, ctrl) ->
+    link: ($scope, element, attrs, ctrl, transclude) ->
       labelKey = attrs.macAutocompleteLabel  or "name"
       queryKey = attrs.macAutocompleteQuery  or "q"
       delay    = +(attrs.macAutocompleteDelay or 800)
@@ -83,6 +84,9 @@ angular.module("Mac").directive "macAutocomplete", [
         "mac-menu-style":  "style"
         "mac-menu-select": "select(index)"
         "mac-menu-index":  "index"
+
+      transclude $menuScope, (clone) -> menuEl.append(clone)
+
       # Precompile menu element
       $compile(menuEl) $menuScope
 
