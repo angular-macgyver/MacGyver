@@ -1,3 +1,21 @@
+# v0.2.8 (2014/3/31)
+## Bug Fixes
+- **macMenu:** Fixed how custom menu template getting transcluded
+  ([385a4149](https://github.com/StartTheShift/MacGyver/commit/385a41492bdd9d5f489a3cc75ee06b739ad45068))
+
+## Features
+- **macAutocomplete:** Allow custom html templating for dropdown
+  ([190ad2b5](https://github.com/StartTheShift/MacGyver/commit/190ad2b5add21f5414258732ee1c5eaf3a7ff41b))
+- **macMenu:** Allow for custom html templating for each item
+  ([bf1dcfe6](https://github.com/StartTheShift/MacGyver/commit/bf1dcfe6e9e0873d7bb4a2ac0b2eb3bec88b1b28))
+- **macTableSelectable:** Differentiate between click and text selection
+  ([645443d4](https://github.com/StartTheShift/MacGyver/commit/645443d4b442d1b4a64f3967ba28f43390ea4ba4))
+
+## Optimizations
+- **macAutocomplete:** Switched to createElement instead of jq/jqlite creating `mac-menu`
+  ([c1ba7b09](https://github.com/StartTheShift/MacGyver/commit/c1ba7b09d7926c19eed28ba4ed479683aa7b48d9))
+
+
 # v0.2.7 (2014/3/26)
 ## Bug Fixes
 - **macModal:** Fixed modal callbacks firing on page loads
