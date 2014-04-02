@@ -3,7 +3,7 @@ Autocomplete
 ===
 A directive for providing suggestions while typing into the field  
   
-Autocomplete allows for custom html templating in the dropdown and some properpities are exposed on the local scope on each template instance, including:  
+Autocomplete allows for custom html templating in the dropdown and some properties are exposed on the local scope on each template instance, including:  
   
 | Variable  | Type    | Details                                                                     |  
 |-----------|---------|-----------------------------------------------------------------------------|  

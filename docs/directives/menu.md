@@ -3,7 +3,9 @@ Menu
 ===
 A directive for creating a menu with multiple items  
   
-Since macMenu is using ngRepeat, some ngRepeat properities along with `item` are exposed on the local scope of each template instance, including:  
+Menu allows for custom html templating for each item.  
+  
+Since macMenu is using ngRepeat, some ngRepeat properties along with `item` are exposed on the local scope of each template instance, including:  
   
 | Variable  | Type    | Details                                                                     |  
 |-----------|---------|-----------------------------------------------------------------------------|  
