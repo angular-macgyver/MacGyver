@@ -49,9 +49,9 @@
 </table>
 <p>To use custom templating  </p>
 <pre><code>&lt;mac-autocomplete mac-autocomplete-url=&quot;someUrl&quot; ng-model=&quot;model&quot;&gt;  
-  &lt;span&gt; { {item.label}} &lt;/span&gt;  
+  &lt;span&gt; {{item.label}} &lt;/span&gt;  
 &lt;/mac-autocomplete&gt;</code></pre>
-<p>Template default to <code>item.label</code> if not defined  </p>
+<p>Template default to <code>{{item.label}}</code> if not defined  </p>
 <h3 id="dependencies">Dependencies</h3>
 <ul>
 <li>mac-menu  </li>

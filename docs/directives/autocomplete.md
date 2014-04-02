@@ -16,13 +16,14 @@ Autocomplete allows for custom html templating in the dropdown and some properti
 | `item`    | Object  | item object with `value` and `label` if label-key is set                    |  
   
 To use custom templating  
+  
 ```  
 <mac-autocomplete mac-autocomplete-url="someUrl" ng-model="model">  
-  <span> { {item.label}} </span>  
+  <span> {{item.label}} </span>  
 </mac-autocomplete>  
 ```  
   
-Template default to `item.label` if not defined  
+Template default to `{{item.label}}` if not defined  
   
   
 ### Dependencies

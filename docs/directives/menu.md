@@ -20,11 +20,11 @@ Since macMenu is using ngRepeat, some ngRepeat properties along with `item` are 
 To use custom templating  
 ```  
 <mac-menu>  
-  <span> { {item.label}} </span>  
+  <span> {{item.label}} </span>  
 </mac-menu>  
 ```  
   
-Template default to `item.label` if not defined  
+Template default to `{{item.label}}` if not defined  
   
   
 ### Parameters
