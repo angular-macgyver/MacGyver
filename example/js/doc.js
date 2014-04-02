@@ -313,5 +313,3 @@ angular.module("Mac").
   }]);
 
 window.prettyPrint && prettyPrint();
-
-angular.bootstrap(document.body, ["Mac"]);
