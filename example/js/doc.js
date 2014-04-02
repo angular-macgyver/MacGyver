@@ -2,6 +2,9 @@
  * Documentation script
  */
 angular.module("Mac").
+  directive("code", function() {
+    return { restrict:'E', terminal: true };
+  }).
   controller("modalController", ["$scope", "modal", function($scope, modal){
     $scope.$on("modalWasShown", function(event, id){
       if (id === "test-modal") {
