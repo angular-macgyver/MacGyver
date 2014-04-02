@@ -19,7 +19,7 @@ module.exports = (grunt) ->
 
     appJs:
       dest: "example/js/<%= pkg.name %>.js"
-      src: "<%= buildConf.example %>"
+      src: "<%= buildConf.full %>"
 
     deployAppJs:
       options:

@@ -1,16 +1,9 @@
 {
-  "example": [
-    "tmp/app/main.js",
-    "tmp/jqueryui.js",
-    "vendor/bower/jquery-file-upload/js/jquery.fileupload.js",
-    "tmp/app/**/*.js"
-  ],
   "full": [
     "tmp/app/main.js",
     "tmp/jqueryui.js",
     "vendor/bower/jquery-file-upload/js/jquery.fileupload.js",
-    "tmp/app/**/*.js",
-    "!tmp/app/example_controller/*.js"
+    "tmp/app/**/*.js"
   ],
   "core": [
     "tmp/app/main.js",
