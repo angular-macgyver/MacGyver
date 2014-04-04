@@ -57,6 +57,8 @@ Source support multiple types:
 @param {String}  mac-autocomplete-label The label to display to the users (default "name")
 @param {String}  mac-autocomplete-query The query parameter on GET command (default "q")
 @param {Integer} mac-autocomplete-delay Delay on fetching autocomplete data after keyup (default 800)
+
+@param {Expr} mac-menu-class Classes for mac-menu used by mac-autocomplete. For more info, check [ngClass](http://docs.angularjs.org/api/ng/directive/ngClass)
 ###
 
 angular.module("Mac").directive "macAutocomplete", [
@@ -95,13 +97,13 @@ angular.module("Mac").directive "macAutocomplete", [
       # is selected in the menu
       onSelectBool = false
 
-      # NOTE: An isolate scope is created to prevent rootScope pollution
-      $menuScope       = $rootScope.$new(true)
+      $menuScope       = $scope.$new()
       $menuScope.items = []
       $menuScope.index = 0
 
       menuEl = angular.element(document.createElement("mac-menu"))
       menuEl.attr
+        "ng-class":        attrs.macMenuClass or null
         "mac-menu-items":  "items"
         "mac-menu-style":  "style"
         "mac-menu-select": "select(index)"

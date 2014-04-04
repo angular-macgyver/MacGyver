@@ -2,6 +2,7 @@ describe "Mac autocomplete", ->
   data             = {}
   $compile         = null
   $rootScope       = null
+  $timeout         = null
   keys             = null
   $sniffer         = null
   changeInputValue = null
@@ -10,11 +11,12 @@ describe "Mac autocomplete", ->
   beforeEach module("template/autocomplete.html")
   beforeEach module("template/menu.html")
 
-  beforeEach inject (_$compile_, _$rootScope_, _keys_, _$sniffer_) ->
+  beforeEach inject (_$compile_, _$rootScope_, _keys_, _$sniffer_, _$timeout_) ->
     $compile   = _$compile_
     $rootScope = _$rootScope_
     keys       = _keys_
     $sniffer   = _$sniffer_
+    $timeout   = _$timeout_
 
     data = ["foo", "world", "bar"]
 
@@ -192,11 +194,6 @@ describe "Mac autocomplete", ->
       expect(items[0].value).toBe "foo"
 
   describe "options", ->
-    $timeout = null
-
-    beforeEach inject (_$timeout_) ->
-      $timeout = _$timeout_
-
     it "should use default delay - 800ms", ->
       $rootScope.source = data
 
@@ -337,3 +334,35 @@ describe "Mac autocomplete", ->
       $rootScope.$digest()
 
       expect(element.val()).toBe "hello"
+
+  describe "mac-menu class", ->
+    it "should set classes", ->
+      $rootScope.source  = data
+      $rootScope.classes = {test: true, hello: false}
+
+      element = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-source='source' mac-menu-class='classes'></mac-autocomplete>") $rootScope
+      $rootScope.$digest()
+
+      changeInputValue element, "f"
+      $rootScope.$digest()
+
+      $timeout.flush()
+
+      menuEl = $(".mac-menu")
+
+      expect(menuEl.hasClass "test").toBeTruthy()
+      expect(menuEl.hasClass "hello").toBeFalsy()
+
+    it "should not have ng-class on menu element", ->
+      $rootScope.source  = data
+
+      element = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-source='source'></mac-autocomplete>") $rootScope
+      $rootScope.$digest()
+
+      changeInputValue element, "f"
+      $rootScope.$digest()
+
+      $timeout.flush()
+
+      menuEl = $(".mac-menu")
+      expect(menuEl.attr("ng-class")).toBeFalsy()
