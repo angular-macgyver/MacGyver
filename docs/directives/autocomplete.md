@@ -91,4 +91,9 @@ The query parameter on GET command (default "q")
 Type: `Integer`  
 Delay on fetching autocomplete data after keyup (default 800)  
   
+  
+**mac-menu-class**  
+Type: `Expr`  
+Classes for mac-menu used by mac-autocomplete. For more info, check [ngClass](http://docs.angularjs.org/api/ng/directive/ngClass)  
+  
 
