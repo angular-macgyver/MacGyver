@@ -63,6 +63,12 @@ angular.module("Mac").directive("macMenu", [
       if attrs.macMenuIndex?
         $scope.$watch "pIndex", (value) ->
           $scope.index = parseInt(value)
+
+      $scope.$watch "items.length", (value) ->
+        if !!value
+          attrs.$addClass("visible")
+        else
+          attrs.$removeClass("visible")
 ]).
 
 #
