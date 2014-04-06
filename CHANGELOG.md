@@ -1,3 +1,16 @@
+# v0.2.9 (2014/4/6)
+## Bug Fixes
+- **macAutocomplete:** Item property on template now include full object
+  ([6df95c71](https://github.com/StartTheShift/MacGyver/commit/6df95c719aa003c09b30f72e142708b189627cde))
+- **macMenu:** Fixed mac-menu not working with ng-class before
+  ([1f9b2a02](https://github.com/StartTheShift/MacGyver/commit/1f9b2a02dd39d3f9c111a35e503b2a56873a4b18))
+
+## Features
+- **macAutocomplete:** Added option to update mac-menu classes
+  ([02bbdd25](https://github.com/StartTheShift/MacGyver/commit/02bbdd25752b07ddbc9f7c0b7f3ba8897a355b92),
+   [#166](https://github.com/StartTheShift/MacGyver/issues/166))
+
+
 # v0.2.8 (2014/3/31)
 ## Bug Fixes
 - **macMenu:** Fixed how custom menu template getting transcluded
