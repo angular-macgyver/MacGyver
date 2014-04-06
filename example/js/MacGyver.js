@@ -7482,6 +7482,28 @@ angular.module("Mac").directive("macAffix", [
 @description
 A directive for providing suggestions while typing into the field
 
+Autocomplete allows for custom html templating in the dropdown and some properties are exposed on the local scope on each template instance, including:
+
+| Variable  | Type    | Details                                                                     |
+|-----------|---------|-----------------------------------------------------------------------------|
+| `$index`  | Number  | iterator offset of the repeated element (0..length-1)                       |
+| `$first`  | Boolean | true if the repeated element is first in the iterator.                      |
+| `$middle` | Boolean | true if the repeated element is between the first and last in the iterator. |
+| `$last`   | Boolean | true if the repeated element is last in the iterator.                       |
+| `$even`   | Boolean | true if the iterator position `$index` is even (otherwise false).           |
+| `$odd`    | Boolean | true if the iterator position `$index` is odd (otherwise false).            |
+| `item`    | Object  | item object with `value` and `label` if label-key is set                    |
+
+To use custom templating
+
+```
+<mac-autocomplete mac-autocomplete-url="someUrl" ng-model="model">
+  <span> {{item.label}} </span>
+</mac-autocomplete>
+```
+
+Template default to `{{item.label}}` if not defined
+
 @dependencies
 - mac-menu
 
@@ -7512,6 +7534,8 @@ Source support multiple types:
 @param {String}  mac-autocomplete-label The label to display to the users (default "name")
 @param {String}  mac-autocomplete-query The query parameter on GET command (default "q")
 @param {Integer} mac-autocomplete-delay Delay on fetching autocomplete data after keyup (default 800)
+
+@param {Expr} mac-menu-class Classes for mac-menu used by mac-autocomplete. For more info, check [ngClass](http://docs.angularjs.org/api/ng/directive/ngClass)
 */
 
 angular.module("Mac").directive("macAutocomplete", [
@@ -7537,11 +7561,12 @@ angular.module("Mac").directive("macAutocomplete", [
         currentAutocomplete = [];
         timeoutId = null;
         onSelectBool = false;
-        $menuScope = $rootScope.$new(true);
+        $menuScope = $scope.$new();
         $menuScope.items = [];
         $menuScope.index = 0;
         menuEl = angular.element(document.createElement("mac-menu"));
         menuEl.attr({
+          "ng-class": attrs.macMenuClass || null,
           "mac-menu-items": "items",
           "mac-menu-style": "style",
           "mac-menu-select": "select(index)",
@@ -7644,21 +7669,27 @@ angular.module("Mac").directive("macAutocomplete", [
         */
 
         updateItem = function(data) {
-          var item, label, value, _i, _len;
           if (data == null) {
             data = [];
           }
           if (data.length > 0) {
             currentAutocomplete = data;
-            $menuScope.items = [];
-            for (_i = 0, _len = data.length; _i < _len; _i++) {
-              item = data[_i];
-              label = value = item[labelKey] || item;
-              $menuScope.items.push({
-                label: label,
-                value: value
-              });
-            }
+            $menuScope.items = data.map(function(item) {
+              if (angular.isObject(item)) {
+                if (item.value == null) {
+                  item.value = item[labelKey] || "";
+                }
+                if (item.label == null) {
+                  item.label = item[labelKey] || "";
+                }
+                return item;
+              } else {
+                return {
+                  label: item,
+                  value: item
+                };
+              }
+            });
             return positionMenu();
           }
         };
@@ -8664,7 +8695,9 @@ angular.module("Mac").factory("keys", function() {
 @description
 A directive for creating a menu with multiple items
 
-Since macMenu is using ngRepeat, some ngRepeat properities along with `item` are exposed on the local scope of each template instance, including:
+Menu allows for custom html templating for each item.
+
+Since macMenu is using ngRepeat, some ngRepeat properties along with `item` are exposed on the local scope of each template instance, including:
 
 | Variable  | Type    | Details                                                                     |
 |-----------|---------|-----------------------------------------------------------------------------|
@@ -8676,7 +8709,14 @@ Since macMenu is using ngRepeat, some ngRepeat properities along with `item` are
 | `$odd`    | Boolean | true if the iterator position `$index` is odd (otherwise false).            |
 | `item`    | Object  | item object                                                                 |
 
-Template default to `item.label` if not defined
+To use custom templating
+```
+<mac-menu>
+  <span> {{item.label}} </span>
+</mac-menu>
+```
+
+Template default to `{{item.label}}` if not defined
 
 @param {Expression} mac-menu-items List of items to display in the menu
         Each item should have a `label` key as display text
@@ -8713,10 +8753,17 @@ angular.module("Mac").directive("macMenu", [
           }
         };
         if (attrs.macMenuIndex != null) {
-          return $scope.$watch("pIndex", function(value) {
+          $scope.$watch("pIndex", function(value) {
             return $scope.index = parseInt(value);
           });
         }
+        return $scope.$watch("items.length", function(value) {
+          if (!!value) {
+            return attrs.$addClass("visible");
+          } else {
+            return attrs.$removeClass("visible");
+          }
+        });
       }
     };
   }
@@ -10681,318 +10728,6 @@ angular.module("Mac").directive("macTooltip", [
     };
   }
 ]);
-
-var module,
-  __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
-
-module = angular.module("Mac");
-
-module.controller("modalController", [
-  "$scope", "modal", function($scope, modal) {
-    return $scope.$on("modalWasShown", function(event, id) {
-      if (id === "test-modal") {
-        return console.log(modal.opened.options.data);
-      }
-    });
-  }
-]);
-
-module.controller("ExampleController", [
-  "$scope", "$window", "keys", function($scope, $window, keys) {
-    var code, key;
-    $scope.keys = (function() {
-      var _results;
-      _results = [];
-      for (key in keys) {
-        code = keys[key];
-        _results.push({
-          key: key,
-          code: code
-        });
-      }
-      return _results;
-    })();
-    $scope.selectOptions = [
-      {
-        value: 1,
-        text: "text1"
-      }, {
-        value: 2,
-        text: "text2"
-      }, {
-        value: 3,
-        text: "text3"
-      }
-    ];
-    $scope.selectedOptionValue = "1";
-    $scope.convertToText = function() {
-      var option, _i, _len, _ref;
-      _ref = $scope.selectOptions;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        option = _ref[_i];
-        if (option.value === +$scope.selectedOptionValue) {
-          return option.text;
-        }
-      }
-    };
-    $scope.menuItems = [
-      {
-        label: "Page 1",
-        key: "Page 1"
-      }, {
-        label: "Page 2",
-        key: "Page 2"
-      }, {
-        label: "Page 3",
-        key: "Page 3"
-      }, {
-        label: "Page 4",
-        key: "Page 4"
-      }
-    ];
-    $scope.selectingMenuItem = function(index) {
-      return $scope.selectedItem = $scope.menuItems[index].label;
-    };
-    $scope.onSuccess = function(data) {
-      return data.data;
-    };
-    $scope.autocompleteQuery = "";
-    $scope.autocompleteUrl = "data.json";
-    $scope.tagAutocompleteSelected = [];
-    $scope.tagAutocompleteDisabledSelected = [];
-    $scope.tagAutocompleteEvents = [];
-    $scope.tagAutocompletePlaceholder = "Hello";
-    $scope.tagAutocompleteModel = "";
-    $scope.tagAutocompleteOnSelected = function(item) {
-      return {
-        key: item
-      };
-    };
-    $scope.tagAutocompleteOnBlur = function(event, item) {
-      if (!item) {
-        return;
-      }
-      $scope.tagAutocompleteEvents.push({
-        key: item
-      });
-      return $scope.tagAutocompleteModel = "";
-    };
-    $scope.tagAutocompleteOnKeyup = function(event, item) {
-      return console.debug("You just typed something");
-    };
-    $scope.extraTagInputs = [
-      {
-        "name": "United States",
-        "id": "123"
-      }, {
-        "name": "United Kingdom",
-        "id": "234"
-      }, {
-        "name": "United Arab Emirates",
-        "id": "345"
-      }
-    ];
-    $scope.selected = [
-      {
-        "name": "United States",
-        "id": "123"
-      }
-    ];
-    $scope.uploadRoute = "/test_upload";
-    $scope.fileUploaderEnabled = true;
-    $scope.uploadPreviews = [];
-    $scope.previewImage = function(preview) {
-      if (preview == null) {
-        preview = {};
-      }
-      if (/image./.test(preview.type)) {
-        return preview.fileData;
-      } else {
-        return "/img/file_icon.png";
-      }
-    };
-    $scope.previewProgress = function(preview) {
-      return {
-        width: "" + preview.progress + "%"
-      };
-    };
-    $scope.fileUploadSubmit = function($event, $data) {
-      return console.log("submitted");
-    };
-    $scope.fileUploadSuccess = function($data, $status) {
-      return console.log("success");
-    };
-    $scope.startDate = "01/01/2013";
-    $scope.minDate = "07/01/2012";
-    $scope.startTime = "04:42 PM";
-    $scope.fiveMinAgo = Math.round(Date.now() / 1000) - 5 * 60;
-    $scope.oneDayAgo = Math.round(Date.now() / 1000) - 24 * 60 * 60;
-    $scope.threeDaysAgo = Math.round(Date.now() / 1000) - 72 * 60 * 60;
-    $scope.afterPausing = function($event) {
-      return $scope.pauseTypingModel = angular.element($event.target).val();
-    };
-    $scope.windowResizing = function($event) {
-      return $scope.windowWidth = angular.element($event.target).width();
-    };
-    $scope.macGyverSeasonOne = [
-      {
-        'No.': '1',
-        'Title': '"Pilot"',
-        'Directed by': 'Jerrold Freedman',
-        'Written by': 'Thackary Pallor',
-        'Original air date': 'September 29, 1985'
-      }, {
-        'No.': '2',
-        'Title': '"The Golden Triangle"',
-        'Directed by': 'Paul Stanley & Donald Petrie',
-        'Written by': 'Dennis R. Foley & Terry Nation',
-        'Original air date': 'October 6, 1985'
-      }, {
-        'No.': '3',
-        'Title': '"Thief of Budapest"',
-        'Directed by': 'Lee H. Katzin & John Patterson',
-        'Written by': 'Terry Nation & Stephen Downing & Joe Viola',
-        'Original air date': 'October 13, 1985'
-      }, {
-        'No.': '4',
-        'Title': '"The Gauntlet"',
-        'Directed by': 'Lee H. Katzin',
-        'Written by': 'Stephen Kandel',
-        'Original air date': 'October 20, 1985'
-      }, {
-        'No.': '5',
-        'Title': '"The Heist"',
-        'Directed by': 'Alan Smithee',
-        'Written by': 'Larry Alexander & James Schmerer',
-        'Original air date': 'November 3, 1985'
-      }, {
-        'No.': '6',
-        'Title': '"Trumbo\'s World"',
-        'Directed by': 'Donald Petrie & Lee H. Katzin',
-        'Written by': 'Stephen Kandel',
-        'Original air date': 'November 10, 1985'
-      }, {
-        'No.': '7',
-        'Title': '"Last Stand"',
-        'Directed by': 'John Florea',
-        'Written by': 'Judy Burns',
-        'Original air date': 'November 17, 1985'
-      }, {
-        'No.': '8',
-        'Title': '"Hellfire"',
-        'Directed by': 'Richard Colla',
-        'Written by': 'Story by: Douglas Brooks West',
-        'Original air date': 'November 24, 1985'
-      }, {
-        'No.': '9',
-        'Title': '"The Prodigal"',
-        'Directed by': 'Alexander Singer',
-        'Written by': 'Story by: David Abramowitz & Paul Savage',
-        'Original air date': 'December 8, 1985'
-      }, {
-        'No.': '10',
-        'Title': '"Target MacGyver"',
-        'Directed by': 'Lee H. Katzin & Ernest Pintoff',
-        'Written by': 'Story by: Mike Marvin',
-        'Original air date': 'December 22, 1985'
-      }, {
-        'No.': '11',
-        'Title': '"Nightmares"',
-        'Directed by': 'Cliff Bole',
-        'Written by': 'James Schmerer',
-        'Original air date': 'January 15, 1986'
-      }, {
-        'No.': '12',
-        'Title': '"Deathlock"',
-        'Directed by': 'Cliff Bole & Alexander Singer',
-        'Written by': 'Jerry Ludwig & Stephen Kandel',
-        'Original air date': 'January 22, 1986'
-      }, {
-        'No.': '13',
-        'Title': '"Flame\'s End"',
-        'Directed by': 'Bruce Seth Green',
-        'Written by': 'Story by: Hannah Louise Shearer',
-        'Original air date': 'January 29, 1986'
-      }, {
-        'No.': '14',
-        'Title': '"Countdown"',
-        'Directed by': 'Stan Jolley',
-        'Written by': 'Tony DiMarco & David Ketchum',
-        'Original air date': 'February 5, 1986'
-      }, {
-        'No.': '15',
-        'Title': '"The Enemy Within"',
-        'Directed by': 'Cliff Bole',
-        'Written by': 'David Abramowitz',
-        'Original air date': 'February 12, 1986'
-      }, {
-        'No.': '16',
-        'Title': '"Every Time She Smiles"',
-        'Directed by': 'Charlie Correll',
-        'Written by': 'James Schmerer',
-        'Original air date': 'February 19, 1986'
-      }, {
-        'No.': '17',
-        'Title': '"To Be a Man"',
-        'Directed by': 'Cliff Bole',
-        'Written by': 'Don Mankiewicz',
-        'Original air date': 'March 5, 1986'
-      }, {
-        'No.': '18',
-        'Title': '"Ugly Duckling"',
-        'Directed by': 'Charlie Correll',
-        'Written by': 'Larry Gross',
-        'Original air date': 'March 12, 1986'
-      }, {
-        'No.': '19',
-        'Title': '"Slow Death"',
-        'Directed by': 'Don Weis',
-        'Written by': 'Stephen Kandel',
-        'Original air date': 'April 2, 1986'
-      }, {
-        'No.': '20',
-        'Title': '"The Escape"',
-        'Directed by': 'Don Chaffey',
-        'Written by': 'Stephen Kandel',
-        'Original air date': 'April 16, 1986'
-      }, {
-        'No.': '21',
-        'Title': '"A Prisoner of Conscience"',
-        'Directed by': 'Cliff Bole',
-        'Written by': 'Stephen Kandel',
-        'Original air date': 'April 30, 1986'
-      }, {
-        'No.': '22',
-        'Title': '"The Assassin"',
-        'Directed by': 'Charlie Correll',
-        'Written by': 'James Schmerer',
-        'Original air date': 'May 7, 1986'
-      }
-    ];
-    $scope.selectedModels = [];
-    $scope.unselectAll = function() {
-      return $scope.selectedModels = [];
-    };
-    $scope.selectAll = function() {
-      return $scope.selectedModels = $scope.macGyverSeasonOne.slice(0);
-    };
-    return $scope.selectRandom = function() {
-      var i, index, length, model, models, _i, _ref;
-      length = $scope.macGyverSeasonOne.length;
-      models = [];
-      for (i = _i = 1, _ref = length / 2; 1 <= _ref ? _i <= _ref : _i >= _ref; i = 1 <= _ref ? ++_i : --_i) {
-        index = Math.floor(Math.random() * length);
-        model = $scope.macGyverSeasonOne[index];
-        if (__indexOf.call(models, model) < 0) {
-          models.push(model);
-        }
-      }
-      return $scope.selectedModels = models;
-    };
-  }
-]);
-
-window.prettyPrint && prettyPrint();
 
 angular.module("Mac").filter("boolean", function() {
   return function(boolean, trueString, falseString) {
