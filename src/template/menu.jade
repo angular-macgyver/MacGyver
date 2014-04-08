@@ -4,8 +4,8 @@
   ul
     li.mac-menu-item(
       mac-menu-transclude
-      ng-repeat      = "item in items"
-      ng-click       = "selectItem($index)"
-      ng-class       = "{'active': $index == index}"
-      mac-mouseenter = "setIndex($index)"
+      ng-repeat     = "item in items"
+      ng-click      = "selectItem($index)"
+      ng-class      = "{'active': $index == index}"
+      ng-mouseenter = "setIndex($index)"
     )
