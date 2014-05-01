@@ -116,6 +116,18 @@ describe "Popover", ->
 
         expect(popover.hasClass("visible")).toBeTruthy()
 
+      it "should set left and top offset with 'px'", ->
+        popoverObj = popover.popoverList[0]
+        popover    = popoverObj.popover
+
+        $rootScope.$digest()
+        $timeout.flush()
+        $rootScope.$digest()
+
+        style = popover.attr 'style'
+        expect(style.match /top: [\d]px/).toBeDefined()
+        expect(style.match /left: [\d]px/).toBeDefined()
+
     describe "hide popover", ->
       trigger  = $("<a>Click me</a>")
       callback = null

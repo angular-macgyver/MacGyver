@@ -297,7 +297,12 @@ angular.module("Mac").
         offset.left += options.offsetX if options.offsetX?
         offset.top  += options.offsetY if options.offsetY?
 
-        currentPopover.css(offset).addClass "visible #{position}"
+        angular.forEach offset, (value, key) ->
+          unless isNaN(+value)
+            value = "#{value}px"
+          currentPopover.css key, value
+
+        currentPopover.addClass "visible #{position}"
 
       # Hides the currently-shown popover.
       hide: (selector, callback) ->
