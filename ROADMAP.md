@@ -22,5 +22,15 @@ Until there is a stable release of v1.3.0, MacGyver will not use any of v1.3.0 f
 jQuery, jQuery UI, jQuery file upload and underscore string should be removed as dependencies
 
 # Upcoming versions
-- v0.3.0 Namespacing MacGyver CSS classes, modularize file upload
-- v0.4.0 modularize table view
+### v0.3.0
+- namespacing MacGyver CSS classes
+- make sure MacGyver runs properly without Bootstrap
+- modularize file upload
+- clean up file structure
+- remove example folder from repo
+- update documentation to be top level instead of /example/
+- reduce image files as much as possible
+- update documentation to Bootstrap 3
+
+### v0.4.0
+- modularize table view
