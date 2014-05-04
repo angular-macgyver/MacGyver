@@ -42,6 +42,7 @@
     "matchdep": "~0.1.2",
     "karma-sauce-launcher": "~0.1.8",
     "protractor": "~0.18.1",
-    "coffee-script": "~1.7.1"
+    "coffee-script": "~1.7.1",
+    "grunt-gh-pages": "~0.9.1"
   }
 }
