@@ -79,6 +79,7 @@ module.exports = (grunt) ->
 
   grunt.registerTask "dev", "Watch src and run test server", [
     "compile"
+    "copy:example"
     "karma:unit"
     "connect:example"
     "watch"

@@ -10,8 +10,20 @@ module.exports = (grunt) ->
       files: [
         expand:  true
         flatten: true
-        src:     ["example/css/img/ui-*.png"]
+        src:     ["src/img/ui-*.png"]
         dest:    "lib/img/"
+      ]
+
+    example:
+      files: [
+        {
+          expand:  true
+          flatten: true
+          src:     ["src/img/ui-*.png"]
+          dest:    "example/css/img/"
+        },
+        "example/data.json": "docs/data.json"
+
       ]
 
     public:
