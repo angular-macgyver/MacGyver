@@ -92,6 +92,7 @@ module.exports = (grunt) ->
     "clean"
     "coffee"
     "stylus"
+    "jade"
     "concatDeploy"
     "clean"
     "replace:src"
