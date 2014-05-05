@@ -14,6 +14,9 @@ module.exports = (grunt) ->
         "concat:appJs"
         "clean"
       ]
+    doc:
+      files: ["docs/doc.coffee"]
+      tasks: ["coffee:doc"]
     test:
       files: ["test/**/*.spec.coffee"]
       tasks: ["karma:unit:run"]
@@ -21,5 +24,5 @@ module.exports = (grunt) ->
       files: ["src/css/*.styl", "vendor/vendor.styl"]
       tasks: ["stylus", "concat:css", "clean"]
     jade:
-      files: ["src/**/*.jade"]
+      files: ["src/**/*.jade", "docs/*.jade"]
       tasks: ["jade", "replace:docs"]
