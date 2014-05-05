@@ -9,6 +9,7 @@ example/uploads
 
 # Build files
 build/
+example/
 .gitmodules
 .grunt/
 
