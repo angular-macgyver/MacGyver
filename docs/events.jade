@@ -14,7 +14,7 @@ block append nav
 
 block append content
   section#keydowns(mac-scroll-spy-anchor)
-    @@include("docs/html/directives/events/keydown.html")
+    | @@include("docs/html/directives/events/keydown.html")
 
     h3 Example
     .docs-example
@@ -42,7 +42,7 @@ block append content
          mac-keydown-down=&quot;eventKeydown = 'down'&quot;/&gt;
 
   section#pause-typing(mac-scroll-spy-anchor)
-    @@include("docs/html/directives/events/pause_typing.html")
+    | @@include("docs/html/directives/events/pause_typing.html")
 
     h3 Example
     .docs-example
@@ -53,7 +53,7 @@ block append content
       &lt;input type=&quot;text&quot; mac-pause-typing=&quot;afterPausing($event)&quot;&gt;
 
   section#window-resize(mac-scroll-spy-anchor)
-    @@include("docs/html/directives/events/window_resize.html")
+    | @@include("docs/html/directives/events/window_resize.html")
 
     h3 Example
     .docs-example

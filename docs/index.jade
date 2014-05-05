@@ -59,8 +59,8 @@ block append nav
 
 block append content
   section#modal(mac-scroll-spy-anchor)
-    @@include("docs/html/services/modal.html")
-    @@include("docs/html/directives/modal.html")
+    | @@include("docs/html/services/modal.html")
+    | @@include("docs/html/directives/modal.html")
     h3 Example
     .docs-example
       mac-modal#test-modal(
@@ -82,8 +82,8 @@ block append content
       &lt;button mac-modal=&quot;test-modal&quot; mac-modal-data=&quot;maGyverSeasonOne&quot; class=&quot;btn&quot;&gt;Show Modal&lt;/button&gt;
 
   section#scrollspy(mac-scroll-spy-anchor)
-    @@include("docs/html/services/scroll_spy.html")
-    @@include("docs/html/directives/scroll_spy.html")
+    | @@include("docs/html/services/scroll_spy.html")
+    | @@include("docs/html/directives/scroll_spy.html")
     h3 Example
     .docs-example The nav to the left and this documentation page is probably the best example
 
@@ -103,14 +103,14 @@ block append content
       &lt;section id=&quot;modal&quot; mac-scroll-spy-anchor&gt;&lt;/section&gt;
 
   section#affix(mac-scroll-spy-anchor)
-    @@include("docs/html/directives/affix.html")
+    | @@include("docs/html/directives/affix.html")
     h3 Example
     .docs-example The nav to the left uses mac-affix
     pre.prettyprint.
       &lt;div mac-affix&gt;Nav content&lt;/div&gt;
 
   section#tooltip(mac-scroll-spy-anchor)
-    @@include("docs/html/directives/tooltip.html")
+    | @@include("docs/html/directives/tooltip.html")
     h3 Example
     .docs-example
       ul.nav.nav-pills
@@ -122,8 +122,8 @@ block append content
       &lt;a href=&quot;#&quot; mac-tooltip=&quot;Tooltip on bottom&quot; mac-tooltip-direction=&quot;bottom&quot;&gt;Tooltip on bottom&lt;/a&gt;
 
   section#popover(mac-scroll-spy-anchor)
-    @@include("docs/html/services/popover.html")
-    @@include("docs/html/directives/popover.html")
+    | @@include("docs/html/services/popover.html")
+    | @@include("docs/html/directives/popover.html")
     h3 Example
     .docs-example
       ul.nav.nav-pills
@@ -184,7 +184,7 @@ block append content
       &lt;mac-popover id=&quot;testPopover&quot; &gt;Open a popover&lt;/mac-popover&gt;
 
   section#menu(mac-scroll-spy-anchor)
-    @@include("docs/html/directives/menu.html")
+    | @@include("docs/html/directives/menu.html")
     h3 Example
     .docs-example
       mac-menu(
@@ -194,7 +194,7 @@ block append content
       div Current selected item: {{selectedItem}}
 
   section#autocomplete(mac-scroll-spy-anchor)
-    @@include("docs/html/directives/autocomplete.html")
+    | @@include("docs/html/directives/autocomplete.html")
     h3 Example
     .docs-example
       mac-autocomplete(
@@ -226,7 +226,7 @@ block append content
       &lt;/mac-autocomplete&gt;
 
   section#tag-autocomplete(mac-scroll-spy-anchor)
-    @@include("docs/html/directives/tag_autocomplete.html")
+    | @@include("docs/html/directives/tag_autocomplete.html")
     h3 Example
     .docs-example
       mac-tag-autocomplete(
@@ -296,7 +296,7 @@ block append content
       &lt;/mac-tag-autocomplete&gt;
 
   section#datepicker(mac-scroll-spy-anchor)
-    @@include("docs/html/directives/datepicker.html")
+    | @@include("docs/html/directives/datepicker.html")
     h3 Example
     .docs-example
       mac-datepicker(
@@ -308,7 +308,7 @@ block append content
       &lt;mac-datepicker mac-datepicker-id=&quot;input-start-date&quot; mac-datepicker-model=&quot;startDate&quot;&gt;&lt;/mac-datepicker&gt;
 
   section#time-input(mac-scroll-spy-anchor)
-    @@include("docs/html/directives/time.html")
+    | @@include("docs/html/directives/time.html")
     h3 Example
     .docs-example
       mac-time(
@@ -324,7 +324,7 @@ block append content
       &lt;/mac-time&gt;
 
   section#spinner(mac-scroll-spy-anchor)
-    @@include("docs/html/directives/spinner.html")
+    | @@include("docs/html/directives/spinner.html")
     h3 Example
     .docs-example
       mac-spinner
@@ -332,7 +332,7 @@ block append content
       &lt;mac-spinner&gt;&lt;/mac-spinner&gt;
 
   section#cspinner(mac-scroll-spy-anchor)
-    @@include("docs/html/directives/cspinner.html")
+    | @@include("docs/html/directives/cspinner.html")
     h3 Example
     .docs-example
       mac-cspinner
@@ -340,7 +340,7 @@ block append content
       &lt;mac-cspinner&gt;&lt;/mac-cspinner&gt;
 
   section#placeholder(mac-scroll-spy-anchor)
-    @@include("docs/html/directives/placeholder.html")
+    | @@include("docs/html/directives/placeholder.html")
     h3 Example
     .docs-example
       input(type="text", mac-placeholder="tagAutocompletePlaceholder")

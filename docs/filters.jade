@@ -17,7 +17,7 @@ block append nav
 
 block append content
   section#underscore-string(mac-scroll-spy-anchor)
-    @@include("docs/html/filters/underscore.html")
+    | @@include("docs/html/filters/underscore.html")
     h3 Example
     .docs-example
       p {{ "this_Is_aTestFor_Underscore_string" | underscoreString: "humanize" }}
@@ -27,7 +27,7 @@ block append content
       &lt;p&gt;{{ &quot;this_Is_aTestFor_Underscore_string&quot; | underscoreString: &quot;humanize&quot; }}&lt;/p&gt;
 
   section#pluralize-filter(mac-scroll-spy-anchor)
-    @@include("docs/html/filters/pluralize.html")
+    | @@include("docs/html/filters/pluralize.html")
     h3 Example
     .docs-example
       dl.dl-horizontal
@@ -39,7 +39,7 @@ block append content
       {{&quot;person&quot; | pluralize:1500}}
 
   section#timestamp-filter(mac-scroll-spy-anchor)
-    @@include("docs/html/filters/timestamp.html")
+    | @@include("docs/html/filters/timestamp.html")
     h3 Example
     .docs-example
       dl.dl-horizontal
@@ -53,7 +53,7 @@ block append content
       {{ fiveMinAgo | timestamp }}
 
   section#list-filter(mac-scroll-spy-anchor)
-    @@include("docs/html/filters/list.html")
+    | @@include("docs/html/filters/list.html")
     h3 Example
     .docs-example
       p {{ ["item1", "item2", "item3", "item4"] | list }}

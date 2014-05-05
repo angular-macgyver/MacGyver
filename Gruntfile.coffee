@@ -27,6 +27,8 @@ module.exports = (grunt) ->
 
   grunt.loadTasks "misc/grunt"
 
+  require('time-grunt') grunt
+
   grunt.registerTask "prepare", "Prepare for deploying", ["bump", "changelog"]
   grunt.registerTask "concatDeploy", [
     "concat:jqueryui"

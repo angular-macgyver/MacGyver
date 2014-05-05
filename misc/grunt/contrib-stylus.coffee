@@ -9,8 +9,9 @@ module.exports = (grunt) ->
     #
     compile:
       options:
-        paths:   ["example/css"]
-        urlfunc: "url"
+        urlfunc:
+          name: "url"
+          paths: ["src"]
         import:  ["nib"]
       files: [
         expand:  true
