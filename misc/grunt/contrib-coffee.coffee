@@ -13,3 +13,8 @@ module.exports = (grunt) ->
       src:    ["**/*.coffee"]
       dest:   "tmp/app/"
       ext:    ".js"
+    doc:
+      options:
+        bare: false
+      files:
+        "example/js/doc.js": "docs/doc.coffee"
