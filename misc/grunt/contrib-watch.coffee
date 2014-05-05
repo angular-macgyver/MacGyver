@@ -13,7 +13,6 @@ module.exports = (grunt) ->
         "concat:jqueryui"
         "concat:appJs"
         "clean"
-        "copy:public"
       ]
     test:
       files: ["test/**/*.spec.coffee"]

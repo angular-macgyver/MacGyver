@@ -91,9 +91,8 @@ module.exports = (grunt) ->
   grunt.registerTask "test:e2e", "Compile all source code, run a test server and run the end to end tests", [
     "clean"
     "coffee"
-    "concatDeploy"
     "stylus"
-    "concat:css"
+    "concatDeploy"
     "clean"
     "replace:src"
     "connect:e2e"
