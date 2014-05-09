@@ -1,9 +1,9 @@
 .mac-tag-autocomplete(ng-click="focusTextInput()")
-  ul.tag-list
-    li.tag.label(ng-repeat="tag in selected")
-      .tag-close(ng-click="selected.splice($index, 1)") &times;
+  ul.mac-tag-list
+    li.mac-tag.mac-label(ng-repeat="tag in selected")
+      .mac-tag-close(ng-click="selected.splice($index, 1)") &times;
       span.tag-label {{getTagLabel(tag)}}
-    li.tag.input-tag(ng-class="{'fullwidth': !selected.length}")
+    li.mac-tag.mac-input-tag(ng-class="{'fullwidth': !selected.length}")
       mac-autocomplete.text-input.mac-autocomplete(
         ng-model                    = "textInput"
         mac-autocomplete-disabled   = "disabled"
