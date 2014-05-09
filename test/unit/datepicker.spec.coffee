@@ -22,7 +22,7 @@ describe "Mac datepicker", ->
       element = $compile("<mac-datepicker></mac-datepicker>") $rootScope
       $rootScope.$digest()
 
-      expect(element.hasClass("date-time")).toBe true
+      expect(element.hasClass("mac-date-time")).toBe true
 
     it "should set mac-id on input", ->
       element = $compile("<mac-datepicker mac-datepicker-id='test-picker'></mac-datepicker>") $rootScope

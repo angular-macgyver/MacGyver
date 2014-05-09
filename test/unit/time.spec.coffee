@@ -15,7 +15,7 @@ describe "Mac Time input", ->
       element = $compile("<mac-time></mac-time>") $rootScope
       $rootScope.$digest()
 
-      expect(element.hasClass("date-time")).toBe true
+      expect(element.hasClass("mac-date-time")).toBe true
 
     it "should use default placeholder", ->
       element = $compile("<mac-time></mac-time>") $rootScope
