@@ -22,12 +22,12 @@ angular.module("Mac").directive "macAffix", [
         disabled: false
         classes:  "affix affix-top affix-bottom"
 
-      offset    = top: defaults.top, bottom: defaults.bottom
-      position  = element.offset()
-      disabled  = defaults.disabled
-      lastAffix = null
-      unpin     = null
-      windowEl  = angular.element($window)
+      offset       = top: defaults.top, bottom: defaults.bottom
+      disabled     = defaults.disabled
+      lastAffix    = null
+      unpin        = null
+      pinnedOffset = null
+      windowEl     = angular.element($window)
 
       ###
       @name setOffset
@@ -50,40 +50,53 @@ angular.module("Mac").directive "macAffix", [
         setOffset "bottom", $scope.$eval(attrs.macAffixBottom), true
         $scope.$watch attrs.macAffixBottom, (value) -> setOffset "bottom", value
 
+      getPinnedOffset = ->
+        return pinnedOffset if pinnedOffset?
+
+        element.removeClass(defaults.classes).addClass "affix"
+        scrollHeight = $document.height()
+        pinnedOffset = scrollHeight - element.outerHeight() - offset.bottom
+        return pinnedOffset
+
       scrollEvent = ->
         # Check if element is visible
         return if element[0].offsetHeight <= 0 and element[0].offsetWidth <= 0
 
-        scrollTop    = windowEl.scrollTop()
-        scrollHeight = $document.height()
+        position      = element.offset()
+        scrollTop     = windowEl.scrollTop()
+        scrollHeight  = $document.height()
+        elementHeight = element.outerHeight()
 
         affix =
-          if unpin? and scrollTop + unpin <= position.top
+          # Disable pinning to the bottom
+          if unpin? and scrollTop <= unpin
             false
-          else if position.top + element.height() >= scrollHeight - offset.bottom
+
+          # If user scroll pass element and should fix to the bottom
+          else if offset.bottom? and scrollTop > scrollHeight - elementHeight - offset.bottom
             "bottom"
-          else if scrollTop <= offset.top
+
+          # Before top offset and affixing element
+          else if offset.top? and scrollTop <= offset.top
             "top"
+
+          # Affix element to certain position
           else
             false
 
         return if affix is lastAffix
-        lastAffix = affix
-
         element.css "top", "" if unpin
+
+        lastAffix = affix
+        unpin     = if affix is "bottom" then getPinnedOffset() else null
 
         element
           .removeClass(defaults.classes)
           .addClass "affix" + (if affix then "-#{affix}" else "")
 
         if affix is "bottom"
-          unpin = position.top - scrollTop
-          element.css(
-            "top",
-            $document[0].body.offsetHeight - offset.bottom - element.height()
-          )
-        else
-          unpin = null
+          curOffset = element.offset()
+          element.css "top", unpin - curOffset.top
 
         return true
 
