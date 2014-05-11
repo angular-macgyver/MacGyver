@@ -1,7 +1,10 @@
 extends layout
 
 block append nav
-  ul.nav.nav-list.docs-sidenav(mac-affix)
+  ul.nav.nav-list.docs-sidenav(
+    mac-affix
+    mac-affix-bottom = "256"
+  )
     li(mac-scroll-spy-target="element"): a(href="#element")
       i.icon-chevron-right
       | Angular element
