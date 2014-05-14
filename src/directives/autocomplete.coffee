@@ -169,6 +169,8 @@ angular.module("Mac").directive "macAutocomplete", [
 
         $scope.$apply() if invokeApply
 
+        return
+
       ###
       @function
       @name positionMenu
