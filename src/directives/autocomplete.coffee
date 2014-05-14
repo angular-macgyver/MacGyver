@@ -69,9 +69,8 @@ angular.module("Mac").directive "macAutocomplete", [
   "$timeout"
   "$parse"
   "$rootScope"
-  "$document"
   "keys"
-  ($animate, $http, $filter, $compile, $timeout, $parse, $rootScope, $document, keys) ->
+  ($animate, $http, $filter, $compile, $timeout, $parse, $rootScope, keys) ->
     restrict:    "EA"
     templateUrl: "template/autocomplete.html"
     transclude:  true
@@ -152,7 +151,7 @@ angular.module("Mac").directive "macAutocomplete", [
         else
           $animate.enter menuEl, angular.element(document.body)
 
-        $document.bind "click", clickHandler
+        element.bind "blur", clickHandler
 
       ###
       @function
@@ -165,7 +164,7 @@ angular.module("Mac").directive "macAutocomplete", [
           $menuScope.items = []
           $menuScope.index = 0
 
-          $document.unbind "click", clickHandler
+          element.unbind "blur", clickHandler
 
         $scope.$apply() if invokeApply
 
