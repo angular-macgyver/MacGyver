@@ -16,6 +16,7 @@ example/
 # Logs
 test-results.xml
 libpeerconnection.log
+npm-debug.log
 
 # System file types
 .DS_Store
