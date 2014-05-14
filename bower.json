@@ -21,16 +21,17 @@
     "lib/macgyver.min.js"
   ],
   "ignore": [
-    ".bowerrc",
-    ".gitignore",
-    "build.json",
-    "Gruntfile.coffee",
-    "example",
     "misc",
-    "package.json",
     "src",
     "test",
-    "vendor"
+    "vendor",
+    ".bowerrc",
+    ".gitignore",
+    ".travis.yml",
+    "build.json",
+    "Gruntfile.coffee",
+    "init-project.sh",
+    "package.json"
   ],
   "devDependencies": {
     "angular-mocks": "1.2.13",
