@@ -144,12 +144,13 @@ angular.module("Mac").directive "macAutocomplete", [
       @name appendMenu
       @description
       Adding menu to DOM
+      @param {Function} callback Callback after enter animation completes
       ###
-      appendMenu = ->
+      appendMenu = (callback) ->
         if inside
-          $animate.enter menuEl, undefined, element
+          $animate.enter menuEl, undefined, element, callback
         else
-          $animate.enter menuEl, angular.element(document.body)
+          $animate.enter menuEl, angular.element(document.body), undefined, callback
 
         element.bind "blur", clickHandler
 
@@ -177,17 +178,21 @@ angular.module("Mac").directive "macAutocomplete", [
       Calculate the style include position and width for menu
       ###
       positionMenu = ->
-        if $menuScope.items.length > 0
+        return if $menuScope.items.length is 0
+
+        appendMenu ->
+          parentOffset = menuEl.offset()
+
           $menuScope.style          = element.offset()
-          $menuScope.style.top     += element.outerHeight()
+          $menuScope.style.left    -= parentOffset.left
+          $menuScope.style.top     += element.outerHeight() - parentOffset.top
           $menuScope.style.minWidth = element.outerWidth()
 
+          # Add 'px' to left and top
           angular.forEach $menuScope.style, (value, key) ->
             if not isNaN(+value) and angular.isNumber +value
               value = "#{value}px"
             $menuScope.style[key] = value
-
-          appendMenu()
 
       ###
       @function
