@@ -62,7 +62,7 @@ describe "Mac autocomplete", ->
       changeInputValue element, "fo"
       $rootScope.$digest()
 
-      expect($(".mac-menu-item").text() == "foo").toBe true
+      expect($(".mac-menu-item").text()).toBe "foo"
 
     it "should use local label, value object", ->
       $rootScope.source = [
@@ -74,7 +74,7 @@ describe "Mac autocomplete", ->
       $rootScope.$digest()
 
       changeInputValue element, "f"
-      expect($(".mac-menu-item").text() == "foo").toBe true
+      expect($(".mac-menu-item").text()).toBe "foo"
 
     it "should use a url string and work exactly like mac-autocomplete-url", ->
       $httpBackend.when("GET", "/api/autocomplete?q=f").respond({data})
@@ -98,7 +98,7 @@ describe "Mac autocomplete", ->
       changeInputValue element, "f"
       $rootScope.$digest()
 
-      expect($(".mac-menu-item").text() == "foo").toBe true
+      expect($(".mac-menu-item").text()).toBe "foo"
 
     it "should use a callback function returned by an invoked function", ->
       $rootScope.source = (val) ->
@@ -110,7 +110,7 @@ describe "Mac autocomplete", ->
       changeInputValue element, "f"
       $rootScope.$digest()
 
-      expect($(".mac-menu-item").text() == "foo").toBe true
+      expect($(".mac-menu-item").text()).toBe "foo"
 
   describe "label", ->
     it "should use default 'name' label", ->
@@ -123,7 +123,7 @@ describe "Mac autocomplete", ->
       $rootScope.$digest()
 
       changeInputValue element, "f"
-      expect($(".mac-menu-item").text() == "foo").toBe true
+      expect($(".mac-menu-item").text()).toBe "foo"
 
     it "should not be able to find anything", ->
       $rootScope.source = [
@@ -135,7 +135,7 @@ describe "Mac autocomplete", ->
       $rootScope.$digest()
 
       changeInputValue element, "f"
-      expect($(".mac-menu-item").text() == "foo").toBe false
+      expect($(".mac-menu-item").text()).not.toBe "foo"
 
     it "should use 'label' as the key", ->
       $rootScope.source = [
@@ -147,7 +147,7 @@ describe "Mac autocomplete", ->
       $rootScope.$digest()
 
       changeInputValue element, "f"
-      expect($(".mac-menu-item").text() == "foo").toBe true
+      expect($(".mac-menu-item").text()).toBe "foo"
 
   describe "updateItem", ->
     it "should convert key to label", ->
@@ -200,14 +200,14 @@ describe "Mac autocomplete", ->
       element = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-source='source'></mac-autocomplete>") $rootScope
       $rootScope.$digest()
 
-      expect($(".mac-menu").hasClass "visible").toBe false
+      expect($(".mac-menu").hasClass "visible").toBeFalsy()
 
       changeInputValue element, "f"
       $rootScope.$digest()
 
       $timeout.flush()
 
-      expect($(".mac-menu").hasClass "visible").toBe true
+      expect($(".mac-menu").hasClass "visible").toBeTruthy()
 
     it "should delay for 200ms", ->
       $rootScope.source = data
@@ -215,26 +215,26 @@ describe "Mac autocomplete", ->
       element = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-source='source' mac-autocomplete-delay='200'></mac-autocomplete>") $rootScope
       $rootScope.$digest()
 
-      expect($(".mac-menu").hasClass "visible").toBe false
+      expect($(".mac-menu").hasClass "visible").toBeFalsy()
 
       changeInputValue element, "f"
       $rootScope.$digest()
 
       $timeout.flush()
 
-      expect($(".mac-menu").hasClass "visible").toBe true
+      expect($(".mac-menu").hasClass "visible").toBeTruthy()
 
     it "should disable autocomplete", ->
       $rootScope.disabled = true
       element             = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-disabled='disabled'></mac-autocomplete>") $rootScope
       $rootScope.$digest()
 
-      expect($(".mac-menu").hasClass "visible").toBe false
+      expect($(".mac-menu").hasClass "visible").toBeFalsy()
 
       changeInputValue element, "f"
       $rootScope.$digest()
 
-      expect($(".mac-menu").hasClass "visible").toBe false
+      expect($(".mac-menu").hasClass "visible").toBeFalsy()
 
   describe "callbacks", ->
     $httpBackend = null
@@ -310,9 +310,8 @@ describe "Mac autocomplete", ->
     it "should call error", ->
       $httpBackend.when("GET", "/api/404?q=f").respond(404)
 
-      called           = false
       $rootScope.url   = "/api/404"
-      $rootScope.error = (data) -> called = true
+      $rootScope.error = jasmine.createSpy "error"
 
       element = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-url='url' mac-autocomplete-on-error='error(data)'></mac-autocomplete>") $rootScope
       $rootScope.$digest()
@@ -323,7 +322,7 @@ describe "Mac autocomplete", ->
       $timeout.flush()
       $httpBackend.flush()
 
-      expect(called).toBe true
+      expect($rootScope.error).toHaveBeenCalled()
 
   describe "model -> view", ->
     it "should update the view", ->
