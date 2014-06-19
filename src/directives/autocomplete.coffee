@@ -63,14 +63,23 @@ Source support multiple types:
 
 angular.module("Mac").directive "macAutocomplete", [
   "$animate"
-  "$http"
-  "$filter"
   "$compile"
-  "$timeout"
+  "$filter"
+  "$http"
   "$parse"
   "$rootScope"
+  "$timeout"
   "keys"
-  ($animate, $http, $filter, $compile, $timeout, $parse, $rootScope, keys) ->
+  (
+    $animate
+    $compile
+    $filter
+    $http
+    $parse
+    $rootScope
+    $timeout
+    keys
+  ) ->
     restrict:    "EA"
     templateUrl: "template/autocomplete.html"
     transclude:  true
