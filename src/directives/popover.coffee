@@ -91,7 +91,7 @@ angular.module("Mac").
   # @param {Bool}   mac-popover-footer     Show footer or not
   # @param {Bool}   mac-popover-header     Show header or not
   # @param {String} mac-popover-title      Popover title
-  # @param {String} direction              Popover direction (default "above left")
+  # @param {String} mac-popover-direction  Popover direction (default "above left")
   # - above, below or middle - Place the popover above, below or center align the trigger element
   # - left or right  - Place tip on the left or right of the popover
   #
