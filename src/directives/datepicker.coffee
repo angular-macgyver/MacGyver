@@ -39,7 +39,11 @@ angular.module("Mac").directive "macDatepicker", [
   "$parse"
   "$timeout"
   "util"
-  ($parse, $timeout, util) ->
+  (
+    $parse
+    $timeout
+    util
+  ) ->
     restrict:    "E"
     replace:     true
     templateUrl: "template/datepicker.html"
@@ -123,11 +127,17 @@ angular.module("Mac").directive "macDatepickerInput", ->
   link:     ($scope, element, attrs, ctrl) ->
     if ctrl
       datepickerValidator = (value) ->
+        # Do not validate if the value is empty string
+        unless value
+          ctrl.$setValidity "date", true
+          return value
+
         format = attrs.macDatepickerInput
         try
           $.datepicker.parseDate format, value
           ctrl.$setValidity "date", true
           return value
+
         catch e
           ctrl.$setValidity "date", false
           return undefined

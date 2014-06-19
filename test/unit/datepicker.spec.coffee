@@ -143,6 +143,21 @@ describe "Mac datepicker", ->
 
       expect(input.hasClass("ng-invalid")).toBeTruthy()
 
+    it "should not validate for date", ->
+      $rootScope.model = "01/01/2014"
+
+      element = $compile("<mac-datepicker mac-datepicker-model='model'></mac-datepicker>") $rootScope
+      $rootScope.$digest()
+
+      input = $("input", element)
+      expect(input.hasClass("ng-valid")).toBeTruthy()
+
+      $rootScope.model = ""
+      $rootScope.$digest()
+
+      expect(input.hasClass("ng-valid")).toBeTruthy()
+      expect(input.hasClass("ng-valid-date")).toBeTruthy()
+
   describe "view -> model", ->
     $sniffer         = null
     changeInputValue = ->
