@@ -1,8 +1,9 @@
-# MacGyver
+# MacGyver ![License](http://img.shields.io/badge/license-MIT-green.svg) ![Latest Release](http://img.shields.io/github/release/StartTheShift/MacGyver.svg)
 
 Duct Tape and a Swiss Army Knife. Angular helpers for all your friends!
 
-[![Build Status](https://travis-ci.org/StartTheShift/MacGyver.png?branch=master)](https://travis-ci.org/StartTheShift/MacGyver) [![Selenium Test Status](https://saucelabs.com/buildstatus/macgyver-ci)](https://saucelabs.com/u/macgyver-ci)
+[![Build Status](https://travis-ci.org/StartTheShift/MacGyver.png?branch=master)](https://travis-ci.org/StartTheShift/MacGyver)
+[![Selenium Test Status](https://saucelabs.com/buildstatus/macgyver-ci)](https://saucelabs.com/u/macgyver-ci)
 
 [![Selenium Test Status](https://saucelabs.com/browser-matrix/macgyver-ci.svg)](https://saucelabs.com/u/macgyver-ci)
 
@@ -14,7 +15,6 @@ Duct Tape and a Swiss Army Knife. Angular helpers for all your friends!
  - Canvas Spinner
  - Datepicker
  - Events
- - File Upload
  - Menu
  - Modal
  - Placeholder
@@ -34,10 +34,9 @@ Duct Tape and a Swiss Army Knife. Angular helpers for all your friends!
 
 ## 3rd party libraries dependencies ##
 Libraries are only needed for a few directives,
-
- - jQuery (datepicker, table and file upload)
+ - AngularJS (1.2.x+)
+ - jQuery (datepicker and table)
  - jQuery UI (datepicker and table)
- - jQuery File Upload (file upload directive)
  - Underscore String (Underscore string filter)
 
 ## Using MacGyver ##
@@ -57,7 +56,6 @@ MacGyver includes multiple scripts,
 - `macgyver.js` - All directives, services and filters bundled together
 - `macgyver-core.js` - Utilities, events and all directives without 3rd party dependencies
 - `macgyver-datepicker.js` - Datepicker with jQuery UI datepicker
-- `macgyver-fileupload.js` - Fileupload directive with jQuery UI and jQuery fileupload
 - `macgyver-filters.js` - Filters except underscore string filter
 - `macgyver-string-filter.js` - Underscore String filter
 - `macgyver-table.js` - Table view
