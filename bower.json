@@ -34,13 +34,13 @@
     "package.json"
   ],
   "devDependencies": {
-    "angular-mocks": "1.2.13",
+    "angular-mocks": "*",
     "jquery": "~2.0.3",
     "jquery.ui": "~1.10.3"
   },
   "dependencies": {
-    "angular": "1.2.13",
-    "angular-animate": "1.2.13",
+    "angular": ">=1.2.0",
+    "angular-animate": ">=1.2.0",
     "underscore.string": "~2.3.3"
   }
 }
