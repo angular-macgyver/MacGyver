@@ -1,13 +1,13 @@
 <h1 id="datepicker">Datepicker</h1>
-<p>A directive for creating a datepicker on text input using jquery ui  </p>
+<p>A directive for creating a datepicker on text input using jquery ui. Time input can use any <code>ng-</code> attributes support by text input type.  </p>
 <h3 id="dependencies">Dependencies</h3>
 <ul>
 <li>jQuery  </li>
 <li>jQuery datepicker  </li>
 </ul>
 <h3 id="parameters">Parameters</h3>
-<p><strong>mac-datepicker-id</strong><br>Type: <code>String</code><br>The id of the text input field  </p>
-<p><strong>mac-datepicker-model</strong><br>Type: <code>String</code><br>The model to store the selected date<br>Clearing model by setting it to null or &#39;&#39; will clear the input field  </p>
+<p><strong>id</strong><br>Type: <code>String</code><br>The id of the text input field  </p>
+<p><strong>ng-model</strong><br>Type: <code>String</code><br>The model to store the selected date<br>Clearing model by setting it to null or &#39;&#39; will clear the input field  </p>
 <p><strong>mac-datepicker-on-select</strong><br>Type: <code>Function</code><br>Function called before setting the value to the model  </p>
 <ul>
 <li><code>date</code> - {String} Selected date from the datepicker  </li>
@@ -33,4 +33,4 @@
 <p><strong>mac-datepicker-number-of-months</strong><br>Type: <code>Integer</code><br>The number of months to show at once  </p>
 <p><strong>mac-datepicker-show-on</strong><br>Type: <code>String</code><br>When the datepicker should appear  </p>
 <p><strong>mac-datepicker-year-range</strong><br>Type: <code>Integer</code><br>The range of years displayed in the year drop-down  </p>
-<p><strong>mac-datepicker-disabled</strong><br>Type: <code>Boolean</code><br>Enable or disable datepicker  </p>
+<p><strong>ng-disabled</strong><br>Type: <code>Boolean</code><br>Enable or disable datepicker  </p>

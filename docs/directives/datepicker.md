@@ -1,7 +1,7 @@
 
 Datepicker
 ===
-A directive for creating a datepicker on text input using jquery ui  
+A directive for creating a datepicker on text input using jquery ui. Time input can use any `ng-` attributes support by text input type.  
   
   
 ### Dependencies
@@ -10,11 +10,11 @@ A directive for creating a datepicker on text input using jquery ui
   
 
 ### Parameters
-**mac-datepicker-id**  
+**id**  
 Type: `String`  
 The id of the text input field  
   
-**mac-datepicker-model**  
+**ng-model**  
 Type: `String`  
 The model to store the selected date  
 Clearing model by setting it to null or '' will clear the input field  
@@ -91,7 +91,7 @@ When the datepicker should appear
 Type: `Integer`  
 The range of years displayed in the year drop-down  
   
-**mac-datepicker-disabled**  
+**ng-disabled**  
 Type: `Boolean`  
 Enable or disable datepicker  
   

@@ -302,12 +302,12 @@ block append content
     h3 Example
     .docs-example
       mac-datepicker(
-        mac-datepicker-id       = "input-start-date"
-        mac-datepicker-model    = "startDate"
+        id                      = "input-start-date"
+        ng-model                = "startDate"
         mac-datepicker-min-date = "minDate"
       )
     pre.prettyprint.
-      &lt;mac-datepicker mac-datepicker-id=&quot;input-start-date&quot; mac-datepicker-model=&quot;startDate&quot;&gt;&lt;/mac-datepicker&gt;
+      &lt;mac-datepicker id=&quot;input-start-date&quot; ng-model=&quot;startDate&quot;&gt;&lt;/mac-datepicker&gt;
 
   section#time-input(mac-scroll-spy-anchor)
     | @@include("docs/html/directives/time.html")

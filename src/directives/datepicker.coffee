@@ -2,14 +2,13 @@
 @chalk overview
 @name Datepicker
 @description
-A directive for creating a datepicker on text input using jquery ui
+A directive for creating a datepicker on text input using jquery ui. Time input can use any `ng-` attributes support by text input type.
 
 @dependencies
 - jQuery
 - jQuery datepicker
 
-@param {String}     mac-datepicker-id        The id of the text input field
-@param {String}     mac-datepicker-model     The model to store the selected date
+@param {String}     ng-model The model to store the selected date
 Clearing model by setting it to null or '' will clear the input field
 @param {Function}   mac-datepicker-on-select Function called before setting the value to the model
   - `date` - {String} Selected date from the datepicker
@@ -32,7 +31,7 @@ Clearing model by setting it to null or '' will clear the input field
 @param {Integer}    mac-datepicker-number-of-months     The number of months to show at once
 @param {String}     mac-datepicker-show-on              When the datepicker should appear
 @param {Integer}    mac-datepicker-year-range           The range of years displayed in the year drop-down
-@param {Boolean}    mac-datepicker-disabled             Enable or disable datepicker
+@param {Boolean}    ng-disabled                         Enable or disable datepicker
 ###
 
 angular.module("Mac").directive "macDatepicker", [
@@ -44,103 +43,81 @@ angular.module("Mac").directive "macDatepicker", [
     $timeout
     util
   ) ->
+    defaults =
+      appendText:         ""
+      autoSize:           false
+      changeMonth:        false
+      changeYear:         false
+      constrainInputType: true
+      currentText:        "Today"
+      dateFormat:         "mm/dd/yy"
+      defaultDate:        null
+      duration:           "normal"
+      firstDay:           0
+      maxDate:            null
+      minDate:            null
+      numberOfMonths:     1
+      showOn:             "focus"
+      yearRange:          "c-10:c+10"
+
     restrict:    "E"
+    require:     "ngModel"
     replace:     true
     templateUrl: "template/datepicker.html"
 
-    compile: (element, attrs) ->
-      defaults =
-        id:                 "input-date"
-        appendText:         ""
-        autoSize:           false
-        changeMonth:        false
-        changeYear:         false
-        constrainInputType: true
-        currentText:        "Today"
-        dateFormat:         "mm/dd/yy"
-        defaultDate:        null
-        duration:           "normal"
-        firstDay:           0
-        maxDate:            null
-        minDate:            null
-        numberOfMonths:     1
-        showOn:             "focus"
-        yearRange:          "c-10:c+10"
-
+    link: ($scope, element, attrs, ngModelCtrl) ->
       opts = util.extendAttributes "macDatepicker", defaults, attrs
 
-      inputAttrs = "mac-id": opts.id
+      onSelect = $parse attrs.macDatepickerOnSelect
+      onClose  = $parse attrs.macDatepickerOnClose
 
-      if attrs.macDatepickerModel
-        inputAttrs["ng-model"]             = attrs.macDatepickerModel
-        inputAttrs["mac-datepicker-input"] = opts.dateFormat
-
-      if attrs.macDatepickerDisabled?
-        inputAttrs["ng-disabled"] = attrs.macDatepickerDisabled
-
-      inputElement = angular.element(element[0].getElementsByTagName "input")
-      inputElement.attr inputAttrs
-
-      ($scope, element, attrs) ->
-        onSelect    = $parse attrs.macDatepickerOnSelect
-        onClose     = $parse attrs.macDatepickerOnClose
-        model       = $parse attrs.macDatepickerModel
-
-        # jQuery UI Datepicker initialization
-        opts.onSelect = (date, instance) ->
-          $scope.$apply ->
-            onSelect? $scope, {date, instance}
-            model.assign? $scope, date
-
-        opts.onClose = (date, instance) ->
-          $scope.$apply ->
-            onClose? $scope, {date, instance}
-
-        inputElement.datepicker opts
-
-        # Watchers on local variables
-        setOptions = (name, value) ->
-          if value?
-            inputElement.datepicker "option", name, value
-
-        if attrs.macDatepickerDefaultDate?
-          $scope.$watch attrs.macDatepickerDefaultDate, (value) ->
-            setOptions "defaultDate", value
-
-        if attrs.macDatepickerMaxDate?
-          $scope.$watch attrs.macDatepickerMaxDate, (value) ->
-            setOptions "maxDate", value
-
-        if attrs.macDatepickerMinDate?
-          $scope.$watch attrs.macDatepickerMinDate, (value) ->
-            setOptions "minDate", value
-]
-
-###
-@name Datepicker Input
-@description
-An internal directive for mac-datepicker input element to add validator
-###
-angular.module("Mac").directive "macDatepickerInput", ->
-  restrict: "A"
-  require:  "?ngModel"
-  link:     ($scope, element, attrs, ctrl) ->
-    if ctrl
+      # Validation
       datepickerValidator = (value) ->
         # Do not validate if the value is empty string
         unless value
-          ctrl.$setValidity "date", true
+          ngModelCtrl.$setValidity "date", true
           return value
 
-        format = attrs.macDatepickerInput
         try
-          $.datepicker.parseDate format, value
-          ctrl.$setValidity "date", true
+          $.datepicker.parseDate opts.dateFormat, value
+          ngModelCtrl.$setValidity "date", true
           return value
 
         catch e
-          ctrl.$setValidity "date", false
+          ngModelCtrl.$setValidity "date", false
           return undefined
 
-      ctrl.$formatters.push datepickerValidator
-      ctrl.$parsers.push datepickerValidator
+      ngModelCtrl.$formatters.push datepickerValidator
+      ngModelCtrl.$parsers.push datepickerValidator
+
+      # jQuery UI Datepicker initialization
+      opts.onSelect = (date, instance) ->
+        $scope.$apply ->
+          onSelect? $scope, {date, instance}
+
+          ngModelCtrl.$setViewValue date
+          ngModelCtrl.$render()
+
+      opts.onClose = (date, instance) ->
+        $scope.$apply ->
+          onClose? $scope, {date, instance}
+
+      element.datepicker opts
+
+      # Watchers on local variables
+      setOptions = (name, value) ->
+        if value?
+          element.datepicker "option", name, value
+
+      if attrs.macDatepickerDefaultDate?
+        $scope.$watch attrs.macDatepickerDefaultDate, (value) ->
+          setOptions "defaultDate", value
+
+      if attrs.macDatepickerMaxDate?
+        $scope.$watch attrs.macDatepickerMaxDate, (value) ->
+          setOptions "maxDate", value
+
+      if attrs.macDatepickerMinDate?
+        $scope.$watch attrs.macDatepickerMinDate, (value) ->
+          setOptions "minDate", value
+]

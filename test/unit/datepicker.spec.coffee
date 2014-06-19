@@ -19,91 +19,63 @@ describe "Mac datepicker", ->
 
   describe "basic initialization", ->
     it "should be replaced with template", ->
-      element = $compile("<mac-datepicker></mac-datepicker>") $rootScope
+      element = $compile("<mac-datepicker ng-model='date'></mac-datepicker>") $rootScope
       $rootScope.$digest()
 
       expect(element.hasClass("mac-date-time")).toBe true
 
-    it "should set mac-id on input", ->
-      element = $compile("<mac-datepicker mac-datepicker-id='test-picker'></mac-datepicker>") $rootScope
-      $rootScope.$digest()
-
-      inputElement = $("input", element)
-      expect(inputElement.attr("mac-id")).toBe "test-picker"
-
-    it "should not set ng-disabled on input", ->
-      element = $compile("<mac-datepicker></mac-datepicker>") $rootScope
-      $rootScope.$digest()
-
-      inputElement = $("input", element)
-      expect(inputElement.attr("ng-disabled")).not.toBeDefined()
-
-    it "should set ng-disabled on input", ->
-      $rootScope.disabled = true
-      element = $compile("<mac-datepicker mac-datepicker-disabled='disabled'></mac-datepicker>") $rootScope
-      $rootScope.$digest()
-
-      inputElement = $("input", element)
-      expect(inputElement.attr("ng-disabled")).toBe "disabled"
-      expect(inputElement.prop("disabled")).toBe true
-
   describe "options", ->
     it "should set options using attributes", ->
-      element = $compile("<mac-datepicker mac-datepicker-append-text='test'></mac-datepicker>") $rootScope
+      element = $compile("<mac-datepicker mac-datepicker-append-text='test' ng-model='date'></mac-datepicker>") $rootScope
       $rootScope.$digest()
 
-      inputElement = $("input", element)
-      expect(inputElement.datepicker("option", "appendText")).toBe "test"
+      expect(element.datepicker("option", "appendText")).toBe "test"
 
     it "should set dateFormat correctly", ->
-      element = $compile("<mac-datepicker mac-datepicker-date-format='yyyy/mm/dd'></mac-datepicker>") $rootScope
+      element = $compile("<mac-datepicker mac-datepicker-date-format='yyyy/mm/dd' ng-model='date'></mac-datepicker>") $rootScope
       $rootScope.$digest()
 
-      inputElement = $("input", element)
-      expect(inputElement.datepicker("option", "dateFormat")).toBe "yyyy/mm/dd"
+      expect(element.datepicker("option", "dateFormat")).toBe "yyyy/mm/dd"
 
   describe "defaultDate", ->
     it "should set defaultDate to null", ->
       date    = new Date()
-      element = $compile("<mac-datepicker></mac-datepicker>") $rootScope
+      element = $compile("<mac-datepicker ng-model='date'></mac-datepicker>") $rootScope
       $("body").append element
       $rootScope.$digest()
 
-      inputElement = $("input", element)
-      inputElement.val("").datepicker("show").
+      element.val("").datepicker("show").
         trigger $.Event("keydown", keyCode: keys.ENTER)
 
-      equalsDate inputElement.datepicker("getDate"), date
+      equalsDate element.datepicker("getDate"), date
 
     it "should set defaultDate with numerical value", ->
       $rootScope.defaultDate = 2
       date                   = new Date()
       date.setDate date.getDate() + 2
 
-      element = $compile("<mac-datepicker mac-datepicker-default-date='defaultDate'></mac-datepicker>") $rootScope
+      element = $compile("<mac-datepicker mac-datepicker-default-date='defaultDate' ng-model='date'></mac-datepicker>") $rootScope
       $("body").append element
       $rootScope.$digest()
 
-      inputElement = $("input", element)
-      inputElement.val("").datepicker("show").
+      element.val("").datepicker("show").
         trigger $.Event("keydown", keyCode: keys.ENTER)
 
-      equalsDate inputElement.datepicker("getDate"), date
+      equalsDate element.datepicker("getDate"), date
 
     it "should set defaultDate with numerical value", ->
       $rootScope.defaultDate = "-3d"
       date                   = new Date()
       date.setDate date.getDate() - 3
 
-      element = $compile("<mac-datepicker mac-datepicker-default-date='defaultDate'></mac-datepicker>") $rootScope
+      element = $compile("<mac-datepicker mac-datepicker-default-date='defaultDate' ng-model='date'></mac-datepicker>") $rootScope
       $("body").append element
       $rootScope.$digest()
 
-      inputElement = $("input", element)
-      inputElement.val("").datepicker("show").
+      element.val("").datepicker("show").
         trigger $.Event("keydown", keyCode: keys.ENTER)
 
-      equalsDate inputElement.datepicker("getDate"), date
+      equalsDate element.datepicker("getDate"), date
 
   describe "min/max", ->
     it "should set the min date correctly", ->
@@ -111,52 +83,48 @@ describe "Mac datepicker", ->
       date.setMonth date.getMonth() - 6
       $rootScope.minDate = date
 
-      element = $compile("<mac-datepicker mac-datepicker-min-date='minDate'></mac-datepicker>") $rootScope
+      element = $compile("<mac-datepicker mac-datepicker-min-date='minDate' ng-model='date'></mac-datepicker>") $rootScope
       $rootScope.$digest()
 
-      inputElement = $("input", element)
-      equalsDate inputElement.datepicker("option", "minDate"), date
+      equalsDate element.datepicker("option", "minDate"), date
 
     it "should set the min date correctly", ->
       date = new Date()
       date.setMonth date.getMonth() - 6
       $rootScope.maxDate = date
 
-      element = $compile("<mac-datepicker mac-datepicker-max-date='maxDate'></mac-datepicker>") $rootScope
+      element = $compile("<mac-datepicker mac-datepicker-max-date='maxDate' ng-model='date'></mac-datepicker>") $rootScope
       $rootScope.$digest()
 
-      inputElement = $("input", element)
-      equalsDate inputElement.datepicker("option", "maxDate"), date
+      equalsDate element.datepicker("option", "maxDate"), date
 
   describe "validation", ->
     it "should set to invalid", ->
       $rootScope.model = "01/01/2014"
 
-      element = $compile("<mac-datepicker mac-datepicker-model='model'></mac-datepicker>") $rootScope
+      element = $compile("<mac-datepicker ng-model='model'></mac-datepicker>") $rootScope
       $rootScope.$digest()
 
-      input = $("input", element)
-      expect(input.hasClass("ng-valid")).toBeTruthy()
+      expect(element.hasClass("ng-valid")).toBeTruthy()
 
       $rootScope.model = "13/01/2014"
       $rootScope.$digest()
 
-      expect(input.hasClass("ng-invalid")).toBeTruthy()
+      expect(element.hasClass("ng-invalid")).toBeTruthy()
 
     it "should not validate for date", ->
       $rootScope.model = "01/01/2014"
 
-      element = $compile("<mac-datepicker mac-datepicker-model='model'></mac-datepicker>") $rootScope
+      element = $compile("<mac-datepicker ng-model='model'></mac-datepicker>") $rootScope
       $rootScope.$digest()
 
-      input = $("input", element)
-      expect(input.hasClass("ng-valid")).toBeTruthy()
+      expect(element.hasClass("ng-valid")).toBeTruthy()
 
       $rootScope.model = ""
       $rootScope.$digest()
 
-      expect(input.hasClass("ng-valid")).toBeTruthy()
-      expect(input.hasClass("ng-valid-date")).toBeTruthy()
+      expect(element.hasClass("ng-valid")).toBeTruthy()
+      expect(element.hasClass("ng-valid-date")).toBeTruthy()
 
   describe "view -> model", ->
     $sniffer         = null
@@ -172,11 +140,10 @@ describe "Mac datepicker", ->
     it "should update model", ->
       $rootScope.model = "01/01/2014"
 
-      element = $compile("<mac-datepicker mac-datepicker-model='model'></mac-datepicker>") $rootScope
+      element = $compile("<mac-datepicker ng-model='model'></mac-datepicker>") $rootScope
       $rootScope.$digest()
 
-      input = $("input", element)
-      changeInputValue input, "10/21/2015"
+      changeInputValue element, "10/21/2015"
 
       expect($rootScope.model).toBe "10/21/2015"
 
@@ -188,14 +155,12 @@ describe "Mac datepicker", ->
 
       $rootScope.onSelect = (date) -> called = true
 
-      element = $compile("<mac-datepicker mac-datepicker-on-select='onSelect(date)' mac-datepicker-model='model'></mac-datepicker>") $rootScope
+      element = $compile("<mac-datepicker mac-datepicker-on-select='onSelect(date)' ng-model='model'></mac-datepicker>") $rootScope
       $rootScope.$digest()
       $("body").append element
 
-      inputElement = $("input", element)
-
       runs ->
-        inputElement.val("").datepicker("show").
+        element.val("").datepicker("show").
           trigger $.Event("keydown", keyCode: keys.ENTER)
 
       waitsFor ->
@@ -213,14 +178,12 @@ describe "Mac datepicker", ->
         closedDate = onCloseDate
         called     = true
 
-      element = $compile("<mac-datepicker mac-datepicker-on-close='onClose(date)'></mac-datepicker>") $rootScope
+      element = $compile("<mac-datepicker mac-datepicker-on-close='onClose(date)' ng-model='date'></mac-datepicker>") $rootScope
       $rootScope.$digest()
       $("body").append element
 
-      inputElement = $("input", element)
-
       runs ->
-        inputElement.val("").datepicker("show").
+        element.val("").datepicker("show").
           trigger $.Event("keydown", keyCode: keys.ENTER)
 
       waitsFor ->
