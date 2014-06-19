@@ -226,9 +226,12 @@ angular.module("Mac").directive "macAutocomplete", [
 
           $menuScope.items = data.map (item) ->
             if angular.isObject item
-              item.value ?= item[labelKey] or ""
-              item.label ?= item[labelKey] or ""
+              itemGetter = $parse labelKey
+
+              item.value ?= itemGetter(item) or ""
+              item.label ?= itemGetter(item) or ""
               item
+
             else
               {label: item, value: item}
 

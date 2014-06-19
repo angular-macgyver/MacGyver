@@ -62,10 +62,14 @@ angular.module("Mac").directive "macTagAutocomplete", [
       onKeydown:   "&macTagAutocompleteOnKeydown"
 
     compile: (element, attrs) ->
-      valueKey   = attrs.macTagAutocompleteValue
-      valueKey  ?= "id"
-      labelKey   = attrs.macTagAutocompleteLabel
-      labelKey  ?= "name"
+      valueKey    = attrs.macTagAutocompleteValue
+      valueKey   ?= "id"
+      valueGetter = $parse valueKey
+
+      labelKey    = attrs.macTagAutocompleteLabel
+      labelKey   ?= "name"
+      labelGetter = $parse labelKey
+
       queryKey   = attrs.macTagAutocompleteQuery  or "q"
       delay      = +attrs.macTagAutocompleteDelay or 800
       useSource  = false
@@ -73,7 +77,6 @@ angular.module("Mac").directive "macTagAutocomplete", [
       textInput =
         angular.element(element[0].getElementsByClassName "mac-autocomplete")
       attrsObject =
-        "mac-autocomplete-value": valueKey
         "mac-autocomplete-label": labelKey
         "mac-autocomplete-query": queryKey
         "mac-autocomplete-delay": delay
@@ -87,7 +90,7 @@ angular.module("Mac").directive "macTagAutocomplete", [
 
       ($scope, element, attrs) ->
         # Variable for input element
-        $scope.textInput = ""
+        $scope.textInput          = ""
         $scope.autocompleteSource =
           if angular.isArray($scope.source) then [] else $scope.source
 
@@ -102,7 +105,7 @@ angular.module("Mac").directive "macTagAutocomplete", [
           textInputDOM = element[0].getElementsByClassName "mac-autocomplete"
           textInputDOM[0].focus()
 
-        $scope.getTagLabel = (tag) -> if labelKey then tag[labelKey] else tag
+        $scope.getTagLabel = (tag) -> if labelKey then labelGetter(tag) else tag
 
         # Loop through the list of events user specified
         # NOTE: Timeout is added to make sure the autocomplete directive
@@ -134,12 +137,12 @@ angular.module("Mac").directive "macTagAutocomplete", [
             $scope.autocompleteSource = $scope.source
             return
 
-          sourceValues   = (item[valueKey] for item in ($scope.source or []))
-          selectedValues = (item[valueKey] for item in ($scope.selected or []))
+          sourceValues   = (valueGetter(item) for item in ($scope.source or []))
+          selectedValues = (valueGetter(item) for item in ($scope.selected or []))
           difference     = (item for item in sourceValues when item not in selectedValues)
 
           $scope.autocompleteSource =
-            (item for item in ($scope.source or []) when item[valueKey] in difference)
+            (item for item in ($scope.source or []) when valueGetter(item) in difference)
 
         if useSource
           # NOTE: Watcher on source is added for string and function type to make sure
@@ -166,9 +169,9 @@ angular.module("Mac").directive "macTagAutocomplete", [
 
         $scope.onSuccess = (data) ->
           # get all selected values
-          existingValues = (item[valueKey] for item in ($scope.selected or []))
+          existingValues = (valueGetter(item) for item in ($scope.selected or []))
           # remove selected tags on autocomplete dropdown
-          return (item for item in data.data when (item[valueKey] or item) not in existingValues)
+          return (item for item in data.data when (valueGetter(item) or item) not in existingValues)
 
         $scope.onSelect = (item) ->
           if attrs.macTagAutocompleteOnEnter?

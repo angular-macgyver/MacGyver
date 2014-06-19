@@ -149,6 +149,20 @@ describe "Mac autocomplete", ->
       changeInputValue element, "f"
       expect($(".mac-menu-item").text()).toBe "foo"
 
+    it "should evaulate expression on label attribute correctly", ->
+      $rootScope.source = [
+        {
+          name: "foo"
+          attributes:
+            value: "foo"
+        }
+      ]
+      element = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-source='source' mac-autocomplete-label='attributes.value' mac-autocomplete-delay='0'></mac-autocomplete>") $rootScope
+      $rootScope.$digest()
+
+      changeInputValue element, "f"
+      expect($(".mac-menu-item").text()).toBe "foo"
+
   describe "updateItem", ->
     it "should convert key to label", ->
       $rootScope.source = (query, cb) ->

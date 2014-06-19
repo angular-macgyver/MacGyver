@@ -27,7 +27,6 @@ describe "Mac tag autocomplete", ->
       $rootScope.$digest()
 
       textInput = $(".mac-autocomplete", element)
-      expect(textInput.attr("mac-autocomplete-value")).toBe "id"
       expect(textInput.attr("mac-autocomplete-label")).toBe "name"
 
     it "should set value and label attribute on mac-autocomplete", ->
@@ -35,7 +34,6 @@ describe "Mac tag autocomplete", ->
       $rootScope.$digest()
 
       textInput = $(".mac-autocomplete", element)
-      expect(textInput.attr("mac-autocomplete-value")).toBe "test-id"
       expect(textInput.attr("mac-autocomplete-label")).toBe "test-name"
 
     it "should pass empty string as key and value", ->
@@ -43,7 +41,6 @@ describe "Mac tag autocomplete", ->
       $rootScope.$digest()
 
       textInput = $(".mac-autocomplete", element)
-      expect(textInput.attr("mac-autocomplete-value")).toBe ""
       expect(textInput.attr("mac-autocomplete-label")).toBe ""
 
     it "should set query attribute on mac-autocomplete", ->
