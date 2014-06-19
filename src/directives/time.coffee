@@ -2,127 +2,148 @@
 @chalk overview
 @name Time
 @description
-A directive for creating a time input field
+A directive for creating a time input field. Time input can use any `ng-` attributes support by text input type.
 
-@param {String} mac-time-model        Assignable angular expression to data-bind to
+@param {String} ng-model         Assignable angular expression to data-bind to
 Clearing model by setting it to null or '' will set model back to default value
-@param {String} mac-time-placeholder  Placeholder text of the text input (default --:--)
-@param {String} mac-time-disabled     Enable or disable time input
-@param {String} mac-time-default      If model is undefined, use this as the starting value (default 12:00 PM)
+@param {String} name             Property name of the form under which the control is published
+@param {String} required         Adds `required` validation error key if the value is not entered.
+@param {String} ng-required      Adds `required` attribute and `required` validation constraint to
+ the element when the ngRequired expression evaluates to true. Use `ngRequired` instead of
+ `required` when you want to data-bind to the `required` attribute.
+@param {String} ng-pattern      Sets `pattern` validation error key if the value does not match the
+ RegExp pattern expression. Expected value is `/regexp/` for inline patterns or `regexp` for
+   patterns defined as scope expressions.
+@param {String} ng-change       Angular expression to be executed when input changes due to user interaction with the input element.
+@param {String} ng-disabled     Enable or disable time input
+
+@param {String} mac-time-default If model is undefined, use this as the starting value (default 12:00 PM)
 
 ###
 
 angular.module("Mac").directive "macTime", [
   "$filter"
   "$timeout"
-  "util"
   "keys"
-  ($filter, $timeout, util, keys) ->
-    restrict: "E"
-    scope:
-      model:    "=macTimeModel"
-      disabled: "=macTimeDisabled"
+  "util"
+  (
+    $filter
+    $timeout
+    keys
+    util
+  ) ->
+    defaults =
+      default: "12:00 AM"
+
+    restrict:    "E"
+    require:     "ngModel"
     replace:     true
     templateUrl: "template/time.html"
-
-    compile: (element, attrs) ->
-
-      defaults =
-        placeholder: "--:--"
-        default:     "12:00 AM"
-
+    link:        ($scope, element, attrs, ngModelCtrl) ->
       opts = util.extendAttributes "macTime", defaults, attrs
+      time = null
 
-      ($scope, element, attrs) ->
-        $scope.placeholder = opts.placeholder
+      # Set default placeholder
+      unless attrs.placeholder
+        attrs.$set "placeholder", "--:--"
 
-        inputDOM = element[0].getElementsByTagName("input")[0]
+      # Validation
+      timeValidator = (value) ->
+        if !value or util.timeRegex.exec(value)
+          ngModelCtrl.$setValidity "time", true
 
-        do initializeTime = ->
-          currentDate = new Date().toDateString()
-          time        = new Date currentDate + " " + opts.default
+          return value
+        else
+          ngModelCtrl.$setValidity "time", false
 
-          if isNaN time.getTime()
-            time = new Date currentDate + " " + defaults.default
+          return undefined
 
-          #
-          # @name $scope.time
-          # @description
-          # Javscript date variable for easier datetime manipulation
-          #
-          $scope.time = time
+      ngModelCtrl.$formatters.push timeValidator
+      ngModelCtrl.$parsers.push timeValidator
 
-        getSelection = ->
-          start = inputDOM.selectionStart
+      do initializeTime = ->
+        currentDate = new Date().toDateString()
+        time        = new Date currentDate + " " + opts.default
 
-          switch
-            when 0 <= start < 3 then "hour"
-            when 3 <= start < 6 then "minute"
-            when 6 <= start < 9 then "meridian"
+        if isNaN time.getTime()
+          time = new Date currentDate + " " + defaults.default
 
-        selectRange = (start, end) ->
-          $timeout ->
-            inputDOM.setSelectionRange start, end
-          , 0, false
+      getSelection = ->
+        start = element[0].selectionStart
 
-        selectHours    = -> selectRange 0, 2
-        selectMinutes  = -> selectRange 3, 5
-        selectMeridian = -> selectRange 6, 8
+        switch
+          when 0 <= start < 3 then "hour"
+          when 3 <= start < 6 then "minute"
+          when 6 <= start < 9 then "meridian"
 
-        selectNextSection = ->
-          switch getSelection()
-            when "hour" then selectMinutes()
-            when "minute", "meridian" then selectMeridian()
+      selectRange = (start, end) ->
+        $timeout ->
+          element[0].setSelectionRange start, end
+        , 0, false
 
-        selectPreviousSection = ->
-          switch getSelection()
-            when "hour", "minute" then selectHours()
-            when "meridian" then selectMinutes()
+      selectHours    = -> selectRange 0, 2
+      selectMinutes  = -> selectRange 3, 5
+      selectMeridian = -> selectRange 6, 8
 
-        setMeridian = (meridian) ->
-          hours = $scope.time.getHours()
+      selectNextSection = ->
+        switch getSelection()
+          when "hour"               then selectMinutes()
+          when "minute", "meridian" then selectMeridian()
 
-          hours -= 12 if hours >= 12 and meridian is "AM"
-          hours += 12 if hours < 12 and meridian is "PM"
+      selectPreviousSection = ->
+        switch getSelection()
+          when "hour", "minute" then selectHours()
+          when "meridian"       then selectMinutes()
 
-          $scope.time.setHours hours
+      setMeridian = (meridian) ->
+        hours = time.getHours()
 
-        toggleMeridian = ->
-          hours = $scope.time.getHours()
+        hours -= 12 if hours >= 12 and meridian is "AM"
+        hours += 12 if hours < 12 and meridian is "PM"
 
-          $scope.time.setHours (hours + 12) % 24
+        time.setHours hours
 
-        incrementHour = (change) ->
-          $scope.time.setHours $scope.time.getHours() + change
+      toggleMeridian = ->
+        hours = time.getHours()
+        time.setHours (hours + 12) % 24
 
-        incrementMinute = (change) ->
-          $scope.time.setMinutes $scope.time.getMinutes() + change
+      incrementHour = (change) ->
+        time.setHours time.getHours() + change
 
-        updateInput = ->
-          $scope.model = $filter("date") $scope.time.getTime(), "hh:mm a"
+      incrementMinute = (change) ->
+        time.setMinutes time.getMinutes() + change
 
-        updateTime = ->
-          if timeMatch = util.timeRegex.exec $scope.model
-            hours    = +timeMatch[1]
-            minutes  = +timeMatch[2]
-            meridian = timeMatch[3]
+      updateInput = ->
+        displayTime = $filter("date") time.getTime(), "hh:mm a"
 
-            hours += 12 if meridian is "PM" and hours isnt 12
-            hours  = 0 if meridian is "AM" and hours is 12
+        unless displayTime is ngModelCtrl.$viewValue
+          ngModelCtrl.$setViewValue displayTime
+          ngModelCtrl.$render()
 
-            $scope.time.setHours hours, minutes
+      updateTime = ->
+        if timeMatch = util.timeRegex.exec ngModelCtrl.$modelValue
+          hours    = +timeMatch[1]
+          minutes  = +timeMatch[2]
+          meridian = timeMatch[3]
 
-        $scope.blurEvent = (event) ->
+          hours += 12 if meridian is "PM" and hours isnt 12
+          hours  = 0 if meridian is "AM" and hours is 12
+
+          time.setHours hours, minutes
+
+      element.on 'blur', (event) ->
+        $scope.$apply ->
           updateInput()
 
-        #
-        # @name $scope.clickEvent
-        # @description
-        # Note: The initial click into the input will not update the time because the
-        # model is empty. The selection by default should be hour. This works
-        # due to the cursor defaulting to 0,0.
-        #
-        $scope.clickEvent = (event) ->
+      #
+      # @name Click event
+      # @description
+      # Note: The initial click into the input will not update the time because the
+      # model is empty. The selection by default should be hour. This works
+      # due to the cursor defaulting to 0,0.
+      #
+      element.on 'click', (event) ->
+        $scope.$apply ->
           updateTime()
           updateInput()
 
@@ -131,18 +152,21 @@ angular.module("Mac").directive "macTime", [
             when "minute" then selectMinutes()
             when "meridian" then selectMeridian()
 
-        $scope.keydownEvent = (event) ->
-          key = event.which
+      element.on 'keydown', (event) ->
+        key = event.which
 
-          event.preventDefault() if key in [
-            keys.UP
-            keys.DOWN
-            keys.LEFT
-            keys.RIGHT
-            keys.A
-            keys.P
-          ]
+        return true unless key in [
+          keys.UP
+          keys.DOWN
+          keys.LEFT
+          keys.RIGHT
+          keys.A
+          keys.P
+        ]
 
+        event.preventDefault()
+
+        $scope.$apply ->
           switch key
             when keys.UP, keys.DOWN
               change = if key is keys.UP then 1 else -1
@@ -159,7 +183,7 @@ angular.module("Mac").directive "macTime", [
                   selectMeridian()
 
               updateInput()
-              
+
             when keys.LEFT, keys.RIGHT
               switch key
                 when keys.LEFT then selectPreviousSection()
@@ -179,36 +203,12 @@ angular.module("Mac").directive "macTime", [
               selectMeridian()
               updateInput()
 
-        $scope.keyupEvent = (event) ->
-          key = event.which
+      element.on 'keyup', (event) ->
+        key = event.which
 
-          unless keys.NUMPAD0 <= key <= keys.NUMPAD9 or keys.ZERO <= key <= keys.NINE
-            event.preventDefault()
+        unless keys.NUMPAD0 <= key <= keys.NUMPAD9 or keys.ZERO <= key <= keys.NINE
+          event.preventDefault()
 
+        $scope.$apply ->
           updateTime()
-]
-
-###
-@name Time Input
-@description
-An internal directive for mac-time input element to add validator
-###
-angular.module("Mac").directive "macTimeInput", [
-  "util"
-  (util) ->
-    restrict: "A"
-    require:  "?ngModel"
-    link:     ($scope, element, attrs, ctrl) ->
-      timeValidator = (value) ->
-        if !value or util.timeRegex.exec(value)
-          ctrl.$setValidity "time", true
-
-          return value
-        else
-          ctrl.$setValidity "time", false
-
-          return undefined
-
-      ctrl.$formatters.push timeValidator
-      ctrl.$parsers.push timeValidator
 ]
