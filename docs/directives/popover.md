@@ -65,7 +65,7 @@ Show header or not
 Type: `String`  
 Popover title  
   
-**direction**  
+**mac-popover-direction**  
 Type: `String`  
 Popover direction (default "above left")  
 - above, below or middle - Place the popover above, below or center align the trigger element  
