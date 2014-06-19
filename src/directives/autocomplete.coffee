@@ -101,6 +101,9 @@ angular.module("Mac").directive "macAutocomplete", [
 
       currentAutocomplete = []
       timeoutId           = null
+
+      isMenuAppended = false
+
       # NOTE: onSelectBool is used to prevent parser from firing when an item
       # is selected in the menu
       onSelectBool = false
@@ -113,7 +116,6 @@ angular.module("Mac").directive "macAutocomplete", [
       menuEl.attr
         "ng-class":        attrs.macMenuClass or null
         "mac-menu-items":  "items"
-        "mac-menu-style":  "style"
         "mac-menu-select": "select(index)"
         "mac-menu-index":  "index"
 
@@ -156,12 +158,15 @@ angular.module("Mac").directive "macAutocomplete", [
       @param {Function} callback Callback after enter animation completes
       ###
       appendMenu = (callback) ->
+        unless isMenuAppended
+          element.bind "blur", clickHandler
+
+        isMenuAppended = true
+
         if inside
           $animate.enter menuEl, undefined, element, callback
         else
           $animate.enter menuEl, angular.element(document.body), undefined, callback
-
-        element.bind "blur", clickHandler
 
       ###
       @function
@@ -173,6 +178,8 @@ angular.module("Mac").directive "macAutocomplete", [
         $animate.leave menuEl, ->
           $menuScope.items = []
           $menuScope.index = 0
+
+          isMenuAppended = false
 
           element.unbind "blur", clickHandler
 
@@ -187,21 +194,20 @@ angular.module("Mac").directive "macAutocomplete", [
       Calculate the style include position and width for menu
       ###
       positionMenu = ->
-        return if $menuScope.items.length is 0
+        parentElement = if inside then element[0] else document.body
+        parentStyles  = window.getComputedStyle parentElement
 
-        appendMenu ->
-          parentOffset = menuEl.offset()
+        offset          = element.offset()
+        offset.left    -= parseInt parentStyles.marginLeft
+        offset.top     += element.outerHeight() - parseInt parentStyles.marginTop
+        offset.minWidth = element.outerWidth()
 
-          $menuScope.style          = element.offset()
-          $menuScope.style.left    -= parentOffset.left
-          $menuScope.style.top     += element.outerHeight() - parentOffset.top
-          $menuScope.style.minWidth = element.outerWidth()
+        # Add 'px' to left and top
+        angular.forEach offset, (value, key) ->
+          if not isNaN(+value) and angular.isNumber +value
+            value = "#{value}px"
 
-          # Add 'px' to left and top
-          angular.forEach $menuScope.style, (value, key) ->
-            if not isNaN(+value) and angular.isNumber +value
-              value = "#{value}px"
-            $menuScope.style[key] = value
+          menuEl[0].style[key] = value
 
       ###
       @function
@@ -222,7 +228,7 @@ angular.module("Mac").directive "macAutocomplete", [
             else
               {label: item, value: item}
 
-          positionMenu()
+          appendMenu positionMenu
 
       ###
       @function
@@ -245,6 +251,7 @@ angular.module("Mac").directive "macAutocomplete", [
             dataList ?= data.data
 
             updateItem dataList
+
           .error (data, status, headers, config) ->
             onError $scope, {data, status, headers}
 
@@ -260,6 +267,7 @@ angular.module("Mac").directive "macAutocomplete", [
 
         if url
           getData url, query
+
         else
           sourceData = source $scope
 
@@ -286,23 +294,35 @@ angular.module("Mac").directive "macAutocomplete", [
         reset()
 
       element.bind "keydown", (event) ->
+        # No action when menu is not showing
+        return true if $menuScope.items.length is 0
+
         switch event.which
           when keys.DOWN
             $scope.$apply ->
               $menuScope.index = ($menuScope.index + 1) % $menuScope.items.length
+
+              event.preventDefault()
+
           when keys.UP
             $scope.$apply ->
               $menuScope.index = (if $menuScope.index then $menuScope.index else $menuScope.items.length) - 1
+
+              event.preventDefault()
+
           when keys.ENTER
             $scope.$apply ->
-              if $menuScope.items.length > 0
-                $menuScope.select $menuScope.index
+              $menuScope.select $menuScope.index
 
-                # Prevent event from propagating up and possibly causing a form
-                # submission.
-                event.preventDefault()
+              # Prevent event from propagating up and possibly causing a form
+              # submission.
+              event.preventDefault()
+
           when keys.ESCAPE
-            $scope.$apply -> reset()
+            $scope.$apply ->
+              reset()
+
+              event.preventDefault()
 
         return true
 
