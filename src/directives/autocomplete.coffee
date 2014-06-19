@@ -179,6 +179,10 @@ angular.module("Mac").directive "macAutocomplete", [
           $menuScope.items = []
           $menuScope.index = 0
 
+          # Clear menu element inline style
+          menuEl[0].style.top  = ""
+          menuEl[0].style.left = ""
+
           isMenuAppended = false
 
           element.unbind "blur", clickHandler
