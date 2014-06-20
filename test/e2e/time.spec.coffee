@@ -30,12 +30,12 @@ describe "Mac Time Input", ->
     input = element(By.css(".mac-date-time"))
     input.click()
     input.sendKeys protractor.Key.DOWN
-    expect(input.getAttribute("value")).toEqual "09:55 PM"
+    expect(input.getAttribute("value")).toEqual "10:55 AM"
     return
 
   it "should change the model after pressing up button", ->
     input = element(By.css(".mac-date-time"))
     input.click()
     input.sendKeys protractor.Key.UP
-    expect(input.getAttribute("value")).toEqual "11:55 PM"
+    expect(input.getAttribute("value")).toEqual "10:55 AM"
     return
