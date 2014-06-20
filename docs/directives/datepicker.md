@@ -10,10 +10,6 @@ A directive for creating a datepicker on text input using jquery ui. Time input 
   
 
 ### Parameters
-**id**  
-Type: `String`  
-The id of the text input field  
-  
 **ng-model**  
 Type: `String`  
 The model to store the selected date  
