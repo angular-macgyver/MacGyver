@@ -1,20 +1,37 @@
 describe "Mac modal", ->
+  $animate       = null
   $compile       = null
   $rootScope     = null
   $templateCache = null
-  $timeout       = null
   modal          = null
   keys           = null
 
+  showModal = null
+
   beforeEach module("Mac")
+  beforeEach module("ngAnimateMock")
   beforeEach module("template/modal.html")
-  beforeEach inject (_$compile_, _$rootScope_, _modal_, _$templateCache_, _keys_, _$timeout_) ->
+  beforeEach inject (
+    _$animate_
+    _$compile_
+    _$rootScope_
+    _$templateCache_
+    _keys_
+    _modal_
+  ) ->
+    $animate       = _$animate_
     $compile       = _$compile_
     $rootScope     = _$rootScope_
-    modal          = _modal_
     $templateCache = _$templateCache_
     keys           = _keys_
-    $timeout       = _$timeout_
+    modal          = _modal_
+
+    showModal = (id) ->
+      modal.show id
+
+      # HACK: To invoke the callback for second function.
+      $animate.triggerCallbacks()
+      $animate.queue[1].args[2]()
 
   describe "modal service", ->
     it "should register a modal element", ->
@@ -45,8 +62,8 @@ describe "Mac modal", ->
       element.append $templateCache.get("template/modal.html")
 
       modal.register "test-modal", element, {position: true}
-      modal.show "test-modal"
-      $timeout.flush()
+
+      showModal "test-modal"
 
       modalElement = $(".mac-modal", element)
       expect(modalElement.attr("style")).toBeDefined()
@@ -56,8 +73,8 @@ describe "Mac modal", ->
       element.append $templateCache.get("template/modal.html")
 
       modal.register "test-modal", element, {position: false}
-      modal.show "test-modal"
-      $timeout.flush()
+
+      showModal "test-modal"
 
       modalElement = $(".mac-modal", element)
       expect(modalElement.attr("style")).not.toBeDefined()
@@ -74,9 +91,7 @@ describe "Mac modal", ->
         openedId = id
         called   = true
 
-      $rootScope.$apply -> modal.show "test-modal"
-
-      $timeout.flush()
+      $rootScope.$apply -> showModal "test-modal"
 
       expect(openedId).toBe "test-modal"
 
@@ -88,11 +103,11 @@ describe "Mac modal", ->
       $rootScope.$on "modalWasHidden", (event, id) -> closedId = id
 
       modal.register "test-modal", element, {}
-      modal.show "test-modal"
-      $timeout.flush()
+
+      showModal "test-modal"
 
       modal.hide()
-      $timeout.flush()
+      $animate.triggerCallbacks()
 
       expect(modal.opened).toBe null
       expect(closedId).toBe "test-modal"
@@ -131,8 +146,7 @@ describe "Mac modal", ->
       $rootScope.$digest()
 
       expect(opened).toBe false
-      modal.show "test-modal"
-      $timeout.flush()
+      showModal "test-modal"
 
       expect(opened).toBe true
 
@@ -143,8 +157,7 @@ describe "Mac modal", ->
 
       expect($rootScope.beforeShow).not.toHaveBeenCalled()
 
-      modal.show "test-modal"
-      $timeout.flush()
+      showModal "test-modal"
 
       expect($rootScope.beforeShow).toHaveBeenCalled()
 
@@ -155,8 +168,7 @@ describe "Mac modal", ->
 
       expect($rootScope.afterShow).not.toHaveBeenCalled()
 
-      modal.show "test-modal"
-      $timeout.flush()
+      showModal "test-modal"
 
       expect($rootScope.afterShow).toHaveBeenCalled()
 
@@ -167,11 +179,10 @@ describe "Mac modal", ->
 
       expect($rootScope.beforeHide).not.toHaveBeenCalled()
 
-      modal.show "test-modal"
+      showModal "test-modal"
 
       expect($rootScope.beforeHide).not.toHaveBeenCalled()
 
-      $timeout.flush()
       modal.hide()
 
       expect($rootScope.beforeHide).toHaveBeenCalled()
@@ -183,13 +194,13 @@ describe "Mac modal", ->
 
       expect($rootScope.afterHide).not.toHaveBeenCalled()
 
-      modal.show "test-modal"
-      $timeout.flush()
+      showModal "test-modal"
 
       expect($rootScope.afterHide).not.toHaveBeenCalled()
 
       modal.hide()
-      $timeout.flush()
+
+      $animate.triggerCallbacks()
 
       expect($rootScope.afterHide).toHaveBeenCalled()
 
@@ -200,7 +211,10 @@ describe "Mac modal", ->
       $rootScope.$digest()
 
       element.click()
-      $timeout.flush()
+
+      $animate.triggerCallbacks()
+      $animate.queue[1].args[2]()
+
       expect(modal.opened.id).toBe "test-modal"
 
     it "should bind data to opened modal", ->
@@ -211,7 +225,10 @@ describe "Mac modal", ->
       $rootScope.$digest()
 
       element.click()
-      $timeout.flush()
+
+      $animate.triggerCallbacks()
+      $animate.queue[1].args[2]()
+
       expect(modal.opened.options.data.text).toBe "hello"
 
   describe "modal method", ->
@@ -245,19 +262,20 @@ describe "Mac modal", ->
       expect(defaults.resize).toBe true
 
     it "should compile on show", ->
-      modal.show "testing"
+      showModal "testing"
 
-      $timeout.flush()
       contentText = angular.element(".mac-modal-content-wrapper").text()
       expect(contentText).toBe "Test Modal Content"
 
     it "should remove modal on hide", ->
-      modal.show "testing"
-      $timeout.flush()
+      showModal "testing"
+
+      $animate.triggerCallbacks()
 
       callback = jasmine.createSpy "select"
 
       modal.hide(callback)
-      $timeout.flush()
+
+      $animate.triggerCallbacks()
 
       expect(callback).toHaveBeenCalled()

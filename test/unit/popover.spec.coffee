@@ -1,12 +1,21 @@
 describe "Popover", ->
+  $animate     = null
   $rootScope   = null
   $timeout     = null
   popover      = null
   popoverViews = null
 
   beforeEach module("Mac")
+  beforeEach module("ngAnimateMock")
 
-  beforeEach inject (_$rootScope_, _$timeout_, _popover_, _popoverViews_) ->
+  beforeEach inject (
+    _$animate_
+    _$rootScope_
+    _$timeout_
+    _popover_
+    _popoverViews_
+  ) ->
+    $animate     = _$animate_
     $rootScope   = _$rootScope_
     $timeout     = _$timeout_
     popover      = _popover_
@@ -110,9 +119,7 @@ describe "Popover", ->
         popoverObj = popover.popoverList[0]
         popover    = popoverObj.popover
 
-        $rootScope.$digest()
-        $timeout.flush()
-        $rootScope.$digest()
+        $animate.triggerCallbacks()
 
         expect(popover.hasClass("visible")).toBeTruthy()
 
@@ -120,9 +127,7 @@ describe "Popover", ->
         popoverObj = popover.popoverList[0]
         popover    = popoverObj.popover
 
-        $rootScope.$digest()
-        $timeout.flush()
-        $rootScope.$digest()
+        $animate.triggerCallbacks()
 
         style = popover.attr 'style'
         expect(style.match /top: [\d]px/).toBeDefined()
@@ -143,7 +148,10 @@ describe "Popover", ->
         $rootScope.$on "$destroy", destroy
 
         popover.show "test", trigger, {scope: $rootScope}
-        $rootScope.$digest()
+
+        $animate.triggerCallbacks()
+
+        $animate.queue = []
 
       it "should not close any popover with incorrect selector", ->
         popover.hide "test2"
@@ -165,9 +173,9 @@ describe "Popover", ->
       it "should invoke callback", ->
         callbackFn = jasmine.createSpy("callback")
         popover.hide "test", callbackFn
-        $rootScope.$digest()
-        $timeout.flush()
-        $rootScope.$digest()
+
+        # HACK: To invoke the leave callback
+        $animate.queue[0].args[1]()
 
         expect(callbackFn).toHaveBeenCalled()
 
@@ -176,17 +184,17 @@ describe "Popover", ->
         $rootScope.$on "popoverWasHidden", broadcastFn
 
         popover.hide "test"
-        $rootScope.$digest()
-        $timeout.flush()
-        $rootScope.$digest()
+
+        # HACK: To invoke the leave callback
+        $animate.queue[0].args[1]()
 
         expect(broadcastFn).toHaveBeenCalled()
 
       it "should remove active class on trigger", ->
         popover.hide "test"
-        $rootScope.$digest()
-        $timeout.flush()
-        $rootScope.$digest()
+
+        # HACK: To invoke the leave callback
+        $animate.queue[0].args[1]()
 
         expect(trigger.hasClass("active")).toBeFalsy()
 
