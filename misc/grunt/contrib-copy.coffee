@@ -50,10 +50,6 @@ module.exports = (grunt) ->
           dest: "build/bower-macgyver-datepicker/macgyver-datepicker.js"
         }
         {
-          src: "lib/<%= pkg.name.toLowerCase() %>-fileupload.js"
-          dest: "build/bower-macgyver-fileupload/macgyver-fileupload.js"
-        }
-        {
           src: "lib/<%= pkg.name.toLowerCase() %>-filters.js"
           dest: "build/bower-macgyver-filters/macgyver-filters.js"
         }

@@ -2,7 +2,6 @@
   "full": [
     "tmp/app/main.js",
     "tmp/jqueryui.js",
-    "vendor/bower/jquery-file-upload/js/jquery.fileupload.js",
     "tmp/app/**/*.js"
   ],
   "core": [

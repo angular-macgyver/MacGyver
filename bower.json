@@ -12,7 +12,6 @@
     "lib/img/ui-icons_f6cf3b_256x240.png",
     "lib/macgyver-core.js",
     "lib/macgyver-datepicker.js",
-    "lib/macgyver-fileupload.js",
     "lib/macgyver-filters.js",
     "lib/macgyver-string-filter.js",
     "lib/macgyver-table.js",
