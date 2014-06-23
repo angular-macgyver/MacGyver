@@ -1,0 +1,34 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>MacGyver Example</title><link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css" rel="stylesheet"><link href="//fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css"><link href="css/vendor.css" rel="stylesheet"><link href="css/MacGyver.css" rel="stylesheet"></head><body ng-app="Mac" data-spy="scroll" data-target="#nav" data-offset="54"><div id="top-nav"><div class="container"><a id="logo" href="index.html"><h2>MacGyver</h2></a><ul class="nav-menu"><li id="directives-nav"><a href="index.html">Directives</a></li><li id="tableview-nav"><a href="tableview.html">Table View</a></li><li id="filters-nav"><a href="filters.html">Filters</a></li><li id="events-nav"><a href="events.html">Events</a></li><li id="utils-nav"><a href="util.html">Utilities</a></li></ul></div></div><div class="container"><div class="row content"><div id="nav" class="span3"><ul data-spy="affix" data-offset-top="0" class="nav nav-list docs-sidenav"><li><a href="#pluralize"><i class="icon-chevron-right"></i>Pluralize</a></li><li><a href="#capitalize"><i class="icon-chevron-right"></i>Capitalize</a></li><li><a href="#uncapitalize"><i class="icon-chevron-right"></i>Uncapitalize</a></li><li><a href="#toCamelCase"><i class="icon-chevron-right"></i>toCamelCase</a></li><li><a href="#toSnakeCase"><i class="icon-chevron-right"></i>toSnakeCase</a></li><li><a href="#convertKeysToCamelCase"><i class="icon-chevron-right"></i>convertKeysToCamelCase</a></li><li><a href="#convertKeysToSnakeCase"><i class="icon-chevron-right"></i>convertKeysToSnakeCase</a></li><li><a href="#validateUrl"><i class="icon-chevron-right"></i>validateUrl</a></li><li><a href="#validateEmail"><i class="icon-chevron-right"></i>validateEmail</a></li><li><a href="#getQueryString"><i class="icon-chevron-right"></i>getQueryString</a></li><li><a href="#parseUrlPath"><i class="icon-chevron-right"></i>parseUrlPath</a></li></ul></div><div id="example" class="span9"><section id="pluralize"><h3>pluralize</h3><pre ng-non-bindable class="prettyprint">util.pluralize("apple", 5)
+=> "apples"
+util.pluralize("apple", 10, true)
+=> "10 apples"</pre></section><section id="capitalize"><h3>capitalize</h3><p>Converts first leter of the string to uppercase (Underscore string proxy)</p><pre ng-non-bindable class="prettyprint">util.capitalize("lowercase")
+=> "Lowercase"</pre></section><section id="uncapitalize"><h3>uncapitalize</h3><pre ng-non-bindable class="prettyprint">util.uncapitalize("UPPERCASE")
+=> "uPPERCASE"</pre></section><section id="toCamelCase"><h3>toCamelCase</h3><pre ng-non-bindable class="prettyprint">util.toCamelCase("a-string-with-dashes")
+=> "aStringWithDashes"</pre></section><section id="toSnakeCase"><h3>toSnakeCase</h3><pre ng-non-bindable class="prettyprint">util.toSnakeCase("just another string")
+=> "just_another_string"</pre></section><section id="convertKeysToCamelCase"><h3>convertKeysToCamelCase</h3><p>Convert all the keys in an object to camel case</p><pre ng-non-bindable class="prettyprint">util.toSnakeCase({'hello-world': 'test'})
+=> {'helloWorld': 'test'}</pre></section><section id="convertKeysToSnakeCase"><h3>convertKeysToSnakeCase</h3><p>Convert all the keys in an object to snake case</p><pre ng-non-bindable class="prettyprint">util.toSnakeCase({'helloWorld': 'test'})
+=> {'hello_world': 'test'}</pre></section><section id="validateUrl"><h3>validateUrl</h3><p>Parse url and break it into different components</p><pre ng-non-bindable class="prettyprint">util.validateUrl("http://www.example.com/macgyver/episodes")
+=> {domain: "com"
+    name: "example"
+    path: "/macgyver/episodes"
+    port: undefined
+    protocol: "http://"
+    subdomain: "www"
+    url: "http://www.example.com/macgyver/episodes"}</pre></section><section id="validateEmail"><h3>validateEmail</h3><pre ng-non-bindable class="prettyprint">util.validateEmail("user@example.com")
+=> true</pre></section><section id="getQueryString"><h3>getQueryString</h3><pre ng-non-bindable class="prettyprint">util.getQueryString("http://www.example.com/macgyver?season=1&episode=3&time=12:23", "episode")
+=> 3</pre></section><section id="parseUrlPath"><h3>parseUrlPath</h3><pre ng-non-bindable class="prettyprint">util.parseUrlPath("http://www.example.com/macgyver?season=1&episode=3&time=12:23")
+=> {fullPath: "http://www.example.com/macgyver?season=1&episode=3&time=12:23",
+    path: "http://www.example.com",
+    pathComponents: [
+      "http:",
+      "",
+      "www.example.com",
+      "macgyver"
+    ],
+    verb: "macgyver",
+    queries: {
+      season: "1",
+      episode: "3",
+      time: "12:23"
+    }
+  }</pre></section></div></div></div><footer class="footer"><div class="container"><p>Built by the Dev team at&nbsp;<a href="http://www.shift.com">SHIFT.com</a></p><p>Code licensed under&nbsp;<a href="https://github.com/StartTheShift/MacGyver/blob/master/LICENSE">MIT</a></p></div><ul class="footer-links"><li><a href="https://github.com/StartTheShift/MacGyver/issues">Issues</a></li></ul></footer><script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.10.1/jquery.min.js" type="text/javascript"></script><script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.3/underscore-min.js" type="text/javascript"></script><script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/bootstrap.js" type="text/javascript"></script><script src="//cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.js" type="text/javascript"></script><script src="js/vendor.js" type="text/javascript"></script><script src="js/macgyver.js" type="text/javascript"></script></body></html>
