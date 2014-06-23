@@ -82,6 +82,9 @@ writeChangeLog = (stream, commits, version) ->
 
   for commit in commits
     section = sections[commit.type]
+
+    continue unless section?
+
     section[commit.component] ?= []
     section[commit.component].push commit
 
