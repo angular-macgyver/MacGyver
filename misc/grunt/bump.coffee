@@ -17,3 +17,4 @@ module.exports = (grunt) ->
       commitMessage: "chore(build): Build v%VERSION%"
       tagMessage:    "Build v%VERSION%"
       push:          false
+      createTag:     false
