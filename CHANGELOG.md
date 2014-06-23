@@ -1,3 +1,57 @@
+# v0.3.0 (2014/6/23)
+###There are major changes with this update. Please read 'Breaking Changes' section before updating.
+## Bug Fixes
+- **macAffix:** Fixed affixing bottom not working properly
+  ([e8683f55](https://github.com/StartTheShift/MacGyver/commit/e8683f554bd7eab64478c144a0e3e54401246245))
+- **macAutocomplete:**
+  - Clear inline style on hide
+  ([33297e20](https://github.com/StartTheShift/MacGyver/commit/33297e207b149c6bf4d471d27de4d70d5e674ab7))
+  - Fixed menu not positioned correctly Fixed offset getting calculated before animation completes
+  ([9ffc2e72](https://github.com/StartTheShift/MacGyver/commit/9ffc2e72affff72f3dd4f76b87990d58a70d1e05))
+  - Added explicit return to prevent return DOM element
+  ([b8cf7018](https://github.com/StartTheShift/MacGyver/commit/b8cf70189653e85c2d9fb7928fcf3a2ea68c2a8c))
+- **macDatepicker:** Remove date validation on empty string
+  ([a4743b67](https://github.com/StartTheShift/MacGyver/commit/a4743b67b70bbc42cb6e1bb0e1526b19e34ed1b6),
+   [#173](https://github.com/StartTheShift/MacGyver/issues/173))
+- **macMenu:** Fixed menu using mac-mouseenter instead of ng-mouseenter
+  ([2fbf4073](https://github.com/StartTheShift/MacGyver/commit/2fbf4073ea0381cb92275f1e449c9bbd05e5c475))
+- **macModal:** Added missing close-modal styles
+  ([3560bb7e](https://github.com/StartTheShift/MacGyver/commit/3560bb7ec3ff9a4174dc21d2ff720799aa055c0e))
+
+## Optimizations
+- **macAutocomplete:**
+  - Improved mac-autocomplete positioning
+  ([d07714f5](https://github.com/StartTheShift/MacGyver/commit/d07714f5b71b0df62f9dbf549c326981f65e563d))
+  - Removed unnecessary document binding
+  ([d0d734bc](https://github.com/StartTheShift/MacGyver/commit/d0d734bc8d60a0b06d85a73649752ddecdb4e6a1))
+
+## Breaking Changes
+- **events:**  mac-blur, mac-focus, mac-keydown, mac-keyup, mac-mouseenter and mac-mouseleave have been removed from MacGyver. Use the AngularJS equivalents.
+  ([a46eed62](https://github.com/StartTheShift/MacGyver/commit/a46eed624b6929024f833b7b1acf24ca0c8bafd3))
+- **macDatepicker:**
+  -  mac-datepicker input element is not in mac-date-time wrapper and is now top level. mac-datepicker-model has been removed in favor of ng-model. mac-datepicker-id has been removed and `id` attribute should be used instead.
+  ([6bdc993c](https://github.com/StartTheShift/MacGyver/commit/6bdc993c1c328425f7e0c3304eb225770f06d641))
+  -  Icons for datepicker and time input are removed
+  ([c1bb850c](https://github.com/StartTheShift/MacGyver/commit/c1bb850ca200126fc546478bc5a6f40ef824c1a4))
+  -  For user with custom styles, css classes for mac-datepicker and mac-time have been namespaced with `mac-`
+  ([e99a5c15](https://github.com/StartTheShift/MacGyver/commit/e99a5c15b09edb494c2de5a07e47d9e757b79259))
+- **macModal:**  All modal class names are prefixed with `mac-`
+  ([07948fec](https://github.com/StartTheShift/MacGyver/commit/07948fec2f6b85eb24941b639c1158f698ab7abc))
+- **macTagAutocomplete:**  For people using custom css for MacGyver, class names for mac-tag-autocomplete are now namespaced with `mac-`
+  ([035084a3](https://github.com/StartTheShift/MacGyver/commit/035084a33c36ab29a34732eda5c46dcffc1ef880))
+- **macTime:**
+  -  mac-time input element is not in a mac-date-time wrapper and is now top level. mac-time-model has been removed in favor of ng-model mac-time-placeholder has been removed mac-time isolated scope has been removed
+  ([2d61c26d](https://github.com/StartTheShift/MacGyver/commit/2d61c26d0d55aee71c3b68a942328c8f8732158e))
+  -  Icons for datepicker and time input are removed
+  ([c1bb850c](https://github.com/StartTheShift/MacGyver/commit/c1bb850ca200126fc546478bc5a6f40ef824c1a4))
+  -  For user with custom styles, css classes for mac-datepicker and mac-time have been namespaced with `mac-`
+  ([e99a5c15](https://github.com/StartTheShift/MacGyver/commit/e99a5c15b09edb494c2de5a07e47d9e757b79259))
+- **macTooltip:**  `tooltip` class has been renamed to `mac-tooltip`
+  ([d0e4c239](https://github.com/StartTheShift/MacGyver/commit/d0e4c2392767692ceffd33b7714379def6ca094b))
+- **macUpload:**  mac-upload has been moved to a separate module. Module can be found at https://github.com/angular-macgyver/angular-macgyver-upload
+  ([a44db86b](https://github.com/StartTheShift/MacGyver/commit/a44db86b923b3f6bd788590abecb0ebe6d8c352d))
+
+
 # v0.2.9 (2014/4/6)
 ## Bug Fixes
 - **macAutocomplete:** Item property on template now include full object
