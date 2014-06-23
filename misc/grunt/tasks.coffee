@@ -2,11 +2,10 @@
 finalBuildPath = "lib/"
 componentFile  = "bower.json"
 
-child   = require "child_process"
+child = require "child_process"
 
-GIT_TAG       = "git describe --tags --abbrev=0"
-CHANGELOG     = "coffee ./changelog.coffee"
-VERSION_REGEX = /^v\d+\.\d+\.\d+$/
+GIT_TAG   = "git describe --tags --abbrev=0"
+CHANGELOG = "coffee ./changelog.coffee"
 
 getLastVersion = (callback) ->
   child.exec GIT_TAG, (error, stdout, stderr) ->
@@ -83,10 +82,8 @@ module.exports = (grunt) ->
     grunt.file.recurse finalBuildPath, (path, root, sub, filename) ->
       fileList.push path if filename.indexOf(".DS_Store") is -1
 
-    data         = grunt.file.readJSON componentFile, encoding: "utf8"
-    data.main    = fileList
-    data.name    = grunt.config.get("pkg").name
-    data.version = grunt.config.get("pkg").version
+    data      = grunt.config.get("bower")
+    data.main = fileList
 
     grunt.file.write componentFile, JSON.stringify(data, null, "  "), encoding: "utf8"
     grunt.log.writeln "Updated bower.json"
@@ -114,45 +111,6 @@ module.exports = (grunt) ->
 
       grunt.file.write file.dest, src, encoding: "utf8"
       grunt.log.writeln "Updated version in #{file.dest}"
-
-  ###
-  @name bump
-  @description
-  Bump package version up unless specified
-  This also generate changelog with `changelog` task
-  ###
-  grunt.registerTask "bump", "Bump package version up and generate changelog", ->
-    done = @async()
-
-    version = grunt.option "tag"
-    if version? and not VERSION_REGEX.test version
-      grunt.fail.fatal "Invalid tag"
-
-    writeAndChangelog = (newVersion) ->
-      grunt.log.writeln "Updating to version #{newVersion}"
-
-      pkg         = grunt.config.get("pkg")
-      pkg.version = newVersion
-      grunt.config "pkg", pkg
-      grunt.file.write "package.json", JSON.stringify(pkg, null, "  "), encoding: "utf8"
-
-      grunt.task.run "changelog"
-
-      done()
-
-    if version?
-      writeAndChangelog version[1..]
-    else
-      getLastVersion (error, data) ->
-        grunt.fail.fatal "Failed to read last tag" if error?
-
-        grunt.log.writeln "Previous version #{data}"
-
-        versionArr    = data.split "."
-        versionArr[2] = +versionArr[2] + 1
-        data          = versionArr.join "."
-
-        writeAndChangelog data[1..]
 
   ###
   @name changelog

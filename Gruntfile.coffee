@@ -22,6 +22,7 @@ module.exports = (grunt) ->
 
   grunt.initConfig
     pkg:       grunt.file.readJSON "package.json"
+    bower:     grunt.file.readJSON "bower.json"
     jqueryUI:  grunt.file.readJSON "vendor/bower/jquery.ui/package.json"
     buildConf: grunt.file.readJSON "build.json"
 
@@ -29,7 +30,6 @@ module.exports = (grunt) ->
 
   require('time-grunt') grunt
 
-  grunt.registerTask "prepare", "Prepare for deploying", ["bump", "changelog"]
   grunt.registerTask "concatDeploy", [
     "concat:jqueryui"
     "concat:appJs"
