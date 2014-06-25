@@ -148,7 +148,8 @@ angular.module("Mac").directive "macAutocomplete", [
       Create a click handler function to make sure directive is unbinding
       the correct handler
       ###
-      clickHandler = -> reset(true)
+      clickHandler = ->
+        $scope.$apply -> hide()
 
       ###
       @function
@@ -174,9 +175,13 @@ angular.module("Mac").directive "macAutocomplete", [
       @description
       Resetting autocomplete
       ###
-      reset = (invokeApply = false) ->
+      reset = ->
+        $menuScope.items.length = 0
+
+        hide()
+
+      hide = ->
         $animate.leave menuEl, ->
-          $menuScope.items = []
           $menuScope.index = 0
 
           # Clear menu element inline style
@@ -186,8 +191,6 @@ angular.module("Mac").directive "macAutocomplete", [
           isMenuAppended = false
 
           element.unbind "blur", clickHandler
-
-        $scope.$apply() if invokeApply
 
         return
 
@@ -327,7 +330,7 @@ angular.module("Mac").directive "macAutocomplete", [
 
           when keys.ESCAPE
             $scope.$apply ->
-              reset()
+              hide()
 
               event.preventDefault()
 
