@@ -87,7 +87,9 @@ angular.module("Mac").directive "macAutocomplete", [
     require:     "ngModel"
 
     link: ($scope, element, attrs, ctrl, transclude) ->
-      labelKey = attrs.macAutocompleteLabel  or "name"
+      labelKey    = attrs.macAutocompleteLabel  or "name"
+      labelGetter = $parse labelKey
+
       queryKey = attrs.macAutocompleteQuery  or "q"
       delay    = +(attrs.macAutocompleteDelay or 800)
       inside   = attrs.macAutocompleteInside?
@@ -133,10 +135,12 @@ angular.module("Mac").directive "macAutocomplete", [
             timeoutId = $timeout ->
               queryData value
             , delay
+
           else
             queryData value
-        else
-          reset()
+
+        else if isMenuAppended
+          hide()
 
         onSelectBool = false
 
@@ -224,19 +228,19 @@ angular.module("Mac").directive "macAutocomplete", [
       @param {Array} data Array of data
       ###
       updateItem = (data = []) ->
+        $menuScope.items.length = 0
+
         if data.length > 0
           currentAutocomplete = data
 
           $menuScope.items = data.map (item) ->
             if angular.isObject item
-              itemGetter = $parse labelKey
-
-              item.value ?= itemGetter(item) or ""
-              item.label ?= itemGetter(item) or ""
-              item
+              label = labelGetter(item) or ""
 
             else
-              {label: item, value: item}
+              label = item
+
+            return {label: label, value: label}
 
           appendMenu positionMenu
 
@@ -336,7 +340,11 @@ angular.module("Mac").directive "macAutocomplete", [
 
         return true
 
-      $scope.$on "$destroy", -> reset()
+      $scope.$on "$destroy", ->
+        # Remove and destroy $menuScope
+        $menuScope.$destroy()
+
+        reset()
 
       ###
       @event

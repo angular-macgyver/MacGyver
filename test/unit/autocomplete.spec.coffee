@@ -179,22 +179,6 @@ describe "Mac autocomplete", ->
 
       expect(items[0].label).toBeDefined()
 
-    it "should keep all the parameters", ->
-      $rootScope.source = (query, cb) ->
-        cb [
-          {key: "foo", value: "foo", param1: "1", param2: "2"}
-          {key: "world", value: "world", param3: "3"}
-          {key: "bar", value: "bar"}
-        ]
-      element = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-source='source' mac-autocomplete-label='key' mac-autocomplete-delay='0'></mac-autocomplete>") $rootScope
-      $rootScope.$digest()
-
-      changeInputValue element, "f"
-      items = $rootScope.$$childHead.items
-
-      expect(items[0].param1).toBe "1"
-      expect(items[0].param2).toBe "2"
-
     it "should convert string to object", ->
       $rootScope.source = (query, cb) ->
         cb ["foo", "bar", "world"]
