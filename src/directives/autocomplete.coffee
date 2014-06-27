@@ -340,7 +340,11 @@ angular.module("Mac").directive "macAutocomplete", [
 
         return true
 
-      $scope.$on "$destroy", -> reset()
+      $scope.$on "$destroy", ->
+        # Remove and destroy $menuScope
+        $menuScope.$destroy()
+
+        reset()
 
       ###
       @event
