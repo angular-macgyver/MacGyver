@@ -106,17 +106,45 @@ angular.module("Mac").directive "macAutocomplete", [
 
       isMenuAppended = false
 
-      # NOTE: onSelectBool is used to prevent parser from firing when an item
+      # NOTE: preventParser is used to prevent parser from firing when an item
       # is selected in the menu
-      onSelectBool = false
+      preventParser = false
+
+      # NOTE: preventBlur is used to prevent blur even from firing when user click
+      # on the menu
+      preventBlur = false
 
       $menuScope       = $scope.$new()
       $menuScope.items = []
       $menuScope.index = 0
 
+      $menuScope.select = (index) ->
+        selected = currentAutocomplete[index]
+        onSelect $scope, {selected}
+
+        label         = $menuScope.items[index].label or ""
+        preventParser = true
+
+        if attrs.ngModel?
+          ctrl.$setViewValue label
+          ctrl.$render()
+
+        reset()
+
+      $menuScope.onMousedown = ($event) ->
+        # prevent moving focus out of text field
+        $event.preventDefault()
+
+        preventBlur = true
+        $timeout ->
+          preventBlur = false
+        , 0, false
+
+
       menuEl = angular.element(document.createElement("mac-menu"))
       menuEl.attr
         "ng-class":        attrs.macMenuClass or null
+        "ng-mousedown":    "onMousedown($event)"
         "mac-menu-items":  "items"
         "mac-menu-select": "select(index)"
         "mac-menu-index":  "index"
@@ -129,7 +157,7 @@ angular.module("Mac").directive "macAutocomplete", [
       ctrl.$parsers.push (value) ->
         # NOTE: If value is more than an empty string,
         # autocomplete is enabled and not 'onSelect' cycle
-        if value and not disabled($scope) and not onSelectBool
+        if value and not disabled($scope) and not preventParser
           $timeout.cancel timeoutId if timeoutId?
           if delay > 0
             timeoutId = $timeout ->
@@ -142,18 +170,23 @@ angular.module("Mac").directive "macAutocomplete", [
         else
           reset()
 
-        onSelectBool = false
+        preventParser = false
 
         return value
 
       ###
-      @name clickHandler
+      @name blurHandler
       @description
-      Create a click handler function to make sure directive is unbinding
+      Create a blur handler function to make sure directive is unbinding
       the correct handler
       ###
-      clickHandler = ->
-        $scope.$apply -> hide()
+      blurHandler = ->
+        if preventBlur
+          preventBlur = false
+          return
+
+        $scope.$apply ->
+          reset()
 
       ###
       @function
@@ -164,7 +197,7 @@ angular.module("Mac").directive "macAutocomplete", [
       ###
       appendMenu = (callback) ->
         unless isMenuAppended
-          element.bind "blur", clickHandler
+          element.bind "blur", blurHandler
 
         isMenuAppended = true
 
@@ -180,13 +213,9 @@ angular.module("Mac").directive "macAutocomplete", [
       Resetting autocomplete
       ###
       reset = ->
-        $menuScope.items.length = 0
-
-        hide()
-
-      hide = ->
         $animate.leave menuEl, ->
-          $menuScope.index = 0
+          $menuScope.index        = 0
+          $menuScope.items.length = 0
 
           # Clear menu element inline style
           menuEl[0].style.top  = ""
@@ -194,7 +223,7 @@ angular.module("Mac").directive "macAutocomplete", [
 
           isMenuAppended = false
 
-          element.unbind "blur", clickHandler
+          element.unbind "blur", blurHandler
 
         return
 
@@ -228,8 +257,6 @@ angular.module("Mac").directive "macAutocomplete", [
       @param {Array} data Array of data
       ###
       updateItem = (data = []) ->
-        $menuScope.items.length = 0
-
         if data.length > 0
           currentAutocomplete = data
 
@@ -294,19 +321,6 @@ angular.module("Mac").directive "macAutocomplete", [
           else if angular.isFunction(sourceData)
             sourceData query, updateItem
 
-      $menuScope.select = (index) ->
-        selected = currentAutocomplete[index]
-        onSelect $scope, {selected}
-
-        label        = $menuScope.items[index].label or ""
-        onSelectBool = true
-
-        if attrs.ngModel?
-          ctrl.$setViewValue label
-          ctrl.$render()
-
-        reset()
-
       element.bind "keydown", (event) ->
         # No action when menu is not showing
         return true if $menuScope.items.length is 0
@@ -334,7 +348,7 @@ angular.module("Mac").directive "macAutocomplete", [
 
           when keys.ESCAPE
             $scope.$apply ->
-              hide()
+              reset()
 
               event.preventDefault()
 
