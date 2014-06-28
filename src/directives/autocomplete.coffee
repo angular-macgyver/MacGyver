@@ -164,7 +164,7 @@ angular.module("Mac").directive "macAutocomplete", [
               queryData value
             , delay
 
-          else if isMenuAppended
+          else
             queryData value
 
         else
