@@ -211,20 +211,22 @@ block append content
         mac-autocomplete-url=&quot;autocompleteUrl&quot;
         mac-autocomplete-query=&quot;q&quot;
         mac-autocomplete-on-success=&quot;onSuccess(data)&quot;
-        mac-placeholder=&quot;\'Autocomplete\'&quot;&gt;
+        mac-placeholder=&quot;\'Autocomplete\'&quot;
+        ng-model=&quot;autocompleteQuery&quot;&gt;
       &lt;/mac-autocomplete&gt;
 
     h3 Example with autocomplete using source
     .docs-example
       mac-autocomplete(
         mac-autocomplete-source = "['hello', 'world']"
-        ng-model                = "autocompleteSourceQuery"
         mac-placeholder         = "'Type something...'"
+        ng-model                = "autocompleteSourceQuery"
       )
     pre.prettyprint.
       &lt;mac-autocomplete
         mac-autocomplete-source=&quot;[\'hello\', \'world\']&quot;
         mac-placeholder=&quot;\'Autocomplete\'&quot;&gt;
+        ng-model=&quot;autocompleteSourceQuery&quot;
       &lt;/mac-autocomplete&gt;
 
   section#tag-autocomplete(mac-scroll-spy-anchor)
