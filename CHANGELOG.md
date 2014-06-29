@@ -1,3 +1,18 @@
+# v0.3.2 (2014/6/29)
+## Bug Fixes
+- **macAutocomplete:**
+  - Fixed not querying data correctly
+  ([aaf8f7c9](https://github.com/StartTheShift/MacGyver/commit/aaf8f7c9fcadd6e06885853e4620f976475f3a89))
+  - Fixed not able to select item using mouse
+  ([f644f3f5](https://github.com/StartTheShift/MacGyver/commit/f644f3f5c53ffecf70136ea713caf2cb912b3e09))
+  - Fixed scope not destroyed correctly
+  ([5ea9ab0c](https://github.com/StartTheShift/MacGyver/commit/5ea9ab0cea6d1f96915b663fb1187b428fff6875))
+
+## Optimizations
+- **macAutocomplete:** Reduced parsing when update items
+  ([29121368](https://github.com/StartTheShift/MacGyver/commit/29121368f5d574bb859e2dacaf8a0af23b0e6f25))
+
+
 # v0.3.1 (2014/6/27)
 ## Bug Fixes
 - **macAutocomplete:** Fixed not able to select item when clicking on dropdown
