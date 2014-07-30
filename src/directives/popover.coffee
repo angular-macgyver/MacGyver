@@ -105,7 +105,7 @@ angular.module("Mac").
       util
     ) ->
       restrict: "E"
-      link:     ($scope, element, attrs) ->
+      compile:  (element, attrs) ->
         opts = util.extendAttributes "macPopover", popoverViews.popoverDefaults, attrs
 
         return unless attrs.id
@@ -125,7 +125,7 @@ angular.module("Mac").
   directive("macPopoverFillContent", [
     "$compile", ($compile) ->
       restrict: "A"
-      link: ($scope, element, attrs, ctrl) ->
+      link: ($scope, element, attrs) ->
         element.html $scope.macPopoverTemplate
         $compile(element.contents()) $scope
   ])
