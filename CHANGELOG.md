@@ -1,3 +1,9 @@
+# v0.3.3 (2014/7/30)
+## Bug Fixes
+- **macPopover:** Fix popover not compiling low priority template
+  ([706f1ab5](https://github.com/StartTheShift/MacGyver/commit/706f1ab5bfc2f4a102ccb1b0aecbf0f755709633))
+
+
 # v0.3.2 (2014/6/29)
 ## Bug Fixes
 - **macAutocomplete:**
