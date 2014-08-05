@@ -43,7 +43,7 @@
     "karma-sauce-launcher": "~0.1.8",
     "marked": "~0.2.9",
     "matchdep": "~0.1.2",
-    "protractor": "~0.18.1",
+    "protractor": "~1.0.0",
     "time-grunt": "^0.3.1"
   }
 }
