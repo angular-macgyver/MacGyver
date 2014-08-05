@@ -216,6 +216,12 @@ describe "Popover", ->
 
       $rootScope.$digest()
 
+    it "should throw an error when id is missing", ->
+      toCompile = ->
+        $compile("<mac-popover></mac-popover>") $rootScope
+
+      expect(toCompile).toThrow Error 'macPopover: Missing id'
+
     it "should register the popover", ->
       expect(popover.registered["testPopover"]).toBeDefined()
 
@@ -225,3 +231,13 @@ describe "Popover", ->
 
     it "should be replaced with a comment", ->
       expect(element.contents()[0].nodeType).toBe 8
+
+    it "should interpolate id before registering", ->
+      $rootScope.someId = '12345'
+
+      template = "<div><mac-popover id='testPopover{{someId}}'>Test</mac-popover></div>"
+      element  = $compile(template) $rootScope
+
+      $rootScope.$digest()
+
+      expect(popover.registered["testPopover12345"]).toBeDefined()

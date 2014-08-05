@@ -106,15 +106,17 @@ angular.module("Mac").
     ) ->
       restrict: "E"
       compile:  (element, attrs) ->
-        opts = util.extendAttributes "macPopover", popoverViews.popoverDefaults, attrs
+        unless attrs.id
+          throw Error "macPopover: Missing id"
 
-        return unless attrs.id
+        opts = util.extendAttributes "macPopover", popoverViews.popoverDefaults, attrs
 
         angular.extend opts, {template: element.html()}
 
         element.replaceWith document.createComment "macPopover: #{attrs.id}"
-        popover.register attrs.id, opts
 
+        ($scope, element, attrs) ->
+          attrs.$observe "id", (value) -> popover.register value, opts
   ]).
 
   #
