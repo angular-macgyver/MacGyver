@@ -176,6 +176,7 @@ module.exports = (grunt) ->
 
     if grunt.option("local")?
       args.push "--seleniumAddress=http://localhost:4444/wd/hub"
+      args.push "--browser=#{browser || 'chrome'}"
 
     p = child.spawn "node", args
     p.stdout.pipe process.stdout
