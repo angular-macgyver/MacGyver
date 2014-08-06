@@ -163,10 +163,13 @@ module.exports = (grunt) ->
     browser          = grunt.option "browser"
 
     args = ["node_modules/protractor/bin/protractor", @data]
+
     args.push "--sauceUser=#{sauceUser}" if sauceUser
     args.push "--sauceKey=#{sauceKey}" if sauceKey
+
     if tunnelIdentifier
       args.push "--capabilities.tunnel-identifier=#{tunnelIdentifier}"
+
     if sauceBuild
       args.push "--capabilities.build=TRAVIS ##{sauceBuild}"
 
