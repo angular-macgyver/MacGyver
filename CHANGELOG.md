@@ -1,3 +1,9 @@
+# v0.3.4 (2014/8/6)
+## Bug Fixes
+- **macPopover:** Fixed id not interpolating correctly
+  ([3100f63d](https://github.com/StartTheShift/MacGyver/commit/3100f63d01e63a2b41f4e233a36795274c9b3b29))
+
+
 # v0.3.3 (2014/7/30)
 ## Bug Fixes
 - **macPopover:** Fix popover not compiling low priority template
