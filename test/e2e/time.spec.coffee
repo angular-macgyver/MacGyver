@@ -22,7 +22,6 @@ describe "Mac Time Input", ->
     input = element(By.css(".mac-date-time"))
     input.click()
     input.sendKeys "P"
-    input.sendKeys "P"
     expect(input.getAttribute("value")).toEqual "10:55 PM"
     return
 
