@@ -10,7 +10,7 @@ popover will be closed automatically
 @param {Boolean} mac-popover-child-popover If the popover is child of another popover (default false)
 @param {Integer} mac-popover-offset-x      Extra x offset (default 0)
 @param {Integer} mac-popover-offset-y      Extra y offset (default 0)
-@param {String}  mac-popover-trigger       Trigger option, click | hover | manual (default click)
+@param {String}  mac-popover-trigger       Trigger option, click | hover | focus (default click)
 - click: Popover only opens when user click on trigger
 - hover: Popover shows when user hover on trigger
 - focus: Popover shows when focus on input element
