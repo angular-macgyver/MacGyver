@@ -73,8 +73,8 @@ angular.module("Mac").
           if options.trigger is "click"
             element.bind "click", -> show id, 0
           else
-            showEvent = if "focus" then "focusin" else "mouseenter"
-            hideEvent = if "focus" then "focusout" else "mouseleave"
+            showEvent = if options.trigger is "focus" then "focusin" else "mouseenter"
+            hideEvent = if options.trigger is "focus" then "focusout" else "mouseleave"
 
             element.bind showEvent, -> show id, 400
             element.bind hideEvent, -> hide element, 500
