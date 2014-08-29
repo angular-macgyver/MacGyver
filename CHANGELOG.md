@@ -1,3 +1,9 @@
+# v0.3.5 (2014/8/29)
+## Bug Fixes
+- **macPopover:** Updated popover to respond to hover events.
+  ([295c3240](https://github.com/StartTheShift/MacGyver/commit/295c3240ab36013afc2f9eb2da12de3f8df0bcae))
+
+
 # v0.3.4 (2014/8/6)
 ## Bug Fixes
 - **macPopover:** Fixed id not interpolating correctly

@@ -28,7 +28,7 @@ Extra y offset (default 0)
   
 **mac-popover-trigger**  
 Type: `String`  
-Trigger option, click | hover | manual (default click)  
+Trigger option, click | hover | focus (default click)  
 - click: Popover only opens when user click on trigger  
 - hover: Popover shows when user hover on trigger  
 - focus: Popover shows when focus on input element  
