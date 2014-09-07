@@ -199,8 +199,8 @@ angular.module("Mac").directive "macTime", [
                 when meridianSelected and key is keys.P
                   setMeridian("PM")
 
-              selectMeridian()
               updateInput()
+              selectMeridian()
 
       element.on 'keyup', (event) ->
         key = event.which
