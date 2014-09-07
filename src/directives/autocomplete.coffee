@@ -110,10 +110,6 @@ angular.module("Mac").directive "macAutocomplete", [
       # is selected in the menu
       preventParser = false
 
-      # NOTE: preventBlur is used to prevent blur even from firing when user click
-      # on the menu
-      preventBlur = false
-
       $menuScope       = $scope.$new()
       $menuScope.items = []
       $menuScope.index = 0
@@ -131,20 +127,9 @@ angular.module("Mac").directive "macAutocomplete", [
 
         reset()
 
-      $menuScope.onMousedown = ($event) ->
-        # prevent moving focus out of text field
-        $event.preventDefault()
-
-        preventBlur = true
-        $timeout ->
-          preventBlur = false
-        , 0, false
-
-
       menuEl = angular.element(document.createElement("mac-menu"))
       menuEl.attr
         "ng-class":        attrs.macMenuClass or null
-        "ng-mousedown":    "onMousedown($event)"
         "mac-menu-items":  "items"
         "mac-menu-select": "select(index)"
         "mac-menu-index":  "index"
@@ -181,10 +166,6 @@ angular.module("Mac").directive "macAutocomplete", [
       the correct handler
       ###
       blurHandler = ->
-        if preventBlur
-          preventBlur = false
-          return
-
         $scope.$apply ->
           reset()
 
@@ -198,6 +179,10 @@ angular.module("Mac").directive "macAutocomplete", [
       appendMenu = (callback) ->
         unless isMenuAppended
           element.bind "blur", blurHandler
+
+          # Bind mousedown event to prevent blur when clicking in menu
+          menuEl.on 'mousedown', (event) ->
+            event.preventDefault()
 
         isMenuAppended = true
 
