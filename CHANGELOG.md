@@ -1,3 +1,14 @@
+# v0.3.6 (2014/9/6)
+## Bug Fixes
+- **macAutocomplete:** Fixed not able to select autocomplete from dropdown
+  ([609d14f9](https://github.com/StartTheShift/MacGyver/commit/609d14f983038173ef0b7ed1cb33cabf4a29c5c0))
+- **macTime:**
+  - Select meridian after updating view
+  ([0a6527b4](https://github.com/StartTheShift/MacGyver/commit/0a6527b40de4bec09475dc06ebacbf243b779b58))
+  - Re-render time input view even when viewValue is the same
+  ([695078ea](https://github.com/StartTheShift/MacGyver/commit/695078ea092083dd1f54a87d0ce3136c77a8942b))
+
+
 # v0.3.5 (2014/8/29)
 ## Bug Fixes
 - **macPopover:** Updated popover to respond to hover events.
