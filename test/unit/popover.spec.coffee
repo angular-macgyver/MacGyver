@@ -94,6 +94,12 @@ describe "Popover", ->
       it "should show and add popover to list", ->
         expect(popover.popoverList.length).toBe 1
 
+      it "should create a new scope", ->
+        popoverObj = popover.popoverList[0]
+        scope      = popoverObj.popover.scope()
+
+        expect($rootScope.$id).not.toBe scope.$id
+
       it "should create a scope with additional data", ->
         popoverObj = popover.popoverList[0]
         scope      = popoverObj.popover.scope()
@@ -198,11 +204,29 @@ describe "Popover", ->
 
         expect(trigger.hasClass("active")).toBeFalsy()
 
-      it "should not destroy scope", ->
+      it "should not destroy original scope", ->
         popover.hide "test"
         $rootScope.$digest()
 
+        # HACK: To invoke the leave callback
+        $animate.queue[0].args[1]()
+
         expect(destroy).not.toHaveBeenCalled()
+
+      it "should destroy popover scope", ->
+        popoverObj = popover.popoverList[0]
+        scope      = popoverObj.popover.scope()
+
+        destroyed = jasmine.createSpy "destroy"
+        scope.$on "$destroy", destroyed
+
+        popover.hide "test"
+        $rootScope.$digest()
+
+        # HACK: To invoke the leave callback
+        $animate.queue[0].args[1]()
+
+        expect(destroyed).toHaveBeenCalled()
 
   describe "popover directive", ->
     $compile = null
