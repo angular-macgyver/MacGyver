@@ -147,13 +147,13 @@ angular.module("Mac").
             #
             # Use the scope passed in
             if isScope(options.scope)
-              viewScope = options.scope
+              viewScope = options.scope.$new()
 
             # Create an isolated scope and extend scope with value pass in
             else
-                viewScope = $rootScope.$new true
-                if angular.isObject options.scope
-                  angular.extend viewScope, options.scope
+              viewScope = $rootScope.$new true
+              if angular.isObject options.scope
+                angular.extend viewScope, options.scope
 
             # Bind refresh on listener to popover
             if popoverOptions.refreshOn
@@ -349,8 +349,7 @@ angular.module("Mac").
           $animate.removeClass popoverObj.element, "active"
           $rootScope.$broadcast "popoverWasHidden", popoverObj.id
 
-          unless isScope popoverObj.options.scope
-            removeScope.$destroy()
+          removeScope.$destroy()
 
           callback?()
 
