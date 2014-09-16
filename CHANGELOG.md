@@ -1,3 +1,20 @@
+# v0.3.7 (2014/9/16)
+## Bug Fixes
+- **jqLite:** Fixed scrollTop setting X offset instead of Y offset
+  ([a5e7389f](https://github.com/StartTheShift/MacGyver/commit/a5e7389f77a9e96d13af58668ac1550b471ca22b))
+- **macPopover:** Fixed popover positioning not checking scrollLeft
+  ([d2572059](https://github.com/StartTheShift/MacGyver/commit/d2572059b8e138d5165814529ea7aa087d9797b4))
+
+## Features
+- **jqLite:** Added scrollLeft to jqLite
+  ([2f926f72](https://github.com/StartTheShift/MacGyver/commit/2f926f7208f528af1459c6637411d9ae87499eaa))
+
+## Breaking Changes
+- **macPopover:**  Popover is now compiling with a new scope. In order to change anything on the original scope developer must pass data through an object.  
+  ([940759b6](https://github.com/StartTheShift/MacGyver/commit/940759b67d114c84ca4dbea5cb3629e4c5f986b7),
+   [#181](https://github.com/StartTheShift/MacGyver/issues/181))
+
+
 # v0.3.6 (2014/9/6)
 ## Bug Fixes
 - **macAutocomplete:** Fixed not able to select autocomplete from dropdown
