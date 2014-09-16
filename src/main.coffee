@@ -147,7 +147,7 @@ jqLiteExtend =
       return if win then win["pageYOffset"] else element["scrollTop"]
 
     if win
-      win.scrollTo(window.pageXOffset, value)
+      win.scrollTo(window.pageYOffset, value)
     else
       element["scrollTop"] = value
 
