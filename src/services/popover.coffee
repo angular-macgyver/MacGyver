@@ -266,24 +266,32 @@ angular.module("Mac").
         updateOffset()
 
         #Calculate if popover is clipped by window, swap direction otherwise
-        topScroll = if options.fixed then 0 else $window.scrollTop()
-        action    = {}
+        topScroll  = if options.fixed then 0 else $window.scrollTop()
+        leftScroll = if options.fixed then 0 else $window.scrollLeft()
+        action     = {}
 
+        # if position is either above or below
         if position.indexOf("middle") is -1
           if offset.top + top - topScroll < 0 # above
             action = {remove: "above", add: "below"}
+
           else if offset.top + top - topScroll > $window.height()
             action = {remove: "below", add: "above"}
 
+        # if position is middle
         else
           if (diff = offset.top + top - topScroll) < 0
             setOverflowPosition diff
+
           else if (diff = offset.top + top + currentPopover.outerHeight() - topScroll - $window.height()) > 0
             setOverflowPosition diff
 
-        if offset.left + left < 0 # right align
+        # Right align originally, switching to left
+        if offset.left + left - leftScroll < 0
           action = {remove: "right", add: "left"}
-        else if offset.left + left + currentPopover.outerWidth() > $window.width() # left align
+
+        # Left align originally, switching to right
+        else if offset.left + left + currentPopover.outerWidth() - leftScroll > $window.width()
           action = {remove: "left", add: "right"}
 
         if action.remove and action.add
