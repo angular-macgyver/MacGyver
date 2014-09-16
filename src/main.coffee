@@ -151,6 +151,17 @@ jqLiteExtend =
     else
       element["scrollTop"] = value
 
+  scrollLeft: (element, value) ->
+    win = getWindow element
+
+    unless value?
+      return if win then win["pageXOffset"] else element["scrollLeft"]
+
+    if win
+      win.scrollTo(window.pageXOffset, value)
+    else
+      element["scrollLeft"] = value
+
 extendjQuery = ->
   # NOTE: Make sure Angular element is using jQuery
   # MacGyver breaks when Angular to initialized before jQuery
