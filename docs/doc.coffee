@@ -279,24 +279,6 @@ angular.module("Mac").
           "Original air date": "May 7, 1986"
         }
       ]
-      $scope.selectedModels = []
-      $scope.unselectAll    = ->
-        $scope.selectedModels = []
-        return
-
-      $scope.selectAll = ->
-        $scope.selectedModels = $scope.macGyverSeasonOne.slice(0)
-        return
-
-      $scope.selectRandom = ->
-        length = $scope.macGyverSeasonOne.length
-        models = []
-        for i in [1..(length / 2)]
-          index = Math.floor Math.random() * length
-          model = $scope.macGyverSeasonOne[index]
-          models.push model unless model in models
-
-        $scope.selectedModels = models
   ]
 
 window.prettyPrint and prettyPrint()
