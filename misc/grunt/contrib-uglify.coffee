@@ -29,8 +29,4 @@ module.exports = (grunt) ->
           src: "lib/<%= pkg.name.toLowerCase() %>-filters.js"
           dest: "build/bower-macgyver-filters/macgyver-filters.min.js"
         }
-        {
-          src: "lib/<%= pkg.name.toLowerCase() %>-table.js"
-          dest: "build/bower-macgyver-table/macgyver-table.min.js"
-        }
       ]

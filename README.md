@@ -21,7 +21,6 @@ Duct Tape and a Swiss Army Knife. Angular helpers for all your friends!
  - Popover
  - Scroll Spy
  - Spinner
- - Table
  - Tag Autocomplete
  - Time Input
  - Tooltip
@@ -35,8 +34,8 @@ Duct Tape and a Swiss Army Knife. Angular helpers for all your friends!
 ## 3rd party libraries dependencies ##
 Libraries are only needed for a few directives,
  - AngularJS (1.2.x+)
- - jQuery (datepicker and table)
- - jQuery UI (datepicker and table)
+ - jQuery (datepicker)
+ - jQuery UI (datepicker)
  - Underscore String (Underscore string filter)
 
 ## Using MacGyver ##
@@ -58,7 +57,6 @@ MacGyver includes multiple scripts,
 - `macgyver-datepicker.js` - Datepicker with jQuery UI datepicker
 - `macgyver-filters.js` - Filters except underscore string filter
 - `macgyver-string-filter.js` - Underscore String filter
-- `macgyver-table.js` - Table view
 
 ## Get Started On Development ##
 MacGyver requires a few node modules and bower packages for development environment.

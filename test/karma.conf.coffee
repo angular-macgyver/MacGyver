@@ -48,12 +48,7 @@ module.exports = (config) ->
       "../vendor/bower/jquery/jquery.js"
       "../vendor/bower/underscore.string/lib/underscore.string.js"
       "../vendor/bower/jquery.ui/ui/jquery.ui.core.js"
-      "../vendor/bower/jquery.ui/ui/jquery.ui.widget.js"
-      "../vendor/bower/jquery.ui/ui/jquery.ui.mouse.js"
-      "../vendor/bower/jquery.ui/ui/jquery.ui.position.js"
       "../vendor/bower/jquery.ui/ui/jquery.ui.datepicker.js"
-      "../vendor/bower/jquery.ui/ui/jquery.ui.resizable.js"
-      "../vendor/bower/jquery.ui/ui/jquery.ui.sortable.js"
       "../vendor/bower/angular/angular.js"
       "../vendor/bower/angular-animate/angular-animate.js"
 

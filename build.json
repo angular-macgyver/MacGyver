@@ -32,19 +32,6 @@
   "underscoreFilter": [
     "tmp/app/filters/underscore.js"
   ],
-  "table": [
-    "vendor/bower/jquery.ui/ui/jquery.ui.core.js",
-    "vendor/bower/jquery.ui/ui/jquery.ui.widget.js",
-    "vendor/bower/jquery.ui/ui/jquery.ui.mouse.js",
-    "vendor/bower/jquery.ui/ui/jquery.ui.resizable.js",
-    "vendor/bower/jquery.ui/ui/jquery.ui.sortable.js",
-    "tmp/app/services/table.js",
-    "tmp/app/services/directive_helpers.js",
-    "tmp/app/services/hookable_directive_controller.js",
-    "tmp/app/directives/reorderable.js",
-    "tmp/app/directives/resizable.js",
-    "tmp/app/directives/table/*.js"
-  ],
   "datepicker": [
     "vendor/bower/jquery.ui/ui/jquery.ui.core.js",
     "vendor/bower/jquery.ui/ui/jquery.ui.datepicker.js",
@@ -52,12 +39,7 @@
   ],
   "jqueryui": [
     "vendor/bower/jquery.ui/ui/jquery.ui.core.js",
-    "vendor/bower/jquery.ui/ui/jquery.ui.widget.js",
-    "vendor/bower/jquery.ui/ui/jquery.ui.mouse.js",
-    "vendor/bower/jquery.ui/ui/jquery.ui.position.js",
-    "vendor/bower/jquery.ui/ui/jquery.ui.datepicker.js",
-    "vendor/bower/jquery.ui/ui/jquery.ui.resizable.js",
-    "vendor/bower/jquery.ui/ui/jquery.ui.sortable.js"
+    "vendor/bower/jquery.ui/ui/jquery.ui.datepicker.js"
   ],
   "css": {
     "example": [
@@ -73,11 +55,6 @@
       "tmp/css/spinner.css",
       "tmp/css/tag_autocomplete.css",
       "tmp/css/tooltip.css"
-    ],
-    "table": [
-      "vendor/css/jquery-ui-1.10.0.custom.css",
-      "tmp/css/mac-table-themes.css",
-      "tmp/css/table_view.css"
     ],
     "datepicker": [
       "vendor/css/jquery-ui-1.10.0.custom.css",

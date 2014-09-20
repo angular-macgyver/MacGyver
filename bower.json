@@ -14,7 +14,6 @@
     "lib/macgyver-datepicker.js",
     "lib/macgyver-filters.js",
     "lib/macgyver-string-filter.js",
-    "lib/macgyver-table.js",
     "lib/macgyver.css",
     "lib/macgyver.js",
     "lib/macgyver.min.js"

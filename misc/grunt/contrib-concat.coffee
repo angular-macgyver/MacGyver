@@ -60,10 +60,6 @@ module.exports = (grunt) ->
           dest: "lib/<%= pkg.name.toLowerCase() %>-string-filter.js"
         }
         {
-          src:  "<%= buildConf.table %>"
-          dest: "lib/<%= pkg.name.toLowerCase() %>-table.js"
-        }
-        {
           src:  "<%= buildConf.datepicker %>"
           dest: "lib/<%= pkg.name.toLowerCase() %>-datepicker.js"
         }
@@ -94,9 +90,5 @@ module.exports = (grunt) ->
         {
           dest: "build/bower-macgyver-datepicker/<%= pkg.name.toLowerCase() %>-datepicker.css"
           src: "<%= buildConf.css.datepicker %>"
-        }
-        {
-          dest: "build/bower-macgyver-table/<%= pkg.name.toLowerCase() %>-table.css"
-          src: "<%= buildConf.css.table %>"
         }
       ]
