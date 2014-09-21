@@ -1,6 +1,3 @@
-fs   = require "fs"
-path = require "path"
-
 module.exports = (grunt) ->
 
   #
@@ -13,11 +10,8 @@ module.exports = (grunt) ->
         port:       9001
         hostname:   "0.0.0.0"
         base:       "example"
-        middleware: (connect, options) ->
-          return [
-            connect.static(options.base)
-            connect.bodyParser()
-          ]
+        middleware: (connect, options, middlewares) ->
+          return [connect.static("example")]
 
     e2e:
       options:
