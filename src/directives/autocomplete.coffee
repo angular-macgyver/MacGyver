@@ -241,8 +241,8 @@ angular.module("Mac").directive "macAutocomplete", [
       Update list of items getting passed to menu
       @param {Array} data Array of data
       ###
-      updateItem = (data = []) ->
-        if data.length > 0
+      updateItem = (data) ->
+        if data?.length > 0
           currentAutocomplete = data
 
           $menuScope.items = data.map (item) ->
@@ -255,6 +255,9 @@ angular.module("Mac").directive "macAutocomplete", [
               {label: item, value: item}
 
           appendMenu positionMenu
+
+        else
+         reset()
 
       ###
       @function
