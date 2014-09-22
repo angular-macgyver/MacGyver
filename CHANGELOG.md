@@ -1,3 +1,10 @@
+# v0.3.8 (2014/9/22)
+## Bug Fixes
+- **macAutocomplete:** Fixed dropdown not hiding when no item is returned
+  ([f5dec055](https://github.com/StartTheShift/MacGyver/commit/f5dec055994236a472695197c7dc66e330af5a81),
+   [#182](https://github.com/StartTheShift/MacGyver/issues/182))
+
+
 # v0.3.7 (2014/9/16)
 ## Bug Fixes
 - **jqLite:** Fixed scrollTop setting X offset instead of Y offset
