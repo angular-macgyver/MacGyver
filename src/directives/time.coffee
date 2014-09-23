@@ -116,8 +116,9 @@ angular.module("Mac").directive "macTime", [
       updateInput = ->
         displayTime = $filter("date") time.getTime(), "hh:mm a"
 
-        ngModelCtrl.$setViewValue displayTime
-        ngModelCtrl.$render()
+        unless displayTime is ngModelCtrl.$viewValue
+          ngModelCtrl.$setViewValue displayTime
+          ngModelCtrl.$render()
 
       updateTime = ->
         if timeMatch = util.timeRegex.exec ngModelCtrl.$modelValue
