@@ -2,7 +2,7 @@
   "author": "Adrian Lee <adrian@adrianlee.me>",
   "name": "MacGyver",
   "description": "A library of shared directives",
-  "version": "0.3.8",
+  "version": "0.3.9",
   "homepage": "http://starttheshift.github.io/MacGyver",
   "repository": {
     "type": "git",

@@ -1,3 +1,10 @@
+# v0.3.9 (2014/9/22)
+## Bug Fixes
+- **macTime:** Fixed not able to select hour and minute Revert "fix(macTime): Re-render time input view even when viewValue is the same"
+This reverts commit 695078ea092083dd1f54a87d0ce3136c77a8942b.
+  ([20165f2a](https://github.com/StartTheShift/MacGyver/commit/20165f2a8e286cee66acba5aacc13a4cdfdc82c1))
+
+
 # v0.3.8 (2014/9/22)
 ## Bug Fixes
 - **macAutocomplete:** Fixed dropdown not hiding when no item is returned
