@@ -1,8 +1,8 @@
-# MacGyver ![License](http://img.shields.io/badge/license-MIT-green.svg) ![Latest Release](http://img.shields.io/github/release/StartTheShift/MacGyver.svg)
+# MacGyver ![License](http://img.shields.io/badge/license-MIT-green.svg) ![Latest Release](http://img.shields.io/github/release/angular-macgyver/MacGyver.svg)
 
 Duct Tape and a Swiss Army Knife. Angular helpers for all your friends!
 
-[![Build Status](https://travis-ci.org/StartTheShift/MacGyver.png?branch=master)](https://travis-ci.org/StartTheShift/MacGyver)
+[![Build Status](https://travis-ci.org/angular-macgyver/MacGyver.png?branch=master)](https://travis-ci.org/angular-macgyver/MacGyver)
 [![Selenium Test Status](https://saucelabs.com/buildstatus/macgyver-ci)](https://saucelabs.com/u/macgyver-ci)
 
 [![Selenium Test Status](https://saucelabs.com/browser-matrix/macgyver-ci.svg)](https://saucelabs.com/u/macgyver-ci)
@@ -40,7 +40,7 @@ Libraries are only needed for a few directives,
  - Underscore String (Underscore string filter)
 
 ## Using MacGyver ##
-You can install via [Bower](http://www.bower.io) or download from [Github](https://github.com/StartTheShift/MacGyver/archive/master.zip)
+You can install via [Bower](http://www.bower.io) or download from [Github](https://github.com/angular-macgyver/MacGyver/archive/master.zip)
 
 To install via bower, make sure you have bower installed and then run:
 

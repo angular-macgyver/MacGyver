@@ -8,7 +8,7 @@ GIT_LOG = "git log --grep='%s' -E --format=%s %s..HEAD"
 GIT_TAG = "git describe --tags --abbrev=0"
 GIT_GREP = "^fix|^feature|^refactor|BREAKING"
 
-githubUrl = "https://github.com/StartTheShift/MacGyver"
+githubUrl = "https://github.com/angular-macgyver/MacGyver"
 
 issueLink = "[#%s](#{githubUrl}/issues/%s)"
 commitLink = "[%s](#{githubUrl}/commit/%s)"
