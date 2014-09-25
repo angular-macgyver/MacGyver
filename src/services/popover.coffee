@@ -275,7 +275,7 @@ angular.module("Mac").
           if offset.top + top - topScroll < 0 # above
             action = {remove: "above", add: "below"}
 
-          else if offset.top + top - topScroll > $window.height()
+          else if offset.top + top + current.height - topScroll > $window.height()
             action = {remove: "below", add: "above"}
 
         # if position is middle
@@ -285,6 +285,13 @@ angular.module("Mac").
 
           else if (diff = offset.top + top + currentPopover.outerHeight() - topScroll - $window.height()) > 0
             setOverflowPosition diff
+
+        # Update offset for above or below
+        if action.remove and action.add
+          position = position.replace action.remove, action.add
+
+        # Clear action for left and right
+        action = {}
 
         # Right align originally, switching to left
         if offset.left + left - leftScroll < 0
@@ -296,7 +303,8 @@ angular.module("Mac").
 
         if action.remove and action.add
           position = position.replace action.remove, action.add
-          updateOffset()
+
+        updateOffset()
 
         offset.top  += top
         offset.left += left
