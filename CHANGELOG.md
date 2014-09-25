@@ -1,3 +1,9 @@
+# v0.3.10 (2014/9/25)
+## Bug Fixes
+- **macPopover:** Fixed popover not changing from below to above when overflow
+  ([52306f5e](https://github.com/StartTheShift/MacGyver/commit/52306f5e0550bb0ac6d04f4ef1489d65eea34785))
+
+
 # v0.3.9 (2014/9/22)
 ## Bug Fixes
 - **macTime:** Fixed not able to select hour and minute Revert "fix(macTime): Re-render time input view even when viewValue is the same"
