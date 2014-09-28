@@ -43,13 +43,17 @@ You can install via [Bower](http://www.bower.io) or download from [Github](https
 
 To install via bower, make sure you have bower installed and then run:
 
-    bower install angular-macgyver
+```
+bower install angular-macgyver
+```
 
 More bower repositories can be found at [Angular MacGyver](https://github.com/angular-macgyver)
 
 Once you have MacGyver in your project, just include "Mac" as a dependency in your Angular application and you’re good to go.
 
-    angular.module("myModule", ["Mac"])
+```javascript
+angular.module("myModule", ["Mac"]);
+```
 
 MacGyver includes multiple scripts,
 - `macgyver.js` - All directives, services and filters bundled together
@@ -57,31 +61,3 @@ MacGyver includes multiple scripts,
 - `macgyver-datepicker.js` - Datepicker with jQuery UI datepicker
 - `macgyver-filters.js` - Filters except underscore string filter
 - `macgyver-string-filter.js` - Underscore String filter
-
-## Get Started On Development ##
-MacGyver requires a few node modules and bower packages for development environment.
-
-The easiest way to install all requirements,
-
-    ./init-project
-
-### Install all through npm ###
-
-    npm install
-
-#### Install Bower ####
-
-    sudo npm -g install bower
-
-#### Install Grunt ####
-
-    sudo npm -g install grunt-cli
-
-#### Install script dependencies
-
-    bower install
-
-#### Starting Grunt
-To compile source code and run unit tests while developing:
-
-    grunt dev
