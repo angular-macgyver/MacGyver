@@ -3,19 +3,29 @@ html
   head
       meta(charset='utf-8')
       title MacGyver Example
-      link(href='//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css', rel='stylesheet')
+      link(href='//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css', rel='stylesheet')
       link(href='css/macgyver.css', rel='stylesheet')
       link(href='css/vendor.css', rel='stylesheet')
 
   body(ng-app="Mac", mac-scroll-spy, mac-scroll-spy-offset="10")
-    #top-nav
-      .container
-        a#logo(href="index.html"): h2 MacGyver
-        ul.nav-menu
-          li#directives-nav: a(href="index.html") Directives
-          li#filters-nav: a(href="filters.html") Filters
-          li#events-nav: a(href="events.html") Events
-          li#utils-nav: a(href="util.html") Utilities
+    nav.navbar.navbar-fixed-top.navbar-inverse
+      .container-fluid
+        .navbar-header
+          a.navbar-brand(href="index.html") MacGyver
+
+        .collapse.navbar-collapse
+          ul.nav.navbar-nav
+            li: a(href="index.html") Directives
+            li: a(href="filters.html") Filters
+            li: a(href="events.html") Events
+            li: a(href="util.html") Utilities
+            li
+              a(
+                href   = "http://angular-macgyver.github.io/macgyver-table/"
+                target = "_blank"
+              )
+                | Table view&nbsp;
+                span.glyphicon.glyphicon-new-window
 
     block header
 
@@ -27,8 +37,8 @@ html
         #nav.col-md-3.col-xs-12
           block nav
 
-    footer.footer
-      ul.footer-links
+    footer.footer.text-center
+      ul.footer-links.list-inline
         li
           iframe(
             src               = "http://ghbtns.com/github-btn.html?user=angular-macgyver&repo=MacGyver&type=watch&count=true"
@@ -54,7 +64,7 @@ html
         p Code licensed under&nbsp;
           a(href="https://github.com/angular-macgyver/MacGyver/blob/master/LICENSE") MIT
 
-      ul.footer-links
+      ul.footer-links.list-inline
         li Currently @@version
         li &middot;
         li: a(href="https://github.com/angular-macgyver/MacGyver") Github
