@@ -1,3 +1,9 @@
+# v0.4.0 (2014/9/29)
+## Breaking Changes
+- **macTable:**  Table view has been removed from core MacGyver In order to continue using table view, please visit: https://github.com/angular-macgyver/macgyver-table
+  ([0be6abfa](https://github.com/angular-macgyver/MacGyver/commit/0be6abfa8ee2bded6c2a1c40d187b18e17cca536))
+
+
 # v0.3.10 (2014/9/25)
 ## Bug Fixes
 - **macPopover:** Fixed popover not changing from below to above when overflow

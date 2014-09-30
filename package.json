@@ -2,7 +2,7 @@
   "author": "Adrian Lee <adrian@adrianlee.me>",
   "name": "MacGyver",
   "description": "A library of shared directives",
-  "version": "0.3.10",
+  "version": "0.4.0",
   "homepage": "http://angular-macgyver.github.io/MacGyver",
   "repository": {
     "type": "git",
