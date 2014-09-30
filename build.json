@@ -33,13 +33,13 @@
     "tmp/app/filters/underscore.js"
   ],
   "datepicker": [
-    "vendor/bower/jquery.ui/ui/jquery.ui.core.js",
-    "vendor/bower/jquery.ui/ui/jquery.ui.datepicker.js",
+    "bower_components/jquery.ui/ui/jquery.ui.core.js",
+    "bower_components/jquery.ui/ui/jquery.ui.datepicker.js",
     "tmp/app/directives/datepicker.js"
   ],
   "jqueryui": [
-    "vendor/bower/jquery.ui/ui/jquery.ui.core.js",
-    "vendor/bower/jquery.ui/ui/jquery.ui.datepicker.js"
+    "bower_components/jquery.ui/ui/jquery.ui.core.js",
+    "bower_components/jquery.ui/ui/jquery.ui.datepicker.js"
   ],
   "css": {
     "example": [

@@ -17,11 +17,11 @@ module.exports = (grunt) ->
       singleRun: true
       options:
         files: [
-          "../vendor/bower/jquery/jquery.js"
-          "../vendor/bower/angular/angular.js"
+          "../bower_components/jquery/jquery.js"
+          "../bower_components/angular/angular.js"
           "template/*.html"
           "../lib/macgyver.js"
-          "../vendor/bower/angular-mocks/angular-mocks.js"
+          "../bower_components/angular-mocks/angular-mocks.js"
           "../test/vendor/browserTrigger.js"
           "../test/unit/*.spec.coffee"
         ]

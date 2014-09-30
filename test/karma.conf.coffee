@@ -45,12 +45,12 @@ module.exports = (config) ->
     # list of files / patterns to load in the browser
     files: [
       # Javascript
-      "../vendor/bower/jquery/jquery.js"
-      "../vendor/bower/underscore.string/lib/underscore.string.js"
-      "../vendor/bower/jquery.ui/ui/jquery.ui.core.js"
-      "../vendor/bower/jquery.ui/ui/jquery.ui.datepicker.js"
-      "../vendor/bower/angular/angular.js"
-      "../vendor/bower/angular-animate/angular-animate.js"
+      "../bower_components/jquery/jquery.js"
+      "../bower_components/underscore.string/lib/underscore.string.js"
+      "../bower_components/jquery.ui/ui/jquery.ui.core.js"
+      "../bower_components/jquery.ui/ui/jquery.ui.datepicker.js"
+      "../bower_components/angular/angular.js"
+      "../bower_components/angular-animate/angular-animate.js"
 
       # Template
       "template/*.html"
@@ -60,7 +60,7 @@ module.exports = (config) ->
       "../src/services/*.coffee"
       "../src/*.coffee"
       "../src/**/*.coffee"
-      "../vendor/bower/angular-mocks/angular-mocks.js"
+      "../bower_components/angular-mocks/angular-mocks.js"
       "../test/vendor/browserTrigger.js"
       "../test/unit/*.spec.coffee"
     ]
