@@ -5,6 +5,8 @@ module.exports = (grunt) ->
   # Watch all js, css and jade changes
   #
   grunt.config "watch",
+    options:
+      livereload: true
     js:
       files: ["src/**/*.coffee", "src/*.coffee"]
       tasks: [
