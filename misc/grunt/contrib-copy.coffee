@@ -22,6 +22,12 @@ module.exports = (grunt) ->
           src:     ["src/img/ui-*.png"]
           dest:    "example/css/img/"
         },
+        {
+          expand:  true
+          flatten: true
+          src:     ["src/template/*.html"]
+          dest:    "example/template/"
+        },
         "example/data.json": "docs/data.json"
 
       ]

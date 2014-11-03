@@ -9,7 +9,7 @@ module.exports = (grunt) ->
       options:
         pattern: /templateUrl: "([^"]+)"/g
         replace: (match) ->
-          filePath     = require("path").join "example/", match[1]
+          filePath     = require("path").join "src/", match[1]
           compiledHtml = grunt.file.read filePath
           compiledHtml = compiledHtml.replace /"/g, "\\\""
           "template: \"#{compiledHtml}\""
