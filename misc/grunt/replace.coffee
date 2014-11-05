@@ -12,7 +12,8 @@ module.exports = (grunt) ->
           filePath     = require("path").join "src/", match[1]
           compiledHtml = grunt.file.read filePath
           compiledHtml = compiledHtml.replace /"/g, "\\\""
-          "template: \"#{compiledHtml}\""
+          compiledHtml = compiledHtml.replace /\n/g, ""
+          "template: \"#{compiledHtml.trim()}\""
       files: [
         expand:  true
         flatten: false
