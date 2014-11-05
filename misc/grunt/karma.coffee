@@ -7,6 +7,8 @@ module.exports = (grunt) ->
   grunt.config "karma",
     options:
       configFile: "test/karma.conf.coffee"
+      ngHtml2JsPreprocessor:
+        stripPrefix: "src/"
     unit:
       background: true
     travis:
@@ -17,11 +19,11 @@ module.exports = (grunt) ->
       singleRun: true
       options:
         files: [
-          "../bower_components/jquery/jquery.js"
-          "../bower_components/angular/angular.js"
-          "template/*.html"
-          "../lib/macgyver.js"
-          "../bower_components/angular-mocks/angular-mocks.js"
-          "../test/vendor/browserTrigger.js"
-          "../test/unit/*.spec.coffee"
+          "bower_components/jquery/jquery.js"
+          "bower_components/angular/angular.js"
+          "src/template/*.html"
+          "lib/macgyver.js"
+          "bower_components/angular-mocks/angular-mocks.js"
+          "test/vendor/browserTrigger.js"
+          "test/unit/*.spec.coffee"
         ]

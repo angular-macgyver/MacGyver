@@ -39,41 +39,37 @@ module.exports = (config) ->
         version: '11'
 
     # base path, that will be used to resolve files and exclude
-    basePath: "../example"
+    basePath: "../"
     frameworks: ["jasmine"]
 
     # list of files / patterns to load in the browser
     files: [
       # Javascript
-      "../bower_components/jquery/jquery.js"
-      "../bower_components/underscore.string/lib/underscore.string.js"
-      "../bower_components/jquery.ui/ui/jquery.ui.core.js"
-      "../bower_components/jquery.ui/ui/jquery.ui.datepicker.js"
-      "../bower_components/angular/angular.js"
-      "../bower_components/angular-animate/angular-animate.js"
+      "bower_components/jquery/jquery.js"
+      "bower_components/underscore.string/lib/underscore.string.js"
+      "bower_components/jquery.ui/ui/jquery.ui.core.js"
+      "bower_components/jquery.ui/ui/jquery.ui.datepicker.js"
+      "bower_components/angular/angular.js"
+      "bower_components/angular-animate/angular-animate.js"
 
       # Template
-      "template/*.html"
+      "src/template/*.html"
 
       # Test Code
-      "../src/main.coffee"
-      "../src/services/*.coffee"
-      "../src/*.coffee"
-      "../src/**/*.coffee"
-      "../bower_components/angular-mocks/angular-mocks.js"
-      "../test/vendor/browserTrigger.js"
-      "../test/unit/*.spec.coffee"
-    ]
-
-    exclude: [
-      "../src/example_controller/*.coffee"
+      "src/main.coffee"
+      "src/services/*.coffee"
+      "src/*.coffee"
+      "src/**/*.coffee"
+      "bower_components/angular-mocks/angular-mocks.js"
+      "test/vendor/browserTrigger.js"
+      "test/unit/*.spec.coffee"
     ]
 
     reporters: ["progress"]
     logLevel: config.LOG_INFO
     browsers: ["PhantomJS"]
     preprocessors:
-      "../**/*.coffee": ["coffee"]
+      "**/*.coffee": ["coffee"]
       "**/*.html": ["ng-html2js"]
 
     plugins: ["karma-*"]
