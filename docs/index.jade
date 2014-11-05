@@ -300,16 +300,9 @@ block append content
       &lt;/mac-tag-autocomplete&gt;
 
   section#datepicker(mac-scroll-spy-anchor)
-    | @@include("docs/html/directives/datepicker.html")
-    h3 Example
-    .docs-example
-      mac-datepicker(
-        id                      = "input-start-date"
-        ng-model                = "startDate"
-        mac-datepicker-min-date = "minDate"
-      )
-    pre.prettyprint.
-      &lt;mac-datepicker id=&quot;input-start-date&quot; ng-model=&quot;startDate&quot;&gt;&lt;/mac-datepicker&gt;
+    h1 Datepicker
+    .alert.alert-warning Datepicker has been moved to a separate module.&nbsp;
+      a(href="https://github.com/angular-macgyver/macgyver-datepicker") Module can be found here
 
   section#time-input(mac-scroll-spy-anchor)
     | @@include("docs/html/directives/time.html")

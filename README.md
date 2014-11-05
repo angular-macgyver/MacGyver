@@ -13,7 +13,6 @@ Duct Tape and a Swiss Army Knife. Angular helpers for all your friends!
  - Affix
  - Autocomplete
  - Canvas Spinner
- - Datepicker
  - Events
  - Menu
  - Modal
@@ -58,6 +57,5 @@ angular.module("myModule", ["Mac"]);
 MacGyver includes multiple scripts,
 - `macgyver.js` - All directives, services and filters bundled together
 - `macgyver-core.js` - Utilities, events and all directives without 3rd party dependencies
-- `macgyver-datepicker.js` - Datepicker with jQuery UI datepicker
 - `macgyver-filters.js` - Filters except underscore string filter
 - `macgyver-string-filter.js` - Underscore String filter

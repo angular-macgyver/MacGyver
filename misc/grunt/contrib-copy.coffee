@@ -52,10 +52,6 @@ module.exports = (grunt) ->
           dest: "build/bower-macgyver-core/macgyver-core.js"
         }
         {
-          src: "lib/<%= pkg.name.toLowerCase() %>-datepicker.js"
-          dest: "build/bower-macgyver-datepicker/macgyver-datepicker.js"
-        }
-        {
           src: "lib/<%= pkg.name.toLowerCase() %>-filters.js"
           dest: "build/bower-macgyver-filters/macgyver-filters.js"
         }
