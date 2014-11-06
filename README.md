@@ -33,8 +33,6 @@ Duct Tape and a Swiss Army Knife. Angular helpers for all your friends!
 ## 3rd party libraries dependencies ##
 Libraries are only needed for a few directives,
  - AngularJS (1.2.x+)
- - jQuery (datepicker)
- - jQuery UI (datepicker)
  - Underscore String (Underscore string filter)
 
 ## Using MacGyver ##

@@ -1,7 +1,6 @@
 {
   "full": [
     "tmp/app/main.js",
-    "tmp/jqueryui.js",
     "tmp/app/**/*.js"
   ],
   "core": [
@@ -31,10 +30,6 @@
   ],
   "underscoreFilter": [
     "tmp/app/filters/underscore.js"
-  ],
-  "jqueryui": [
-    "bower_components/jquery.ui/ui/jquery.ui.core.js",
-    "bower_components/jquery.ui/ui/jquery.ui.datepicker.js"
   ],
   "css": {
     "example": [

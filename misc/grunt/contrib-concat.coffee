@@ -2,7 +2,6 @@ module.exports = (grunt) ->
 
   #
   # Concat section
-  # jqueryui    - compile required jquery ui files
   # appJs       - concat all the application code into MacGyver.js
   # deployAppJs - concat all app code for deployment
   # modulesJs   - modularized js
@@ -10,13 +9,6 @@ module.exports = (grunt) ->
   #
 
   grunt.config "concat",
-    jqueryui:
-      options:
-        process: (src, filepath) ->
-          src.replace /@VERSION/g, grunt.config.get("jqueryUI").version
-      dest: "tmp/jqueryui.js"
-      src:  "<%= buildConf.jqueryui %>"
-
     appJs:
       dest: "example/js/<%= pkg.name %>.js"
       src: "<%= buildConf.full %>"

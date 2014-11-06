@@ -32,9 +32,7 @@
     "package.json"
   ],
   "devDependencies": {
-    "angular-mocks": "~1.2.0",
-    "jquery": "~2.0.3",
-    "jquery.ui": "~1.10.3"
+    "angular-mocks": "~1.2.0"
   },
   "dependencies": {
     "angular": "~1.2.0",

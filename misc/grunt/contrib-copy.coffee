@@ -6,14 +6,6 @@ module.exports = (grunt) ->
   # when deploying code
   #
   grunt.config "copy",
-    images:
-      files: [
-        expand:  true
-        flatten: true
-        src:     ["src/img/ui-*.png"]
-        dest:    "lib/img/"
-      ]
-
     example:
       files: [
         {

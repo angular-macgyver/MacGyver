@@ -19,7 +19,6 @@ module.exports = (grunt) ->
       singleRun: true
       options:
         files: [
-          "bower_components/jquery/jquery.js"
           "bower_components/angular/angular.js"
           "src/template/*.html"
           "lib/macgyver.js"
