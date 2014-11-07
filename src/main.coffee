@@ -43,6 +43,7 @@ getWindow = (element) ->
 augmentWidthOrHeight = (element, name, extra, isBorderBox, styles) ->
   return 0 if extra is (if isBorderBox then "border" else "content")
 
+  val   = 0
   start = if name is "Width" then 1 else 0
 
   for i in [start..3] by 2
