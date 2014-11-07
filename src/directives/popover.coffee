@@ -113,10 +113,13 @@ angular.module("Mac").
 
         angular.extend opts, {template: element.html()}
 
-        element.replaceWith document.createComment "macPopover: #{attrs.id}"
-
         ($scope, element, attrs) ->
-          attrs.$observe "id", (value) -> popover.register value, opts
+          attrs.$observe "id", (value) ->
+            # Register the popover with popover service
+            popover.register value, opts
+
+            # Replace original element with comment once element is cached
+            element.replaceWith document.createComment "macPopover: #{attrs.id}"
   ]).
 
   #
