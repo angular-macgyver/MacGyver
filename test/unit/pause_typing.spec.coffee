@@ -18,9 +18,17 @@ describe "Pause typing", ->
     input = $compile("<input type='text' mac-pause-typing='callback()' />") $rootScope
     $rootScope.$digest()
 
-    input.trigger $.Event("keyup", which: keys.F)
-    input.trigger $.Event("keyup", which: keys.O)
-    input.trigger $.Event("keyup", which: keys.O)
+    input.triggerHandler
+      type: "keyup"
+      which: keys.F
+
+    input.triggerHandler
+      type: "keyup"
+      which: keys.O
+
+    input.triggerHandler
+      type: "keyup"
+      which: keys.O
 
     $timeout.flush()
 
