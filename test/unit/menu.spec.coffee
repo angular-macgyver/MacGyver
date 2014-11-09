@@ -10,6 +10,11 @@ describe "Mac menu", ->
   queryMenu = (element) ->
     element.querySelector(".mac-menu-item")
 
+  getMenuText = (element) ->
+    item = queryMenu element
+
+    return item.innerText or item.textContent
+
   beforeEach module("Mac")
   beforeEach module("template/menu.html")
 
@@ -23,14 +28,14 @@ describe "Mac menu", ->
       element = $compile("<mac-menu mac-menu-items='items'></mac-menu>") $rootScope
       $rootScope.$digest()
 
-      expect(queryMenu(element[0]).innerText).toBe "item1"
+      expect(getMenuText(element[0])).toBe "item1"
 
     it "should use custom template", ->
       $rootScope.items = items
       element = $compile("<mac-menu mac-menu-items='items'><span>{{item.label}} {{$index}}</span></mac-menu>") $rootScope
       $rootScope.$digest()
 
-      expect(queryMenu(element[0]).innerText).toBe "item1 0"
+      expect(getMenuText(element[0])).toBe "item1 0"
 
   it "should show three items", ->
     $rootScope.items = items
