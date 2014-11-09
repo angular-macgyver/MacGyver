@@ -7,6 +7,11 @@ describe "Mac autocomplete", ->
   $sniffer         = null
   changeInputValue = null
 
+  getMenuText = ->
+    item = document.querySelector(".mac-menu-item")
+
+    return item.innerText or item.textContent
+
   beforeEach module("Mac")
   beforeEach module("template/autocomplete.html")
   beforeEach module("template/menu.html")
@@ -64,7 +69,7 @@ describe "Mac autocomplete", ->
       changeInputValue element, "fo"
       $rootScope.$digest()
 
-      expect(document.querySelector(".mac-menu-item").innerText).toBe "foo"
+      expect(getMenuText()).toBe "foo"
 
     it "should use local label, value object", ->
       $rootScope.source = [
@@ -76,7 +81,7 @@ describe "Mac autocomplete", ->
       $rootScope.$digest()
 
       changeInputValue element, "f"
-      expect(document.querySelector(".mac-menu-item").innerText).toBe "foo"
+      expect(getMenuText()).toBe "foo"
 
     it "should use a url string and work exactly like mac-autocomplete-url", ->
       $httpBackend.when("GET", "/api/autocomplete?q=f").respond({data})
@@ -100,7 +105,7 @@ describe "Mac autocomplete", ->
       changeInputValue element, "f"
       $rootScope.$digest()
 
-      expect(document.querySelector(".mac-menu-item").innerText).toBe "foo"
+      expect(getMenuText()).toBe "foo"
 
     it "should use a callback function returned by an invoked function", ->
       $rootScope.source = (val) ->
@@ -112,7 +117,7 @@ describe "Mac autocomplete", ->
       changeInputValue element, "f"
       $rootScope.$digest()
 
-      expect(document.querySelector(".mac-menu-item").innerText).toBe "foo"
+      expect(getMenuText()).toBe "foo"
 
   describe "label", ->
     it "should use default 'name' label", ->
@@ -125,7 +130,7 @@ describe "Mac autocomplete", ->
       $rootScope.$digest()
 
       changeInputValue element, "f"
-      expect(document.querySelector(".mac-menu-item").innerText).toBe "foo"
+      expect(getMenuText()).toBe "foo"
 
     it "should not be able to find anything", ->
       $rootScope.source = [
@@ -137,7 +142,7 @@ describe "Mac autocomplete", ->
       $rootScope.$digest()
 
       changeInputValue element, "f"
-      expect(document.querySelector(".mac-menu-item").innerText).not.toBe "foo"
+      expect(getMenuText()).not.toBe "foo"
 
     it "should use 'label' as the key", ->
       $rootScope.source = [
@@ -149,7 +154,7 @@ describe "Mac autocomplete", ->
       $rootScope.$digest()
 
       changeInputValue element, "f"
-      expect(document.querySelector(".mac-menu-item").innerText).toBe "foo"
+      expect(getMenuText()).toBe "foo"
 
     it "should evaulate expression on label attribute correctly", ->
       $rootScope.source = [
@@ -163,7 +168,7 @@ describe "Mac autocomplete", ->
       $rootScope.$digest()
 
       changeInputValue element, "f"
-      expect(document.querySelector(".mac-menu-item").innerText).toBe "foo"
+      expect(getMenuText()).toBe "foo"
 
   describe "updateItem", ->
     it "should convert key to label", ->
