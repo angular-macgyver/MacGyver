@@ -265,7 +265,8 @@ describe "Mac modal", ->
     it "should compile on show", ->
       showModal "testing"
 
-      contentText = document.querySelector(".mac-modal-content-wrapper").innerText
+      wrapper     = document.querySelector(".mac-modal-content-wrapper")
+      contentText = wrapper.innerText or wrapper.textContent
       expect(contentText).toBe "Test Modal Content"
 
     it "should remove modal on hide", ->
