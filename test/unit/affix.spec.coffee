@@ -20,7 +20,7 @@ describe "Mac Affix", ->
     $compile(element) $rootScope
 
     $rootScope.$digest()
-    angular.element(window).trigger "scroll"
+    angular.element(window).triggerHandler "scroll"
 
     $rootScope.affixDisabled = true
     $rootScope.$digest()
