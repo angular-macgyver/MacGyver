@@ -29,7 +29,9 @@ describe "Mac Tooltip", ->
       $rootScope.$digest()
       tip.triggerHandler "mouseenter"
 
-      expect(queryTooltip().innerText).toBe "hello world"
+      text = queryTooltip().innerText or queryTooltip().textContent
+
+      expect(text).toBe "hello world"
 
   describe "Trigger", ->
 
