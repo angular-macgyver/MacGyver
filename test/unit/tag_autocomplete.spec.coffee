@@ -4,6 +4,9 @@ describe "Mac tag autocomplete", ->
   $timeout   = null
   keys       = null
 
+  hasClass = (element, className) ->
+    element[0].className.indexOf(className) > -1
+
   beforeEach module("Mac")
   beforeEach module("template/tag_autocomplete.html")
   beforeEach module("template/autocomplete.html")
@@ -20,42 +23,42 @@ describe "Mac tag autocomplete", ->
       element = $compile("<mac-tag-autocomplete></mac-tag-autocomplete>") $rootScope
       $rootScope.$digest()
 
-      expect(element.hasClass("mac-tag-autocomplete")).toBeTruthy()
+      expect(hasClass(element, "mac-tag-autocomplete")).toBeTruthy()
 
     it "should set default value and label attribute on mac-autocomplete", ->
       element = $compile("<mac-tag-autocomplete></mac-tag-autocomplete>") $rootScope
       $rootScope.$digest()
 
-      textInput = $(".mac-autocomplete", element)
-      expect(textInput.attr("mac-autocomplete-label")).toBe "name"
+      textInput = element[0].querySelector ".mac-autocomplete"
+      expect(textInput.getAttribute("mac-autocomplete-label")).toBe "name"
 
     it "should set value and label attribute on mac-autocomplete", ->
       element = $compile("<mac-tag-autocomplete mac-tag-autocomplete-label='test-name' mac-tag-autocomplete-value='test-id'></mac-tag-autocomplete>") $rootScope
       $rootScope.$digest()
 
-      textInput = $(".mac-autocomplete", element)
-      expect(textInput.attr("mac-autocomplete-label")).toBe "test-name"
+      textInput = element[0].querySelector ".mac-autocomplete"
+      expect(textInput.getAttribute("mac-autocomplete-label")).toBe "test-name"
 
     it "should pass empty string as key and value", ->
       element = $compile("<mac-tag-autocomplete mac-tag-autocomplete-label='' mac-tag-autocomplete-value=''></mac-tag-autocomplete>") $rootScope
       $rootScope.$digest()
 
-      textInput = $(".mac-autocomplete", element)
-      expect(textInput.attr("mac-autocomplete-label")).toBe ""
+      textInput = element[0].querySelector ".mac-autocomplete"
+      expect(textInput.getAttribute("mac-autocomplete-label")).toBe ""
 
     it "should set query attribute on mac-autocomplete", ->
       element = $compile("<mac-tag-autocomplete mac-tag-autocomplete-query='query'></mac-tag-autocomplete>") $rootScope
       $rootScope.$digest()
 
-      textInput = $(".mac-autocomplete", element)
-      expect(textInput.attr("mac-autocomplete-query")).toBe "query"
+      textInput = element[0].querySelector ".mac-autocomplete"
+      expect(textInput.getAttribute("mac-autocomplete-query")).toBe "query"
 
     it "should set delay attribute on mac-autocomplete", ->
       element = $compile("<mac-tag-autocomplete mac-tag-autocomplete-delay='100'></mac-tag-autocomplete>") $rootScope
       $rootScope.$digest()
 
-      textInput = $(".mac-autocomplete", element)
-      expect(textInput.attr("mac-autocomplete-delay")).toBe "100"
+      textInput = element[0].querySelector ".mac-autocomplete"
+      expect(textInput.getAttribute("mac-autocomplete-delay")).toBe "100"
 
     it "should set the url attribute on mac-autocomplete", ->
       $rootScope.url = "/test"
@@ -63,16 +66,16 @@ describe "Mac tag autocomplete", ->
       element = $compile("<mac-tag-autocomplete mac-tag-autocomplete-url='url'></mac-tag-autocomplete>") $rootScope
       $rootScope.$digest()
 
-      textInput = $(".mac-autocomplete", element)
-      expect(textInput.attr("mac-autocomplete-url")).toBe "url"
+      textInput = element[0].querySelector ".mac-autocomplete"
+      expect(textInput.getAttribute("mac-autocomplete-url")).toBe "url"
 
     it "should set the source attribute on mac-autocomplete", ->
       $rootScope.source = ["test", "test1", "test2"]
       element = $compile("<mac-tag-autocomplete mac-tag-autocomplete-source='source'></mac-tag-autocomplete>") $rootScope
       $rootScope.$digest()
 
-      textInput = $(".mac-autocomplete", element)
-      expect(textInput.attr("mac-autocomplete-source")).toBe "autocompleteSource"
+      textInput = element[0].querySelector ".mac-autocomplete"
+      expect(textInput.getAttribute("mac-autocomplete-source")).toBe "autocompleteSource"
 
     it "should have the same source function as the parent scope", ->
       $rootScope.source = jasmine.createSpy "source"
@@ -82,15 +85,16 @@ describe "Mac tag autocomplete", ->
 
       expect($rootScope.source).toHaveBeenCalled()
 
+    # TODO: Should convert this to e2e test
     xit "should focus on autocomplete when click on tag autocomplete", ->
       $rootScope.source = ["test", "test1", "test2"]
       element           = $compile("<mac-tag-autocomplete mac-tag-autocomplete-source='source'></mac-tag-autocomplete>") $rootScope
       $rootScope.$digest()
 
-      element.click()
+      element.triggerHandler "click"
 
-      textInput = $(".mac-autocomplete", element)
-      expect(textInput.is(":focus")).toBeTruthy()
+      textInput = element[0].querySelector ".mac-autocomplete"
+      expect(textInput).toBe document.activeElement
 
     it "should model -> view", ->
       element = $compile("<mac-tag-autocomplete mac-tag-autocomplete-model='model'></mac-tag-autocomplete>") $rootScope
@@ -99,8 +103,8 @@ describe "Mac tag autocomplete", ->
       $rootScope.model = "Here"
       $rootScope.$digest()
 
-      textInput = $(".mac-autocomplete", element)
-      expect(textInput.val()).toBe "Here"
+      textInput = element[0].querySelector ".mac-autocomplete"
+      expect(angular.element(textInput).val()).toBe "Here"
 
   describe "binding events", ->
     it "should bind events to autocomplete", ->
@@ -110,8 +114,10 @@ describe "Mac tag autocomplete", ->
       $rootScope.$digest()
       $timeout.flush()
 
-      textInput = $(".mac-autocomplete", element)
-      textInput.trigger "keyup", keyCode: keys.A
+      textInput = element[0].querySelector ".mac-autocomplete"
+      angular.element(textInput).triggerHandler
+        type:    "keyup"
+        keyCode: keys.A
 
       expect($rootScope.keyup).toHaveBeenCalled()
 
@@ -184,7 +190,7 @@ describe "Mac tag autocomplete", ->
       element = $compile("<mac-tag-autocomplete mac-tag-autocomplete-on-keydown='keydown()'></mac-tag-autocomplete>") $rootScope
       $rootScope.$digest()
 
-      textInput = $(".mac-autocomplete", element)
+      textInput = element[0].querySelector ".mac-autocomplete"
       browserTrigger textInput, "keydown"
 
       expect($rootScope.keydown).toHaveBeenCalled()
@@ -197,8 +203,10 @@ describe "Mac tag autocomplete", ->
       element = $compile("<mac-tag-autocomplete mac-tag-autocomplete-selected='selected' mac-tag-autocomplete-on-keydown='keydown()'></mac-tag-autocomplete>") $rootScope
       $rootScope.$digest()
 
-      textInput = $(".mac-autocomplete", element)
-      textInput.trigger $.Event("keydown", which: keys.BACKSPACE)
+      textInput = element[0].querySelector ".mac-autocomplete"
+      angular.element(textInput).triggerHandler
+        type:  "keydown"
+        which: keys.BACKSPACE
 
       expect($rootScope.selected.length).toBe 0
 
@@ -210,9 +218,11 @@ describe "Mac tag autocomplete", ->
       element = $compile("<mac-tag-autocomplete mac-tag-autocomplete-selected='selected' mac-tag-autocomplete-on-keydown='keydown()' mac-tag-autocomplete-disabled='true'></mac-tag-autocomplete>") $rootScope
       $rootScope.$digest()
 
-      textInput = $(".mac-autocomplete", element)
+      textInput = element[0].querySelector ".mac-autocomplete"
       $rootScope.$$childHead.textInput = "Testing"
-      textInput.trigger $.Event("keydown", which: keys.ENTER)
+      angular.element(textInput).triggerHandler
+        type:  "keydown"
+        which: keys.ENTER
 
       $timeout.flush()
 
@@ -229,9 +239,11 @@ describe "Mac tag autocomplete", ->
       element = $compile("<mac-tag-autocomplete mac-tag-autocomplete-selected='selected' mac-tag-autocomplete-on-enter='onEnter(item)' mac-tag-autocomplete-disabled='true'></mac-tag-autocomplete>") $rootScope
       $rootScope.$digest()
 
-      textInput = $(".mac-autocomplete", element)
+      textInput = element[0].querySelector ".mac-autocomplete"
       $rootScope.$$childHead.textInput = "Testing"
-      textInput.trigger $.Event("keydown", which: keys.ENTER)
+      angular.element(textInput).triggerHandler
+        type:  "keydown"
+        which: keys.ENTER
 
       $timeout.flush()
 
