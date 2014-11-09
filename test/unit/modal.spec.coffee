@@ -35,12 +35,12 @@ describe "Mac modal", ->
 
   describe "modal service", ->
     it "should register a modal element", ->
-      element = $("<div></div>")
+      element = angular.element("<div></div>")
       modal.register "test-modal", element, {}
       expect(modal.registered["test-modal"]).toBeDefined()
 
     it "should unregister a modal element", ->
-      element = $("<div></div>")
+      element = angular.element("<div></div>")
       modal.register "test-modal", element, {}
       modal.unregister "test-modal"
       expect(modal.registered["test-modal"]).not.toBeDefined()
@@ -58,31 +58,31 @@ describe "Mac modal", ->
       expect(isEmpty(modal.waiting.options)).toBe true
 
     it "should resize the modal after open", ->
-      element = $("<div></div>")
+      element = angular.element("<div></div>")
       element.append $templateCache.get("template/modal.html")
 
       modal.register "test-modal", element, {position: true}
 
       showModal "test-modal"
 
-      modalElement = $(".mac-modal", element)
-      expect(modalElement.attr("style")).toBeDefined()
+      modalElement = element[0].querySelector(".mac-modal")
+      expect(modalElement.style.length).toBe 1
 
     it "should not resize the modal by setting modal style", ->
-      element = $("<div></div>")
+      element = angular.element("<div></div>")
       element.append $templateCache.get("template/modal.html")
 
       modal.register "test-modal", element, {position: false}
 
       showModal "test-modal"
 
-      modalElement = $(".mac-modal", element)
-      expect(modalElement.attr("style")).not.toBeDefined()
+      modalElement = element[0].querySelector(".mac-modal")
+      expect(modalElement.style.length).toBe 0
 
     it "should broadcast modalWasShown", ->
       called   = false
       openedId = ""
-      element  = $("<div></div>")
+      element  = angular.element("<div></div>")
       element.append $templateCache.get("template/modal.html")
 
       modal.register "test-modal", element, {}
@@ -97,7 +97,7 @@ describe "Mac modal", ->
 
     it "should broadcast modalWasHidden after hiding the modal", ->
       closedId = ""
-      element  = $("<div></div>")
+      element  = angular.element("<div></div>")
       element.append $templateCache.get("template/modal.html")
 
       $rootScope.$on "modalWasHidden", (event, id) -> closedId = id
@@ -210,7 +210,7 @@ describe "Mac modal", ->
       element      = $compile("<button mac-modal='test-modal'></button>") $rootScope
       $rootScope.$digest()
 
-      element.click()
+      element.triggerHandler "click"
 
       $animate.triggerCallbacks()
       $animate.queue[1].args[2]()
@@ -224,7 +224,7 @@ describe "Mac modal", ->
 
       $rootScope.$digest()
 
-      element.click()
+      element.triggerHandler "click"
 
       $animate.triggerCallbacks()
       $animate.queue[1].args[2]()
@@ -240,7 +240,8 @@ describe "Mac modal", ->
         topOffset: 10
 
     afterEach ->
-      angular.element(".mac-modal-overlay").remove()
+      overlay = document.querySelector ".mac-modal-overlay"
+      overlay.parentNode.removeChild overlay if overlay?
 
     it "should register a new modal", ->
       expect(modal.registered["testing"]).toBeDefined()
@@ -264,7 +265,7 @@ describe "Mac modal", ->
     it "should compile on show", ->
       showModal "testing"
 
-      contentText = angular.element(".mac-modal-content-wrapper").text()
+      contentText = document.querySelector(".mac-modal-content-wrapper").innerText
       expect(contentText).toBe "Test Modal Content"
 
     it "should remove modal on hide", ->
