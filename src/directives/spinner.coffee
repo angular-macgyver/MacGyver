@@ -17,10 +17,22 @@ angular.module("Mac").directive "macSpinner", ["util", (util) ->
 
   compile: (element, attrs) ->
     prefixes = ["webkit", "Moz", "ms", "O"]
+    bars     = []
+
     vendor = (el, name) ->
       name = util.capitalize name
       return prefix+name for prefix in prefixes when el.style[prefix+name]?
       return name
+
+    updateBars = (propertyName, value) ->
+      if angular.isObject(propertyName)
+        for property, propertyValue of propertyName
+          updateBars property, propertyValue
+
+        return
+
+      for bar in bars
+        bar.style[propertyName] = value
 
     animateCss   = vendor element[0], "animation"
     transformCss = vendor element[0], "transform"
@@ -30,6 +42,9 @@ angular.module("Mac").directive "macSpinner", ["util", (util) ->
       degree = i * 36
       styl   = {}
       bar    = angular.element """<div class="bar"></div>"""
+
+      # Cache each bar for css updates
+      bars.push bar[0]
 
       styl[animateCss]   = "fade 1s linear infinite #{delay}s"
       styl[transformCss] = "rotate(#{degree}deg) translate(0, 130%)"
@@ -43,10 +58,8 @@ angular.module("Mac").directive "macSpinner", ["util", (util) ->
         zIndex: "inherit"
         color:  "#2f3035"
 
-      bars = angular.element element[0].getElementsByClassName("bar")
-
       setSpinnerSize = (size) ->
-        bars.css
+        updateBars
           height:       size * 0.32 + "px"
           left:         size * 0.445 + "px"
           top:          size * 0.37 + "px"
@@ -73,8 +86,7 @@ angular.module("Mac").directive "macSpinner", ["util", (util) ->
 
       if attrs.macSpinnerColor?
         attrs.$observe "macSpinnerColor", (value) ->
-          bars.css "background", value if value? and value
+          updateBars "background", value if value? and value
       else
-        bars.css "background", defaults.color
-
+        updateBars "background", defaults.color
 ]
