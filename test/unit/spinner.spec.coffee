@@ -4,6 +4,7 @@ describe "Mac Spinner", ->
   describe "Basic Initialization", ->
     $compile   = null
     $rootScope = null
+    prefixes   = ["webkit", "Moz", "ms", "O"]
 
     beforeEach inject (_$compile_, _$rootScope_) ->
       $compile   = _$compile_
@@ -13,19 +14,47 @@ describe "Mac Spinner", ->
       element = $compile("<mac-spinner></mac-spinner>") $rootScope
       $rootScope.$digest()
 
-      expect(element.hasClass "mac-spinner").toBe true
+      expect(element[0].className.indexOf "mac-spinner").not.toBe -1
 
     it "should create 10 bars", ->
       element = $compile("<mac-spinner></mac-spinner>") $rootScope
       $rootScope.$digest()
 
-      expect($(".bar", element).length).toBe 10
+      bars = element[0].querySelectorAll ".bar"
+
+      expect(bars.length).toBe 10
+
+    it "should update animation", ->
+      element = $compile("<mac-spinner></mac-spinner>") $rootScope
+      $rootScope.$digest()
+
+      bar          = element[0].querySelector ".bar"
+      hasAnimation = false
+
+      for prefix in prefixes
+        if bar.style["#{prefix}Animation"]?
+          hasAnimation = true
+
+      expect(hasAnimation).toBe true
+
+    it "should update transform", ->
+      element = $compile("<mac-spinner></mac-spinner>") $rootScope
+      $rootScope.$digest()
+
+      bar          = element[0].querySelector ".bar"
+      hasTransform = false
+
+      for prefix in prefixes
+        if bar.style["#{prefix}Transform"]?
+          hasTransform = true
+
+      expect(hasTransform).toBe true
 
     it "should update spinner size", ->
       element = $compile("<mac-spinner mac-spinner-size='30'></mac-spinner>") $rootScope
       $rootScope.$digest()
 
-      isCorrectSize = element.height() is 30 and element.width() is 30
+      isCorrectSize = element[0].style.height is "30px" and element[0].style.width is "30px"
       expect(isCorrectSize).toBe true
 
     it "should update z-index", ->
@@ -39,4 +68,6 @@ describe "Mac Spinner", ->
       $rootScope.$digest()
 
       # FF extends background style to 'none repeat scroll 0% 0% rgb(18, 49, 35)'
-      expect($(".bar", element).css("background").indexOf("rgb(18, 49, 35)")).not.toBe -1
+      bar = element[0].querySelector ".bar"
+
+      expect(bar.style.background.indexOf("rgb(18, 49, 35)")).not.toBe -1
