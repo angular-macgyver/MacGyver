@@ -129,7 +129,7 @@ angular.module("Mac").directive "macAutocomplete", [
 
       menuEl = angular.element(document.createElement("mac-menu"))
       menuEl.attr
-        "ng-class":        attrs.macMenuClass or null
+        "ng-class":        attrs.macMenuClass or ""
         "mac-menu-items":  "items"
         "mac-menu-select": "select(index)"
         "mac-menu-index":  "index"
