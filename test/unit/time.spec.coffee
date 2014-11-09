@@ -28,7 +28,7 @@ describe "Mac Time input", ->
       element          = $compile("<mac-time ng-model='model' mac-time-default='06:30 PM'></mac-time>") $rootScope
       $rootScope.$digest()
 
-      element.click()
+      element.triggerHandler "click"
       $rootScope.$digest()
 
       expect($rootScope.model).toBe "06:30 PM"
@@ -38,7 +38,7 @@ describe "Mac Time input", ->
       element          = $compile("<mac-time ng-model='model'></mac-time>") $rootScope
       $rootScope.$digest()
 
-      element.click()
+      element.triggerHandler "click"
       $rootScope.$digest()
 
       expect($rootScope.model).toBe "12:00 AM"
@@ -51,7 +51,7 @@ describe "Mac Time input", ->
       $rootScope.model = ""
       $rootScope.$digest()
 
-      element.click()
+      element.triggerHandler "click"
       $rootScope.$digest()
 
       expect($rootScope.model).toBe "12:00 AM"
@@ -69,14 +69,14 @@ describe "Mac Time input", ->
 
       changeInputValue = (element, value) ->
         element.val value
-        element.trigger (if $sniffer.hasEvent("input") then "input" else "change")
+        element.triggerHandler (if $sniffer.hasEvent("input") then "input" else "change")
 
     it "should update the model correctly", ->
       $rootScope.model = ""
       element          = $compile("<mac-time ng-model='model'></mac-time>") $rootScope
       $rootScope.$digest()
 
-      element.click()
+      element.triggerHandler 'click'
       changeInputValue element, "06:25 PM"
 
       expect($rootScope.model).toBe "06:25 PM"
@@ -86,11 +86,11 @@ describe "Mac Time input", ->
       element          = $compile("<mac-time ng-model='model'></mac-time>") $rootScope
       $rootScope.$digest()
 
-      element.click()
+      element.triggerHandler 'click'
       $rootScope.$digest()
 
       changeInputValue element, "14:41 AM"
-      element.trigger 'blur'
+      element.triggerHandler 'blur'
       $rootScope.$digest()
 
       expect($rootScope.model).toBe("12:00 AM")
@@ -100,11 +100,11 @@ describe "Mac Time input", ->
       element          = $compile("<mac-time ng-model='model'></mac-time>") $rootScope
       $rootScope.$digest()
 
-      element.click()
+      element.triggerHandler 'click'
       $rootScope.$digest()
 
       changeInputValue element, "123"
-      element.trigger 'blur'
+      element.triggerHandler 'blur'
       $rootScope.$digest()
 
       expect($rootScope.model).toBe("12:00 AM")
