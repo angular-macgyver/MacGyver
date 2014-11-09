@@ -7,6 +7,9 @@ describe "Mac menu", ->
     {label: "item3"}
   ]
 
+  queryMenu = (element) ->
+    element.querySelector(".mac-menu-item")
+
   beforeEach module("Mac")
   beforeEach module("template/menu.html")
 
@@ -20,21 +23,21 @@ describe "Mac menu", ->
       element = $compile("<mac-menu mac-menu-items='items'></mac-menu>") $rootScope
       $rootScope.$digest()
 
-      expect($($(".mac-menu-item", element)[0]).text()).toBe "item1"
+      expect(queryMenu(element[0]).innerText).toBe "item1"
 
     it "should use custom template", ->
       $rootScope.items = items
       element = $compile("<mac-menu mac-menu-items='items'><span>{{item.label}} {{$index}}</span></mac-menu>") $rootScope
       $rootScope.$digest()
 
-      expect($($(".mac-menu-item", element)[0]).text()).toBe "item1 0"
+      expect(queryMenu(element[0]).innerText).toBe "item1 0"
 
   it "should show three items", ->
     $rootScope.items = items
     element = $compile("<mac-menu mac-menu-items='items'></mac-menu>") $rootScope
     $rootScope.$digest()
 
-    expect($(".mac-menu-item", element).length).toBe 3
+    expect(element[0].querySelectorAll(".mac-menu-item").length).toBe 3
 
   it "should update scope index", ->
     $rootScope.items = items
