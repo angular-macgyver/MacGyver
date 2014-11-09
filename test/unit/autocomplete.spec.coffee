@@ -22,17 +22,19 @@ describe "Mac autocomplete", ->
 
     changeInputValue = (element, value) ->
       element.val value
-      element.trigger (if $sniffer.hasEvent("input") then "input" else "change")
+      element.triggerHandler (if $sniffer.hasEvent("input") then "input" else "change")
 
   afterEach ->
-    $(".mac-menu").remove()
+    menu = document.querySelector ".mac-menu"
+    menu.parentNode.removeChild menu if menu?
 
   describe "Basic Initialization", ->
     it "should be compiled as text input", ->
       element = $compile("<mac-autocomplete ng-model='test'></mac-autocomplete>") $rootScope
       $rootScope.$digest()
 
-      expect(element.is(":input[type='text']")).toBe true
+      expect(element[0].nodeName).toBe "INPUT"
+      expect(element[0].getAttribute("type")).toBe "text"
 
     it "should throw an error if ng-model is not defined", ->
       init = ->
@@ -45,7 +47,7 @@ describe "Mac autocomplete", ->
       element = $compile("<mac-autocomplete ng-model='value'></mac-autocomplete>") $rootScope
       $rootScope.$digest()
 
-      expect($(".mac-menu").length).toBe 0
+      expect(document.querySelectorAll(".mac-menu").length).toBe 0
 
   describe "source", ->
     $httpBackend = null
@@ -62,7 +64,7 @@ describe "Mac autocomplete", ->
       changeInputValue element, "fo"
       $rootScope.$digest()
 
-      expect($(".mac-menu-item").text()).toBe "foo"
+      expect(document.querySelector(".mac-menu-item").innerText).toBe "foo"
 
     it "should use local label, value object", ->
       $rootScope.source = [
@@ -74,7 +76,7 @@ describe "Mac autocomplete", ->
       $rootScope.$digest()
 
       changeInputValue element, "f"
-      expect($(".mac-menu-item").text()).toBe "foo"
+      expect(document.querySelector(".mac-menu-item").innerText).toBe "foo"
 
     it "should use a url string and work exactly like mac-autocomplete-url", ->
       $httpBackend.when("GET", "/api/autocomplete?q=f").respond({data})
@@ -98,7 +100,7 @@ describe "Mac autocomplete", ->
       changeInputValue element, "f"
       $rootScope.$digest()
 
-      expect($(".mac-menu-item").text()).toBe "foo"
+      expect(document.querySelector(".mac-menu-item").innerText).toBe "foo"
 
     it "should use a callback function returned by an invoked function", ->
       $rootScope.source = (val) ->
@@ -110,7 +112,7 @@ describe "Mac autocomplete", ->
       changeInputValue element, "f"
       $rootScope.$digest()
 
-      expect($(".mac-menu-item").text()).toBe "foo"
+      expect(document.querySelector(".mac-menu-item").innerText).toBe "foo"
 
   describe "label", ->
     it "should use default 'name' label", ->
@@ -123,7 +125,7 @@ describe "Mac autocomplete", ->
       $rootScope.$digest()
 
       changeInputValue element, "f"
-      expect($(".mac-menu-item").text()).toBe "foo"
+      expect(document.querySelector(".mac-menu-item").innerText).toBe "foo"
 
     it "should not be able to find anything", ->
       $rootScope.source = [
@@ -135,7 +137,7 @@ describe "Mac autocomplete", ->
       $rootScope.$digest()
 
       changeInputValue element, "f"
-      expect($(".mac-menu-item").text()).not.toBe "foo"
+      expect(document.querySelector(".mac-menu-item").innerText).not.toBe "foo"
 
     it "should use 'label' as the key", ->
       $rootScope.source = [
@@ -147,7 +149,7 @@ describe "Mac autocomplete", ->
       $rootScope.$digest()
 
       changeInputValue element, "f"
-      expect($(".mac-menu-item").text()).toBe "foo"
+      expect(document.querySelector(".mac-menu-item").innerText).toBe "foo"
 
     it "should evaulate expression on label attribute correctly", ->
       $rootScope.source = [
@@ -161,7 +163,7 @@ describe "Mac autocomplete", ->
       $rootScope.$digest()
 
       changeInputValue element, "f"
-      expect($(".mac-menu-item").text()).toBe "foo"
+      expect(document.querySelector(".mac-menu-item").innerText).toBe "foo"
 
   describe "updateItem", ->
     it "should convert key to label", ->
@@ -214,14 +216,18 @@ describe "Mac autocomplete", ->
       element = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-source='source'></mac-autocomplete>") $rootScope
       $rootScope.$digest()
 
-      expect($(".mac-menu").hasClass "visible").toBeFalsy()
+      menu = document.querySelector ".mac-menu"
+
+      expect(menu).toBe null
 
       changeInputValue element, "f"
       $rootScope.$digest()
 
       $timeout.flush()
 
-      expect($(".mac-menu").hasClass "visible").toBeTruthy()
+      menu = document.querySelector ".mac-menu"
+
+      expect(menu.className.indexOf "visible").not.toBe -1
 
     it "should delay for 200ms", ->
       $rootScope.source = data
@@ -229,26 +235,34 @@ describe "Mac autocomplete", ->
       element = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-source='source' mac-autocomplete-delay='200'></mac-autocomplete>") $rootScope
       $rootScope.$digest()
 
-      expect($(".mac-menu").hasClass "visible").toBeFalsy()
+      menu = document.querySelector ".mac-menu"
+
+      expect(menu).toBe null
 
       changeInputValue element, "f"
       $rootScope.$digest()
 
       $timeout.flush()
 
-      expect($(".mac-menu").hasClass "visible").toBeTruthy()
+      menu = document.querySelector ".mac-menu"
+
+      expect(menu.className.indexOf "visible").not.toBe -1
 
     it "should disable autocomplete", ->
       $rootScope.disabled = true
       element             = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-disabled='disabled'></mac-autocomplete>") $rootScope
       $rootScope.$digest()
 
-      expect($(".mac-menu").hasClass "visible").toBeFalsy()
+      menu = document.querySelector ".mac-menu"
+
+      expect(menu).toBe null
 
       changeInputValue element, "f"
       $rootScope.$digest()
 
-      expect($(".mac-menu").hasClass "visible").toBeFalsy()
+      menu = document.querySelector ".mac-menu"
+
+      expect(menu).toBe null
 
   describe "callbacks", ->
     $httpBackend = null
@@ -275,7 +289,9 @@ describe "Mac autocomplete", ->
 
         $timeout.flush()
 
-        element.trigger $.Event("keydown", {which: keys.ENTER})
+        element.triggerHandler
+          type: "keydown"
+          which: keys.ENTER
 
       waitsFor ->
         return called
@@ -319,7 +335,7 @@ describe "Mac autocomplete", ->
       $timeout.flush()
       $httpBackend.flush()
 
-      expect($(".mac-menu-item").length).toBe 3
+      expect(document.querySelectorAll(".mac-menu-item").length).toBe 3
 
     it "should call error", ->
       $httpBackend.when("GET", "/api/404?q=f").respond(404)
@@ -361,10 +377,10 @@ describe "Mac autocomplete", ->
 
       $timeout.flush()
 
-      menuEl = $(".mac-menu")
+      menuEl = document.querySelector(".mac-menu")
 
-      expect(menuEl.hasClass "test").toBeTruthy()
-      expect(menuEl.hasClass "hello").toBeFalsy()
+      expect(menuEl.className.indexOf "test").not.toBe -1
+      expect(menuEl.className.indexOf "hello").toBe -1
 
     it "should not have ng-class on menu element", ->
       $rootScope.source  = data
@@ -377,5 +393,5 @@ describe "Mac autocomplete", ->
 
       $timeout.flush()
 
-      menuEl = $(".mac-menu")
-      expect(menuEl.attr("ng-class")).toBeFalsy()
+      menuEl = document.querySelector(".mac-menu")
+      expect(menuEl.getAttribute("ng-class")).toBeFalsy()
