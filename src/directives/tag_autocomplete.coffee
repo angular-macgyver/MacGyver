@@ -100,8 +100,8 @@ angular.module("Mac").directive "macTagAutocomplete", [
           $scope.$watch "textInput", (value) -> $scope.model     = value
           $scope.$watch "model",     (value) -> $scope.textInput = value
 
-        # Clicking on the element will focus on input
-        $scope.focusTextInput = ->
+        # Allow user to focus on text input when clicking on tag autocomplete
+        element.bind "click", ->
           textInputDOM = element[0].getElementsByClassName "mac-autocomplete"
           textInputDOM[0].focus()
 
