@@ -12,14 +12,14 @@ describe "Mac scroll spy", ->
   describe "scrollspy service", ->
     it "should register an anchor", ->
       element = angular.element("<div></div>")
-      angular.element("body").append element
+      angular.element(document.body).append element
       scrollspy.register "test", element
 
       expect(scrollspy.registered.length).toBe 1
 
     it "should unregister an anchor", ->
       element = angular.element("<div></div>")
-      angular.element("body").append element
+      angular.element(document.body).append element
       scrollspy.register "test", element
       scrollspy.unregister "test"
 
@@ -49,7 +49,7 @@ describe "Mac scroll spy", ->
   describe "initializing an anchor", ->
     it "should register with the service", ->
       element = angular.element "<div mac-scroll-spy-anchor id='test-anchor'></div>"
-      angular.element("body").append element
+      angular.element(document.body).append element
       $compile(element) $rootScope
       $rootScope.$digest()
 
@@ -59,7 +59,7 @@ describe "Mac scroll spy", ->
     it "should register with the service with an interpolated id in mac-scroll-spy-anchor attr", ->
       $rootScope.name = 'test-anchor2'
       element = angular.element "<div mac-scroll-spy-anchor='{{name}}'></div>"
-      angular.element("body").append element
+      angular.element(document.body).append element
       $compile(element) $rootScope
       $rootScope.$digest()
 
@@ -69,7 +69,7 @@ describe "Mac scroll spy", ->
     it "should register with the service with an interpolated id", ->
       $rootScope.name = 'test-anchor4'
       element = angular.element "<div id='{{name}}' mac-scroll-spy-anchor='mac-scroll-spy-anchor'></div>"
-      angular.element("body").append element
+      angular.element(document.body).append element
       $compile(element) $rootScope
       $rootScope.$digest()
 
@@ -83,13 +83,15 @@ describe "Mac scroll spy", ->
 
     it "should update anchor on refresh-scroll-spy event", ->
       element = angular.element("<div mac-scroll-spy-anchor id='test'></div>")
-      angular.element("body").append element
+      angular.element(document.body).append element
       $compile(element) $rootScope
 
       origTop = element.offset().top
-      element.css "margin-top", 200
+      element.css "margin-top", "200px"
 
       $rootScope.$broadcast "refresh-scroll-spy"
+
+      $rootScope.$digest()
 
       expect(origTop).not.toBe scrollspy.registered[0].top
 
