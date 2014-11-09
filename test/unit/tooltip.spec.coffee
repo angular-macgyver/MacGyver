@@ -3,6 +3,8 @@ describe "Mac Tooltip", ->
   $rootScope = null
   $timeout   = null
 
+  queryTooltip = -> document.querySelector(".mac-tooltip")
+
   beforeEach module("Mac")
   beforeEach inject (_$compile_, _$rootScope_, _$timeout_) ->
     $compile   = _$compile_
@@ -10,50 +12,51 @@ describe "Mac Tooltip", ->
     $timeout   = _$timeout_
 
   afterEach ->
-    $(".mac-tooltip").remove()
+    tooltip = document.querySelector(".mac-tooltip")
+    tooltip.parentNode.removeChild tooltip if tooltip?
 
   describe "Basic Initialization", ->
 
     it "should append to body on mouseenter", ->
       tip = $compile("<div mac-tooltip='hello world'></div>") $rootScope
       $rootScope.$digest()
-      tip.trigger "mouseenter"
+      tip.triggerHandler "mouseenter"
 
-      expect($(".mac-tooltip").length).toBe 1
+      expect(queryTooltip()).not.toBe(null)
 
     it "should display the correct message", ->
       tip = $compile("<div mac-tooltip='hello world'></div>") $rootScope
       $rootScope.$digest()
-      tip.trigger "mouseenter"
+      tip.triggerHandler "mouseenter"
 
-      expect($(".tooltip-message").text()).toBe "hello world"
+      expect(queryTooltip().innerText).toBe "hello world"
 
   describe "Trigger", ->
 
     it "should remove tooltip on mouseleave", ->
       tip = $compile("<div mac-tooltip='hello world'></div>") $rootScope
       $rootScope.$digest()
-      tip.trigger "mouseenter"
+      tip.triggerHandler "mouseenter"
 
-      expect($(".mac-tooltip").length).toBe 1
+      expect(queryTooltip()).not.toBe null
 
-      tip.trigger "mouseleave"
+      tip.triggerHandler "mouseleave"
       $timeout.flush()
 
-      expect($(".mac-tooltip").length).toBe 0
+      expect(queryTooltip()).toBe null
 
     it "should show and hide on click", ->
       tip = $compile("<div mac-tooltip='test' mac-tooltip-trigger='click'></div>") $rootScope
       $rootScope.$digest()
       # show
-      tip.trigger "click"
-      expect($(".mac-tooltip").length).toBe 1
+      tip.triggerHandler "click"
+      expect(queryTooltip()).not.toBe null
 
       # hide
-      tip.trigger "click"
+      tip.triggerHandler "click"
       $timeout.flush()
 
-      expect($(".tooltip").length).toBe 0
+      expect(queryTooltip()).toBe null
 
     it "should throw an error with invalid trigger", ->
       compile = ->
@@ -67,17 +70,17 @@ describe "Mac Tooltip", ->
       tip = $compile("<div mac-tooltip='test'></div>") $rootScope
       $rootScope.$digest()
 
-      tip.trigger "mouseenter"
+      tip.triggerHandler "mouseenter"
 
-      expect($(".mac-tooltip").hasClass "top").toBe true
+      expect(queryTooltip().className.indexOf "top").not.toBe -1
 
     it "should set the direction to bottom", ->
       tip = $compile("<div mac-tooltip='test' mac-tooltip-direction='bottom'></div>") $rootScope
       $rootScope.$digest()
 
-      tip.trigger "mouseenter"
+      tip.triggerHandler "mouseenter"
 
-      expect($(".mac-tooltip").hasClass "bottom").toBe true
+      expect(queryTooltip().className.indexOf "bottom").not.toBe -1
 
   describe "disabled", ->
 
@@ -85,15 +88,15 @@ describe "Mac Tooltip", ->
       tip = $compile("<div mac-tooltip='test' mac-tooltip-disabled='true'></div>") $rootScope
       $rootScope.$digest()
 
-      tip.trigger "mouseenter"
-      expect($(".mac-tooltip").length).toBe 0
+      tip.triggerHandler "mouseenter"
+      expect(queryTooltip()).toBe null
 
     it "should create a tooltip", ->
       tip = $compile("<div mac-tooltip='test' mac-tooltip-disabled='false'></div>") $rootScope
       $rootScope.$digest()
 
-      tip.trigger "mouseenter"
-      expect($(".mac-tooltip").length).toBe 1
+      tip.triggerHandler "mouseenter"
+      expect(queryTooltip()).not.toBe null
 
   describe "Inside", ->
 
@@ -101,14 +104,14 @@ describe "Mac Tooltip", ->
       tip = $compile("<div mac-tooltip='test' mac-tooltip-inside></div>") $rootScope
       $rootScope.$digest()
 
-      tip.trigger "mouseenter"
+      tip.triggerHandler "mouseenter"
 
-      expect($(".mac-tooltip", tip).length).toBe 1
+      expect(tip[0].querySelector(".mac-tooltip")).not.toBe null
 
     it "should not append tooltip inside of trigger", ->
       tip = $compile("<div mac-tooltip='test'></div>") $rootScope
       $rootScope.$digest()
 
-      tip.trigger "mouseenter"
+      tip.triggerHandler "mouseenter"
 
-      expect($(".mac-tooltip", tip).length).toBe 0
+      expect(tip[0].querySelector(".mac-tooltip")).toBe null
