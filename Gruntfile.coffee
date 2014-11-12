@@ -37,23 +37,23 @@ module.exports = (grunt) ->
   ]
 
   grunt.registerTask "deploy", "Build and copy to lib/", [
-      "coffee"
-      "stylus"
-      "jade"
-      "concatDeploy"
-      "clean"
-      "replace:src"
-      "chalkboard"
-      "marked"
-      "replace:docs"
-      "replace:version"
-      "karma:build"
-      "update:component"
-      "copy:images"
-      "copy:public"
-      "uglify:dist"
-      "tag"
-    ]
+    "coffee"
+    "stylus"
+    "jade"
+    "concatDeploy"
+    "clean"
+    "replace:src"
+    "chalkboard"
+    "marked"
+    "replace:docs"
+    "replace:version"
+    "karma:build"
+    "update:component"
+    "copy:images"
+    "copy:public"
+    "uglify:dist"
+    "tag"
+  ]
 
   grunt.registerTask "compile", "Compile files", [
     "coffee"
