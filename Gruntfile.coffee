@@ -49,10 +49,9 @@ module.exports = (grunt) ->
     "replace:version"
     "karma:build"
     "update:component"
-    "copy:images"
     "copy:public"
     "uglify:dist"
-    "tag"
+    # "tag"
   ]
 
   grunt.registerTask "compile", "Compile files", [
