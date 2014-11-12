@@ -32,13 +32,8 @@
     "tmp/app/filters/underscore.js"
   ],
   "css": {
-    "example": [
-      "vendor/css/*.css",
-      "tmp/css/*.css"
-    ],
     "core": [
       "tmp/css/common.css",
-      "tmp/css/icons.css",
       "tmp/css/menu.css",
       "tmp/css/modal.css",
       "tmp/css/popover.css",

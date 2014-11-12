@@ -61,7 +61,7 @@ module.exports = (grunt) ->
         }
         {
           dest: "example/css/<%= pkg.name.toLowerCase() %>.css"
-          src: "<%= buildConf.css.example %>"
+          src: "<%= buildConf.css.core %>"
         }
       ]
 
@@ -69,7 +69,7 @@ module.exports = (grunt) ->
       files: [
         {
           dest: "build/bower-macgyver/<%= pkg.name.toLowerCase() %>.css"
-          src: "<%= buildConf.css.example %>"
+          src: "<%= buildConf.css.core %>"
         }
         {
           dest: "build/bower-macgyver-core/<%= pkg.name.toLowerCase() %>-core.css"
