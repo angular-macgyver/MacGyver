@@ -1,13 +1,14 @@
-# MacGyver ![License](http://img.shields.io/badge/license-MIT-green.svg) ![Latest Release](http://img.shields.io/github/release/angular-macgyver/MacGyver.svg)
+# MacGyver
 
 Duct Tape and a Swiss Army Knife. Angular helpers for all your friends!
 
-[![Build Status](https://travis-ci.org/angular-macgyver/MacGyver.png?branch=master)](https://travis-ci.org/angular-macgyver/MacGyver)
-[![Selenium Test Status](https://saucelabs.com/buildstatus/macgyver-ci)](https://saucelabs.com/u/macgyver-ci)
+[![Build Status](http://img.shields.io/travis/angular-macgyver/MacGyver.svg?style=flat-square)](https://travis-ci.org/angular-macgyver/MacGyver)
+[![License](http://img.shields.io/badge/license-MIT-green.svg?style=flat-square)](https://github.com/angular-macgyver/MacGyver/blob/master/LICENSE)
+[![Latest Release](http://img.shields.io/github/release/angular-macgyver/MacGyver.svg?style=flat-square)](https://github.com/angular-macgyver/MacGyver/releases/latest)
 
 [![Selenium Test Status](https://saucelabs.com/browser-matrix/macgyver-ci.svg)](https://saucelabs.com/u/macgyver-ci)
 
-## Current components ##
+## Components ##
 
 ### Directives ###
  - Affix
@@ -31,7 +32,6 @@ Duct Tape and a Swiss Army Knife. Angular helpers for all your friends!
  - Underscore String
 
 ## 3rd party libraries dependencies ##
-Libraries are only needed for a few directives,
  - AngularJS (1.2.x+)
  - Underscore String (Underscore string filter)
 
@@ -52,7 +52,7 @@ Once you have MacGyver in your project, just include "Mac" as a dependency in yo
 angular.module("myModule", ["Mac"]);
 ```
 
-MacGyver includes multiple scripts,
+MacGyver includes multiple files,
 - `macgyver.js` - All directives, services and filters bundled together
 - `macgyver-core.js` - Utilities, events and all directives without 3rd party dependencies
 - `macgyver-filters.js` - Filters except underscore string filter
