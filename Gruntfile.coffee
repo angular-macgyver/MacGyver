@@ -51,7 +51,7 @@ module.exports = (grunt) ->
     "update:component"
     "copy:public"
     "uglify:dist"
-    # "tag"
+    "tag"
   ]
 
   grunt.registerTask "compile", "Compile files", [
