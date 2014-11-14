@@ -1,3 +1,29 @@
+# v0.5.0 (2014/11/13)
+## Bug Fixes
+- **core:** Fixed val not getting initialized correctly
+  ([c6eba169](https://github.com/angular-macgyver/MacGyver/commit/c6eba16908a9c73b36b19cf6b909f44af65f41e4))
+- **macAutocomplete:** Fixed ng-class getting set to null string when no class is provided
+  ([013111f9](https://github.com/angular-macgyver/MacGyver/commit/013111f905eca1f870f7a5c719be96727c33557d))
+- **macPopover:** Fixed compile issue replacing original popover element with comments
+  ([fc84089b](https://github.com/angular-macgyver/MacGyver/commit/fc84089bc2e5fbb2bdd9ecf4ac7391a0d96edcdc))
+
+## Optimizations
+- **Mac:** Removed jQuery dependencies
+  ([174d60c1](https://github.com/angular-macgyver/MacGyver/commit/174d60c12326e9385062d656dde88704d346dd2b),
+   [#7](https://github.com/angular-macgyver/MacGyver/issues/7))
+- **MacGyver:** Converted directive templates to html
+  ([ca7d32f8](https://github.com/angular-macgyver/MacGyver/commit/ca7d32f85a31b1956c7485255524b37c23f3b488))
+- **macSpinner:** Updated to work without jQuery
+  ([ed6292b3](https://github.com/angular-macgyver/MacGyver/commit/ed6292b31a67f0aae1c46af29c497b18437a364d))
+- **macTagAutocomplete:** Removed ng-click on reduce digest cycle
+  ([dc429cb6](https://github.com/angular-macgyver/MacGyver/commit/dc429cb6e3908f159e596a7dce670e1127e47c9f))
+
+## Breaking Changes
+- **macDatepicker:**  macDatepicker has been moved to a separate module. In order to continue to use macDatepicker, please visit https://github.com/angular-macgyver/macgyver-datepicker  
+  ([d9438ec4](https://github.com/angular-macgyver/MacGyver/commit/d9438ec48f35a1b011e8f274673502e13fa68248),
+   [#6](https://github.com/angular-macgyver/MacGyver/issues/6))
+
+
 # v0.4.0 (2014/9/29)
 ## Breaking Changes
 - **macTable:**  Table view has been removed from core MacGyver In order to continue using table view, please visit: https://github.com/angular-macgyver/macgyver-table
