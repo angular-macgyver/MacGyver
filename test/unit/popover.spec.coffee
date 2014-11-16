@@ -1,4 +1,4 @@
-describe "Popover", ->
+xdescribe "Popover", ->
   $animate     = null
   $rootScope   = null
   $timeout     = null

@@ -1,4 +1,4 @@
-describe "Mac modal", ->
+xdescribe "Mac modal", ->
   $animate       = null
   $compile       = null
   $rootScope     = null

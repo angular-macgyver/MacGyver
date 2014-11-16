@@ -6,11 +6,16 @@
   right            0
   bottom           0
   opacity          0
+  display          none
   overflow-y       auto
   z-index          3
 
+  .ng-animate
+    display block
+
   &.visible, &.visible-add-active
     opacity 1.0
+    display block
 
     .mac-modal
       top 50%
@@ -18,8 +23,8 @@
   &.visible-add, &.visible-remove
     transition 0.2s ease-out all
 
-  &.visible-remove-active
-    opacity 0
+  // &.visible-remove-active
+  //   opacity 0
 
   .mac-modal
     position      absolute

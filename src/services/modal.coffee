@@ -69,6 +69,7 @@ angular.module("Mac").service("modal", [
     # @param {Object} triggerOptions Additional options to open modal
     #
     show: (id, triggerOptions = {}) ->
+      debugger
       if @registered[id]? and @opened?
         @hide()
 
@@ -83,19 +84,18 @@ angular.module("Mac").service("modal", [
         showModal = (element) =>
           showOptions.beforeShow element.scope()
 
-          $animate.removeClass element, "hide", =>
-            $animate.addClass element, "visible", =>
+          $animate.addClass(element, "visible").then =>
 
-              # Update opened modal object
-              @opened = {id, element, options: showOptions}
-              @resize @opened
-              @bindingEvents()
+            # Update opened modal object
+            @opened = {id, element, options: showOptions}
+            @resize @opened
+            @bindingEvents()
 
-              showOptions.open element.scope()
-              showOptions.afterShow element.scope()
+            showOptions.open element.scope()
+            showOptions.afterShow element.scope()
 
-              $rootScope.$broadcast "modalWasShown", id
-              @clearWaiting()
+            $rootScope.$broadcast "modalWasShown", id
+            @clearWaiting()
 
         # if modal is created thru module method "modal"
         if showOptions.moduleMethod?
@@ -217,9 +217,6 @@ angular.module("Mac").service("modal", [
             element.scope().$destroy()
 
           $animate.leave element
-
-        else
-          $animate.addClass element, "hide"
 
         options.afterHide element.scope()
 
