@@ -6,22 +6,19 @@ module.exports = (grunt) ->
   # when deploying code
   #
   grunt.config "copy",
-    example:
+    template:
       files: [
-        {
-          expand:  true
-          flatten: true
-          src:     ["src/img/ui-*.png"]
-          dest:    "example/css/img/"
-        },
         {
           expand:  true
           flatten: true
           src:     ["src/template/*.html"]
           dest:    "example/template/"
-        },
-        "example/data.json": "docs/data.json"
-
+        }
+      ]
+    data:
+      files: [
+        src: "docs/data.json",
+        dest: "example/data.json"
       ]
 
     public:

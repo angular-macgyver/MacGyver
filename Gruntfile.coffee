@@ -77,7 +77,8 @@ module.exports = (grunt) ->
 
   grunt.registerTask "dev", "Watch src and run test server", [
     "compile"
-    "copy:example"
+    "copy:data"
+    "copy:template"
     "karma:unit"
     "connect:example"
     "watch"
@@ -89,7 +90,8 @@ module.exports = (grunt) ->
     "coffee"
     "stylus"
     "jade"
-    "copy:example"
+    "copy:data"
+    "copy:template"
     "concatDeploy"
     "clean"
     "replace:src"
