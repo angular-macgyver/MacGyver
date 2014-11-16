@@ -278,32 +278,22 @@ describe "Mac autocomplete", ->
       $timeout     = _$timeout_
 
     it "should call select", ->
-      called            = false
-      selectedItem      = ""
       $rootScope.source = data
-      $rootScope.select = (selected) ->
-        selectedItem = selected
-        called       = true
+      $rootScope.select = jasmine.createSpy "select"
 
       element = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-source='source' mac-autocomplete-on-select='select(selected)'></mac-autocomplete>") $rootScope
       $rootScope.$digest()
 
-      runs ->
-        changeInputValue element, "f"
-        $rootScope.$digest()
+      changeInputValue element, "f"
+      $rootScope.$digest()
 
-        $timeout.flush()
+      $timeout.flush()
 
-        element.triggerHandler
-          type: "keydown"
-          which: keys.ENTER
+      element.triggerHandler
+        type: "keydown"
+        which: keys.ENTER
 
-      waitsFor ->
-        return called
-      , "selected item", 200
-
-      runs ->
-        expect(selectedItem).toBe "foo"
+      expect($rootScope.select).toHaveBeenCalled()
 
     it "should call success", ->
       $httpBackend.when("GET", "/api/autocomplete?q=f").respond({data})
