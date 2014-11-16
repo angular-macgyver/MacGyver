@@ -25,5 +25,8 @@ module.exports = (grunt) ->
       files: ["src/css/*.styl", "vendor/vendor.styl"]
       tasks: ["stylus", "concat:css", "clean"]
     jade:
-      files: ["src/**/*.jade", "docs/*.jade"]
+      files: ["docs/*.jade"]
       tasks: ["jade", "replace:docs"]
+    template:
+      files: ["src/template/*.html"]
+      tasks: ["copy:template"]
