@@ -1,8 +1,8 @@
-xdescribe "Mac modal", ->
+describe "Mac modal", ->
   $animate       = null
   $compile       = null
   $rootScope     = null
-  $templateCache = null
+  $timeout = null
   modal          = null
   keys           = null
 
@@ -10,28 +10,26 @@ xdescribe "Mac modal", ->
 
   beforeEach module("Mac")
   beforeEach module("ngAnimateMock")
-  beforeEach module("template/modal.html")
   beforeEach inject (
     _$animate_
     _$compile_
     _$rootScope_
-    _$templateCache_
+    _$timeout_
     _keys_
     _modal_
   ) ->
-    $animate       = _$animate_
-    $compile       = _$compile_
-    $rootScope     = _$rootScope_
-    $templateCache = _$templateCache_
-    keys           = _keys_
-    modal          = _modal_
+    $animate   = _$animate_
+    $compile   = _$compile_
+    $rootScope = _$rootScope_
+    $timeout = _$timeout_
+    keys       = _keys_
+    modal      = _modal_
 
     showModal = (id) ->
       modal.show id
 
-      # HACK: To invoke the callback for second function.
+      $rootScope.$digest()
       $animate.triggerCallbacks()
-      $animate.queue[1].args[2]()
 
   describe "modal service", ->
     it "should register a modal element", ->
@@ -59,7 +57,7 @@ xdescribe "Mac modal", ->
 
     it "should resize the modal after open", ->
       element = angular.element("<div></div>")
-      element.append $templateCache.get("template/modal.html")
+      element.append modal.modalTemplate
 
       modal.register "test-modal", element, {position: true}
 
@@ -70,7 +68,7 @@ xdescribe "Mac modal", ->
 
     it "should not resize the modal by setting modal style", ->
       element = angular.element("<div></div>")
-      element.append $templateCache.get("template/modal.html")
+      element.append modal.modalTemplate
 
       modal.register "test-modal", element, {position: false}
 
@@ -83,7 +81,7 @@ xdescribe "Mac modal", ->
       called   = false
       openedId = ""
       element  = angular.element("<div></div>")
-      element.append $templateCache.get("template/modal.html")
+      element.append modal.modalTemplate
 
       modal.register "test-modal", element, {}
 
@@ -91,14 +89,14 @@ xdescribe "Mac modal", ->
         openedId = id
         called   = true
 
-      $rootScope.$apply -> showModal "test-modal"
+      showModal "test-modal"
 
       expect(openedId).toBe "test-modal"
 
     it "should broadcast modalWasHidden after hiding the modal", ->
       closedId = ""
       element  = angular.element("<div></div>")
-      element.append $templateCache.get("template/modal.html")
+      element.append modal.modalTemplate
 
       $rootScope.$on "modalWasHidden", (event, id) -> closedId = id
 
@@ -106,8 +104,12 @@ xdescribe "Mac modal", ->
 
       showModal "test-modal"
 
+      $animate.triggerReflow();
+
       modal.hide()
-      $animate.triggerCallbacks()
+
+      $rootScope.$digest()
+      $animate.triggerCallbackPromise()
 
       expect(modal.opened).toBe null
       expect(closedId).toBe "test-modal"
@@ -198,9 +200,12 @@ xdescribe "Mac modal", ->
 
       expect($rootScope.afterHide).not.toHaveBeenCalled()
 
+      $animate.triggerReflow();
+
       modal.hide()
 
-      $animate.triggerCallbacks()
+      $rootScope.$digest()
+      $animate.triggerCallbackPromise()
 
       expect($rootScope.afterHide).toHaveBeenCalled()
 
@@ -212,8 +217,8 @@ xdescribe "Mac modal", ->
 
       element.triggerHandler "click"
 
-      $animate.triggerCallbacks()
-      $animate.queue[1].args[2]()
+      $rootScope.$digest()
+      $animate.triggerCallbackPromise()
 
       expect(modal.opened.id).toBe "test-modal"
 
@@ -226,8 +231,8 @@ xdescribe "Mac modal", ->
 
       element.triggerHandler "click"
 
-      $animate.triggerCallbacks()
-      $animate.queue[1].args[2]()
+      $rootScope.$digest()
+      $animate.triggerCallbackPromise()
 
       expect(modal.opened.options.data.text).toBe "hello"
 
@@ -256,8 +261,8 @@ xdescribe "Mac modal", ->
       expect(options.keyboard).toBe true
       expect(options.overlayClose).toBe false
 
-    it "should not overwrite default options", inject (modalViews) ->
-      defaults = modalViews.defaults
+    it "should not overwrite default options", ->
+      defaults = modal.defaults
 
       expect(defaults.keyboard).toBe false
       expect(defaults.resize).toBe true
@@ -272,12 +277,14 @@ xdescribe "Mac modal", ->
     it "should remove modal on hide", ->
       showModal "testing"
 
+      $animate.triggerReflow()
+
+      modal.hide()
+
+      $rootScope.$digest()
       $animate.triggerCallbacks()
 
-      callback = jasmine.createSpy "select"
+      $rootScope.$digest()
 
-      modal.hide(callback)
-
-      $animate.triggerCallbacks()
-
-      expect(callback).toHaveBeenCalled()
+      overlay = document.querySelector ".mac-modal-overlay"
+      expect(overlay).toBe null

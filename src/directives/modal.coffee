@@ -19,9 +19,8 @@ modal template
 angular.module("Mac").directive("macModal", [
   "$parse"
   "modal"
-  "modalViews"
   "util"
-  ($parse, modal, modalViews, util) ->
+  ($parse, modal, util) ->
     restrict:   "E"
     template:   modal.modalTemplate
     replace:    true
@@ -35,7 +34,7 @@ angular.module("Mac").directive("macModal", [
           element[0].getElementsByClassName "mac-modal-content-wrapper"
         ).replaceWith clone
 
-      opts  = util.extendAttributes "macModal", modalViews.defaults, attrs
+      opts  = util.extendAttributes "macModal", modal.defaults, attrs
       regId = null
 
       if opts.overlayClose

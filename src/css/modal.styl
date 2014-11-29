@@ -10,69 +10,64 @@
   overflow-y       auto
   z-index          3
 
-  .ng-animate
+  &.ng-animate
     display block
+    transition 0.2s ease-out all
 
-  &.visible, &.visible-add-active
+  &.visible
     opacity 1.0
     display block
 
     .mac-modal
       top 50%
 
-  &.visible-add, &.visible-remove
-    transition 0.2s ease-out all
+.mac-modal
+  position      absolute
+  top           0
+  left          50%
+  width         500px
+  margin-left   -251px
+  background    #FFF
+  border        1px solid #d1d3d8
+  box-shadow    0 4px 10px rgba(0,0,0,0.15)
+  transition    top 0.2s ease-out
+  border-radius 3px
+  transform     rotateX(0) rotateY(0)
 
-  // &.visible-remove-active
-  //   opacity 0
+  &:after
+    content  ""
+    display  block
+    position absolute
+    bottom   -20px
+    height   20px
+    width    1px
 
-  .mac-modal
-    position      absolute
-    top           0
-    left          50%
-    width         500px
-    margin-left   -251px
-    background    #FFF
-    border        1px solid #d1d3d8
-    box-shadow    0 4px 10px rgba(0,0,0,0.15)
-    transition    all 0.2s ease-out
-    border-radius 3px
-    transform     rotateX(0) rotateY(0)
+.mac-close-modal
+  position      absolute
+  top           -5px
+  right         -5px
+  width         18px
+  height        18px
+  border-radius 9px
+  display       block
+  background    #bdc0c7
+  cursor        pointer
 
-    &:after
-      content  ""
-      display  block
-      position absolute
-      bottom   -20px
-      height   20px
-      width    1px
+  &:before, &:after
+    content    ''
+    display    block
+    width      2px
+    height     10px
+    background #fff
+    position   absolute
+    top        4px
+    left       8px
 
-    .mac-close-modal
-      position      absolute
-      top           -5px
-      right         -5px
-      width         18px
-      height        18px
-      border-radius 9px
-      display       block
-      background    #bdc0c7
-      cursor        pointer
+  &:before
+    transform rotate(-45deg)
 
-      &:before, &:after
-        content    ''
-        display    block
-        width      2px
-        height     10px
-        background #fff
-        position   absolute
-        top        4px
-        left       8px
+  &:after
+    transform rotate(45deg)
 
-      &:before
-        transform rotate(-45deg)
-
-      &:after
-        transform rotate(45deg)
-
-    .mac-modal-content
-      padding 20px
+.mac-modal-content
+  padding 20px
