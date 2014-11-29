@@ -2,7 +2,7 @@
 
 Duct Tape and a Swiss Army Knife. Angular helpers for all your friends!
 
-[![Build Status](http://img.shields.io/travis/angular-macgyver/MacGyver.svg?style=flat-square)](https://travis-ci.org/angular-macgyver/MacGyver)
+[![Build Status](http://img.shields.io/travis/angular-macgyver/MacGyver/master.svg?style=flat-square)](https://travis-ci.org/angular-macgyver/MacGyver)
 [![License](http://img.shields.io/badge/license-MIT-green.svg?style=flat-square)](https://github.com/angular-macgyver/MacGyver/blob/master/LICENSE)
 [![Latest Release](http://img.shields.io/github/release/angular-macgyver/MacGyver.svg?style=flat-square)](https://github.com/angular-macgyver/MacGyver/releases/latest)
 
