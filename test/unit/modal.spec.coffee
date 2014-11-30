@@ -2,7 +2,6 @@ describe "Mac modal", ->
   $animate       = null
   $compile       = null
   $rootScope     = null
-  $timeout = null
   modal          = null
   keys           = null
 
@@ -14,14 +13,12 @@ describe "Mac modal", ->
     _$animate_
     _$compile_
     _$rootScope_
-    _$timeout_
     _keys_
     _modal_
   ) ->
     $animate   = _$animate_
     $compile   = _$compile_
     $rootScope = _$rootScope_
-    $timeout = _$timeout_
     keys       = _keys_
     modal      = _modal_
 
