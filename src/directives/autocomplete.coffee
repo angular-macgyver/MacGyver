@@ -175,8 +175,9 @@ angular.module("Mac").directive "macAutocomplete", [
       @description
       Adding menu to DOM
       @param {Function} callback Callback after enter animation completes
+      @returns {Promise} Animation promise
       ###
-      appendMenu = (callback) ->
+      appendMenu = ->
         unless isMenuAppended
           element.bind "blur", blurHandler
 
@@ -187,18 +188,19 @@ angular.module("Mac").directive "macAutocomplete", [
         isMenuAppended = true
 
         if inside
-          $animate.enter menuEl, undefined, element, callback
+          return $animate.enter(menuEl, undefined, element)
         else
-          $animate.enter menuEl, angular.element(document.body), undefined, callback
+          return $animate.enter(menuEl, angular.element(document.body))
 
       ###
       @function
       @name reset
       @description
       Resetting autocomplete
+      @returns {Promise} Leave animation promise
       ###
       reset = ->
-        $animate.leave menuEl, ->
+        $animate.leave(menuEl).then ->
           $menuScope.index        = 0
           $menuScope.items.length = 0
 
@@ -209,8 +211,6 @@ angular.module("Mac").directive "macAutocomplete", [
           isMenuAppended = false
 
           element.unbind "blur", blurHandler
-
-        return
 
       ###
       @function
@@ -254,7 +254,7 @@ angular.module("Mac").directive "macAutocomplete", [
             else
               {label: item, value: item}
 
-          appendMenu positionMenu
+          appendMenu().then positionMenu
 
         else
          reset()
