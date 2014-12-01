@@ -33,7 +33,6 @@ module.exports = (grunt) ->
     "concat:appJs"
     "concat:deployAppJs"
     "concat:modulesJs"
-    "concat:css"
   ]
 
   grunt.registerTask "deploy", "Build and copy to lib/", [
@@ -56,10 +55,9 @@ module.exports = (grunt) ->
 
   grunt.registerTask "compile", "Compile files", [
     "coffee"
-    "stylus"
+    "stylus:dev"
     "jade"
     "concat:appJs"
-    "concat:css"
     "clean"
     "chalkboard"
     "marked"
@@ -69,14 +67,13 @@ module.exports = (grunt) ->
   grunt.registerTask "deploy-bower", "Updated all bower repositories", [
     "copy:bower"
     "uglify:bower"
-    "stylus:compile"
-    "concat:moduleCss"
+    "stylus:module"
     "clean"
     "updatebuild"
   ]
 
   grunt.registerTask "dev", "Watch src and run test server", [
-    "compile"
+    "compile:dev"
     "copy:data"
     "copy:template"
     "karma:unit"
@@ -88,7 +85,7 @@ module.exports = (grunt) ->
   grunt.registerTask "test:e2e", "Compile all source code, run a test server and run the end to end tests", [
     "clean"
     "coffee"
-    "stylus"
+    "stylus:dev"
     "jade"
     "copy:data"
     "copy:template"

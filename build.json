@@ -33,13 +33,8 @@
   ],
   "css": {
     "core": [
-      "tmp/css/common.css",
-      "tmp/css/menu.css",
-      "tmp/css/modal.css",
-      "tmp/css/popover.css",
-      "tmp/css/spinner.css",
-      "tmp/css/tag_autocomplete.css",
-      "tmp/css/tooltip.css"
+      "src/css/*.styl",
+      "!src/css/_*.styl"
     ]
   }
 }

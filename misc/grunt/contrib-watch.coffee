@@ -23,7 +23,7 @@ module.exports = (grunt) ->
       tasks: ["karma:unit:run"]
     css:
       files: ["src/css/*.styl", "vendor/vendor.styl"]
-      tasks: ["stylus", "concat:css", "clean"]
+      tasks: ["stylus:dev"]
     jade:
       files: ["docs/*.jade"]
       tasks: ["jade", "replace:docs"]

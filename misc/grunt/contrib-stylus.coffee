@@ -4,24 +4,24 @@ module.exports = (grunt) ->
     #
     # Stylus section
     # Adding nib to all stylus
-    # Compile app css into tmp/app.css temporarily
-    # Compile vendor stylus, e.g. example css into tmp/vendor.css
     #
-    compile:
-      options:
-        urlfunc:
-          name: "url"
-          paths: ["src"]
-        import:  ["nib"]
+    options:
+      use:    ["nib"]
+      paths:  ["src/css/"]
+      import: ["_variables"]
+    dev:
       files: [
-        expand:  true
-        flatten: true
-        src:     "src/css/*.styl"
-        dest:    "tmp/css"
-        ext:     ".css"
+        "example/css/macgyver.css": "<%= buildConf.css.core %>"
+        "example/css/vendor.css":   "vendor/vendor.styl"
       ]
-    vendor:
-      options:
-        use: ["nib"]
-      files:
-        "tmp/vendor.css": "vendor/vendor.styl"
+    module:
+      files: [
+        {
+          dest: "build/bower-macgyver/<%= pkg.name.toLowerCase() %>.css"
+          src:  "<%= buildConf.css.core %>"
+        }
+        {
+          dest: "build/bower-macgyver-core/<%= pkg.name.toLowerCase() %>-core.css"
+          src:  "<%= buildConf.css.core %>"
+        }
+      ]

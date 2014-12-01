@@ -52,27 +52,3 @@ module.exports = (grunt) ->
           dest: "lib/<%= pkg.name.toLowerCase() %>-string-filter.js"
         }
       ]
-
-    css:
-      files: [
-        {
-          dest: "example/css/vendor.css"
-          src:  ["tmp/vendor.css"]
-        }
-        {
-          dest: "example/css/<%= pkg.name.toLowerCase() %>.css"
-          src: "<%= buildConf.css.core %>"
-        }
-      ]
-
-    moduleCss:
-      files: [
-        {
-          dest: "build/bower-macgyver/<%= pkg.name.toLowerCase() %>.css"
-          src: "<%= buildConf.css.core %>"
-        }
-        {
-          dest: "build/bower-macgyver-core/<%= pkg.name.toLowerCase() %>-core.css"
-          src: "<%= buildConf.css.core %>"
-        }
-      ]
