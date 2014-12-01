@@ -22,16 +22,14 @@ angular.module("Mac").
     "$timeout"
     "popover"
     "util"
-    "popoverViews"
     (
       $timeout
       popover
       util
-      popoverViews
     ) ->
       restrict: "A"
       link: (scope, element, attrs) ->
-        options = util.extendAttributes "macPopover", popoverViews.defaults, attrs
+        options = util.extendAttributes "macPopover", popover.defaults, attrs
 
         exclude     = attrs.macPopoverExclude or ""
         excludeList = if exclude then exclude.split "," else []
@@ -97,11 +95,9 @@ angular.module("Mac").
   #
   directive("macPopover", [
     "popover"
-    "popoverViews"
     "util"
     (
       popover
-      popoverViews
       util
     ) ->
       restrict: "E"
@@ -109,7 +105,7 @@ angular.module("Mac").
         unless attrs.id
           throw Error "macPopover: Missing id"
 
-        opts = util.extendAttributes "macPopover", popoverViews.popoverDefaults, attrs
+        opts = util.extendAttributes "macPopover", popover.popoverDefaults, attrs
 
         angular.extend opts, {template: element.html()}
 

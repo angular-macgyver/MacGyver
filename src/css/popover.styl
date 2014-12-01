@@ -22,13 +22,10 @@
     transform  scale3d(1,1,1)
     transition transform .1s ease-out, opacity .1s ease-in, visibility .1s ease-out
 
-  &.ng-leave
-    transition transform .1s ease-out, opacity .1s ease-in, visibility .1s ease-out
-
-    &.ng-leave-active
-      opacity    0
-      transform  scale3d(0,0,0)
-      visibility hidden
+  &.ng-leave-active
+    opacity    0
+    transform  scale3d(0,0,0)
+    visibility hidden
 
   .tip
     display       block

@@ -1,9 +1,8 @@
-xdescribe "Popover", ->
+describe "Popover", ->
   $animate     = null
   $rootScope   = null
   $timeout     = null
   popover      = null
-  popoverViews = null
 
   beforeEach module("Mac")
   beforeEach module("ngAnimateMock")
@@ -13,13 +12,11 @@ xdescribe "Popover", ->
     _$rootScope_
     _$timeout_
     _popover_
-    _popoverViews_
   ) ->
     $animate     = _$animate_
     $rootScope   = _$rootScope_
     $timeout     = _$timeout_
     popover      = _popover_
-    popoverViews = _popoverViews_
 
   describe "popover service", ->
     it "should register a popover", ->
@@ -77,10 +74,13 @@ xdescribe "Popover", ->
       expect(result).toBeFalsy()
 
     describe "show popover", ->
-      trigger  = angular.element("<a>Click me</a>")
+      trigger = null
       callback = null
 
       beforeEach ->
+        trigger = angular.element("<a>Click me</a>")
+        angular.element(document.body).append trigger
+
         popover.register "test",
           template:  "<div>Test</div>"
           direction: "above right"
@@ -89,7 +89,14 @@ xdescribe "Popover", ->
         $rootScope.$on "popoverWasShown", callback
 
         popover.show "test", trigger, {scope: $rootScope}
+
         $rootScope.$digest()
+        $animate.triggerCallbacks()
+
+        $rootScope.$digest()
+
+      afterEach ->
+        trigger = null
 
       it "should show and add popover to list", ->
         expect(popover.popoverList.length).toBe 1
@@ -125,26 +132,25 @@ xdescribe "Popover", ->
         popoverObj = popover.popoverList[0]
         popover    = popoverObj.popover
 
-        $animate.triggerCallbacks()
+        expect(popover.hasClass("visible")).toBe true
 
-        expect(popover.hasClass("visible")).toBeTruthy()
-
-      xit "should set left and top offset with 'px'", ->
+      it "should set left and top offset with 'px'", ->
         popoverObj = popover.popoverList[0]
         popover    = popoverObj.popover
 
-        $animate.triggerCallbacks()
-
         style = popover[0].style
-        expect(style.match /top: [\d]px/).toBeDefined()
-        expect(style.match /left: [\d]px/).toBeDefined()
+        expect(style.top.match /[\d]px/).toBeDefined()
+        expect(style.left.match /[\d]px/).toBeDefined()
 
     describe "hide popover", ->
-      trigger  = angular.element("<a>Click me</a>")
+      trigger  = null
       callback = null
       destroy  = jasmine.createSpy("destroy")
 
       beforeEach ->
+        trigger = angular.element("<a>Click me</a>")
+        angular.element(document.body).append trigger
+
         popover.register "test",
           template:  "<div>Test</div>"
           direction: "above right"
@@ -155,9 +161,8 @@ xdescribe "Popover", ->
 
         popover.show "test", trigger, {scope: $rootScope}
 
+        $rootScope.$digest()
         $animate.triggerCallbacks()
-
-        $animate.queue = []
 
       it "should not close any popover with incorrect selector", ->
         popover.hide "test2"
@@ -180,8 +185,8 @@ xdescribe "Popover", ->
         callbackFn = jasmine.createSpy("callback")
         popover.hide "test", callbackFn
 
-        # HACK: To invoke the leave callback
-        $animate.queue[0].args[1]()
+        $rootScope.$digest()
+        $animate.triggerCallbacks()
 
         expect(callbackFn).toHaveBeenCalled()
 
@@ -191,25 +196,24 @@ xdescribe "Popover", ->
 
         popover.hide "test"
 
-        # HACK: To invoke the leave callback
-        $animate.queue[0].args[1]()
+        $rootScope.$digest()
+        $animate.triggerCallbacks()
 
         expect(broadcastFn).toHaveBeenCalled()
 
       it "should remove active class on trigger", ->
         popover.hide "test"
 
-        # HACK: To invoke the leave callback
-        $animate.queue[0].args[1]()
+        $rootScope.$digest()
+        $animate.triggerCallbacks()
 
-        expect(trigger.hasClass("active")).toBeFalsy()
+        expect(trigger.hasClass("active")).toBe false
 
       it "should not destroy original scope", ->
         popover.hide "test"
-        $rootScope.$digest()
 
-        # HACK: To invoke the leave callback
-        $animate.queue[0].args[1]()
+        $rootScope.$digest()
+        $animate.triggerCallbacks()
 
         expect(destroy).not.toHaveBeenCalled()
 
@@ -221,10 +225,9 @@ xdescribe "Popover", ->
         scope.$on "$destroy", destroyed
 
         popover.hide "test"
-        $rootScope.$digest()
 
-        # HACK: To invoke the leave callback
-        $animate.queue[0].args[1]()
+        $rootScope.$digest()
+        $animate.triggerCallbacks()
 
         expect(destroyed).toHaveBeenCalled()
 
