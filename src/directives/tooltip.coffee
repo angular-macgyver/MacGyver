@@ -25,10 +25,11 @@ angular.module("Mac").directive "macTooltip", [
     restrict: "A"
 
     link: (scope, element, attrs) ->
-      tooltip  = null
-      text     = ""
-      enabled  = false
-      disabled = false
+      tooltip    = null
+      text       = ""
+      enabled    = false
+      disabled   = false
+      closeDelay = null
 
       defaults =
         direction: "top"
@@ -38,7 +39,7 @@ angular.module("Mac").directive "macTooltip", [
       opts = util.extendAttributes "macTooltip", defaults, attrs
 
       showTip = ->
-        return true if disabled or not text
+        return true if disabled or not text or tooltip?
 
         tip =
           if opts.inside then element else angular.element(document.body)
@@ -89,12 +90,15 @@ angular.module("Mac").directive "macTooltip", [
         return true
 
       removeTip = (delay = 100) ->
-        if tooltip?
+        if tooltip? and not closeDelay?
           tooltip.removeClass "visible"
-          $timeout ->
+
+          closeDelay = $timeout ->
             tooltip?.remove()
-            tooltip = null
+            tooltip    = null
+            closeDelay = null
           , delay, false
+
         return true
 
       toggle = ->

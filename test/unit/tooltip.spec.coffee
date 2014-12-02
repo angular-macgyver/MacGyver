@@ -12,8 +12,9 @@ describe "Mac Tooltip", ->
     $timeout   = _$timeout_
 
   afterEach ->
-    tooltip = document.querySelector(".mac-tooltip")
-    tooltip.parentNode.removeChild tooltip if tooltip?
+    tooltips = document.querySelectorAll(".mac-tooltip")
+    for tooltip in tooltips when tooltip?
+      tooltip.parentNode.removeChild tooltip
 
   describe "Basic Initialization", ->
 
@@ -23,6 +24,15 @@ describe "Mac Tooltip", ->
       tip.triggerHandler "mouseenter"
 
       expect(queryTooltip()).not.toBe(null)
+
+    it "should only append one tooltip", ->
+      tip = $compile("<div mac-tooltip='hello world'></div>") $rootScope
+      $rootScope.$digest()
+      tip.triggerHandler "mouseenter"
+      tip.triggerHandler "mouseenter"
+
+      tooltip = document.querySelectorAll(".mac-tooltip")
+      expect(tooltip.length).toBe 1
 
     it "should display the correct message", ->
       tip = $compile("<div mac-tooltip='hello world'></div>") $rootScope
