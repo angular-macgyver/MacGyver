@@ -1,6 +1,6 @@
 {
   "name": "MacGyver",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "main": [
     "lib/macgyver-core.js",
     "lib/macgyver-filters.js",

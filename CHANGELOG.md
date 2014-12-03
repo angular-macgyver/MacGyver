@@ -1,3 +1,10 @@
+# v0.5.1 (2014/12/2)
+## Bug Fixes
+- **macTooltip:** Fixed appending multiple tooltips
+Multiple tooltips get appended to document body when user mouse over the tooltip trigger multiple in a short period of time
+([8070c262](https://github.com/angular-macgyver/MacGyver/commit/8070c2622de20b2f5497344791868dafa7af0ab9))
+
+
 # v0.5.0 (2014/11/13)
 ## Bug Fixes
 - **core:** Fixed val not getting initialized correctly
