@@ -1,5 +1,35 @@
-<h1 id="popover-service">Popover Service</h1>
-<p>A popover service to keep state of opened popover. Allowing user to hide certain<br>or all popovers  </p>
+<h1 id="popover">Popover</h1>
+<h2 id="popover-provider">Popover Provider</h2>
+<p>Configurate popover options in config block.  </p>
+<h3 id="parameters">Parameters</h3>
+<p><strong>defaults</strong><br>Type: <code>Object</code><br>Popover defaults  </p>
+<pre><code class="lang-js">{  
+  fixed: false,  
+  childPopover: false,  
+  offsetY: 0,  
+  offsetX: 0,  
+  trigger: &quot;click&quot;  
+}
+</code></pre>
+<p><strong>popoverDefaults</strong><br>Type: <code>Object</code><br>Popover trigger defaults  </p>
+<pre><code class="lang-js">{  
+  footer: false,  
+  header: false,  
+  title: &quot;&quot;,  
+  direction: &quot;above left&quot;  
+}
+</code></pre>
+<p><strong>template</strong><br>Type: <code>String</code><br>Popover template  </p>
+<pre><code class="lang-js">&quot;&lt;div class=\&quot;mac-popover\&quot; ng-class=\&quot;macPopoverClasses\&quot;&gt;  
+  &lt;div class=\&quot;tip\&quot;&gt;&lt;/div&gt;  
+    &lt;div class=\&quot;popover-header\&quot;&gt;  
+      &lt;div class=\&quot;title\&quot;&gt;{{macPopoverTitle}}&lt;/div&gt;  
+    &lt;/div&gt;  
+  &lt;div mac-popover-fill-content&gt;&lt;/div&gt;  
+&lt;/div&gt;&quot;;
+</code></pre>
+<h2 id="popover-service">Popover Service</h2>
+<p>Popover service to keep state of opened popover. Allowing user to hide certain<br>or all popovers  </p>
 <h3 id="parameters">Parameters</h3>
 <p><strong>popoverList</strong><br>Type: <code>Array</code><br>The popover that&#39;s currently being shown  </p>
 <p><strong>registered</strong><br>Type: <code>Array</code><br>Object storing all the registered popover DOM elements  </p>

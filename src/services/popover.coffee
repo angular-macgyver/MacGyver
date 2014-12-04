@@ -1,9 +1,55 @@
 ###
 @chalk overview
+@name Popover
+###
+
+###
+@chalk provider
+@name Popover Provider
+
+@description
+Configurate popover options in config block.
+
+@param {Object} defaults Popover defaults
+```js
+{
+  fixed: false,
+  childPopover: false,
+  offsetY: 0,
+  offsetX: 0,
+  trigger: "click"
+}
+```
+
+@param {Object} popoverDefaults Popover trigger defaults
+```js
+{
+  footer: false,
+  header: false,
+  title: "",
+  direction: "above left"
+}
+```
+
+@param {String} template Popover template
+```js
+"<div class=\"mac-popover\" ng-class=\"macPopoverClasses\">
+  <div class=\"tip\"></div>
+    <div class=\"popover-header\">
+      <div class=\"title\">{{macPopoverTitle}}</div>
+    </div>
+  <div mac-popover-fill-content></div>
+</div>";
+```
+
+###
+
+###
+@chalk service
 @name Popover Service
 
 @description
-A popover service to keep state of opened popover. Allowing user to hide certain
+Popover service to keep state of opened popover. Allowing user to hide certain
 or all popovers
 
 @param {Array} popoverList The popover that's currently being shown

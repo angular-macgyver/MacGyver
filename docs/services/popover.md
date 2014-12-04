@@ -1,7 +1,61 @@
 
-Popover Service
+Popover
 ===
-A popover service to keep state of opened popover. Allowing user to hide certain  
+
+Popover Provider
+---
+
+Configurate popover options in config block.  
+  
+  
+### Parameters
+**defaults**  
+Type: `Object`  
+Popover defaults  
+```js  
+{  
+  fixed: false,  
+  childPopover: false,  
+  offsetY: 0,  
+  offsetX: 0,  
+  trigger: "click"  
+}  
+```  
+  
+  
+**popoverDefaults**  
+Type: `Object`  
+Popover trigger defaults  
+```js  
+{  
+  footer: false,  
+  header: false,  
+  title: "",  
+  direction: "above left"  
+}  
+```  
+  
+  
+**template**  
+Type: `String`  
+Popover template  
+```js  
+"<div class=\"mac-popover\" ng-class=\"macPopoverClasses\">  
+  <div class=\"tip\"></div>  
+    <div class=\"popover-header\">  
+      <div class=\"title\">{{macPopoverTitle}}</div>  
+    </div>  
+  <div mac-popover-fill-content></div>  
+</div>";  
+```  
+  
+  
+
+
+Popover Service
+---
+
+Popover service to keep state of opened popover. Allowing user to hide certain  
 or all popovers  
   
   
