@@ -1,5 +1,35 @@
 ###
 @chalk overview
+@name Modal
+###
+
+###
+@chalk provider
+@name Modal Provider
+
+@description
+Configure modal options in config block
+
+@param {Object} defaults Modal default
+```js
+{
+  keyboard: false,
+  overlayClose: false,
+  resize: true,
+  position: true,
+  open: angular.noop,
+  topOffset: 20,
+  attributes: {},
+  beforeShow: angular.noop,
+  afterShow: angular.noop,
+  beforeHide: angular.noop,
+  afterHide: angular.noop
+}
+```
+###
+
+###
+@chalk service
 @name Modal Service
 
 @description

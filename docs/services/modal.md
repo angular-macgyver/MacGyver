@@ -1,6 +1,38 @@
 
-Modal Service
+Modal
 ===
+
+Modal Provider
+---
+
+Configure modal options in config block  
+  
+  
+### Parameters
+**defaults**  
+Type: `Object`  
+Modal default  
+```js  
+{  
+  keyboard: false,  
+  overlayClose: false,  
+  resize: true,  
+  position: true,  
+  open: angular.noop,  
+  topOffset: 20,  
+  attributes: {},  
+  beforeShow: angular.noop,  
+  afterShow: angular.noop,  
+  beforeHide: angular.noop,  
+  afterHide: angular.noop  
+}  
+```  
+  
+
+
+Modal Service
+---
+
 There are multiple components used by modal.  
 - A modal service is used to keep state of modal opened in the applications.  
 - A modal element directive to define the modal dialog box  
