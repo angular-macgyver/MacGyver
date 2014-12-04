@@ -1,3 +1,24 @@
+# v0.6.0 (2014/12/4)
+## Features
+- Support AngularJS v1.3+
+
+## Bug Fixes
+- **macAutocomplete:** Fixed $animate API changes due to AngularJS v1.3
+([d6c69cd7](https://github.com/angular-macgyver/MacGyver/commit/d6c69cd7dedbf0ef3d8620b4b0be29339c8a1a9e))
+- **macModal:** Fixed not able to close with escape key
+([373d6647](https://github.com/angular-macgyver/MacGyver/commit/373d6647c00e6c02eed374618cbc0b3d8594393b))
+
+## Optimizations
+- **Mac:** Initial 1.3 changes
+([58207495](https://github.com/angular-macgyver/MacGyver/commit/582074950b5f034b3a8c4839534f5888f9c8821c))
+
+## Breaking Changes
+- **macModal:**  modalView provider has been removed and should be switched to use modalProvider instead  Related to #4
+([c5fb9815](https://github.com/angular-macgyver/MacGyver/commit/c5fb98153e9f4f423019de545decb20f2cf1f274))
+- **macPopover:**  popoverView provider has been removed and should be switched to use popoverProvider instead  Related to #4
+([f38cb92f](https://github.com/angular-macgyver/MacGyver/commit/f38cb92f132ccc81d1ef6501e02421cb412e984e))
+
+
 # v0.5.1 (2014/12/2)
 ## Bug Fixes
 - **macTooltip:** Fixed appending multiple tooltips
