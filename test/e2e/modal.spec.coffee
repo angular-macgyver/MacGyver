@@ -1,9 +1,6 @@
 describe "Mac Modal e2e test", ->
-  ptor = null
-
   beforeEach ->
     browser.get "/test/e2e/modal.html"
-    ptor = protractor.getInstance()
     browser.waitForAngular()
 
   it "should show the registered modal", ->
@@ -32,7 +29,7 @@ describe "Mac Modal e2e test", ->
 
     modal = element(By.id("keyboard-modal"))
 
-    ptor.actions().sendKeys(protractor.Key.ESCAPE).perform()
+    browser.actions().sendKeys(protractor.Key.ESCAPE).perform()
 
     expect(modal.isDisplayed()).toBeFalsy()
 
@@ -40,7 +37,6 @@ describe "Mac Modal e2e test", ->
     button = element(By.id("open-overlay-btn"))
     button.click()
 
-    driver = protractor.getInstance().driver
-    modal  = driver.findElement(By.id("overlay-modal"))
-    driver.executeScript("arguments[0].click()", modal).then ->
+    modal = browser.findElement(By.id("overlay-modal"))
+    browser.driver.executeScript("arguments[0].click()", modal).then ->
       expect(modal.isDisplayed()).toBeFalsy()
