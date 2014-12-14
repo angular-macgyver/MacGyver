@@ -57,6 +57,7 @@ module.exports = (config) ->
       "src/services/*.coffee"
       "src/*.coffee"
       "src/**/*.coffee"
+      "src/**/*.js"
       "bower_components/angular-mocks/angular-mocks.js"
       "test/vendor/browserTrigger.js"
       "test/unit/*.spec.coffee"

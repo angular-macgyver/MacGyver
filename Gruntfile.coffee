@@ -36,6 +36,7 @@ module.exports = (grunt) ->
 
   grunt.registerTask "deploy", "Build and copy to lib/", [
     "coffee"
+    "copy:src"
     "stylus"
     "jade"
     "concatDeploy"
@@ -53,6 +54,7 @@ module.exports = (grunt) ->
 
   grunt.registerTask "compile", "Compile files", [
     "coffee"
+    "copy:src"
     "stylus:dev"
     "jade"
     "concat:example"
@@ -89,6 +91,7 @@ module.exports = (grunt) ->
   grunt.registerTask "test:e2e", "Compile all source code, run a test server and run the end to end tests", [
     "clean"
     "coffee"
+    "copy:src"
     "stylus:dev"
     "jade"
     "copy:data"
