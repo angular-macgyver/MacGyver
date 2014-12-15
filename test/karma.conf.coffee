@@ -61,6 +61,7 @@ module.exports = (config) ->
       "bower_components/angular-mocks/angular-mocks.js"
       "test/vendor/browserTrigger.js"
       "test/unit/*.spec.coffee"
+      "test/unit/*.spec.js"
     ]
 
     reporters: ["progress"]

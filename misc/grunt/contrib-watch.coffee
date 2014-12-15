@@ -24,7 +24,10 @@ module.exports = (grunt) ->
       files: ["docs/doc.coffee"]
       tasks: ["coffee:doc"]
     test:
-      files: ["test/**/*.spec.coffee"]
+      files: [
+        "test/**/*.spec.coffee"
+        "test/**/*.spec.js"
+      ]
       tasks: ["karma:unit:run"]
     css:
       files: ["src/css/*.styl", "vendor/vendor.styl"]
