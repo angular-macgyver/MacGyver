@@ -36,6 +36,8 @@ isWindow = (obj) ->
 
 isScope = (obj) ->
   return obj and obj.$evalAsync? and obj.$watch?
+  
+angular.isScope = isScope
 
 getWindow = (element) ->
   if isWindow(element) then element else element.nodeType is 9 and element.defaultView

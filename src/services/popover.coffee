@@ -193,7 +193,7 @@ angular.module("Mac").
               # scope with data being passed in
               #
               # Use the scope passed in
-              if isScope(options.scope)
+              if angular.isScope(options.scope)
                 viewScope = options.scope.$new()
 
               # Create an isolated scope and extend scope with value pass in

@@ -171,7 +171,7 @@ angular.module("Mac").provider("modal", ->
                 # scope with data being passed in
                 #
                 # Use the scope passed in
-                if isScope(showOptions.scope)
+                if angular.isScope(showOptions.scope)
                   viewScope = showOptions.scope
 
                 # Create an isolated scope and extend scope with value pass in
@@ -279,7 +279,7 @@ angular.module("Mac").provider("modal", ->
 
             if options.moduleMethod
               # Only destroy new isolated scope
-              unless isScope options.scope
+              unless angular.isScope options.scope
                 element.scope().$destroy()
 
               $animate.leave element
