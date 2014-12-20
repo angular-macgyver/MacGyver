@@ -17,6 +17,7 @@ module.exports = (grunt) ->
       singleRun: true
       preprocessors:
         "test/**/*.coffee": ["coffee"]
+        "src/**/*.js": ["coverage"]
         "src/**/*.coffee": ["coverage"]
         "**/*.html": ["ng-html2js"]
       coverageReporter:
