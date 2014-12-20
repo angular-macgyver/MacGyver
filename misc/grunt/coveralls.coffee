@@ -1,5 +1,5 @@
 module.exports = (grunt) ->
   grunt.config "coveralls",
-    options:
+    src:
       src: "coverage/lcov.info"
       force: false
