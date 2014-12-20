@@ -12,6 +12,7 @@ build/
 example/
 .gitmodules
 .grunt/
+coverage/
 
 # Logs
 test-results.xml
@@ -20,6 +21,7 @@ npm-debug.log
 
 # System file types
 .DS_Store
+.c9
 
 # Except these files
 !/vendor/vendor.styl
