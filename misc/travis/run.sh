@@ -3,7 +3,7 @@
 set -e
 
 if [ $JOB = "unit" ]; then
-  grunt test:unit
+  grunt test:ci
 elif [ $JOB = "e2e" ]; then
   grunt test:e2e --sauceUser=$SAUCE_USERNAME \
         --sauceKey=$SAUCE_ACCESS_KEY \

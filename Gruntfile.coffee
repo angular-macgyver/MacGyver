@@ -80,7 +80,11 @@ module.exports = (grunt) ->
     "connect:example"
     "watch"
   ]
-
+  
+  grunt.registerTask "test:ci", [
+    "karma:travis"
+    "coveralls"
+  ]
   grunt.registerTask "test:unit", "Alias for karma:travis", ["karma:travis"]
   grunt.registerTask "test:e2e", "Compile all source code, run a test server and run the end to end tests", [
     "clean"

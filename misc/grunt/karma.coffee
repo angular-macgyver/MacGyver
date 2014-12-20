@@ -13,8 +13,16 @@ module.exports = (grunt) ->
       background: true
     travis:
       browsers: ["SL_Chrome", "SL_Firefox", "SL_Safari"]
-      reporters: ["dots"]
+      reporters: ["dots", "coverage"]
       singleRun: true
+      preprocessors:
+        "test/**/*.coffee": ["coffee"]
+        "src/**/*.coffee": ["coverage"]
+        "**/*.html": ["ng-html2js"]
+      coverageReporter:
+        type: "lcov"
+        dir: "coverage/"
+        subdir: "."
     build:
       singleRun: true
       options:
