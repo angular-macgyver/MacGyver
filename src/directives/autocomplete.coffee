@@ -187,6 +187,9 @@ angular.module("Mac").directive "macAutocomplete", [
 
         isMenuAppended = true
 
+        # Hide the element from view when calculating offset
+        menuEl[0].style.visibility = 'hidden'
+
         if inside
           return $animate.enter(menuEl, undefined, element)
         else
@@ -219,12 +222,8 @@ angular.module("Mac").directive "macAutocomplete", [
       Calculate the style include position and width for menu
       ###
       positionMenu = ->
-        parentElement = if inside then element[0] else document.body
-        parentStyles  = window.getComputedStyle parentElement
-
         offset          = element.offset()
-        offset.left    -= parseInt parentStyles.marginLeft
-        offset.top     += element.outerHeight() - parseInt parentStyles.marginTop
+        offset.top     += element.outerHeight()
         offset.minWidth = element.outerWidth()
 
         # Add 'px' to left and top
@@ -233,6 +232,9 @@ angular.module("Mac").directive "macAutocomplete", [
             value = "#{value}px"
 
           menuEl[0].style[key] = value
+
+        # Show dropdown when positioned correctly
+        menuEl[0].style.visibility = 'visible'
 
       ###
       @function
