@@ -9,7 +9,8 @@ elif [ $JOB = "e2e" ]; then
         --sauceKey=$SAUCE_ACCESS_KEY \
         --capabilities.tunnel-identifier=$TRAVIS_JOB_NUMBER \
         --capabilities.build=$TRAVIS_BUILD_NUMBER \
-        --browser=$BROWSER
+        --browser=$BROWSER \
+        --version=$VERSION
 else
   echo "Unknown job type. Use either JOB=unit or JOB=e2e"
 fi

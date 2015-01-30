@@ -5,7 +5,7 @@ env:
   matrix:
   - JOB=unit
   - JOB=e2e BROWSER=chrome
-  - JOB=e2e BROWSER=firefox
+  - JOB=e2e BROWSER=firefox VERSION=34
   global:
   - LOGS_DIR: /tmp/sauce-build/logs
   - BROWSER_PROVIDER_READY_FILE: /tmp/sauce-connect-ready

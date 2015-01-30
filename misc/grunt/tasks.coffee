@@ -161,6 +161,7 @@ module.exports = (grunt) ->
     tunnelIdentifier = grunt.option "capabilities.tunnel-identifier"
     sauceBuild       = grunt.option "capabilities.build"
     browser          = grunt.option "browser"
+    browserVersion   = grunt.option "version"
 
     args = ["node_modules/protractor/bin/protractor", @data]
 
@@ -174,6 +175,9 @@ module.exports = (grunt) ->
       args.push "--capabilities.build=TRAVIS ##{sauceBuild}"
 
     args.push "--capabilities.browserName=#{browser || 'chrome'}"
+
+    if browserVersion
+      args.push "--capabilities.version=#{browserVersion}"
 
     if grunt.option("local")?
       args.push "--seleniumAddress=http://localhost:4444/wd/hub"
