@@ -173,13 +173,10 @@ module.exports = (grunt) ->
     if sauceBuild
       args.push "--capabilities.build=TRAVIS ##{sauceBuild}"
 
-    if browser
-      args.push "--browser=#{browser}"
-      args.push "--params.browser=#{browser}"
+    args.push "--capabilities.browserName=#{browser || 'chrome'}"
 
     if grunt.option("local")?
       args.push "--seleniumAddress=http://localhost:4444/wd/hub"
-      args.push "--browser=#{browser || 'chrome'}"
 
     p = child.spawn "node", args
     p.stdout.pipe process.stdout
