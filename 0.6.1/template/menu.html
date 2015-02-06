@@ -1,0 +1,11 @@
+<div ng-style="style" class="mac-menu">
+  <ul>
+    <li class="mac-menu-item"
+        ng-class="{'active': $index == index}"
+        ng-click="selectItem($index)"
+        ng-mouseenter="setIndex($index)"
+        ng-repeat="item in items"
+        mac-menu-transclude="mac-menu-transclude">
+    </li>
+  </ul>
+</div>
