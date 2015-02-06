@@ -1,3 +1,10 @@
+# v0.6.1 (2015/2/6)
+## Bug Fixes
+- **macAutocomplete:** Fixed dropdown placement issues
+Related to #11
+  ([725995cb](https://github.com/angular-macgyver/MacGyver/commit/725995cb54a171d21b41c1190ce246e0a1b5f067))
+
+
 # v0.6.0 (2014/12/4)
 ## Features
 - Support AngularJS v1.3+
