@@ -47,7 +47,6 @@ module.exports = (grunt) ->
     "replace:docs"
     "replace:version"
     "karma:build"
-    "update:component"
     "copy:public"
     "uglify:dist"
     "tag"
@@ -80,7 +79,7 @@ module.exports = (grunt) ->
     "connect:example"
     "watch"
   ]
-  
+
   grunt.registerTask "test:ci", [
     "karma:travis"
     "coveralls"

@@ -73,22 +73,6 @@ module.exports = (grunt) ->
       grunt.log.writeln("Converted '#{file.dest}'")
 
   ###
-  @name update:component
-  @description
-  Read all files in build folder and add to component.json
-  ###
-  grunt.registerTask "update:component", "Update bower.json", ->
-    fileList = []
-    grunt.file.recurse finalBuildPath, (path, root, sub, filename) ->
-      fileList.push path if filename.indexOf(".DS_Store") is -1
-
-    data      = grunt.config.get("bower")
-    data.main = fileList
-
-    grunt.file.write componentFile, JSON.stringify(data, null, "  "), encoding: "utf8"
-    grunt.log.writeln "Updated bower.json"
-
-  ###
   @name updatebuild
   @description
   Update bower.json version of all bower repositories

@@ -1,14 +1,7 @@
 {
   "name": "MacGyver",
   "version": "0.6.1",
-  "main": [
-    "lib/macgyver-core.js",
-    "lib/macgyver-filters.js",
-    "lib/macgyver-string-filter.js",
-    "lib/macgyver.css",
-    "lib/macgyver.js",
-    "lib/macgyver.min.js"
-  ],
+  "main": ["lib/macgyver.css", "lib/macgyver.js"],
   "ignore": [
     "misc",
     "src",
