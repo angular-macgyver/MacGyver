@@ -65,6 +65,7 @@ module.exports = (grunt) ->
   grunt.registerTask "deploy-bower", "Updated all bower repositories", [
     "coffee"
     "concat:bower"
+    "replace:bower"
     "uglify:bower"
     "stylus:module"
     "clean"

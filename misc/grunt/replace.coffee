@@ -1,5 +1,12 @@
 module.exports = (grunt) ->
 
+  replaceTemplate = (match) ->
+    filePath     = require("path").join "src/", match[1]
+    compiledHtml = grunt.file.read filePath
+    compiledHtml = compiledHtml.replace /"/g, "\\\""
+    compiledHtml = compiledHtml.replace /\n/g, ""
+    "template: \"#{compiledHtml.trim()}\""
+
   #
   # replace section
   # Replace placeholder with contents
@@ -8,18 +15,26 @@ module.exports = (grunt) ->
     src:
       options:
         pattern: /templateUrl: "([^"]+)"/g
-        replace: (match) ->
-          filePath     = require("path").join "src/", match[1]
-          compiledHtml = grunt.file.read filePath
-          compiledHtml = compiledHtml.replace /"/g, "\\\""
-          compiledHtml = compiledHtml.replace /\n/g, ""
-          "template: \"#{compiledHtml.trim()}\""
+        replace: replaceTemplate
       files: [
         expand:  true
         flatten: false
         src:     [
           "lib/*.js"
           "!lib/macgyver.min.js"
+        ]
+        ext: ".js"
+      ]
+    bower:
+      options:
+        pattern: /templateUrl: "([^"]+)"/g
+        replace: replaceTemplate
+      files: [
+        expand:  true
+        flatten: false
+        src:     [
+          "build/**/*.js"
+          "!build/**/*.min.js"
         ]
         ext: ".js"
       ]
