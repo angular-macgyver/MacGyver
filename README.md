@@ -53,8 +53,8 @@ Once you have MacGyver in your project, just include "Mac" as a dependency in yo
 angular.module("myModule", ["Mac"]);
 ```
 
-MacGyver includes multiple files,
-- `macgyver.js` - All directives, services and filters bundled together
-- `macgyver-core.js` - Utilities, events and all directives without 3rd party dependencies
-- `macgyver-filters.js` - Filters except underscore string filter
-- `macgyver-string-filter.js` - Underscore String filter
+## Bower repositories
+Modularized MacGyver files can be found here:
+- [angular-macgyver/bower-macgyver](https://github.com/angular-macgyver/bower-macgyver) - All directives, services and filters bundled together
+- [angular-macgyver/bower-macgyver-core](https://github.com/angular-macgyver/bower-macgyver-core) - Utilities, events and all directives without 3rd party dependencies
+- [angular-macgyver/bower-macgyver-filters](https://github.com/angular-macgyver/bower-macgyver-filters) - All filters
