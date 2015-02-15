@@ -30,9 +30,8 @@ module.exports = (grunt) ->
   require('time-grunt') grunt
 
   grunt.registerTask "concatDeploy", [
-    "concat:appJs"
-    "concat:deployAppJs"
-    "concat:modulesJs"
+    "concat:example"
+    "concat:lib"
   ]
 
   grunt.registerTask "deploy", "Build and copy to lib/", [
@@ -56,7 +55,7 @@ module.exports = (grunt) ->
     "coffee"
     "stylus:dev"
     "jade"
-    "concat:appJs"
+    "concat:example"
     "clean"
     "chalkboard"
     "marked"
@@ -64,7 +63,8 @@ module.exports = (grunt) ->
   ]
 
   grunt.registerTask "deploy-bower", "Updated all bower repositories", [
-    "copy:bower"
+    "coffee"
+    "concat:bower"
     "uglify:bower"
     "stylus:module"
     "clean"
@@ -92,7 +92,7 @@ module.exports = (grunt) ->
     "jade"
     "copy:data"
     "copy:template"
-    "concatDeploy"
+    "concat:lib"
     "clean"
     "replace:src"
     "connect:e2e"

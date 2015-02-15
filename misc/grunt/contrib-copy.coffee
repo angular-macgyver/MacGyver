@@ -30,18 +30,3 @@ module.exports = (grunt) ->
         ]
         dest: "lib/"
       ]
-    bower:
-      files: [
-        {
-          src: "lib/<%= pkg.name.toLowerCase() %>.js"
-          dest: "build/bower-macgyver/<%= pkg.name.toLowerCase() %>.js"
-        }
-        {
-          src: "lib/<%= pkg.name.toLowerCase() %>-core.js"
-          dest: "build/bower-macgyver-core/macgyver-core.js"
-        }
-        {
-          src: "lib/<%= pkg.name.toLowerCase() %>-filters.js"
-          dest: "build/bower-macgyver-filters/macgyver-filters.js"
-        }
-      ]

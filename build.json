@@ -28,9 +28,6 @@
   "filters": [
     "tmp/app/filters/*.js"
   ],
-  "underscoreFilter": [
-    "tmp/app/filters/underscore.js"
-  ],
   "css": {
     "core": [
       "src/css/*.styl",
