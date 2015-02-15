@@ -12,7 +12,7 @@ module.exports = (grunt) ->
       tasks: [
         "karma:unit:run"
         "coffee"
-        "concat:appJs"
+        "concat:example"
         "clean"
       ]
     doc:
