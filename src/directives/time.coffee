@@ -49,7 +49,7 @@ angular.module("Mac").directive "macTime", [
 
       # Validation
       timeValidator = (value) ->
-        if !value or util.timeRegex.exec(value)
+        if !value or util.validateTime(value)
           ngModelCtrl.$setValidity "time", true
 
           return value
@@ -121,7 +121,7 @@ angular.module("Mac").directive "macTime", [
           ngModelCtrl.$render()
 
       updateTime = ->
-        if timeMatch = util.timeRegex.exec ngModelCtrl.$modelValue
+        if timeMatch = util.validateTime ngModelCtrl.$modelValue
           hours    = +timeMatch[1]
           minutes  = +timeMatch[2]
           meridian = timeMatch[3]
