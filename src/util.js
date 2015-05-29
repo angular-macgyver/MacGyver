@@ -83,19 +83,15 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
      */
     pluralize: function(string, count, includeCount) {
       var irregulars, isUppercase, lowercaseWord, pluralizedString, pluralizedWord, pluralizer, pluralizers, uncountables, word, i;
-      if (string == null) {
-        string = "";
-      }
-      if (includeCount == null) {
-        includeCount = false;
-      }
+      string = string || '';
+      includeCount = includeCount || false;
       if (!angular.isString(string) || this.trim(string).length === 0) {
         return string;
       }
       if (includeCount && isNaN(+count)) {
         return "";
       }
-      if (count == null) {
+      if (count === undefined) {
         count = 2;
       }
 
@@ -109,11 +105,11 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
 
       pluralizedWord = count === 1 || uncountables.indexOf(lowercaseWord) >= 0 ? word : null;
 
-      if (pluralizedWord == null && irregulars[lowercaseWord] != null) {
+      if (pluralizedWord === null && irregulars[lowercaseWord]) {
         pluralizedWord = irregulars[lowercaseWord];
       }
 
-      if (pluralizedWord == null) {
+      if (!pluralizedWord) {
         for (i = 0; i < pluralizers.length; i++) {
           pluralizer = pluralizers[i];
           if (!(pluralizer[0].test(lowercaseWord))) {
@@ -123,7 +119,7 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
           break;
         }
       }
-      pluralizedWord || (pluralizedWord = word);
+      pluralizedWord = pluralizedWord || word;
       if (isUppercase) {
         pluralizedWord = pluralizedWord.toUpperCase();
       }
@@ -145,7 +141,7 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
     trim: function(string) {
       var str;
       str = String(string) || "";
-      if (String.prototype.trim != null) {
+      if (String.prototype.trim !== null) {
         return str.trim();
       } else {
         return str.replace(/^\s+|\s+$/gm, "");
@@ -192,9 +188,7 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
      * @returns {String}
      */
     toCamelCase: function(string) {
-      if (string == null) {
-        string = "";
-      }
+      string = string || '';
       return this.trim(string).replace(/[-_\s]+(.)?/g, function(match, c) {
         return c.toUpperCase();
       });
@@ -208,9 +202,7 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
      * @returns {String}
      */
     toSnakeCase: function(string) {
-      if (string == null) {
-        string = "";
-      }
+      string = string || '';
       return this.trim(string).replace(/([a-z\d])([A-Z]+)/g, "$1_$2").replace(/[-\s]+/g, "_").toLowerCase();
     },
 
@@ -227,7 +219,7 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
         value = object[key];
         key = this.toCamelCase(key);
 
-        if (value != null && typeof value === 'object' && value.constructor !== Array) {
+        if (value && typeof value === 'object' && value.constructor !== Array) {
           value = this.convertKeysToCamelCase(value);
         }
 
@@ -249,7 +241,7 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
         value = object[key];
         key = this.toSnakeCase(key);
 
-        if (value != null && typeof value === 'object' && value.constructor !== Array) {
+        if (value && typeof value === 'object' && value.constructor !== Array) {
           value = this.convertKeysToSnakeCase(value);
         }
 
@@ -342,9 +334,8 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
      * ```
      */
     validateUrl: function(url) {
-      var match;
-      match = urlRegex.exec(url);
-      if (match != null) {
+      var match = urlRegex.exec(url);
+      if (match !== null) {
         match = {
           url: match[0],
           protocol: match[1] || "http",
@@ -354,7 +345,6 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
           port: match[5],
           path: match[6] || "/"
         };
-        match["url"] = match.url;
       }
       return match;
     },
@@ -392,18 +382,13 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
      */
     getQueryString: function(url, name) {
       var regex, regexS, results;
-      if (name == null) {
-        name = "";
-      }
+      name = name || '';
       name = name.replace(/[[]/, "\[").replace(/[]]/, "\]");
       regexS = "[\?&]" + name + "=([^&#]*)";
       regex = new RegExp(regexS);
       results = regex.exec(url);
-      if (results != null) {
-        return results[1];
-      } else {
-        return "";
-      }
+
+      return results ? results[1] : '';
     },
 
     /**
@@ -447,9 +432,7 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
      */
     extendAttributes: function(prefix, defaults, attributes) {
       var altKey, key, macKey, output, value, _ref, _ref1, outputValue;
-      if (prefix == null) {
-        prefix = "";
-      }
+      prefix = prefix || '';
       output = {};
       for (key in defaults) {
         if (!defaults.hasOwnProperty(key)) continue;
@@ -468,7 +451,7 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
           outputValue = +outputValue;
         }
 
-        output[key] = outputValue
+        output[key] = outputValue;
       }
       return output;
     }
