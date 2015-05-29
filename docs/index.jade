@@ -57,9 +57,6 @@ block append nav
     li(mac-scroll-spy-target="spinner"): a(href="#spinner")
       i.icon-chevron-right
       | Spinner
-    li(mac-scroll-spy-target="cspinner"): a(href="#cspinner")
-      i.icon-chevron-right
-      | Canvas Spinner
     li(mac-scroll-spy-target="placeholder"): a(href="#placeholder")
       i.icon-chevron-right
       | Placeholder
@@ -335,14 +332,6 @@ block append content
       mac-spinner
     pre.prettyprint.
       &lt;mac-spinner&gt;&lt;/mac-spinner&gt;
-
-  section#cspinner(mac-scroll-spy-anchor)
-    | @@include("docs/html/directives/cspinner.html")
-    h3 Example
-    .docs-example
-      mac-cspinner
-    pre.prettyprint.
-      &lt;mac-cspinner&gt;&lt;/mac-cspinner&gt;
 
   section#placeholder(mac-scroll-spy-anchor)
     | @@include("docs/html/directives/placeholder.html")
