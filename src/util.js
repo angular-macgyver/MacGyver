@@ -35,6 +35,8 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
     ]
   };
 
+  var cssPrefixes = ['webkit', 'Moz', 'ms', 'O'];
+
   /**
    * @name timeRegex
    * @example
@@ -454,6 +456,19 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
         output[key] = outputValue;
       }
       return output;
+    },
+
+    getCssVendorName: function (el, name) {
+      var i, prefix;
+      name = this.capitalize(name);
+      for (i = 0; i < cssPrefixes.length; i++) {
+        prefix = cssPrefixes[i];
+
+        if (el.style[prefix+name] !== null) {
+          return prefix + name;
+        }
+      }
+      return name;
     }
-  }
+  };
 }]);
