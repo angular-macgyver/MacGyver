@@ -1,7 +1,7 @@
 ###
 Documentation script
 ###
-angular.module("Mac").
+angular.module("MacDemo", ['Mac', 'ngAnimate']).
   directive("code", ->
     restrict: "E"
     terminal: true

@@ -47,13 +47,12 @@ module.exports = (config) ->
       # Javascript
       "bower_components/underscore.string/lib/underscore.string.js"
       "bower_components/angular/angular.js"
-      "bower_components/angular-animate/angular-animate.js"
 
       # Template
       "src/template/*.html"
 
       # Test Code
-      "src/main.coffee"
+      "src/main.js"
       "src/services/*.coffee"
       "src/*.coffee"
       "src/**/*.coffee"
