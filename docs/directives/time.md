@@ -43,5 +43,4 @@ Enable or disable time input
 Type: `String`  
 If model is undefined, use this as the starting value (default 12:00 PM)  
   
-  
 
