@@ -145,6 +145,28 @@ describe("Mac Time input", function() {
       expect(element.val()).toBe("02:30 PM");
     });
 
+    it("initial click should populate time input", function() {
+      $rootScope.model = "02:30 PM";
+      var element = $compile("<mac-time ng-model='model'></mac-time>")($rootScope);
+      $rootScope.$digest();
+
+      element.triggerHandler('click');
+      $rootScope.$digest();
+
+      expect(element.val()).toBe("02:30 PM");
+    });
+
+    it("initial click should populate time input with 12:00 AM", function() {
+      $rootScope.model = "12:00 AM";
+      var element = $compile("<mac-time ng-model='model'></mac-time>")($rootScope);
+      $rootScope.$digest();
+
+      element.triggerHandler('click');
+      $rootScope.$digest();
+
+      expect(element.val()).toBe("12:00 AM");
+    });
+
     it("should clear out text input when clearing model", function() {
       var element = $compile("<mac-time ng-model='model'></mac-time>")($rootScope);
       $rootScope.$digest();
@@ -168,7 +190,7 @@ describe("Mac Time input", function() {
 
       $rootScope.model = null;
       $rootScope.$digest();
-      
+
       expect(element.val()).toBe("");
     });
   });
