@@ -228,9 +228,4 @@ angular.module('Mac').factory('macTimeUtil', [
       updateTime: updateTime
     };
   }
-]).
-
-constant('macTimeDefaults', {
-  default: '12:00 AM',
-  placeholder: '--:--'
-});
+]);

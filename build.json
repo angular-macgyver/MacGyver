@@ -6,6 +6,7 @@
   "core": [
     "tmp/app/main.js",
     "tmp/app/util.js",
+    "tmp/app/constants.js",
     "tmp/app/directives/keys.js",
     "tmp/app/directives/events/*.js",
     "tmp/app/directives/autocomplete.js",

@@ -99,12 +99,9 @@ angular.module('Mac').service('scrollSpy', [
       removeListener: function(fn) {
         var index = this.listeners.indexOf(fn);
         if (index !== -1) {
-          this.listeners.splice(index, 1)
+          this.listeners.splice(index, 1);
         }
       }
     };
   }
-]).constant('scrollSpyDefaults', {
-  offset: 0,
-  highlightClass: 'active'
-});
+]);
