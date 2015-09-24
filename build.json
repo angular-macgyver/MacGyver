@@ -9,6 +9,7 @@
     "tmp/app/constants.js",
     "tmp/app/directives/keys.js",
     "tmp/app/directives/events/*.js",
+    "tmp/app/controllers/autocomplete.js",
     "tmp/app/directives/autocomplete.js",
     "tmp/app/directives/focus_on_event.js",
     "tmp/app/directives/menu.js",
