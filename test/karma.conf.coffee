@@ -63,7 +63,7 @@ module.exports = (config) ->
       "test/unit/**/*.spec.js"
     ]
 
-    reporters: ["progress"]
+    reporters: ["dots"]
     logLevel: config.LOG_INFO
     browsers: ["PhantomJS"]
     preprocessors:
