@@ -239,7 +239,7 @@ block append content
     h3 Example
     .docs-example
       mac-tag-autocomplete(
-        mac-tag-autocomplete-url         = "autocompleteUrl"
+        mac-tag-autocomplete-source      = "autocompleteUrl"
         mac-tag-autocomplete-query       = "q"
         mac-tag-autocomplete-selected    = "tagAutocompleteSelected"
         mac-tag-autocomplete-value       = "id"
@@ -249,7 +249,7 @@ block append content
       )
     pre.prettyprint.
       &lt;mac-tag-autocomplete
-        mac-tag-autocomplete-url=&quot;autocompleteUrl&quot;
+        mac-tag-autocomplete-source=&quot;autocompleteUrl&quot;
         mac-tag-autocomplete-query=&quot;q&quot;
         mac-tag-autocomplete-selected=&quot;tagAutocompleteSelected&quot;
         mac-tag-autocomplete-value=&quot;id&quot;
@@ -274,34 +274,6 @@ block append content
         mac-tag-autocomplete-value=&quot;&quot;
         mac-tag-autocomplete-label=&quot;&quot;
         mac-tag-autocomplete-disabled=&quot;true&quot;&gt;
-      &lt;/mac-tag-autocomplete&gt;
-
-    h3 Example with custom actions on events
-    .docs-example
-      mac-tag-autocomplete(
-        mac-tag-autocomplete-selected    = "tagAutocompleteEvents"
-        mac-tag-autocomplete-placeholder = "tagAutocompletePlaceholder"
-        mac-tag-autocomplete-value       = "key"
-        mac-tag-autocomplete-label       = "key"
-        mac-tag-autocomplete-on-enter    = "tagAutocompleteOnSelected(item)"
-        mac-tag-autocomplete-events      = "blur,keyup"
-        mac-tag-autocomplete-on-blur     = "tagAutocompleteOnBlur($event, item)"
-        mac-tag-autocomplete-on-keyup    = "tagAutocompleteOnKeyup()"
-        mac-tag-autocomplete-disabled    = "true"
-        mac-tag-autocomplete-model       = "tagAutocompleteModel"
-      )
-    pre.prettyprint.
-      &lt;mac-tag-autocomplete
-        mac-tag-autocomplete-selected=&quot;tagAutocompleteEvents&quot;
-        mac-tag-autocomplete-placeholder=&quot;tagAutocompletePlaceholder&quot;
-        mac-tag-autocomplete-value=&quot;key&quot;
-        mac-tag-autocomplete-label=&quot;key&quot;
-        mac-tag-autocomplete-on-enter=&quot;tagAutocompleteOnSelected(item)&quot;
-        mac-tag-autocomplete-events=&quot;blur,keyup&quot;
-        mac-tag-autocomplete-on-blur=&quot;tagAutocompleteOnBlur($event, item)&quot;
-        mac-tag-autocomplete-on-keyup=&quot;tagAutocompleteOnKeyup()&quot;
-        mac-tag-autocomplete-disabled=&quot;true&quot;
-        mac-tag-autocomplete-model=&quot;tagAutocompleteModel&quot;&gt;
       &lt;/mac-tag-autocomplete&gt;
 
   section#datepicker(mac-scroll-spy-anchor)
