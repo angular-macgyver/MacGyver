@@ -48,17 +48,18 @@ angular.module('Mac').directive('macTagAutocomplete', [
         source: '=macTagAutocompleteSource',
         placeholder: '=macTagAutocompletePlaceholder',
         selected: '=macTagAutocompleteSelected',
-        disabled: '=macTagAutocompleteDIsabled',
+        disabled: '=macTagAutocompleteDisabled',
         model: '=macTagAutocompleteModel',
         onEnter: '&macTagAutocompleteOnEnter',
         onKeydown: '&macTagAutocompleteOnKeydown'
       },
 
       compile: function (element, attrs) {
-        var valueKey, labelKey;
+        var valueKey = attrs.macTagAutocompleteValue != undefined ?
+          attrs.macTagAutocompleteValue : 'id';
 
-        valueKey = attrs.macTagAutocompleteValue || 'id';
-        labelKey = attrs.macTagAutocompleteLabel || 'name';
+        var labelKey = attrs.macTagAutocompleteLabel != undefined ?
+          attrs.macTagAutocompleteLabel : 'name';
 
         var valueGetter = $parse(valueKey);
         var labelGetter = $parse(labelKey);
@@ -73,7 +74,7 @@ angular.module('Mac').directive('macTagAutocomplete', [
           'mac-autocomplete-label': labelKey,
           'mac-autocomplete-query': queryKey,
           'mac-autocomplete-delay': delay,
-          'mac-autocomplete-source': 'source'
+          'mac-autocomplete-source': 'autocompleteSource'
         });
 
         return function ($scope, element, attrs) {
@@ -106,7 +107,7 @@ angular.module('Mac').directive('macTagAutocomplete', [
             }
 
             $scope.autocompleteSource = $scope.source.filter(function (item) {
-              return $scope.selected.indexOf(item) > -1;
+              return $scope.selected.indexOf(item) < 0;
             })
           }
 
@@ -148,7 +149,6 @@ angular.module('Mac').directive('macTagAutocomplete', [
           };
 
           $scope.onSelect = function (item) {
-            var item;
             if (attrs.macTagAutocompleteOnEnter) {
               item = $scope.onEnter({item: item});
             }

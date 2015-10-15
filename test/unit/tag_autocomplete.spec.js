@@ -52,7 +52,7 @@ describe("Mac tag autocomplete", function() {
       $rootScope.$digest();
       textInput = element[0].querySelector(".mac-autocomplete");
 
-      expect(textInput.getAttribute("mac-autocomplete-label")).toBe("");
+      expect(textInput.getAttribute("mac-autocomplete-label")).toBe('');
     });
 
     it("should set query attribute on mac-autocomplete", function() {
@@ -127,20 +127,11 @@ describe("Mac tag autocomplete", function() {
   describe("selected variable", function() {
     it("should filter out used tags", function() {
       var element, textInputScope;
-      $rootScope.source = [
-        {
-          id: "tag1"
-        }, {
-          id: "tag2"
-        }, {
-          id: "tag3"
-        }
-      ];
-      $rootScope.selected = [
-        {
-          id: "tag1"
-        }
-      ];
+      var tag1 = {id: 'tag1'};
+      var tag2 = {id: 'tag2'};
+      var tag3 = {id: 'tag3'};
+      $rootScope.source = [tag1, tag2, tag3];
+      $rootScope.selected = [tag1];
       element = $compile("<mac-tag-autocomplete mac-tag-autocomplete-source='source' mac-tag-autocomplete-selected='selected'></mac-tag-autocomplete>")($rootScope);
       $rootScope.$digest();
 
@@ -150,29 +141,20 @@ describe("Mac tag autocomplete", function() {
 
     it("should update autocompleteSource when source changes", function() {
       var element, textInputScope;
-      $rootScope.source = [
-        {
-          id: "tag1"
-        }, {
-          id: "tag2"
-        }, {
-          id: "tag3"
-        }
-      ];
-      $rootScope.selected = [
-        {
-          id: "tag1"
-        }
-      ];
+
+      var tag1 = {id: 'tag1'};
+      var tag2 = {id: 'tag2'};
+      var tag3 = {id: 'tag3'};
+      var tag4 = {id: 'tag4'};
+      $rootScope.source = [tag1, tag2, tag3];
+      $rootScope.selected = [tag1];
 
       element = $compile("<mac-tag-autocomplete\n  mac-tag-autocomplete-source='source'\n  mac-tag-autocomplete-selected='selected'>\n</mac-tag-autocomplete>")($rootScope);
 
       $rootScope.$digest();
       textInputScope = $rootScope.$$childHead;
 
-      $rootScope.source.push({
-        id: "tag5"
-      });
+      $rootScope.source.push(tag4);
       $rootScope.$digest();
 
       expect(textInputScope.autocompleteSource.length).toBe(3);
