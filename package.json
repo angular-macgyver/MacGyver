@@ -46,6 +46,7 @@
     "karma-sauce-launcher": "0.2.14",
     "marked": "0.3.3",
     "matchdep": "0.3.0",
+    "phantomjs-polyfill": "0.0.1",
     "protractor": "1.8.0",
     "time-grunt": "1.2.1"
   }

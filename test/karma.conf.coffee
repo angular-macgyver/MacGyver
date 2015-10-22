@@ -45,6 +45,7 @@ module.exports = (config) ->
     # list of files / patterns to load in the browser
     files: [
       # Javascript
+      "node_modules/phantomjs-polyfill/bind-polyfill.js"
       "bower_components/underscore.string/lib/underscore.string.js"
       "bower_components/angular/angular.js"
 

@@ -28,6 +28,7 @@ module.exports = (grunt) ->
       singleRun: true
       options:
         files: [
+          "node_modules/phantomjs-polyfill/bind-polyfill.js"
           "bower_components/angular/angular.js"
           "src/template/*.html"
           "lib/macgyver.js"
