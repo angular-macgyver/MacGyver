@@ -6,7 +6,7 @@ module.exports = (grunt) ->
   #
   grunt.config "karma",
     options:
-      configFile: "test/karma.conf.coffee"
+      configFile: "test/karma.conf.js"
       ngHtml2JsPreprocessor:
         stripPrefix: "src/"
     unit:
