@@ -112,7 +112,7 @@ describe('Mac modal', function() {
         });
 
         var modalElement = element[0].querySelector('.mac-modal');
-        expect(modalElement.style.length).toBe(1);
+        expect(modalElement.getAttribute('style')).toBeDefined();
       });
 
       it('should not resize the modal', function() {
