@@ -10,7 +10,7 @@ module.exports = (grunt) ->
         expand:  true
         flatten: false
         cwd:     "src"
-        src:     ["**/*.coffee"]
+        src:     ["**/*.js"]
         dest:    "docs/"
         ext:     ".md"
       ]

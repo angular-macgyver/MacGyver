@@ -35,12 +35,10 @@ module.exports = (grunt) ->
   ]
 
   grunt.registerTask "deploy", "Build and copy to lib/", [
-    "coffee"
-    "copy:src"
+    "copy:doc"
     "stylus"
     "jade"
     "concatDeploy"
-    "clean"
     "replace:src"
     "chalkboard"
     "marked"
@@ -53,24 +51,21 @@ module.exports = (grunt) ->
   ]
 
   grunt.registerTask "compile", "Compile files", [
-    "coffee"
-    "copy:src"
+    "copy:doc"
     "stylus:dev"
     "jade"
     "concat:example"
-    "clean"
     "chalkboard"
     "marked"
     "replace:docs"
   ]
 
   grunt.registerTask "deploy-bower", "Updated all bower repositories", [
-    "coffee"
+    "copy:doc"
     "concat:bower"
     "replace:bower"
     "uglify:bower"
     "stylus:module"
-    "clean"
     "updatebuild"
   ]
 
@@ -89,15 +84,12 @@ module.exports = (grunt) ->
   ]
   grunt.registerTask "test:unit", "Alias for karma:travis", ["karma:travis"]
   grunt.registerTask "test:e2e", "Compile all source code, run a test server and run the end to end tests", [
-    "clean"
-    "coffee"
-    "copy:src"
+    "copy:doc"
     "stylus:dev"
     "jade"
     "copy:data"
     "copy:template"
     "concat:lib"
-    "clean"
     "replace:src"
     "connect:e2e"
     "protractor:normal"

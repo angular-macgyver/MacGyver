@@ -9,23 +9,17 @@ module.exports = (grunt) ->
       livereload: true
     js:
       files: [
-        "src/**/*.coffee"
-        "src/*.coffee"
         "src/**/*.js"
       ]
       tasks: [
         "karma:unit:run"
-        "coffee"
-        "copy:src"
         "concat:example"
-        "clean"
       ]
     doc:
-      files: ["docs/doc.coffee"]
-      tasks: ["coffee:doc"]
+      files: ["docs/doc.js"]
+      tasks: ["copy:doc"]
     test:
       files: [
-        "test/**/*.spec.coffee"
         "test/**/*.spec.js"
       ]
       tasks: ["karma:unit:run"]

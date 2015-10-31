@@ -16,9 +16,7 @@ module.exports = (grunt) ->
       reporters: ["dots", "coverage"]
       singleRun: true
       preprocessors:
-        "test/**/*.coffee": ["coffee"]
         "src/**/*.js": ["coverage"]
-        "src/**/*.coffee": ["coverage"]
         "**/*.html": ["ng-html2js"]
       coverageReporter:
         type: "lcov"
@@ -34,5 +32,5 @@ module.exports = (grunt) ->
           "lib/macgyver.js"
           "bower_components/angular-mocks/angular-mocks.js"
           "test/vendor/browserTrigger.js"
-          "test/unit/*.spec.coffee"
+          "test/unit/*.spec.js"
         ]

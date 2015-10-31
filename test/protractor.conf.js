@@ -1,7 +1,7 @@
 require("coffee-script").register();
 
 exports.config = {
-  specs: ["e2e/*.spec.coffee"],
+  specs: ["e2e/*.spec.js"],
   baseUrl: "http://localhost:9001",
   framework: "jasmine",
 

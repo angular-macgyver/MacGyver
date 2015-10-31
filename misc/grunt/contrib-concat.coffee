@@ -2,10 +2,9 @@ module.exports = (grunt) ->
 
   #
   # Concat section
-  # appJs       - concat all the application code into MacGyver.js
-  # deployAppJs - concat all app code for deployment
-  # modulesJs   - modularized js
-  # css         - compile all css
+  # example  - Documentation scripts
+  # lib      - Full MacGyver package
+  # bower    - Bower packages
   #
 
   grunt.config "concat",

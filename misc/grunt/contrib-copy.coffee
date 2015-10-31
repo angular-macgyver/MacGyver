@@ -20,13 +20,10 @@ module.exports = (grunt) ->
         src: "docs/data.json",
         dest: "example/data.json"
       ]
-    src:
+    doc:
       files: [
-        expand:  true
-        flatten: false
-        cwd:     "src/"
-        src:     ["**/*.js"]
-        dest:    "tmp/app/"
+        src: "docs/doc.js",
+        dest: "example/js/doc.js"
       ]
     public:
       files: [
