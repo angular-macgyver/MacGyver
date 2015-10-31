@@ -97,17 +97,19 @@ describe("Mac tag autocomplete", function() {
       expect($rootScope.source).toHaveBeenCalled();
     });
 
-    xit("should focus on autocomplete when click on tag autocomplete", function() {
+    // Add protractor for this use case
+    it("should focus on autocomplete when click on tag autocomplete", function() {
       var element, textInput;
       $rootScope.source = ["test", "test1", "test2"];
       element = $compile("<mac-tag-autocomplete mac-tag-autocomplete-source='source'></mac-tag-autocomplete>")($rootScope);
 
       $rootScope.$digest();
 
-      element.triggerHandler("click");
       textInput = element[0].querySelector(".mac-autocomplete");
+      spyOn(textInput, 'focus');
+      element.triggerHandler("click");
 
-      expect(textInput).toBe(document.activeElement);
+      expect(textInput.focus).toHaveBeenCalled();
     });
 
     it("should model -> view", function() {
