@@ -38,4 +38,24 @@ constant('macPopoverDefaults', {
     </div>\
     <div mac-popover-fill-content></div>\
   </div>"
+}).
+
+constant('macModalDefaults', {
+  keyboard: false,
+  overlayClose: false,
+  resize: false,
+  position: true,
+  open: angular.noop,
+  topOffset: 20,
+  attributes: {},
+  beforeShow: angular.noop,
+  afterShow: angular.noop,
+  beforeHide: angular.noop,
+  afterHide: angular.noop,
+  template: "<div class='mac-modal-overlay'>\
+    <div class='mac-modal'>\
+      <a mac-modal-close class='mac-close-modal'></a>\
+      <div class='mac-modal-content-wrapper'></div>\
+    </div>\
+  </div>"
 });
