@@ -7,12 +7,9 @@ module.exports = (grunt) ->
   grunt.config "connect",
     example:
       options:
-        port:       9001
-        hostname:   "0.0.0.0"
-        base:       "example"
-        middleware: (connect, options, middlewares) ->
-          return [connect.static("example")]
-
+        port:     9001
+        hostname: "0.0.0.0"
+        base:     "example"
     e2e:
       options:
         port:     9001
