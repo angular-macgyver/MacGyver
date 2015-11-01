@@ -78,7 +78,6 @@ module.exports = function(config) {
     config.sauceLabs.build = buildLabel;
     config.sauceLabs.startConnect = false;
     config.sauceLabs.tunnelIdentifier = process.env.TRAVIS_JOB_NUMBER;
-    config.transports = ["xhr-polling"];
   }
 
   // Taken from AngularJS karma-shared.conf.js
