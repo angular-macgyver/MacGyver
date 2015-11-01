@@ -36,7 +36,13 @@ angular.module('Mac').directive('macTime', [
 
         opts = util.extendAttributes('macTime', defaults, attrs);
 
-        whitelistKeys = [keys.UP, keys.DOWN, keys.LEFT, keys.RIGHT, keys.A, keys.P];
+        whitelistKeys = [keys.UP,
+          keys.DOWN,
+          keys.LEFT,
+          keys.RIGHT,
+          keys.A,
+          keys.P
+        ];
 
         // Set default placeholder
         if (!attrs.placeholder) {
