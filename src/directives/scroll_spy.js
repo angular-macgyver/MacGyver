@@ -31,7 +31,7 @@ angular.module('Mac').directive('macScrollSpy', [
           }
 
           scrollTop = spyElement.scrollTop() + options.offset;
-          scrollHeight = spyElement.scrollHeight || element[0].scrollHeight;
+          scrollHeight = spyElement[0].scrollHeight || element[0].scrollHeight;
           maxScroll = scrollHeight - spyElement.height();
 
           // Select the last anchor when scrollTop is over maxScroll
@@ -66,31 +66,17 @@ angular.module('Mac').directive('macScrollSpy', [
 directive('macScrollSpyAnchor', ['scrollSpy', function (scrollSpy) {
   return {
     link: function ($scope, element, attrs) {
-      var id = attrs.id || attrs.macScrollSpyAnchor, registering, observeKey, anchor;
+      var id = attrs.id || attrs.macScrollSpyAnchor;
 
       if (!id) {
         throw new Error('Missing scroll spy anchor id');
       }
 
-      registering = function (registerId) {
-        anchor = scrollSpy.register(registerId, element);
+      var anchor = scrollSpy.register(id, element);
 
-        $scope.$on('$destroy', function () {
-          scrollSpy.unregister(registerId);
-        });
-      }
-
-      // Check if id is interpolated value
-      if (/{{(.*)}}/.test(id)) {
-        observeKey = attrs.id ? 'id' : 'macScrollSpyAnchor';
-        attrs.$observe(observeKey, function (value) {
-          if (value) {
-            registering(value);
-          }
-        });
-      } else {
-        registering(id);
-      }
+      $scope.$on('$destroy', function () {
+        scrollSpy.unregister(id);
+      });
 
       // Re-register anchor to update position/offset
       $scope.$on('refresh-scroll-spy', function () {
@@ -113,43 +99,26 @@ directive('macScrollSpyAnchor', ['scrollSpy', function (scrollSpy) {
 directive('macScrollSpyTarget', ['scrollSpy', 'scrollSpyDefaults', function (scrollSpy, defaults) {
   return {
     link: function ($scope, element, attrs) {
-      var target, highlightClass, register;
-
-      target = attrs.macScrollSpyTarget;
-      highlightClass = attrs.macScrollSpyTargetClass || defaults.highlightClass;
+      var target = attrs.macScrollSpyTarget;
+      var highlightClass = attrs.macScrollSpyTargetClass || defaults.highlightClass;
 
       if (!target) {
         throw new Error('Missing scroll spy target name');
       }
 
-      register = function (id) {
-        var callback;
-        if (!id) {
-          return;
-        }
-
-        callback = function (active) {
-          element.toggleClass(highlightClass, id == active.id);
-        }
-
-        // update target class if target is re-rendered
-        if (scrollSpy.active) {
-          callback(scrollSpy.active);
-        }
-
-        scrollSpy.addListener(callback);
-        $scope.$on('$destroy', function () {
-          scrollSpy.removeListener(callback);
-        });
+      var callback = function (active) {
+        element.toggleClass(highlightClass, target == active.id);
       }
 
-      if (/{{(.*)}}/.test(target)) {
-        attrs.$observe('macScrollSpyTarget', function (value) {
-          register(value);
-        });
-      } else {
-        register(target);
+      // update target class if target is re-rendered
+      if (scrollSpy.active) {
+        callback(scrollSpy.active);
       }
+
+      scrollSpy.addListener(callback);
+      $scope.$on('$destroy', function () {
+        scrollSpy.removeListener(callback);
+      });
     }
   };
 }]);
