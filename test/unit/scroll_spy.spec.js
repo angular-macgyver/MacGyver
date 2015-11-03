@@ -83,6 +83,64 @@ describe("Mac scroll spy", function() {
       expect(callback).toHaveBeenCalled();
     });
   });
+
+  describe("initializing container", function () {
+    var container;
+
+    beforeEach(function () {
+      container = angular.element('<div mac-scroll-spy />');
+    });
+
+    afterEach(function () {
+      container.remove();
+    });
+
+    it('should not call setActive when there is nothing registered', function () {
+      spyOn(scrollspy, 'setActive');
+      spyOn(scrollspy, 'last');
+
+      $compile(container)($rootScope);
+      $rootScope.$digest();
+
+      container.triggerHandler('scroll');
+
+      expect(scrollspy.setActive).not.toHaveBeenCalled();
+    });
+
+    it('should call setActive with last anchor', function () {
+      scrollspy.registered[0] = {};
+
+      spyOn(scrollspy, 'setActive');
+      spyOn(scrollspy, 'last');
+
+      $compile(container)($rootScope);
+      $rootScope.$digest();
+
+      container.triggerHandler('scroll');
+
+      expect(scrollspy.setActive).toHaveBeenCalled();
+      expect(scrollspy.last).toHaveBeenCalled();
+    });
+
+    it('should set the anchor active', function () {
+      spyOn(scrollspy, 'setActive');
+
+      container[0].setAttribute('style', 'height: 200px; padding-bottom: 500px;');
+      angular.element(document.body).append(container);
+
+      var anchor = {top: 0};
+      scrollspy.registered[0] = anchor;
+
+      $compile(container)($rootScope);
+      $rootScope.$digest();
+
+      container.triggerHandler('scroll');
+
+      expect(scrollspy.setActive).toHaveBeenCalled();
+      expect(scrollspy.setActive.calls.argsFor(0)[0]).toBe(anchor);
+    });
+  });
+
   describe("initializing an anchor", function() {
     it("should register with the service", function() {
       var element = angular.element("<div mac-scroll-spy-anchor id='test-anchor'></div>");
@@ -141,7 +199,7 @@ describe("Mac scroll spy", function() {
     });
 
     it("should unregister when scope gets destroy", function() {
-      var element = angular.element("<div id='test'></div>");
+      var element = angular.element("<div mac-scroll-spy-anchor id='test'></div>");
       angular.element(document.body).append(element);
       $compile(element)($rootScope);
       $rootScope.$digest();
