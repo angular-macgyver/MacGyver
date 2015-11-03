@@ -56,19 +56,19 @@ function augmentWidthOrHeight(element, name, extra, isBorderBox, styles) {
   start = name === "Width" ? 1 : 0;
   for (i = j = ref = start; j <= 3; i = j += 2) {
     if (extra === "margin") {
-      val += parseFloat(styles["" + extra + cssExpand[i]]);
+      val += parseFloat(styles["" + extra + cssExpand[i]] || 0);
     }
     if (isBorderBox) {
       if (extra === "content") {
-        val -= parseFloat(styles["padding" + cssExpand[i]]);
+        val -= parseFloat(styles["padding" + cssExpand[i]] || 0);
       }
       if (extra !== "margin") {
-        val -= parseFloat(styles["border" + cssExpand[i]]);
+        val -= parseFloat(styles["border" + cssExpand[i]] || 0);
       }
     } else {
-      val += parseFloat(styles["padding" + cssExpand[i]]);
+      val += parseFloat(styles["padding" + cssExpand[i]] || 0);
       if (extra !== "padding") {
-        val += parseFloat(styles["border" + cssExpand + "Width"]);
+        val += parseFloat(styles["border" + cssExpand + "Width"] || 0);
       }
     }
   }
