@@ -82,6 +82,10 @@ angular.module('Mac').directive('macModal', [
     return {
       restrict: 'A',
       link: function ($scope, element, attrs) {
+        if (!attrs.macModal) {
+          return;
+        }
+
         element.bind('click', function () {
           $scope.$apply(function () {
             var data = $parse(attrs.macModalData)($scope) || {};
