@@ -716,7 +716,7 @@ describe('Mac modal', function() {
     it('should not show any modal when id is not defined', function() {
       spyOn(modal, 'show')
 
-      var element = $compile('<button></button>')($rootScope);
+      var element = $compile('<button mac-modal></button>')($rootScope);
       $rootScope.$digest();
 
       element.triggerHandler('click');
