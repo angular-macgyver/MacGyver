@@ -713,18 +713,6 @@ describe('Mac modal', function() {
   });
 
   describe('modal trigger', function() {
-    it('should not show any modal when id is not defined', function() {
-      spyOn(modal, 'show')
-
-      var element = $compile('<button></button>')($rootScope);
-      $rootScope.$digest();
-
-      element.triggerHandler('click');
-      $rootScope.$digest();
-
-      expect(modal.show).not.toHaveBeenCalled();
-    });
-
     it('should bind a click event to trigger a modal', function() {
       var element, modalElement;
       modalElement = $compile('<mac-modal id="test-modal"></mac-modal>')($rootScope);
