@@ -167,8 +167,7 @@ describe("Popover service", function() {
       popover._compilePopover('test', "<div>Test</div>", {
         footer: true,
         header: true,
-        title: 'test title',
-        fixed: true
+        title: 'test title'
       }).then(callback);
 
       $rootScope.$apply();
@@ -177,7 +176,6 @@ describe("Popover service", function() {
 
       expect(scope.macPopoverClasses.footer).toBe(true);
       expect(scope.macPopoverClasses.header).toBe(true);
-      expect(scope.macPopoverClasses.fixed).toBe(true);
       expect(scope.macPopoverTitle).toBe('test title');
       expect(scope.macPopoverTemplate).toBe('<div>Test</div>');
     });
@@ -245,7 +243,21 @@ describe("Popover service", function() {
       popover._getTemplate({}).then(null, callback);
       $rootScope.$apply();
       expect(callback).toHaveBeenCalled();
-    })
+    });
+
+    it('should reject when given bad template url', inject(function ($httpBackend) {
+      $httpBackend.expectGET('/test.html').respond(404, '');
+
+      popover._getTemplate({
+        templateUrl: '/test.html'
+      }).then(angular.noop, callback);
+
+      $httpBackend.flush();
+      $rootScope.$apply();
+
+      expect(callback).toHaveBeenCalled();
+      expect(callback.calls.argsFor(0)[0]).toBe('Failed to load template: /test.html')
+    }));
   });
 
   it('should reject when opening unregistered popover`', function () {
@@ -297,6 +309,38 @@ describe("Popover service", function() {
     });
   });
 
+  describe('getById', function () {
+    var test1El = angular.element('<div />');
+    var test2El = angular.element('<div />');
+
+    var popover1 = {id: 'test1', element: test1El};
+    var popover2 = {id: 'test2', element: test2El};
+
+    beforeEach(function () {
+      popover.popoverList = [popover1, popover2];
+    });
+
+    it('should get the first popover', function () {
+      var found = popover.getById('test1');
+
+      expect(found).toBe(popover1);
+    });
+
+    it('should get the second popover using id and element', function () {
+      var found = popover.getById('test2', test2El);
+
+      expect(found).toBe(popover2);
+    });
+
+    it('should not get anything', function () {
+      var found = popover.getById('test3');
+      expect(found).toBe(null);
+
+      var found1 = popover.getById('test', test1El);
+      expect(found1).toBe(null);
+    });
+  });
+
   describe('reposition', function () {
     var popoverObj
 
@@ -306,7 +350,15 @@ describe("Popover service", function() {
         popover: angular.element('<div>popover</div>'),
         element: angular.element('<div>trigger</div>'),
         options: {}
-      }
+      };
+
+      angular.element(document).append(popoverObj.popover);
+      angular.element(document).append(popoverObj.element);
+    });
+
+    afterEach(function () {
+      popoverObj.popover.remove();
+      popoverObj.element.remove();
     });
 
     it('should reject when there is no popoverObj', function () {
@@ -318,8 +370,33 @@ describe("Popover service", function() {
       expect(callback).toHaveBeenCalled();
     });
 
-    it("should have a visible class", function() {
+    it("should switch to below with a visible class", function() {
+      popoverObj.popover.attr('direction', 'above left');
       popover.reposition(popoverObj);
+
+      $rootScope.$apply();
+      var popoverEl = popoverObj.popover;
+
+      expect(popoverEl.hasClass("visible")).toBe(true);
+      expect(popoverEl.hasClass("below")).toBe(true);
+      expect(popoverEl.hasClass("left")).toBe(true);
+    });
+
+    it("should have a visible class for middle left", function() {
+      popoverObj.popover.attr('direction', 'middle left');
+      popover.reposition(popoverObj);
+
+      $rootScope.$apply();
+      var popoverEl = popoverObj.popover;
+
+      expect(popoverEl.hasClass("visible")).toBe(true);
+      expect(popoverEl.hasClass("middle")).toBe(true);
+      expect(popoverEl.hasClass("left")).toBe(true);
+    });
+
+    it("should get the object and add a visible class", function() {
+      spyOn(popover, 'getById').and.returnValue(popoverObj);
+      popover.reposition('test-reposition');
 
       $rootScope.$apply();
       var popoverEl = popoverObj.popover;
@@ -341,6 +418,28 @@ describe("Popover service", function() {
     });
 
     // TODO(adrian): Add additional tests for calculating offset
+
+  });
+
+  describe('calculateOffset', function () {
+    var current = {height: 100, width: 200};
+    var relative = {height: 300, width: 400};
+
+    var testcases = [
+      {position: 'above left', expected: {top: -110, left: 175}},
+      {position: 'above right', expected: {top: -110, left: 25}},
+      {position: 'below left', expected: {top: 310, left: 175}},
+      {position: 'below right', expected: {top: 310, left: 25}},
+      {position: 'middle left', expected: {top: 100, left: -210}},
+      {position: 'middle right', expected: {top: 100, left: 410}}
+    ];
+
+    testcases.forEach(function (testcase) {
+      it('should calculate offset correctly for ' + testcase.position, function () {
+        var calculated = popover.calculateOffset(testcase.position, current, relative);
+        expect(calculated).toEqual(testcase.expected);
+      });
+    });
   });
 
   describe("hide popover", function() {
@@ -435,6 +534,18 @@ describe("Popover service", function() {
 
       $animate.triggerCallbacks();
       expect(destroyed).toHaveBeenCalled();
+    });
+  });
+
+  describe('hideAll', function () {
+    it('should hide all popovers in popoverList', function () {
+        spyOn(popover, 'hide').and.callThrough();
+
+        popover.popoverList.length = 10;
+
+        popover.hideAll();
+
+        expect(popover.hide.calls.count()).toBe(10);
     });
   });
 });
