@@ -13,7 +13,6 @@
  *
  * ```js
  * {
- *   fixed: false,
  *   offsetY: 0,
  *   offsetX: 0,
  *   trigger: "click"
@@ -215,8 +214,7 @@ angular.module('Mac').provider('popover', function () {
           angular.extend(viewScope, {
             macPopoverClasses: {
               footer: options.footer || false,
-              header: options.header || !!options.title || false,
-              fixed: options.fixed || false
+              header: options.header || !!options.title || false
             },
             macPopoverTitle: options.title || '',
             macPopoverTemplate: template
@@ -317,9 +315,6 @@ angular.module('Mac').provider('popover', function () {
           $window = angular.element(window);
 
           var offset = relativeElement.offset();
-          if (options.fixed) {
-            offset.top = relativeElement.position().top;
-          }
 
           var relative = {
             height: relativeElement.outerHeight(),
@@ -331,57 +326,26 @@ angular.module('Mac').provider('popover', function () {
             width: currentPopover.outerWidth()
           };
 
-          var top = 0;
-          var left = 0;
-
           var position = (currentPopover.attr('direction') || 'above left').trim();
 
-          function updateOffset() {
-            switch (position) {
-              case "above left":
-                top = -(current.height + 10);
-                left = -25 + relative.width / 2;
-                break;
-              case "above right":
-                top = -(current.height + 10);
-                left = 25 + relative.width / 2 - current.width;
-                break;
-              case "below left":
-                top = relative.height + 10;
-                left = -25 + relative.width / 2;
-                break;
-              case "below right":
-                top = relative.height + 10;
-                left = 25 + relative.width / 2 - current.width;
-                break;
-              case "middle right":
-                top = relative.height / 2 - current.height / 2;
-                left = relative.width + 10;
-                break;
-              case "middle left":
-                top = relative.height / 2 - current.height / 2;
-                left = -(current.width + 10);
-                break;
-            }
-          }
-          updateOffset();
+          var calculatedOffset = this.calculateOffset(position, current, relative);
 
           // Calculate if popover is clipped by window, swap direction otherwise
-          var topScroll = options.fixed ? 0 : $window.scrollTop();
-          var leftScroll = options.fixed ? 0 : $window.scrollLeft();
+          var topScroll = $window.scrollTop();
+          var leftScroll = $window.scrollLeft();
           var action = {};
 
           // if position is either above or below
           if (position.indexOf('middle') === -1) {
-            if (offset.top + top - topScroll < 0) {
+            if (offset.top + calculatedOffset.top - topScroll < 0) {
               action = {remove: 'above', add: 'below'};
-            } else if (offset.top + top + current.height - topScroll > $window.height()) {
+            } else if (offset.top + calculatedOffset.top + current.height - topScroll > $window.height()) {
               action = {remove: 'below', add: 'above'};
             }
 
           // if position is middle
           } else {
-            var diff = offset.top + top - topScroll;
+            var diff = offset.top + calculatedOffset.top - topScroll;
             if (diff >= 0) {
               diff += currentPopover.outerHeight() - $window.height();
               if (diff < 0) {
@@ -391,7 +355,7 @@ angular.module('Mac').provider('popover', function () {
 
             if (diff) {
               var tip = angular.element(currentPopover[0].getElementsByClassName('tip'));
-              top -= diff;
+              // calculatedOffset.top -= diff;
               var tipOffset = +tip.css('margin-tip').replace('px', '');
               tip.css('margin-top', tipOffset + diff);
             }
@@ -406,11 +370,11 @@ angular.module('Mac').provider('popover', function () {
           action = {};
 
           // Right align originally, switching to left
-          if (offset.left + left - leftScroll < 0) {
+          if (offset.left + calculatedOffset.left - leftScroll < 0) {
             action = {remove: 'right', add: 'left'};
 
           // Left align originally, switch to right
-          } else if (offset.left + left + currentPopover.outerWidth() - leftScroll) {
+          } else if (offset.left + calculatedOffset.left + currentPopover.outerWidth() - leftScroll) {
             action = {remove: 'left', add: 'right'};
           }
 
@@ -418,10 +382,10 @@ angular.module('Mac').provider('popover', function () {
             position = position.replace(action.remove, action.add);
           }
 
-          updateOffset();
+          calculatedOffset = this.calculateOffset(position, current, relative);
 
-          offset.top += top;
-          offset.left += left;
+          offset.top += calculatedOffset.top;
+          offset.left += calculatedOffset.left;
 
           // Add any configured offset on the popover trigger
           if (options.offsetX !== undefined) {
@@ -442,6 +406,39 @@ angular.module('Mac').provider('popover', function () {
           currentPopover.addClass('visible ' + position);
 
           return $q.when(true);
+        },
+
+        calculateOffset: function (position, current, relative) {
+          var offset = {top: 0, left: 0};
+
+          switch (position) {
+            case "above left":
+              offset.top = -(current.height + 10);
+              offset.left = -25 + relative.width / 2;
+              break;
+            case "above right":
+              offset.top = -(current.height + 10);
+              offset.left = 25 + relative.width / 2 - current.width;
+              break;
+            case "below left":
+              offset.top = relative.height + 10;
+              offset.left = -25 + relative.width / 2;
+              break;
+            case "below right":
+              offset.top = relative.height + 10;
+              offset.left = 25 + relative.width / 2 - current.width;
+              break;
+            case "middle right":
+              offset.top = relative.height / 2 - current.height / 2;
+              offset.left = relative.width + 10;
+              break;
+            case "middle left":
+              offset.top = relative.height / 2 - current.height / 2;
+              offset.left = -(current.width + 10);
+              break;
+          }
+
+          return offset;
         },
 
         // Hides the currently shown popover
@@ -478,7 +475,7 @@ angular.module('Mac').provider('popover', function () {
 
           } else {
             // Get the last popover element
-            popoverObj = this.pop();
+            popoverObj = this.popoverList.pop();
           }
 
           if (!popoverObj) return;

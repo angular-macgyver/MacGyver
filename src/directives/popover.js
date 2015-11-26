@@ -5,7 +5,6 @@
  * Mac popover trigger directive
  *
  * @param {String}  mac-popover               ID of the popover to show
- * @param {Boolean} mac-popover-fixed         Determine if the popover is fixed
  * @param {Integer} mac-popover-offset-x      Extra x offset (default 0)
  * @param {Integer} mac-popover-offset-y      Extra y offset (default 0)
  * @param {String}  mac-popover-trigger       Trigger option, click | hover | focus (default click)
