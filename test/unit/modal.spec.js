@@ -609,11 +609,26 @@ describe('Mac modal', function() {
       expect(modal.registered['test-modal']).toBeDefined();
     });
 
+    it('should register the modal with observe', function() {
+      $rootScope.modalId = 'test-modal-ob'
+
+      var modalElement = $compile('<mac-modal mac-modal="{{modalId}}"></mac-modal>')($rootScope);
+      $rootScope.$digest();
+
+      expect(modal.registered['test-modal-ob']).toBeDefined();
+    });
+
     it('should unregister the modal when $scope is destroyed', function() {
+      spyOn(modal, 'hide');
+
       var modalElement = $compile('<mac-modal id="test-modal"></mac-modal>')($rootScope);
       $rootScope.$digest();
+
+      modal.opened = {id: 'test-modal'};
+
       $rootScope.$destroy();
 
+      expect(modal.hide).toHaveBeenCalled();
       expect(modal.registered['test-modal']).not.toBeDefined();
     });
 
@@ -698,6 +713,18 @@ describe('Mac modal', function() {
   });
 
   describe('modal trigger', function() {
+    it('should not show any modal when id is not defined', function() {
+      spyOn(modal, 'show')
+
+      var element = $compile('<button></button>')($rootScope);
+      $rootScope.$digest();
+
+      element.triggerHandler('click');
+      $rootScope.$digest();
+
+      expect(modal.show).not.toHaveBeenCalled();
+    });
+
     it('should bind a click event to trigger a modal', function() {
       var element, modalElement;
       modalElement = $compile('<mac-modal id="test-modal"></mac-modal>')($rootScope);
@@ -725,6 +752,42 @@ describe('Mac modal', function() {
 
       $animate.triggerCallbackPromise();
       expect(modal.opened.options.data.text).toBe('hello');
+    });
+  });
+
+  describe('macModalClose', function () {
+    it('should hide the modal', function () {
+      spyOn(modal, 'hide');
+
+      var modalElement = $compile('<mac-modal id="test-modal"></mac-modal>')($rootScope);
+      $rootScope.$digest();
+
+      modal.show('test-modal');
+
+      $animate.triggerCallbackPromise();
+
+      var closeButton = modalElement[0].querySelector('.mac-close-modal');
+      angular.element(closeButton).triggerHandler('click');
+
+      expect(modal.hide).toHaveBeenCalled();
+    })
+  });
+
+  describe('modal overlay close', function () {
+    it('should close modal when clicking on overlay', function () {
+      spyOn(modal, 'hide');
+
+      var modalElement = $compile('<mac-modal id="test-modal" mac-modal-overlay-close></mac-modal>')($rootScope);
+      $rootScope.$digest();
+
+      modal.show('test-modal');
+      $rootScope.$digest();
+
+      modalElement.triggerHandler('click');
+
+      $rootScope.$digest();
+
+      expect(modal.hide).toHaveBeenCalled();
     });
   });
 
