@@ -58,4 +58,11 @@ constant('macModalDefaults', {
       <div class='mac-modal-content-wrapper'></div>\
     </div>\
   </div>"
+}).
+
+constant('macAffixDefaults', {
+  top: 0,
+  bottom: 0,
+  disabled: false,
+  classes: "affix affix-top affix-bottom"
 });
