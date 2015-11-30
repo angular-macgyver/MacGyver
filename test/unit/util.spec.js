@@ -13,6 +13,17 @@ describe('Mac Util', function() {
     expect(util.trim('    test    ')).toBe('test');
   });
 
+  it('should trim when string prototype does not have it', function() {
+    var tempTrim = String.prototype.trim;
+    String.prototype.trim = null;
+
+    expect(util.trim('    test')).toBe('test');
+    expect(util.trim('test    ')).toBe('test');
+    expect(util.trim('    test    ')).toBe('test');
+
+    String.prototype.trim = tempTrim;
+  });
+
   it('should capitalize words', function() {
     expect(util.capitalize('hamburger')).toBe('Hamburger');
     expect(util.capitalize('dog house')).toBe('Dog house');
@@ -206,28 +217,49 @@ describe('Mac Util', function() {
     var attrs, attrsWithPrefix, defaults;
     defaults = {
       width: 10,
-      height: 20
+      height: 20,
+      isEnabled: false,
+      isShown: true,
+      someValue: 10
     };
     attrs = {
-      width: 50
+      width: 50,
+      isEnabled: 'true',
+      isShown: 'false',
+      someValue: '23'
     };
 
     attrsWithPrefix = {
-      macGyverWidth: 30
+      macGyverWidth: 30,
+      macGyverHeight: 19
     };
 
     it('should extend default attributes', function() {
-      expect(util.extendAttributes(null, defaults, attrs)).toEqual({
+      expect(util.extendAttributes(null, defaults, {width: 50})).toEqual({
         width: 50,
-        height: 20
+        height: 20,
+        isEnabled: false,
+        isShown: true,
+        someValue: 10
       });
     });
 
     it('should extend default attributes when there is a prefix', function() {
       expect(util.extendAttributes('macGyver', defaults, attrsWithPrefix)).toEqual({
         width: 30,
-        height: 20
+        height: 19,
+        isEnabled: false,
+        isShown: true,
+        someValue: 10
       });
+    });
+
+    it('should handle special variable', function () {
+      var outputAttrs = util.extendAttributes(null, defaults, attrs);
+
+      expect(outputAttrs.isEnabled).toBe(true);
+      expect(outputAttrs.isShown).toBe(false);
+      expect(outputAttrs.someValue).toBe(23);
     });
   });
 
@@ -250,43 +282,47 @@ describe('Mac Util', function() {
   });
 
   describe('hex to rgb', function() {
-    var hex, hexValues, rgb, _results;
-    hexValues = {
-      '3D9AEB': {
-        r: 61,
-        g: 154,
-        b: 235
-      },
-      '#3D9AEB': {
-        r: 61,
-        g: 154,
-        b: 235
-      },
-      'BAC': {
-        r: 187,
-        g: 170,
-        b: 204
-      },
-      '#BAC': {
-        r: 187,
-        g: 170,
-        b: 204
-      }
-    };
-    _results = [];
-    for (hex in hexValues) {
-      rgb = hexValues[hex];
-      _results.push(it('should convert ' + hex + ' correctly', function() {
-        var rgbKey, rgbValue, testRGB, _results1;
-        testRGB = util.hex2rgb(hex);
-        _results1 = [];
-        for (rgbKey in testRGB) {
-          rgbValue = testRGB[rgbKey];
-          _results1.push(expect(rgbValue).toBe(rgb[rgbKey]));
-        }
-        _results1;
-      }));
-    }
-    _results;
+    it('should convert 3D9AEB', function () {
+      var testRGB = util.hex2rgb('3D9AEB');
+      expect(testRGB.r).toBe(61);
+      expect(testRGB.g).toBe(154);
+      expect(testRGB.b).toBe(235);
+    });
+
+    it('should convert #3D9AEB', function () {
+      var testRGB = util.hex2rgb('#3D9AEB');
+      expect(testRGB.r).toBe(61);
+      expect(testRGB.g).toBe(154);
+      expect(testRGB.b).toBe(235);
+    });
+
+    it('should convert BAC', function () {
+      var testRGB = util.hex2rgb('BAC');
+      expect(testRGB.r).toBe(187);
+      expect(testRGB.g).toBe(170);
+      expect(testRGB.b).toBe(204);
+    });
+
+    it('should convert #BAC', function () {
+      var testRGB = util.hex2rgb('#BAC');
+      expect(testRGB.r).toBe(187);
+      expect(testRGB.g).toBe(170);
+      expect(testRGB.b).toBe(204);
+    });
+  });
+
+  describe('getCssVendorName', function () {
+    var testEl = angular.element('<div />')[0];
+
+    it('should get the css key with vendor prefix', function () {
+      var name = util.getCssVendorName(testEl, 'animation');
+      expect(name).toBeDefined()
+      expect(name.indexOf('animation')).not.toBe(0)
+    });
+
+    it('should fallback to the passed in value', function () {
+      var name = util.getCssVendorName(testEl, 'doesNotExist');
+      expect(name).toBe('doesNotExist')
+    });
   });
 });
