@@ -316,13 +316,13 @@ describe('Mac Util', function() {
 
     it('should get the css key with vendor prefix', function () {
       var name = util.getCssVendorName(testEl, 'animation');
-      expect(name).toBeDefined()
-      expect(name.indexOf('animation')).not.toBe(0)
+      expect(name).toBeDefined();
+      expect(name.indexOf('animation')).not.toBe(-1);
     });
 
     it('should fallback to the passed in value', function () {
       var name = util.getCssVendorName(testEl, 'doesNotExist');
-      expect(name).toBe('doesNotExist')
+      expect(name).toBe('doesNotExist');
     });
   });
 });
