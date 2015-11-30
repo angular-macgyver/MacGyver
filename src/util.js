@@ -460,12 +460,12 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
 
     getCssVendorName: function (el, name) {
       var i, prefix;
-      name = this.capitalize(name);
+      var capitalizedName = this.capitalize(name);
       for (i = 0; i < cssPrefixes.length; i++) {
         prefix = cssPrefixes[i];
 
-        if (el.style[prefix+name] !== null) {
-          return prefix + name;
+        if (el.style.hasOwnProperty(prefix + capitalizedName)) {
+          return prefix + capitalizedName;
         }
       }
       return name;
