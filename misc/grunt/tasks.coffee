@@ -5,7 +5,6 @@ componentFile  = "bower.json"
 child = require "child_process"
 
 GIT_TAG   = "git describe --tags --abbrev=0"
-CHANGELOG = "coffee ./changelog.coffee"
 
 getLastVersion = (callback) ->
   child.exec GIT_TAG, (error, stdout, stderr) ->
@@ -95,22 +94,6 @@ module.exports = (grunt) ->
 
       grunt.file.write file.dest, src, encoding: "utf8"
       grunt.log.writeln "Updated version in #{file.dest}"
-
-  ###
-  @name changelog
-  @description
-  Generate changelog with changelog.coffee
-  ###
-  grunt.registerTask "changelog", "Generate temporary changelog", ->
-    done    = @async()
-    version = grunt.config.get("pkg").version
-
-    CMD = "#{CHANGELOG} v#{version} changelog.tmp.md"
-    child.exec CMD, (error, stdout, stderr) ->
-      grunt.fail.fatal error if error?
-
-      grunt.log.writeln stdout
-      done()
 
   ###
   @name tag
