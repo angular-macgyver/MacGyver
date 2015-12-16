@@ -14,12 +14,7 @@
   "scripts": {
     "test": "grunt karma:travis"
   },
-  "license": [
-    {
-      "type": "MIT",
-      "url": "https://github.com/angular-macgyver/MacGyver/blob/master/LICENSE"
-    }
-  ],
+  "license": "MIT",
   "dependencies": {},
   "devDependencies": {
     "coffee-script": "1.10.0",
