@@ -73,14 +73,14 @@ MacAffixController.prototype.scrollEvent = function () {
 
   if (affix === this.lastAffix) return;
   if (this.unpin) {
-    element.css('top', '');
+    this.$element.css('top', '');
   }
 
   this.lastAffix = affix;
 
   if (affix === 'bottom') {
     if (this.pinnedOffset !== null) {
-      this.unpin = pinnedOffset;
+      this.unpin = this.pinnedOffset;
     }
 
     this.$element
@@ -99,8 +99,8 @@ MacAffixController.prototype.scrollEvent = function () {
 
   // Look into merging this with the move if block
   if (affix === 'bottom') {
-    curOffset = element.offset();
-    element.css('top', this.unpin - curOffset.top);
+    curOffset = this.$element.offset();
+    this.$element.css('top', this.unpin - curOffset.top);
   }
 
   return true;
