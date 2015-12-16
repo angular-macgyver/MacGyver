@@ -30,11 +30,9 @@ Duct Tape and a Swiss Army Knife. Angular helpers for all your friends!
  - Boolean
  - Pluralize
  - Timestamp
- - Underscore String
 
 ## 3rd party libraries dependencies ##
  - AngularJS (1.2.x+)
- - Underscore String (Underscore string filter)
 
 ## Using MacGyver ##
 You can install via [Bower](http://www.bower.io) or download from [Github](https://github.com/angular-macgyver/MacGyver/archive/master.zip)
