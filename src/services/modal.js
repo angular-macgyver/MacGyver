@@ -99,7 +99,7 @@ angular.module('Mac').provider('modal', function () {
           } else if (this.registered[id]) {
             var modalObject = this.registered[id];
             var options = modalObject.options;
-            showOptions = {};
+            var showOptions = {};
 
             // Extend options from trigger with modal options
             angular.extend(showOptions, options, triggerOptions);

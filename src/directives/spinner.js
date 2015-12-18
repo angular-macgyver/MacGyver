@@ -58,7 +58,7 @@ angular.module('Mac').directive('macSpinner', ['util', function (util) {
     replace: true,
     template: '<div class="mac-spinner"></div>',
 
-    compile: function (element, attrs) {
+    compile: function (element) {
       var i, bars = [],
           animateCss = util.getCssVendorName(element[0], 'animation'),
           transformCss = util.getCssVendorName(element[0], 'transform'),

@@ -307,7 +307,7 @@ MacAutocompleteController.prototype.updateItem = function (data) {
 MacAutocompleteController.prototype.appendMenu = function () {
   var self = this;
   if (!this.isMenuAppended) {
-    this.$element.bind('blur', function (event) {
+    this.$element.bind('blur', function () {
       return self.blurHandler();
     });
 
@@ -380,8 +380,8 @@ MacAutocompleteController.prototype.getData = function (url, query) {
     options.timeout = this.previousPromise.promise;
 
     return this.$http(options)
-      .success(function (data, status, headers, config) {
-        dataList = self.onSuccess({
+      .success(function (data, status, headers) {
+        var dataList = self.onSuccess({
           data: data,
           status: status,
           headers: headers
@@ -393,7 +393,7 @@ MacAutocompleteController.prototype.getData = function (url, query) {
 
         self.updateItem(dataList);
       })
-      .error(function (data, status, headers, config) {
+      .error(function (data, status, headers) {
         self.onError({
           data: data,
           status: status,

@@ -65,7 +65,7 @@ angular.module('Mac').directive('macTime', [
 
         time = timeUtil.initializeTime(opts);
 
-        element.on('blur', function (event) {
+        element.on('blur', function () {
           $scope.$apply(function () {
             timeUtil.updateInput(time, ngModelCtrl);
           });
@@ -77,7 +77,7 @@ angular.module('Mac').directive('macTime', [
          * Note: The initial click into the input will not update the time because the
          * model is empty. The selection by default should be hour
          */
-        element.on('click', function (event) {
+        element.on('click', function () {
           $scope.$apply(function() {
             var isModelSet = !!ngModelCtrl.$modelValue;
 

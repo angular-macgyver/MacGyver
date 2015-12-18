@@ -69,7 +69,7 @@ angular.module('Mac').directive('macMenu', function () {
       }
 
       $scope.$watchCollection('items', function (items) {
-        if (!!items.length) {
+        if (items.length) {
           attrs.$addClass('visible');
         } else {
           attrs.$removeClass('visible');

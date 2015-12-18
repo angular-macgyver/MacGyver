@@ -37,8 +37,7 @@ angular.module('Mac').directive('macTagAutocomplete', [
   '$parse',
   '$timeout',
   'keys',
-  'util',
-  function ($parse, $timeout, keys, util) {
+  function ($parse, $timeout, keys) {
     return {
       restrict: 'E',
       templateUrl: 'template/tag_autocomplete.html',
@@ -55,13 +54,8 @@ angular.module('Mac').directive('macTagAutocomplete', [
       },
 
       compile: function (element, attrs) {
-        var valueKey = attrs.macTagAutocompleteValue != undefined ?
-          attrs.macTagAutocompleteValue : 'id';
-
         var labelKey = attrs.macTagAutocompleteLabel != undefined ?
           attrs.macTagAutocompleteLabel : 'name';
-
-        var valueGetter = $parse(valueKey);
         var labelGetter = $parse(labelKey);
 
         var queryKey = attrs.macTagAutocompleteQuery || 'q';
@@ -98,7 +92,7 @@ angular.module('Mac').directive('macTagAutocomplete', [
           };
 
           // TODO (adrian): Look into removing this
-          updateAutocompleteSource = function () {
+          var updateAutocompleteSource = function () {
             $scope.autocompletePlaceholder = $scope.selected && $scope.selected.length ? '' : $scope.placeholder;
 
             if (!angular.isArray($scope.source) || !$scope.selected) {

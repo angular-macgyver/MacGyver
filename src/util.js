@@ -385,7 +385,7 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
     getQueryString: function(url, name) {
       var regex, regexS, results;
       name = name || '';
-      name = name.replace(/[[]/, "\[").replace(/[]]/, "\]");
+      name = name.replace(/\[/, "\[").replace(/\]/, "\]");
       regexS = "[\?&]" + name + "=([^&#]*)";
       regex = new RegExp(regexS);
       results = regex.exec(url);
@@ -433,7 +433,7 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
      * @returns {Object}
      */
     extendAttributes: function(prefix, defaults, attributes) {
-      var altKey, key, macKey, output, value, _ref, _ref1, outputValue;
+      var altKey, key, macKey, output, value, outputValue;
       prefix = prefix || '';
       output = {};
       for (key in defaults) {

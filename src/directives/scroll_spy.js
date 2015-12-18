@@ -22,7 +22,7 @@ angular.module('Mac').directive('macScrollSpy', [
         // NOTE: Look into using something other than $window
         spyElement = element[0].tagName == 'BODY' ? angular.element($window) : element;
 
-        spyElement.bind('scroll', function ($event) {
+        spyElement.bind('scroll', function () {
           var scrollTop, scrollHeight, maxScroll, i, anchor;
 
           // NOTE: exit immediately if no items are registered

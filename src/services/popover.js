@@ -135,7 +135,7 @@ angular.module('Mac').provider('popover', function () {
             this.registered[id] = options;
           }
 
-          return !!!exist;
+          return !exist;
         },
 
         unregister: function (id) {
@@ -312,7 +312,7 @@ angular.module('Mac').provider('popover', function () {
           var currentPopover = popoverObj.popover;
           var relativeElement = popoverObj.element;
           var options = popoverObj.options;
-          $window = angular.element(window);
+          var $window = angular.element(window);
 
           var offset = relativeElement.offset();
 

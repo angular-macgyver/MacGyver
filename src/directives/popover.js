@@ -178,7 +178,7 @@ directive('macPopover', [
 directive('macPopoverFillContent', ['$compile', function ($compile) {
   return {
     restrict: 'A',
-    link: function ($scope, element, attrs) {
+    link: function ($scope, element) {
       element.html($scope.macPopoverTemplate);
       $compile(element.contents())($scope);
     }

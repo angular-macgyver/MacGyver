@@ -26,15 +26,15 @@ var cssExpand = ["Top", "Right", "Bottom", "Left"],
 
 function getStyles(element) {
   return window.getComputedStyle(element, null);
-};
+}
 
 function isWindow(obj) {
   return obj && obj.document && obj.location && obj.alert && obj.setInterval;
-};
+}
 
 function isScope(obj) {
   return obj && (obj.$evalAsync != null) && (obj.$watch != null);
-};
+}
 
 // HACK: Add isScope to AngularJS global scope
 angular.isScope = isScope;
@@ -45,16 +45,16 @@ function getWindow(element) {
   } else {
     return element.nodeType === 9 && element.defaultView;
   }
-};
+}
 
 function augmentWidthOrHeight(element, name, extra, isBorderBox, styles) {
-  var i, j, ref, start, val;
+  var i, start, val;
   if (extra === (isBorderBox ? "border" : "content")) {
     return 0;
   }
   val = 0;
   start = name === "Width" ? 1 : 0;
-  for (i = j = ref = start; j <= 3; i = j += 2) {
+  for (i = start; i <= 3; i += 2) {
     if (extra === "margin") {
       val += parseFloat(styles["" + extra + cssExpand[i]] || 0);
     }
@@ -73,7 +73,7 @@ function augmentWidthOrHeight(element, name, extra, isBorderBox, styles) {
     }
   }
   return val;
-};
+}
 
 function getWidthOrHeight(type, prefix, element) {
   return function(margin) {
@@ -119,7 +119,7 @@ function getWidthOrHeight(type, prefix, element) {
     }
     return value + augmentWidthOrHeight(element, type, extra || (isBorderBox ? "border" : "content"), valueIsBorderBox, styles);
   };
-};
+}
 
 var jqLiteExtend = {
   height: function(element) {

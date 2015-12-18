@@ -55,7 +55,6 @@ MacAffixController.prototype.scrollEvent = function () {
     return;
   }
 
-  var position = this.$element.offset();
   var scrollTop = this.windowEl.scrollTop();
   var scrollHeight = this.$document.height();
   var elementHeight = this.$element.outerHeight();
@@ -99,7 +98,7 @@ MacAffixController.prototype.scrollEvent = function () {
 
   // Look into merging this with the move if block
   if (affix === 'bottom') {
-    curOffset = this.$element.offset();
+    var curOffset = this.$element.offset();
     this.$element.css('top', this.unpin - curOffset.top);
   }
 

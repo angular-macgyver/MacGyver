@@ -106,7 +106,7 @@ angular.module('Mac').directive('macModal', [
   function (modal) {
     return {
       restrict: 'A',
-      link: function($scope, element, attrs) {
+      link: function($scope, element) {
         element.bind('click', function () {
           $scope.$apply(function () {
             modal.hide();
