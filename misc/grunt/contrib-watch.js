@@ -10,7 +10,7 @@ module.exports = function(grunt) {
     },
     js: {
       files: ["src/**/*.js"],
-      tasks: ["karma:unit:run", "concat:example"]
+      tasks: ["eslint:src", "karma:unit:run", "concat:example"]
     },
     doc: {
       files: ["docs/doc.js"],
@@ -18,7 +18,7 @@ module.exports = function(grunt) {
     },
     test: {
       files: ["test/**/*.spec.js"],
-      tasks: ["karma:unit:run"]
+      tasks: ["eslint:test", "eslint:e2e", "karma:unit:run"]
     },
     css: {
       files: ["src/css/*.styl", "vendor/vendor.styl"],

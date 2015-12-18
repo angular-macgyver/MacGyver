@@ -30,6 +30,7 @@
     "grunt-contrib-uglify": "0.10.0",
     "grunt-contrib-watch": "0.6.1",
     "grunt-coveralls": "1.0.0",
+    "grunt-eslint": "^17.3.1",
     "grunt-karma": "0.12.1",
     "karma": "0.13.14",
     "karma-coverage": "0.5.3",

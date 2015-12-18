@@ -50,20 +50,24 @@ module.exports = function(grunt) {
     "updatebuild"
   ]);
 
-  grunt.registerTask("dev", "Watch src and run test server", ["compile",
+  grunt.registerTask("dev", "Watch src and run test server", [
+    "compile",
     "copy:data",
     "copy:template",
+    "eslint",
     "karma:unit",
     "connect:example",
     "watch"
   ]);
 
   grunt.registerTask("test:ci", [
+    "eslint",
     "karma:travis",
     "coveralls"
   ]);
 
   grunt.registerTask("test:unit", "Alias for karma:travis", [
+    "eslint",
     "karma:travis"
   ]);
 
