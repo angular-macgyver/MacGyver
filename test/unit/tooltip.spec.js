@@ -85,7 +85,7 @@ describe("Mac Tooltip", function() {
 
     it("should throw an error with invalid trigger", function() {
       var compile = function() {
-        var tip = $compile("<div mac-tooltip='test' mac-tooltip-trigger='trigger'></div>")($rootScope);
+        $compile("<div mac-tooltip='test' mac-tooltip-trigger='trigger'></div>")($rootScope);
         $rootScope.$digest();
       };
       expect(compile).toThrow();

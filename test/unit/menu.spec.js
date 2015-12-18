@@ -57,11 +57,10 @@ describe("Mac menu", function() {
   });
 
   it("should update scope index", function() {
-    var element;
     $rootScope.items = items;
     $rootScope.index = 0;
 
-    element = $compile("<mac-menu mac-menu-items='items' mac-menu-index='index'></mac-menu>")($rootScope);
+    $compile("<mac-menu mac-menu-items='items' mac-menu-index='index'></mac-menu>")($rootScope);
     $rootScope.$digest();
 
     $rootScope.$$childHead.setIndex(2);
@@ -84,12 +83,11 @@ describe("Mac menu", function() {
   });
 
   it("should fire select callback", function() {
-    var callback, element;
-    callback = jasmine.createSpy("select");
+    var callback = jasmine.createSpy("select");
     $rootScope.items = items;
     $rootScope.select = callback;
 
-    element = $compile("<mac-menu mac-menu-items='items' mac-menu-select='select(index)'></mac-menu>")($rootScope);
+    $compile("<mac-menu mac-menu-items='items' mac-menu-select='select(index)'></mac-menu>")($rootScope);
     $rootScope.$digest();
 
     $rootScope.$$childHead.selectItem(3);

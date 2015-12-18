@@ -226,7 +226,7 @@ describe("Mac scroll spy", function() {
     });
 
     it("should add a listener", function() {
-      var element = $compile("<div mac-scroll-spy-target='test'></div>")($rootScope);
+      $compile("<div mac-scroll-spy-target='test'></div>")($rootScope);
       $rootScope.$digest();
 
       expect(scrollspy.listeners.length).toBe(1);
@@ -263,7 +263,7 @@ describe("Mac scroll spy", function() {
     });
 
     it("should remove listener when scope is destroyed", function() {
-      var element = $compile("<div mac-scroll-spy-target='test'></div>")($rootScope);
+      $compile("<div mac-scroll-spy-target='test'></div>")($rootScope);
       $rootScope.$digest();
 
       $rootScope.$destroy();

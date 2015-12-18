@@ -1,12 +1,11 @@
 describe("Popover service", function() {
-  var $animate, $rootScope, $timeout, popover;
+  var $animate, $rootScope, popover;
   beforeEach(module("Mac"));
   beforeEach(module("ngAnimateMock"));
 
-  beforeEach(inject(function(_$animate_, _$rootScope_, _$timeout_, _popover_) {
+  beforeEach(inject(function(_$animate_, _$rootScope_, _popover_) {
     $animate = _$animate_;
     $rootScope = _$rootScope_;
-    $timeout = _$timeout_;
     popover = _popover_;
   }));
 
@@ -133,7 +132,6 @@ describe("Popover service", function() {
     });
 
     it('should reposition popover based on defined event', function () {
-      var popoverObj, scope;
       popover._compilePopover('test', "<div>Test</div>", {
         refreshOn: 'some-event'
       }).then(callback);

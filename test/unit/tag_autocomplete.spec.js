@@ -1,9 +1,9 @@
 describe("Mac tag autocomplete", function() {
-  var $compile, $rootScope, $timeout, hasClass, keys;
+  var $compile, $rootScope, $timeout, keys;
 
   function hasClass(element, className) {
     return element[0].className.indexOf(className) > -1;
-  };
+  }
 
   beforeEach(module("Mac"));
   beforeEach(module("template/tag_autocomplete.html"));
@@ -87,9 +87,8 @@ describe("Mac tag autocomplete", function() {
     });
 
     it("should have the same source function as the parent scope", function() {
-      var element;
       $rootScope.source = jasmine.createSpy("source");
-      element = $compile("<mac-tag-autocomplete mac-tag-autocomplete-source='source'></mac-tag-autocomplete>")($rootScope);
+      $compile("<mac-tag-autocomplete mac-tag-autocomplete-source='source'></mac-tag-autocomplete>")($rootScope);
 
       $rootScope.$digest();
       $rootScope.$$childHead.autocompleteSource();
@@ -128,22 +127,19 @@ describe("Mac tag autocomplete", function() {
 
   describe("selected variable", function() {
     it("should filter out used tags", function() {
-      var element, textInputScope;
       var tag1 = {id: 'tag1'};
       var tag2 = {id: 'tag2'};
       var tag3 = {id: 'tag3'};
       $rootScope.source = [tag1, tag2, tag3];
       $rootScope.selected = [tag1];
-      element = $compile("<mac-tag-autocomplete mac-tag-autocomplete-source='source' mac-tag-autocomplete-selected='selected'></mac-tag-autocomplete>")($rootScope);
+      $compile("<mac-tag-autocomplete mac-tag-autocomplete-source='source' mac-tag-autocomplete-selected='selected'></mac-tag-autocomplete>")($rootScope);
       $rootScope.$digest();
 
-      textInputScope = $rootScope.$$childHead;
+      var textInputScope = $rootScope.$$childHead;
       expect(textInputScope.autocompleteSource.length).toBe(2);
     });
 
     it("should update autocompleteSource when source changes", function() {
-      var element, textInputScope;
-
       var tag1 = {id: 'tag1'};
       var tag2 = {id: 'tag2'};
       var tag3 = {id: 'tag3'};
@@ -151,10 +147,10 @@ describe("Mac tag autocomplete", function() {
       $rootScope.source = [tag1, tag2, tag3];
       $rootScope.selected = [tag1];
 
-      element = $compile("<mac-tag-autocomplete\n  mac-tag-autocomplete-source='source'\n  mac-tag-autocomplete-selected='selected'>\n</mac-tag-autocomplete>")($rootScope);
+      $compile("<mac-tag-autocomplete\n  mac-tag-autocomplete-source='source'\n  mac-tag-autocomplete-selected='selected'>\n</mac-tag-autocomplete>")($rootScope);
 
       $rootScope.$digest();
-      textInputScope = $rootScope.$$childHead;
+      var textInputScope = $rootScope.$$childHead;
 
       $rootScope.source.push(tag4);
       $rootScope.$digest();
@@ -163,27 +159,25 @@ describe("Mac tag autocomplete", function() {
     });
 
     it("should have a placeholder", function() {
-      var element, textInputScope;
       $rootScope.selected = [];
-      element = $compile("<mac-tag-autocomplete\n  mac-tag-autocomplete-placeholder = \"'Testing'\"\n  mac-tag-autocomplete-selected='selected'>\n</mac-tag-autocomplete>")($rootScope);
+      $compile("<mac-tag-autocomplete\n  mac-tag-autocomplete-placeholder = \"'Testing'\"\n  mac-tag-autocomplete-selected='selected'>\n</mac-tag-autocomplete>")($rootScope);
 
       $rootScope.$digest();
-      textInputScope = $rootScope.$$childHead;
+      var textInputScope = $rootScope.$$childHead;
 
       expect(textInputScope.autocompletePlaceholder).toBe("Testing");
     });
 
     it("should not have a placeholder when there is selcted tag", function() {
-      var element, textInputScope;
       $rootScope.selected = [
         {
           id: "tag123"
         }
       ];
-      element = $compile("<mac-tag-autocomplete\n  mac-tag-autocomplete-placeholder = \"'Testing'\"\n  mac-tag-autocomplete-selected='selected'>\n</mac-tag-autocomplete>")($rootScope);
+      $compile("<mac-tag-autocomplete\n  mac-tag-autocomplete-placeholder = \"'Testing'\"\n  mac-tag-autocomplete-selected='selected'>\n</mac-tag-autocomplete>")($rootScope);
       $rootScope.$digest();
 
-      textInputScope = $rootScope.$$childHead;
+      var textInputScope = $rootScope.$$childHead;
 
       expect(textInputScope.autocompletePlaceholder).toBe("");
     });

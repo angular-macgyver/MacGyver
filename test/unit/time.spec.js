@@ -11,8 +11,6 @@ describe("Mac Time input", function() {
   }));
 
   describe("Basic Initialization", function() {
-    var currentDate = new Date().toDateString();
-
     it("should replace with template", function() {
       var element = $compile("<mac-time ng-model='model'></mac-time>")($rootScope);
       $rootScope.$digest();

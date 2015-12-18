@@ -1,17 +1,16 @@
 describe('Mac modal', function() {
-  var $animate, $compile, $rootScope, $q, $timeout, $parse, keys, modal, showModal;
+  var $animate, $compile, $rootScope, $q, $timeout, $parse, modal, showModal;
 
   beforeEach(module('Mac'));
   beforeEach(module('ngAnimateMock'));
 
-  beforeEach(inject(function(_$animate_, _$compile_, _$rootScope_, _$q_, _$timeout_, _$parse_, _keys_, _modal_) {
+  beforeEach(inject(function(_$animate_, _$compile_, _$rootScope_, _$q_, _$timeout_, _$parse_, _modal_) {
     $animate = _$animate_;
     $compile = _$compile_;
     $rootScope = _$rootScope_;
     $q = _$q_;
     $timeout = _$timeout_;
     $parse = _$parse_;
-    keys = _keys_;
     modal = _modal_;
 
     showModal = function(id) {
@@ -58,7 +57,6 @@ describe('Mac modal', function() {
       });
 
       it('should call all callbacks when using moduleMethod', function () {
-        var element = angular.element('<div />');
         angular.module('Mac').modal('test-modal', {});
 
         spyOn(modal, '_getTemplate').and.callFake(function() {
@@ -512,7 +510,7 @@ describe('Mac modal', function() {
         var element = angular.element('<div></div>');
         element.append(modal.defaults.template);
 
-        scope = $rootScope.$new();
+        var scope = $rootScope.$new();
         $compile(element)(scope);
 
         spyOn(modal, 'hide');
@@ -603,7 +601,7 @@ describe('Mac modal', function() {
 
   describe('initializing a modal', function() {
     it('should register the modal', function() {
-      var modalElement = $compile('<mac-modal id="test-modal"></mac-modal>')($rootScope);
+      $compile('<mac-modal id="test-modal"></mac-modal>')($rootScope);
       $rootScope.$digest();
 
       expect(modal.registered['test-modal']).toBeDefined();
@@ -612,7 +610,7 @@ describe('Mac modal', function() {
     it('should register the modal with observe', function() {
       $rootScope.modalId = 'test-modal-ob'
 
-      var modalElement = $compile('<mac-modal mac-modal="{{modalId}}"></mac-modal>')($rootScope);
+      $compile('<mac-modal mac-modal="{{modalId}}"></mac-modal>')($rootScope);
       $rootScope.$digest();
 
       expect(modal.registered['test-modal-ob']).toBeDefined();
@@ -621,7 +619,7 @@ describe('Mac modal', function() {
     it('should unregister the modal when $scope is destroyed', function() {
       spyOn(modal, 'hide');
 
-      var modalElement = $compile('<mac-modal id="test-modal"></mac-modal>')($rootScope);
+      $compile('<mac-modal id="test-modal"></mac-modal>')($rootScope);
       $rootScope.$digest();
 
       modal.opened = {id: 'test-modal'};
@@ -633,11 +631,10 @@ describe('Mac modal', function() {
     });
 
     it('should unregister the correct one', function() {
-      var modalElement, scope, scope1;
-      scope = $rootScope.$new();
-      scope1 = $rootScope.$new();
-      modalElement = $compile('<mac-modal id="test-modal"></mac-modal>')(scope);
-      modalElement = $compile('<mac-modal id="test-modal-1"></mac-modal>')(scope1);
+      var scope = $rootScope.$new();
+      var scope1 = $rootScope.$new();
+      $compile('<mac-modal id="test-modal"></mac-modal>')(scope);
+      $compile('<mac-modal id="test-modal-1"></mac-modal>')(scope1);
 
       $rootScope.$digest();
       scope.$destroy();
@@ -648,7 +645,7 @@ describe('Mac modal', function() {
 
     it('should execute callback when opening the modal', function() {
       $rootScope.opened = jasmine.createSpy('opened');
-      var modalElement = $compile('<mac-modal id="test-modal" mac-modal-open="opened()"></mac-modal>')($rootScope);
+      $compile('<mac-modal id="test-modal" mac-modal-open="opened()"></mac-modal>')($rootScope);
       $rootScope.$digest();
 
       expect($rootScope.opened).not.toHaveBeenCalled();
@@ -660,7 +657,7 @@ describe('Mac modal', function() {
 
     it('should execute beforeShow when showing the modal', function() {
       $rootScope.beforeShow = jasmine.createSpy('beforeShow');
-      var modalElement = $compile('<mac-modal id="test-modal" mac-modal-before-show="beforeShow()"></mac-modal>')($rootScope);
+      $compile('<mac-modal id="test-modal" mac-modal-before-show="beforeShow()"></mac-modal>')($rootScope);
       $rootScope.$digest();
 
       expect($rootScope.beforeShow).not.toHaveBeenCalled();
@@ -672,7 +669,7 @@ describe('Mac modal', function() {
 
     it('should execute afterShow when showing the modal', function() {
       $rootScope.afterShow = jasmine.createSpy('afterShow');
-      var modalElement = $compile('<mac-modal id="test-modal" mac-modal-after-show="afterShow()"></mac-modal>')($rootScope);
+      $compile('<mac-modal id="test-modal" mac-modal-after-show="afterShow()"></mac-modal>')($rootScope);
       $rootScope.$digest();
 
       expect($rootScope.afterShow).not.toHaveBeenCalled();
@@ -684,7 +681,7 @@ describe('Mac modal', function() {
 
     it('should execute beforeHide when hiding the modal', function() {
       $rootScope.beforeHide = jasmine.createSpy('beforeHide');
-      var modalElement = $compile('<mac-modal id="test-modal" mac-modal-before-hide="beforeHide()"></mac-modal>')($rootScope);
+      $compile('<mac-modal id="test-modal" mac-modal-before-hide="beforeHide()"></mac-modal>')($rootScope);
       $rootScope.$digest();
 
       expect($rootScope.beforeHide).not.toHaveBeenCalled();
@@ -696,7 +693,7 @@ describe('Mac modal', function() {
 
     it('should execute afterHide when hiding the modal', function() {
       $rootScope.afterHide = jasmine.createSpy('afterHide');
-      var modalElement = $compile('<mac-modal id="test-modal" mac-modal-after-hide="afterHide()"></mac-modal>')($rootScope);
+      $compile('<mac-modal id="test-modal" mac-modal-after-hide="afterHide()"></mac-modal>')($rootScope);
       $rootScope.$digest();
 
       expect($rootScope.afterHide).not.toHaveBeenCalled();
@@ -726,9 +723,8 @@ describe('Mac modal', function() {
     });
 
     it('should bind a click event to trigger a modal', function() {
-      var element, modalElement;
-      modalElement = $compile('<mac-modal id="test-modal"></mac-modal>')($rootScope);
-      element = $compile('<button mac-modal="test-modal"></button>')($rootScope);
+      $compile('<mac-modal id="test-modal"></mac-modal>')($rootScope);
+      var element = $compile('<button mac-modal="test-modal"></button>')($rootScope);
       $rootScope.$digest();
 
       element.triggerHandler('click');
@@ -739,12 +735,11 @@ describe('Mac modal', function() {
     });
 
     it('should bind data to opened modal', function() {
-      var element, modalElement;
       $rootScope.data = {
         text: 'hello'
       };
-      modalElement = $compile('<mac-modal id="test-modal"></mac-modal>')($rootScope);
-      element = $compile('<button mac-modal="test-modal" mac-modal-data="data"></button>')($rootScope);
+      $compile('<mac-modal id="test-modal"></mac-modal>')($rootScope);
+      var element = $compile('<button mac-modal="test-modal" mac-modal-data="data"></button>')($rootScope);
       $rootScope.$digest();
 
       element.triggerHandler('click');

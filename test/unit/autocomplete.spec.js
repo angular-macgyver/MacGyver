@@ -449,25 +449,20 @@ describe("Mac autocomplete", function() {
 
       it("should throw an error if ng-model is not defined", function() {
         var init = function() {
-          var element = $compile("<mac-autocomplete></mac-autocomplete>")($rootScope);
+          $compile("<mac-autocomplete></mac-autocomplete>")($rootScope);
           $rootScope.$digest();
         };
         expect(init).toThrow();
       });
 
       it("should not append menu", function() {
-        var element = $compile("<mac-autocomplete ng-model='value'></mac-autocomplete>")($rootScope);
+        $compile("<mac-autocomplete ng-model='value'></mac-autocomplete>")($rootScope);
         $rootScope.$digest();
         expect(document.querySelectorAll(".mac-menu").length).toBe(0);
       });
     });
 
     describe("source", function() {
-      var $httpBackend;
-      beforeEach(inject(function(_$httpBackend_) {
-        $httpBackend = _$httpBackend_;
-      }));
-
       it("should use local array", function() {
         $rootScope.source = data;
         $rootScope.test = "";
@@ -704,7 +699,7 @@ describe("Mac autocomplete", function() {
 
         $timeout.flush();
 
-        var menu = document.querySelector(".mac-menu");
+        menu = document.querySelector(".mac-menu");
         expect(menu.className.indexOf("visible")).not.toBe(-1);
       });
 
@@ -713,13 +708,13 @@ describe("Mac autocomplete", function() {
         var element = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-disabled='disabled'></mac-autocomplete>")($rootScope);
         $rootScope.$digest();
 
-        menu = document.querySelector(".mac-menu");
+        var menu = document.querySelector(".mac-menu");
         expect(menu).toBe(null);
 
         changeInputValue(element, "f");
         $rootScope.$digest();
 
-        var menu = document.querySelector(".mac-menu");
+        menu = document.querySelector(".mac-menu");
         expect(menu).toBe(null);
       });
     });

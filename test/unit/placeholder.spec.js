@@ -9,10 +9,10 @@ describe("Mac placeholder", function() {
     }));
 
     it("should set placeholder with a scope variable", function() {
-      var element = $compile("<input mac-placeholder='placeholder' />")($rootScope);;
+      var element = $compile("<input mac-placeholder='placeholder' />")($rootScope);
       $rootScope.placeholder = "Test";
       $rootScope.$digest();
-      
+
       expect(element.prop("placeholder")).toBe("Test");
     });
 
