@@ -16,7 +16,7 @@ describe('Mac modal', function() {
     showModal = function(id) {
       modal.show(id);
       $rootScope.$digest();
-      $animate.triggerCallbacks();
+      $animate.flush();
     };
   }));
 
@@ -67,7 +67,7 @@ describe('Mac modal', function() {
 
         modal.show('test-modal', {});
         $timeout.flush();
-        $animate.triggerCallbacks();
+        $animate.flush();
 
         expect(modal._getTemplate).toHaveBeenCalled();
         expect(modal._renderModal).toHaveBeenCalled();
@@ -180,7 +180,7 @@ describe('Mac modal', function() {
         scope.$digest();
 
         expect(element.hasClass('visible')).toBe(false);
-        $animate.triggerCallbacks();
+        $animate.flush();
 
         expect(destroy).toHaveBeenCalled();
         expect(scope.afterHide).toHaveBeenCalled();
@@ -200,7 +200,7 @@ describe('Mac modal', function() {
         scope.$digest();
 
         expect(element.hasClass('visible')).toBe(false);
-        $animate.triggerCallbacks();
+        $animate.flush();
 
         expect(destroy).not.toHaveBeenCalled();
         expect(scope.afterHide).toHaveBeenCalled();
@@ -219,7 +219,7 @@ describe('Mac modal', function() {
         modal.hide();
 
         $rootScope.$digest();
-        $animate.triggerCallbackPromise();
+        $animate.flush();
 
         expect(modal.opened).toBe(null);
         expect(closedId).toBe('test-modal');
@@ -408,7 +408,7 @@ describe('Mac modal', function() {
         expect(scope.beforeShow).toHaveBeenCalled();
 
         scope.$digest();
-        $animate.triggerCallbacks();
+        $animate.flush();
 
         expect(modal.opened).toBeDefined();
         expect(modal.opened).toEqual({
@@ -434,7 +434,7 @@ describe('Mac modal', function() {
 
         modal._showModal('test-modal', element, options);
         $rootScope.$digest();
-        $animate.triggerCallbacks();
+        $animate.flush();
         expect(openedId).toBe('test-modal');
       });
     });
@@ -459,6 +459,8 @@ describe('Mac modal', function() {
       });
 
       it('should render modal', function (done) {
+        $animate.enabled(false);
+
         modal._renderModal('test-modal', '<p>hi</p>', options)
         .then(function (element) {
           expect(element).toBeDefined();
@@ -483,7 +485,7 @@ describe('Mac modal', function() {
         });
 
         $rootScope.$digest();
-        $animate.triggerCallbacks();
+        $animate.flush();
       });
 
       it('should create new isolated scope', function (done) {
@@ -501,7 +503,7 @@ describe('Mac modal', function() {
         });
 
         $rootScope.$digest();
-        $animate.triggerCallbacks();
+        $animate.flush();
       })
     });
 
@@ -700,11 +702,10 @@ describe('Mac modal', function() {
       showModal('test-modal');
       expect($rootScope.afterHide).not.toHaveBeenCalled();
 
-      $animate.triggerReflow();
       modal.hide();
       $rootScope.$digest();
 
-      $animate.triggerCallbackPromise();
+      $animate.flush();
       expect($rootScope.afterHide).toHaveBeenCalled();
     });
   });
@@ -730,7 +731,7 @@ describe('Mac modal', function() {
       element.triggerHandler('click');
       $rootScope.$digest();
 
-      $animate.triggerCallbackPromise();
+      $animate.flush();
       expect(modal.opened.id).toBe('test-modal');
     });
 
@@ -745,7 +746,7 @@ describe('Mac modal', function() {
       element.triggerHandler('click');
       $rootScope.$digest();
 
-      $animate.triggerCallbackPromise();
+      $animate.flush();
       expect(modal.opened.options.data.text).toBe('hello');
     });
   });
@@ -759,7 +760,7 @@ describe('Mac modal', function() {
 
       modal.show('test-modal');
 
-      $animate.triggerCallbackPromise();
+      $animate.flush();
 
       var closeButton = modalElement[0].querySelector('.mac-close-modal');
       angular.element(closeButton).triggerHandler('click');
@@ -830,12 +831,12 @@ describe('Mac modal', function() {
 
     it('should remove modal on hide', function() {
       showModal('testing');
-      $animate.triggerReflow();
+      $rootScope.$digest();
 
       modal.hide();
       $rootScope.$digest();
 
-      $animate.triggerCallbacks();
+      $animate.flush();
       $rootScope.$digest();
 
       var overlay = document.querySelector('.mac-modal-overlay');

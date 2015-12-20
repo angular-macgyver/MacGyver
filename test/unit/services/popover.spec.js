@@ -286,7 +286,7 @@ describe("Popover service", function() {
       });
       $rootScope.$digest();
 
-      $animate.triggerCallbacks();
+      $animate.flush();
       $rootScope.$digest();
     });
 
@@ -462,7 +462,7 @@ describe("Popover service", function() {
       });
       $rootScope.$digest();
 
-      $animate.triggerCallbacks();
+      $animate.flush();
     });
 
     it("should not close any popover with incorrect selector", function() {
@@ -490,7 +490,7 @@ describe("Popover service", function() {
       popover.hide("test").then(callbackFn);
 
       $rootScope.$apply();
-      $animate.triggerCallbacks();
+      $animate.flush();
 
       expect(callbackFn).toHaveBeenCalled();
     });
@@ -502,21 +502,21 @@ describe("Popover service", function() {
       popover.hide("test");
       $rootScope.$digest();
 
-      $animate.triggerCallbacks();
+      $animate.flush();
       expect(broadcastFn).toHaveBeenCalled();
     });
 
     it("should remove active class on trigger", function() {
       popover.hide("test");
       $rootScope.$digest();
-      $animate.triggerCallbacks();
+      $animate.flush();
       expect(trigger.hasClass("active")).toBe(false);
     });
 
     it("should not destroy original scope", function() {
       popover.hide("test");
       $rootScope.$digest();
-      $animate.triggerCallbacks();
+      $animate.flush();
       expect(destroy).not.toHaveBeenCalled();
     });
 
@@ -530,7 +530,7 @@ describe("Popover service", function() {
 
       $rootScope.$digest();
 
-      $animate.triggerCallbacks();
+      $animate.flush();
       expect(destroyed).toHaveBeenCalled();
     });
   });
