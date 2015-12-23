@@ -179,36 +179,51 @@ describe('Mac Time Util', function () {
     it('should flip hour to AM', function () {
       var time = new Date('Thu Jan 01 2015 13:12:00 GMT-0800 (PST)');
 
+      spyOn(time, 'getHours').and.returnValue(13);
+      spyOn(time, 'setHours');
+
       macTimeUtil.setMeridian(time, 'AM');
-      expect(time.getHours()).toBe(1);
+      expect(time.setHours.calls.argsFor(0)[0]).toBe(1);
     });
 
     it('should keep the hour for AM', function () {
       var time = new Date('Thu Jan 01 2015 07:12:00 GMT-0800 (PST)');
 
+      spyOn(time, 'getHours').and.returnValue(7);
+      spyOn(time, 'setHours');
+
       macTimeUtil.setMeridian(time, 'AM');
-      expect(time.getHours()).toBe(7);
+      expect(time.setHours.calls.argsFor(0)[0]).toBe(7);
     });
 
     it('should flip hour to PM', function () {
       var time = new Date('Thu Jan 01 2015 07:12:00 GMT-0800 (PST)');
 
+      spyOn(time, 'getHours').and.returnValue(7);
+      spyOn(time, 'setHours');
+
       macTimeUtil.setMeridian(time, 'PM');
-      expect(time.getHours()).toBe(19);
+      expect(time.setHours.calls.argsFor(0)[0]).toBe(19);
     });
 
     it('should keep the hour for PM', function () {
       var time = new Date('Thu Jan 01 2015 15:12:00 GMT-0800 (PST)');
 
+      spyOn(time, 'getHours').and.returnValue(15);
+      spyOn(time, 'setHours');
+
       macTimeUtil.setMeridian(time, 'PM');
-      expect(time.getHours()).toBe(15);
+      expect(time.setHours.calls.argsFor(0)[0]).toBe(15);
     });
 
     it('should keep the hour with invalid meridian value', function () {
       var time = new Date('Thu Jan 01 2015 15:12:00 GMT-0800 (PST)');
 
+      spyOn(time, 'getHours').and.returnValue(15);
+      spyOn(time, 'setHours');
+
       macTimeUtil.setMeridian(time, 'GM');
-      expect(time.getHours()).toBe(15);
+      expect(time.setHours.calls.argsFor(0)[0]).toBe(15);
     });
   });
 
@@ -216,15 +231,21 @@ describe('Mac Time Util', function () {
     it('should change 7 -> 19', function () {
       var time = new Date('Thu Jan 01 2015 07:12:00 GMT-0800 (PST)');
 
+      spyOn(time, 'getHours').and.returnValue(7);
+      spyOn(time, 'setHours');
+
       macTimeUtil.toggleMeridian(time);
-      expect(time.getHours()).toBe(19);
+      expect(time.setHours.calls.argsFor(0)[0]).toBe(19);
     });
 
     it('should change 19 -> 7', function () {
       var time = new Date('Thu Jan 01 2015 19:12:00 GMT-0800 (PST)');
 
+      spyOn(time, 'getHours').and.returnValue(19);
+      spyOn(time, 'setHours');
+
       macTimeUtil.toggleMeridian(time);
-      expect(time.getHours()).toBe(7);
+      expect(time.setHours.calls.argsFor(0)[0]).toBe(7);
     });
   });
 
@@ -233,26 +254,30 @@ describe('Mac Time Util', function () {
 
     beforeEach(function() {
       time = new Date('Thu Jan 01 2015 05:14:00 GMT-0800 (PST)');
+
+      spyOn(time, 'getHours').and.returnValue(5);
+      spyOn(time, 'setHours');
+      spyOn(time, 'setMinutes');
     });
 
     it('should increment hour', function() {
       macTimeUtil.incrementHour(time, 5);
-      expect(time.getHours()).toBe(10);
+      expect(time.setHours.calls.argsFor(0)[0]).toBe(10);
     });
 
     it('should decrement hour', function() {
       macTimeUtil.incrementHour(time, -2);
-      expect(time.getHours()).toBe(3);
+      expect(time.setHours.calls.argsFor(0)[0]).toBe(3);
     });
 
     it('should increment minute', function() {
       macTimeUtil.incrementMinute(time, 26);
-      expect(time.getMinutes()).toBe(40);
+      expect(time.setMinutes.calls.argsFor(0)[0]).toBe(40);
     });
 
     it('should decrement minute', function() {
       macTimeUtil.incrementMinute(time, -12);
-      expect(time.getMinutes()).toBe(2);
+      expect(time.setMinutes.calls.argsFor(0)[0]).toBe(2);
     });
   });
 });
