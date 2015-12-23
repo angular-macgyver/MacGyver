@@ -51,7 +51,6 @@ module.exports = function(config) {
     files: [
       // 3rd party libraries
       "node_modules/phantomjs-polyfill/bind-polyfill.js",
-      "bower_components/underscore.string/lib/underscore.string.js",
       "bower_components/angular/angular.js",
 
       // Template
