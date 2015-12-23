@@ -1,6 +1,6 @@
 module.exports = function(config) {
-  var log4js = require("../node_modules/karma/node_modules/log4js");
-  var layouts = require("../node_modules/karma/node_modules/log4js/lib/layouts");
+  var log4js = require("../node_modules/log4js");
+  var layouts = require("../node_modules/log4js/lib/layouts");
 
   config.set({
     sauceLabs: {
