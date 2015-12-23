@@ -1,7 +1,4 @@
 module.exports = function(config) {
-  var log4js = require("../node_modules/log4js");
-  var layouts = require("../node_modules/log4js/lib/layouts");
-
   config.set({
     sauceLabs: {
       startConnect: true,
@@ -78,25 +75,4 @@ module.exports = function(config) {
     config.sauceLabs.startConnect = false;
     config.sauceLabs.tunnelIdentifier = process.env.TRAVIS_JOB_NUMBER;
   }
-
-  // Taken from AngularJS karma-shared.conf.js
-  // Terrible hack to workaround inflexibility of log4js:
-  // - ignore web-server's 404 warnings,
-  var originalConfigure = log4js.configure;
-  log4js.configure = function(log4jsConfig) {
-    var consoleAppender, layout, originalResult;
-    consoleAppender = log4jsConfig.appenders.shift();
-    originalResult = originalConfigure.call(log4js, log4jsConfig);
-    layout = layouts.layout(consoleAppender.layout.type, consoleAppender.layout);
-    log4js.addAppender(function(log) {
-      var msg = log.data[0];
-
-      // ignore web server's 404s
-      if (log.categoryName === "web-server" && log.level.levelStr === config.LOG_WARN) {
-        return;
-      }
-      console.log(layout(log));
-    });
-    return originalResult;
-  };
 };
