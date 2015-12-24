@@ -47,7 +47,6 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       // 3rd party libraries
-      "node_modules/phantomjs-polyfill/bind-polyfill.js",
       "bower_components/angular/angular.js",
 
       // Template
@@ -62,7 +61,10 @@ module.exports = function(config) {
     ],
     reporters: ["dots"],
     logLevel: config.LOG_INFO,
-    browsers: ["PhantomJS"],
+    browsers: ["Electron"],
+    electronOpts: {
+      show: false
+    },
     preprocessors: {
       "**/*.html": ["ng-html2js"]
     },
