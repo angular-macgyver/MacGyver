@@ -76,5 +76,39 @@ module.exports = function(config) {
     config.sauceLabs.build = buildLabel;
     config.sauceLabs.startConnect = false;
     config.sauceLabs.tunnelIdentifier = process.env.TRAVIS_JOB_NUMBER;
+    config.sauceLabs.recordScreenshots = true;
+
+    config.logLevel = config.LOG_DEBUG;
+
+    // Debug logging into a file, that we print out at the end of the build.
+    config.loggers.push({
+      type: 'file',
+      filename: process.env.LOGS_DIR + '/' + 'karma.log'
+    });
   }
+
+  // Terrible hack to workaround inflexibility of log4js:
+  // - ignore DEBUG logs (on Travis), we log them into a file instead.
+  var log4js = require('../node_modules/log4js');
+  var layouts = require('../node_modules/log4js/lib/layouts');
+
+  var originalConfigure = log4js.configure;
+  log4js.configure = function(log4jsConfig) {
+    var consoleAppender = log4jsConfig.appenders.shift();
+    var originalResult = originalConfigure.call(log4js, log4jsConfig);
+    var layout = layouts.layout(consoleAppender.layout.type, consoleAppender.layout);
+
+    log4js.addAppender(function(log) {
+      var msg = log.data[0];
+
+      // on Travis, ignore DEBUG statements
+      if (process.env.TRAVIS && log.level.levelStr === config.LOG_DEBUG) {
+        return;
+      }
+
+      console.log(layout(log));
+    });
+
+    return originalResult;
+  };
 };
