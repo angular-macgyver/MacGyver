@@ -66,11 +66,6 @@ module.exports = function(grunt) {
     "coveralls"
   ]);
 
-  grunt.registerTask("test:unit", "Alias for karma:travis", [
-    "eslint",
-    "karma:travis"
-  ]);
-
   grunt.registerTask("test:e2e", "Compile all source code, run a test server and run the end to end tests", [
     "copy:doc",
     "stylus:dev",
