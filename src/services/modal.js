@@ -370,8 +370,8 @@ angular.module('Mac').provider('modal', function () {
         },
 
         _escapeHandler: function (event) {
-          if (event.keyCode == keys.ESCAPE && this.opened) {
-            var scope = this.opened.element.scope();
+          if (event.keyCode == keys.ESCAPE && service.opened) {
+            var scope = service.opened.element.scope();
 
             scope.$apply(function () {
               service.hide();
