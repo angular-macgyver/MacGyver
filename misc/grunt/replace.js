@@ -15,7 +15,7 @@ module.exports = function(grunt) {
   grunt.config("replace", {
     src: {
       options: {
-        pattern: /templateUrl: "([^"]+)"/g,
+        pattern: /templateUrl: ["'](.+)["']/g,
         replace: replaceTemplate
       },
       files: [
