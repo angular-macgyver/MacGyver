@@ -1,7 +1,6 @@
 describe("Mac Modal e2e test", function() {
   beforeEach(function() {
     browser.get("/test/e2e/modal.html");
-    browser.waitForAngular();
   });
 
   it("should show the registered modal", function() {
@@ -42,7 +41,7 @@ describe("Mac Modal e2e test", function() {
     button = element(By.id("open-overlay-btn"));
     button.click();
     modal = browser.findElement(By.id("overlay-modal"));
-    
+
     browser.driver.executeScript("arguments[0].click()", modal).then(function() {
       expect(modal.isDisplayed()).toBeFalsy();
     });
