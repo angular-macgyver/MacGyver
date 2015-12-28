@@ -150,35 +150,8 @@ module.exports = function(grunt) {
    */
   grunt.registerMultiTask("protractor", "Run Protractor integration tests", function() {
     var done = this.async();
-
-    var sauceUser = grunt.option("sauceUser");
-    var sauceKey = grunt.option("sauceKey");
-    var tunnelIdentifier = grunt.option("capabilities.tunnel-identifier");
-    var sauceBuild = grunt.option("capabilities.build");
-    var browser = grunt.option("browser");
-    var browserVersion = grunt.option("version");
-
+    
     var args = ["node_modules/protractor/bin/protractor", this.data];
-
-    if (sauceUser) {
-      args.push("--sauceUser=" + sauceUser);
-    }
-    if (sauceKey) {
-      args.push("--sauceKey=" + sauceKey);
-    }
-    if (tunnelIdentifier) {
-      args.push("--capabilities.tunnel-identifier=" + tunnelIdentifier);
-    }
-    if (sauceBuild) {
-      args.push("--capabilities.build=TRAVIS #" + sauceBuild);
-    }
-    args.push("--capabilities.browserName=" + (browser || 'chrome'));
-    if (browserVersion) {
-      args.push("--capabilities.version=" + browserVersion);
-    }
-    if (grunt.option("local") != null) {
-      args.push("--seleniumAddress=http://localhost:4444/wd/hub");
-    }
 
     p = child.spawn("node", args);
     p.stdout.pipe(process.stdout);
