@@ -1,5 +1,3 @@
-require("coffee-script").register();
-
 var config = {
   specs: ["e2e/*.spec.js"],
   baseUrl: "http://localhost:9001",
