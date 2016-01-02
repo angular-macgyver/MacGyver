@@ -125,11 +125,11 @@ angular.module('Mac').directive('macPopover', [
  * Element directive to define popover
  *
  * @param {String} id Modal id
- * @param {String} mac-popover-refresh-on Event to update popover size and position
  * @param {Bool}   mac-popover-footer     Show footer or not
  * @param {Bool}   mac-popover-header     Show header or not
  * @param {String} mac-popover-title      Popover title
  * @param {String} mac-popover-direction  Popover direction (default "above left")
+ * @param {String} mac-popover-refresh-on Event to update popover size and position
  * - above, below or middle - Place the popover above, below or center align the trigger element
  * - left or right  - Place tip on the left or right of the popover
  */

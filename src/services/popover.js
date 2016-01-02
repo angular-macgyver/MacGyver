@@ -374,7 +374,7 @@ angular.module('Mac').provider('popover', function () {
             action = {remove: 'right', add: 'left'};
 
           // Left align originally, switch to right
-          } else if (offset.left + calculatedOffset.left + currentPopover.outerWidth() - leftScroll) {
+          } else if (offset.left + calculatedOffset.left + currentPopover.outerWidth() - leftScroll > $window.width()) {
             action = {remove: 'left', add: 'right'};
           }
 
