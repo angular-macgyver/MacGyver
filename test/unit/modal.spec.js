@@ -476,11 +476,6 @@ describe('Mac modal', function() {
 
           expect(document.body.querySelector('#test-modal')).not.toBe(null);
 
-          spyOn(modal, 'hide');
-          element.triggerHandler('click');
-
-          expect(modal.hide).toHaveBeenCalled();
-
           done();
         });
 
@@ -831,6 +826,7 @@ describe('Mac modal', function() {
 
     it('should remove modal on hide', function() {
       showModal('testing');
+      $animate.flush();
       $rootScope.$digest();
 
       modal.hide();
