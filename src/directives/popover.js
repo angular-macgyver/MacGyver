@@ -24,7 +24,7 @@ angular.module('Mac').directive('macPopover', [
       link: function ($scope, element, attrs) {
         var options, delayId, closeDelayId, unobserve;
 
-        options = util.extendAttributes('macPopover', defaults.element, attrs);
+        options = util.extendAttributes('macPopover', defaults.trigger, attrs);
 
         /**
          * @description

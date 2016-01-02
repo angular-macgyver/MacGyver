@@ -19,13 +19,12 @@ constant('scrollSpyDefaults', {
 }).
 
 constant('macPopoverDefaults', {
-  element: {
-    fixed: false,
+  trigger: {
     offsetY: 0,
     offsetX: 0,
     trigger: 'click'
   },
-  trigger: {
+  element: {
     footer: false,
     header: false,
     title: '',
