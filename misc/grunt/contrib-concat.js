@@ -24,9 +24,6 @@ module.exports = function(grunt) {
           src: "<%= buildConf.full %>",
           dest: "build/bower-macgyver/macgyver.js"
         }, {
-          src: "<%= buildConf.core %>",
-          dest: "build/bower-macgyver-core/macgyver-core.js"
-        }, {
           src: "<%= buildConf.filters %>",
           dest: "build/bower-macgyver-filters/macgyver-filters.js"
         }

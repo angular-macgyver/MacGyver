@@ -22,9 +22,6 @@ module.exports = function(grunt) {
         {
           dest: "build/bower-macgyver/<%= pkg.name.toLowerCase() %>.css",
           src: "<%= buildConf.css.core %>"
-        }, {
-          dest: "build/bower-macgyver-core/<%= pkg.name.toLowerCase() %>-core.css",
-          src: "<%= buildConf.css.core %>"
         }
       ]
     }

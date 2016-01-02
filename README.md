@@ -54,5 +54,4 @@ angular.module("myModule", ["Mac"]);
 ## Bower repositories
 Modularized MacGyver files can be found here:
 - [angular-macgyver/bower-macgyver](https://github.com/angular-macgyver/bower-macgyver) - All directives, services and filters bundled together
-- [angular-macgyver/bower-macgyver-core](https://github.com/angular-macgyver/bower-macgyver-core) - Utilities, events and all directives without 3rd party dependencies
 - [angular-macgyver/bower-macgyver-filters](https://github.com/angular-macgyver/bower-macgyver-filters) - All filters

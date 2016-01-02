@@ -3,30 +3,6 @@
     "src/main.js",
     "src/**/*.js"
   ],
-  "core": [
-    "src/main.js",
-    "src/util.js",
-    "src/constants.js",
-    "src/directives/keys.js",
-    "src/directives/events/*.js",
-    "src/controllers/autocomplete.js",
-    "src/directives/autocomplete.js",
-    "src/directives/focus_on_event.js",
-    "src/directives/menu.js",
-    "src/services/modal.js",
-    "src/services/popover.js",
-    "src/directives/modal.js",
-    "src/directives/popover.js",
-    "src/directives/placeholder.js",
-    "src/services/scroll_spy.js",
-    "src/directives/scroll_spy.js",
-    "src/directives/affix.js",
-    "src/directives/spinner.js",
-    "src/directives/tag_autocomplete.js",
-    "src/directives/tag_input.js",
-    "src/directives/time.js",
-    "src/directives/tooltip.js"
-  ],
   "filters": [
     "src/filters/*.js"
   ],
