@@ -9,6 +9,9 @@ angular.module("Mac", ["Mac.Util"]);
  * functionality is very limited and MacGyver extends jqLite to make sure MacGyver
  * components work properly.
  *
+ * Most of the code in this file are based on jQuery and modified a little bit to work
+ * with MacGyver.
+ *
  * Real jQuery will continue to take precedence over jqLite and all functions MacGyver extends.
  *
  * MacGyver adds the following methods:
@@ -17,6 +20,7 @@ angular.module("Mac", ["Mac.Util"]);
  * - [outerHeight()](http://api.jquery.com/outerHeight/) - Does not support set
  * - [outerWidth()](http://api.jquery.com/outerWidth/) - Does not support set
  * - [offset()](http://api.jquery.com/offset/)
+ * - [position()](http://api.jquery.com/position/)
  * - [scrollTop()](http://api.jquery.com/scrollTop/)
  */
 
@@ -121,6 +125,15 @@ function getWidthOrHeight(type, prefix, element) {
   };
 }
 
+function getOffsetParent(element) {
+  var parent = element.parentNode;
+  while (parent && parent.style['position'] === 'static') {
+    parent = parent.parentNode;
+  }
+
+  return parent || document.documentElement;
+}
+
 var jqLiteExtend = {
   height: function(element) {
     return getWidthOrHeight("Height", "", element)();
@@ -135,24 +148,54 @@ var jqLiteExtend = {
     return getWidthOrHeight("Width", "outer", element)(margin);
   },
   offset: function(element) {
-    var box, doc, docElem, win;
-    box = {
+    var rect, doc, win, docElem;
+
+    // Support: IE<=11+
+		// Running getBoundingClientRect on a
+		// disconnected node in IE throws an error
+		if (!element.getClientRects().length) {
+			return { top: 0, left: 0 };
+		}
+
+    rect = element.getBoundingClientRect();
+
+    if (rect.width || rect.height) {
+      doc = element.ownerDocument;
+      win = getWindow(doc);
+      docElem = doc.documentElement;
+
+      return {
+        top: rect.top + win.pageYOffset - docElem.clientTop,
+        left: rect.left + win.pageXOffset - docElem.clientLeft
+      };
+    }
+
+    return rect;
+  },
+  position: function (element) {
+    var offsetParent, offset, parentOffset = {
       top: 0,
       left: 0
     };
-    doc = element && element.ownerDocument;
-    if (!doc) {
-      return;
+
+    if (element.style['position'] === 'fixed') {
+      offset = element.getBoundingClientRect();
+    } else {
+      offsetParent = getOffsetParent(element);
+
+      offset = jqLiteExtend.offset(element);
+      if (offsetParent.nodeName !== 'HTML') {
+        parentOffset = jqLiteExtend.offset(offsetParent);
+      }
+
+      parentOffset.top += offsetParent['scrollTop'];
+      parentOffset.left += offsetParent['scrollLeft'];
     }
-    docElem = doc.documentElement;
-    if (element.getBoundingClientRect != null) {
-      box = element.getBoundingClientRect();
-    }
-    win = getWindow(doc);
+
     return {
-      top: box.top + win.pageYOffset - docElem.clientTop,
-      left: box.left + win.pageXOffset - docElem.clientLeft
-    };
+      top: offset.top - parentOffset.top - element.style['marginTop'],
+      left: offset.left - parentOffset.left - element.style['marginLeft']
+    }
   },
   scrollTop: function(element, value) {
     var win = getWindow(element);
