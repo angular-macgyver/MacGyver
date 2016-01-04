@@ -31,13 +31,13 @@ angular.module('Mac').directive('macTooltip', [
         opts = util.extendAttributes('macTooltip', defaults, attrs);
 
         function showTip () {
-          var tip, offset, elementSize, tooltipSize, messageEl;
+          var container, offset, elementSize, tooltipSize, messageEl;
 
           if (disabled || !text || tooltip) {
             return true;
           }
 
-          tip = opts.inside ? element : angular.element(document.body);
+          container = opts.inside ? element : angular.element(document.body);
 
           // Check if the tooltip still exists, remove if it does
           removeTip(0);
@@ -47,8 +47,8 @@ angular.module('Mac').directive('macTooltip', [
 
           tooltip = angular.element('<div />').addClass('mac-tooltip ' + opts.direction);
           tooltip.append(messageEl);
-          
-          tip.append(tooltip);
+
+          container.append(tooltip);
 
           // Only get element offset when not adding tooltip within the element
           offset = opts.inside ? {top: 0, left: 0} : element.offset();
@@ -86,10 +86,6 @@ angular.module('Mac').directive('macTooltip', [
           } else if (opts.direction == 'right') {
             offset.left += elementSize.width;
           }
-
-          // Constrain the position
-          offset.top = Math.max(0, offset.top);
-          offset.left = Math.max(0, offset.left);
 
           // Set the offset
           angular.forEach(offset, function (value, key) {

@@ -134,7 +134,7 @@ describe("Mac Tooltip", function() {
 
   describe("Inside", function() {
     it("should append tooltip inside of trigger", function() {
-      var tip = $compile("<div mac-tooltip='test' mac-tooltip-inside></div>")($rootScope);
+      var tip = $compile("<div mac-tooltip='test' mac-tooltip-inside style='position: relative;'></div>")($rootScope);
       $rootScope.$digest();
 
       tip.triggerHandler("mouseenter");
@@ -150,5 +150,16 @@ describe("Mac Tooltip", function() {
 
       expect(tip[0].querySelector(".mac-tooltip")).toBe(null);
     });
+
+    it('should call not call offset', function() {
+      spyOn(angular.element.prototype, 'offset');
+
+      var tip = $compile("<div mac-tooltip='test' mac-tooltip-inside></div>")($rootScope);
+      $rootScope.$digest();
+
+      tip.triggerHandler("mouseenter");
+
+      expect(angular.element.prototype.offset).not.toHaveBeenCalled();
+    })
   });
 });
