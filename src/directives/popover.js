@@ -4,10 +4,14 @@
  * @description
  * Mac popover trigger directive
  *
- * @param {String}  mac-popover               ID of the popover to show
- * @param {Integer} mac-popover-offset-x      Extra x offset (default 0)
- * @param {Integer} mac-popover-offset-y      Extra y offset (default 0)
- * @param {String}  mac-popover-trigger       Trigger option, click | hover | focus (default click)
+ * @param {String}  mac-popover            ID of the popover to show
+ * @param {Integer} mac-popover-offset-x   Extra x offset (default 0)
+ * @param {Integer} mac-popover-offset-y   Extra y offset (default 0)
+ * @param {String}  mac-popover-container  Container for popover
+ * - Attribute does not exist: document body
+ * - Attribute without value: Parent element of the popover
+ * - Attribute with scope variable: Use as container if it is an DOM element
+ * @param {String}  mac-popover-trigger    Trigger option, click | hover | focus (default click)
  * - click: Popover only opens when user click on trigger
  * - hover: Popover shows when user hover on trigger
  * - focus: Popover shows when focus on input element

@@ -110,12 +110,13 @@ angular.module('Mac').provider('popover', function () {
     '$compile',
     '$controller',
     '$http',
+    '$parse',
     '$rootScope',
     '$templateCache',
     '$timeout',
     '$q',
     'macPopoverDefaults',
-    function ($animate, $compile, $controller, $http, $rootScope, $templateCache, $timeout, $q, defaults) {
+    function ($animate, $compile, $controller, $http, $parse, $rootScope, $templateCache, $timeout, $q, defaults) {
       return {
         popoverList: [],
         registered: registered,
@@ -260,6 +261,34 @@ angular.module('Mac').provider('popover', function () {
           return $q.reject();
         },
 
+        /**
+         * @name _getContainer
+         * @private
+         * @description
+         * Get popover container based on options
+         * - null: Use document.body
+         * - true: Use parent of element
+         * - string: Check scope for the variable
+         * - DOM Element: Use the element
+         * @param {DOM Element} element Trigger DOM element
+         * @param {Object} options
+         * @returns {DOM Element}
+         */
+        _getContainer: function (element, options) {
+          if (options.container === true) {
+            return element.parent();
+
+          } else if (angular.isString(options.container)) {
+            var container = $parse(options.container)(element.scope());
+            if (angular.isElement(container)) return container;
+
+          } else if (angular.isElement(options.container)) {
+            return options.container
+          }
+
+          return angular.element(document.body);
+        },
+
         show: function (id, element, options) {
           options = options || {};
 
@@ -268,27 +297,28 @@ angular.module('Mac').provider('popover', function () {
             return $q.reject(false);
           }
 
-          var self = this;
           var combinedObject = angular.extend({}, popoverOptions, options);
 
           return this._getTemplate(combinedObject)
             .then(function (template) {
-              return self._compilePopover.call(self, id, template, combinedObject);
-            })
+              return this._compilePopover(id, template, combinedObject);
+            }.bind(this))
             .then(function (popover) {
-              var popoverObj = self.add.call(self, id, popover, element, options);
+              var container = this._getContainer(element, combinedObject);
+
+              var popoverObj = this.add(id, popover, element, options);
               $animate.addClass(element, 'active');
 
               $rootScope.$broadcast('popoverWasShown', id);
 
-              return $animate.enter(popover, angular.element(document.body))
+              return $animate.enter(popover, container)
                 .then(function () {
                   return popoverObj;
                 });
-            })
+            }.bind(this))
             .then(function (popoverObj) {
-              return self.reposition.call(self, popoverObj);
-            });
+              return this.reposition(popoverObj);
+            }.bind(this));
         },
 
         getById: function (id, element) {
@@ -315,6 +345,18 @@ angular.module('Mac').provider('popover', function () {
           var $window = angular.element(window);
 
           var offset = relativeElement.offset();
+
+          // Calculate relative offset to the container
+          var container = this._getContainer(relativeElement, options);
+          var containerOffset = {top: 0, left: 0};
+          if (container[0] !== document.body) {
+            if (container[0].nodeName !== 'HTML') {
+              containerOffset = container.offset();
+            }
+
+            offset.top -= containerOffset.top;
+            offset.left -= containerOffset.left;
+          }
 
           var relative = {
             height: relativeElement.outerHeight(),

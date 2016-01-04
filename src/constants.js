@@ -22,7 +22,8 @@ constant('macPopoverDefaults', {
   trigger: {
     offsetY: 0,
     offsetX: 0,
-    trigger: 'click'
+    trigger: 'click',
+    container: null
   },
   element: {
     footer: false,

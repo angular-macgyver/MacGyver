@@ -258,6 +258,58 @@ describe("Popover service", function() {
     }));
   });
 
+  describe('_getContainer', function () {
+    var element = angular.element('<div />');
+    var parent = angular.element('<div />').append(element);
+
+    it('should get the document body', function () {
+      var output = popover._getContainer(element, {});
+      expect(output[0]).toBe(document.body);
+    });
+
+    it('should get the parent element', function () {
+      var output = popover._getContainer(element, {container: true});
+      expect(output[0]).toBe(parent[0]);
+    });
+
+    it('should get the element on scope', inject(function ($compile) {
+      var someRandomElement = angular.element('<div  />');
+      $rootScope.popoverElement = element;
+
+      $compile(someRandomElement)($rootScope);
+      $rootScope.$digest();
+
+      var output = popover._getContainer(someRandomElement, {
+        container: 'popoverElement'
+      });
+
+      expect(output[0]).toBe(element[0]);
+    }));
+
+    it('should get the document body when element does not exist on scope', inject(function ($compile) {
+      var someRandomElement = angular.element('<div  />');
+
+      $compile(someRandomElement)($rootScope);
+      $rootScope.$digest();
+
+      var output = popover._getContainer(someRandomElement, {
+        container: 'popoverElement'
+      });
+
+      expect(output[0]).toBe(document.body);
+    }));
+
+    it('should return the same element if container is element', function () {
+      var randomContainer = angular.element('<div />');
+
+      var output = popover._getContainer(element, {
+        container: randomContainer
+      });
+
+      expect(output).toBe(randomContainer);
+    });
+  });
+
   it('should reject when opening unregistered popover`', function () {
     var callback = jasmine.createSpy('show reject')
 
@@ -417,6 +469,48 @@ describe("Popover service", function() {
 
     // TODO(adrian): Add additional tests for calculating offset
 
+  });
+
+  describe('reposition with container', function() {
+    var popoverObj, container;
+
+    beforeEach(function () {
+      // Reset styles
+      angular.element(document.body).css({
+        margin: 0,
+        padding: 0
+      });
+
+      container = angular.element('<div style="top: 200px; position: relative;"></div>');
+
+      popoverObj = {
+        id: 'test-reposition',
+        popover: angular.element('<div style="height: 10px;">popover</div>'),
+        element: angular.element('<div style="top: 100px; position: relative;">trigger</div>'),
+        options: {
+          container: container
+        }
+      };
+
+      container.append(popoverObj.element);
+
+      angular.element(document.body).append(container);
+      angular.element(document.body).append(popoverObj.popover);
+    });
+
+    afterEach(function () {
+      popoverObj.popover.remove();
+      container.remove();
+    });
+
+    it('should calculate offset relative to container', function() {
+      popover.reposition(popoverObj);
+
+      var popoverEl = popoverObj.popover;
+      var style = popoverEl[0].style;
+
+      expect(parseInt(style.top)).toBe(80);
+    });
   });
 
   describe('calculateOffset', function () {
