@@ -3,9 +3,6 @@
     "src/main.js",
     "src/**/*.js"
   ],
-  "filters": [
-    "src/filters/*.js"
-  ],
   "css": {
     "core": [
       "src/css/*.styl",

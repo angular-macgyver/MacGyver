@@ -1,14 +1,14 @@
 module.exports = function(grunt) {
   /**
    * Connect section
-   * Creates a temporary server for display example page
+   * Creates a temporary server for display documentation
    */
   grunt.config("connect", {
-    example: {
+    doc: {
       options: {
         port: 9001,
         hostname: "0.0.0.0",
-        base: "example"
+        base: "out"
       }
     },
     e2e: {

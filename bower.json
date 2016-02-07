@@ -6,8 +6,6 @@
     "misc",
     "src",
     "test",
-    "vendor",
-    ".bowerrc",
     ".gitignore",
     ".travis.yml",
     "build.json",

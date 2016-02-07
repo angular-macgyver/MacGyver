@@ -4,25 +4,16 @@ node_modules
 # Bower vendor files
 bower_components
 
-# Example upload files
-example/uploads
-
 # Build files
 build/
-example/
 .gitmodules
 .grunt/
 coverage/
 out/
 
 # Logs
-test-results.xml
-libpeerconnection.log
 npm-debug.log
 
 # System file types
 .DS_Store
 .c9
-
-# Except these files
-!/vendor/vendor.styl
