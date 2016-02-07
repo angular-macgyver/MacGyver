@@ -1,0 +1,10 @@
+{
+  "plugins": [
+    "plugins/markdown",
+    "node_modules/macgyver-jsdoc/plugins/ngdoc"
+  ],
+  "opts": {
+    "readme": "./README.md",
+    "recurse": true
+  }
+}

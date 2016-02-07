@@ -13,6 +13,7 @@ example/
 .gitmodules
 .grunt/
 coverage/
+out/
 
 # Logs
 test-results.xml
