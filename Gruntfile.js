@@ -77,4 +77,9 @@ module.exports = function(grunt) {
     "connect:e2e",
     "protractor:normal"
   ]);
+
+  grunt.registerTask('doc', [
+    'jsdoc:doc',
+    'copy:doc'
+  ])
 };

@@ -26,8 +26,24 @@ module.exports = function(grunt) {
     doc: {
       files: [
         {
+          src: "lib/macgyver.js",
+          dest: "out/scripts/macgyver.js"
+        },
+        {
+          src: "lib/macgyver.css",
+          dest: "out/styles/macgyver.css"
+        },
+        {
           src: "docs/doc.js",
-          dest: "example/js/doc.js"
+          dest: "out/scripts/doc.js"
+        },
+        {
+          src: "docs/vendor.css",
+          dest: "out/styles/vendor.css"
+        },
+        {
+          src: "docs/data.json",
+          dest: "out/data.json"
         }
       ]
     },
