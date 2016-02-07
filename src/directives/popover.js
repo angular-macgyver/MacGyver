@@ -1,6 +1,6 @@
 /**
- * @chalk
- * @name mac-popover (attribute)
+ * @ngdoc directive
+ * @name macPopover Trigger
  * @description
  * Mac popover trigger directive
  *
@@ -15,6 +15,25 @@
  * - click: Popover only opens when user click on trigger
  * - hover: Popover shows when user hover on trigger
  * - focus: Popover shows when focus on input element
+ *
+ * @example
+<example>
+  <ul class="nav nav-pills">
+    <li><a mac-popover="testPopover">Above left</a></li>
+    <li><a mac-popover="testPopover2">Above right</a></li>
+    <li><a mac-popover="testPopover3">Below left</a></li>
+    <li><a mac-popover="testPopover4">Below right</a></li>
+    <li><a mac-popover="testPopover5">Middle left</a></li>
+    <li><a mac-popover="testPopover6">Middle right</a></li>
+  </ul>
+  <mac-popover id="testPopover" mac-popover-title="Test Popover Title" mac-popover-header ng-cloak>Open a popover</mac-popover>
+  <mac-popover id="testPopover2" mac-popover-direction="above right" ng-cloak>Open a popover</mac-popover>
+  <mac-popover id="testPopover3" mac-popover-direction="below left" ng-cloak>Open a popover</mac-popover>
+  <mac-popover id="testPopover4" mac-popover-direction="below right" ng-cloak>Open a popover</mac-popover>
+  <mac-popover id="testPopover5" mac-popover-direction="middle left" ng-cloak>Open a popover</mac-popover>
+  <mac-popover id="testPopover6" mac-popover-direction="middle right" ng-cloak>Open a popover</mac-popover>
+</example>
+<a mac-popover="testPopover">Above left</a>
  */
 
 angular.module('Mac').directive('macPopover', [
@@ -31,7 +50,6 @@ angular.module('Mac').directive('macPopover', [
         options = util.extendAttributes('macPopover', defaults.trigger, attrs);
 
         /**
-         * @description
          * Clearing show and/or hide delays
          */
         function clearDelays () {
@@ -46,7 +64,6 @@ angular.module('Mac').directive('macPopover', [
         }
 
         /**
-         * @description
          * Check if popover should be shown, and show popover with service
          * @param {string} id
          * @param {Number} delay (default 0)
@@ -74,7 +91,6 @@ angular.module('Mac').directive('macPopover', [
         }
 
         /**
-         * @description
          * Hide popover
          * @param {Element} element
          * @param {Number} delay (default 0)
@@ -123,8 +139,8 @@ angular.module('Mac').directive('macPopover', [
 ]).
 
 /**
- * @chalk
- * @name mac-popover(element)
+ * @ngdoc directive
+ * @name macPopover Element
  * @description
  * Element directive to define popover
  *
@@ -136,6 +152,25 @@ angular.module('Mac').directive('macPopover', [
  * @param {String} mac-popover-refresh-on Event to update popover size and position
  * - above, below or middle - Place the popover above, below or center align the trigger element
  * - left or right  - Place tip on the left or right of the popover
+ *
+ * @example
+<example>
+  <ul class="nav nav-pills">
+    <li><a mac-popover="testPopover">Above left</a></li>
+    <li><a mac-popover="testPopover2">Above right</a></li>
+    <li><a mac-popover="testPopover3">Below left</a></li>
+    <li><a mac-popover="testPopover4">Below right</a></li>
+    <li><a mac-popover="testPopover5">Middle left</a></li>
+    <li><a mac-popover="testPopover6">Middle right</a></li>
+  </ul>
+  <mac-popover id="testPopover" mac-popover-title="Test Popover Title" mac-popover-header ng-cloak>Open a popover</mac-popover>
+  <mac-popover id="testPopover2" mac-popover-direction="above right" ng-cloak>Open a popover</mac-popover>
+  <mac-popover id="testPopover3" mac-popover-direction="below left" ng-cloak>Open a popover</mac-popover>
+  <mac-popover id="testPopover4" mac-popover-direction="below right" ng-cloak>Open a popover</mac-popover>
+  <mac-popover id="testPopover5" mac-popover-direction="middle left" ng-cloak>Open a popover</mac-popover>
+  <mac-popover id="testPopover6" mac-popover-direction="middle right" ng-cloak>Open a popover</mac-popover>
+</example>
+<mac-popover id="testPopover">Open a popover</mac-popover>
  */
 directive('macPopover', [
   'macPopoverDefaults',
@@ -174,8 +209,6 @@ directive('macPopover', [
 ]).
 
 /**
- * @name mac-popover-fill-content
- * @description
  * An internal directive to compile popover template
  * @private
  */

@@ -1,6 +1,6 @@
 /**
- * @chalk overview
- * @name Time
+ * @ngdoc directive
+ * @name macTime
  * @description
  * A directive for creating a time input field. Time input can use any `ng-` attributes support by text input type.
  *
@@ -18,6 +18,13 @@
  * @param {String} ng-disabled     Enable or disable time input
  *
  * @param {String} mac-time-default If model is undefined, use this as the starting value (default 12:00 PM)
+ *
+ * @example
+<caption>Basic setup</caption>
+<example>
+  <mac-time id="input-start-time" ng-model="startTime" mac-time-default="11:59 PM" />
+</example>
+<mac-time id="input-start-time" ng-model="startTime" mac-time-default="11:59 PM" />
  */
 
 angular.module('Mac').directive('macTime', [
@@ -72,8 +79,6 @@ angular.module('Mac').directive('macTime', [
         });
 
         /**
-         * @name Click event
-         * @description
          * Note: The initial click into the input will not update the time because the
          * model is empty. The selection by default should be hour
          */

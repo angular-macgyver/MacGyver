@@ -1,11 +1,21 @@
 /**
- * @chalk overview
- * @name Windows Resize
+ * @ngdoc directive
+ * @name macWindowResize
  *
  * @description
  * Binding custom behavior on window resize event
  *
- * @param {Expression} mac-window-resize Expression to evaluate on window resize
+ * @param {expression} mac-window-resize Expression to evaluate on window resize
+ *
+ * @example`
+<example>
+  <div mac-window-resize="windowResizing($event)">
+    Current width: {{windowWidth}}
+  </div>
+</example>
+<div mac-window-resize="windowResizing($event)">
+  Current width: {{windowWidth}}
+</div>
  */
 
 angular.module('Mac').directive('macWindowResize', ['$parse', '$window', function($parse, $window) {

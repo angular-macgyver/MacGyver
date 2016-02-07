@@ -1,13 +1,19 @@
 /**
- * @chalk overview
- * @name Spinner
- *
+ * @ngdoc directive
+ * @name macSpinner
  * @description
  * A directive for generating spinner
  *
  * @param {Integer} mac-spinner-size The size of the spinner (default 16)
  * @param {Integer} mac-spinner-z-index The z-index (default inherit)
  * @param {String}  mac-spinner-color Color of all the bars (default #2f3035)
+ *
+ * @example
+<caption>Basic setup</caption>
+<example>
+   <mac-spinner />
+ </example>
+ <mac-spinner />
  */
 
 angular.module('Mac').directive('macSpinner', ['util', function (util) {

@@ -1,13 +1,10 @@
 /**
- * @name MacAutocompleteController
- *
- * @description
  * Controller for autocomplete directive
  */
 
 /**
  * @param {$scope} $scope Autocomplete directive scope
- * @param {DOM element} $element Autocomplete directive element
+ * @param {Element} $element Autocomplete directive element
  * @param {$compile.directive.Attributes} $attrs Directive attributes
  * @param {$animate} $animate
  * @param {$timeout} $timeout
@@ -60,7 +57,7 @@ function MacAutocompleteController ($scope, $element, $attrs, $animate, $timeout
 
   /**
    * Element reference to autocomplete menu
-   * @type {DOM element}
+   * @type {Element}
    */
   this.menuEl = null;
 
@@ -70,8 +67,6 @@ function MacAutocompleteController ($scope, $element, $attrs, $animate, $timeout
 }
 
 /**
- * @name initializeMenu
- * @description
  * Initialize menu component
  * @param {Controller} ngModelCtrl Controller of ngModel directive
  * @param {Function} transcludeFn Transclude function of autocomplete directive
@@ -82,7 +77,6 @@ MacAutocompleteController.prototype.initializeMenu = function (ngModelCtrl, tran
 }
 
 /**
- * @name blurHandler
  */
 MacAutocompleteController.prototype.blurHandler = function () {
   this.$scope.$apply(function (scope) {
@@ -91,8 +85,6 @@ MacAutocompleteController.prototype.blurHandler = function () {
 };
 
 /**
- * @name keydownHandler
- * @description
  * Create a keydown handler function
  * @param {Event} event Keydown event
  * @return {boolean}
@@ -156,8 +148,6 @@ MacAutocompleteController.prototype.reset = function () {
 };
 
 /**
- * @name _createMenuScope
- * @description
  * Generate a new scope for the menu element
  * @param {Controller} ngModelCtrl
  * @returns {Scope}
@@ -199,11 +189,9 @@ MacAutocompleteController.prototype._createMenuScope = function (ngModelCtrl) {
 }
 
 /**
- * @name _createMenuElement
- * @description
  * Create a menu element and transclude content
  * @param {Function} transclude
- * @return {DOM Element}
+ * @return {Element}
  * @private
  */
 MacAutocompleteController.prototype._createMenuElement = function (transclude) {
@@ -226,8 +214,6 @@ MacAutocompleteController.prototype._createMenuElement = function (transclude) {
 }
 
 /**
- * @name parser
- * @description
  * Parser function to pass into ngModel controller
  * @param {string} value
  * @return {string} Updated value. In this case, it's the same value as the parameter
@@ -261,8 +247,6 @@ MacAutocompleteController.prototype.parser = function (value) {
 }
 
 /**
- * @name updateItem
- * @description
  * Update list of items getting passed to menu
  * @param {Array} data Array of data
  */
@@ -300,8 +284,6 @@ MacAutocompleteController.prototype.updateItem = function (data) {
 }
 
 /**
- * @name appendMenu
- * @description
  * Append menu to DOM and bind handlers
  */
 MacAutocompleteController.prototype.appendMenu = function () {
@@ -330,8 +312,6 @@ MacAutocompleteController.prototype.appendMenu = function () {
 }
 
 /**
- * @name positionMenu
- * @description
  * Calculate the style include position and width for menu
  */
 MacAutocompleteController.prototype.positionMenu = function () {
@@ -353,8 +333,6 @@ MacAutocompleteController.prototype.positionMenu = function () {
 }
 
 /**
- * @name getData
- * @description
  * GET request to fetch data from server, update menu items and position menu
  * @param {String} url URL to fetch data from
  * @param {String} query Search query
@@ -406,8 +384,6 @@ MacAutocompleteController.prototype.getData = function (url, query) {
 }
 
 /**
- * @name queryData
- * @description
  * Used for querying data
  * @param {String} query Search query
  * @returns {Promise|*}

@@ -1,8 +1,10 @@
 angular.module("Mac", ["Mac.Util"]);
 
 /**
- * @chalk overview
+ * @ngdoc function
  * @name angular.element
+ * @module ng
+ * @kind function
  *
  * @description
  * Angular comes with jqLite, a tiny, API-compatible subset of jQuery. However, its

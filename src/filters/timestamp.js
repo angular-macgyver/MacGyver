@@ -1,13 +1,25 @@
 /**
- * @chalk overview
- * @name Timestamp filter
- *
+ * @ngdoc filter
+ * @name timestamp
  * @description
  * Takes in a unix timestamp and turns it into a human-readable relative time string, like "5
  * minutes ago" or "just now".
  *
- * @param {Unix timestamp} time The time to format
+ * @param {integer} time The time to format
  * @returns {String} Formatted string
+ *
+ * @example
+<example>
+  <dl class="dl-horizontal">
+    <dt>Now - 5 minutes</dt>
+    <dd>{{ fiveMinAgo | timestamp}}</dd>
+    <dt>Now - 1 day</dt>
+    <dd>{{ oneDayAgo | timestamp}}</dd>
+    <dt>Now - 3 days</dt>
+    <dd>{{ threeDaysAgo | timestamp}}</dd>
+  </dl>
+</example>
+<span>{{yesterday | timestamp}}</span>
  */
 
 angular.module('Mac').filter('timestamp', ['util', function(util) {

@@ -1,7 +1,6 @@
 /**
- * @chalk overview
- * @name Autocomplete
- *
+ * @ngdoc directive
+ * @name macAutocomplete
  * @description
  * A directive for providing suggestions while typing into the field
  *
@@ -26,9 +25,6 @@
  * ```
  *
  * Template default to `{{item.label}}` if not defined
- *
- * @dependencies
- * - mac-menu
  *
  * @param {String} ng-model Assignable angular expression to data-bind to (required)
  * @param {String} mac-placeholder Placeholder text
@@ -58,6 +54,41 @@
  * @param {Integer} mac-autocomplete-delay Delay on fetching autocomplete data after keyup (default 800)
  *
  * @param {Expr} mac-menu-class Classes for mac-menu used by mac-autocomplete. For more info, check [ngClass](http://docs.angularjs.org/api/ng/directive/ngClass)
+ *
+ * @example
+<caption>Basic setup</caption>
+<example>
+  <mac-autocomplete
+    mac-autocomplete-source = "autocompleteUrl"
+    mac-autocomplete-query = "q"
+    mac-autocomplete-on-success = "onSuccess(data)"
+    mac-placeholder = "'Autocomplete'"
+    ng-model = "autocompleteQuery"
+  ></mac-autocomplete>
+</example>
+<mac-autocomplete
+  mac-autocomplete-source = "autocompleteUrl"
+  mac-autocomplete-query = "q"
+  mac-autocomplete-on-success = "onSuccess(data)"
+  mac-placeholder = "'Autocomplete'"
+  ng-model = "autocompleteQuery"
+></mac-autocomplete>
+ *
+ * @example
+<caption>Example with autocomplete using source</caption>
+<example>
+  <mac-autocomplete
+    mac-autocomplete-source = "['hello', 'world']"
+    mac-placeholder = "'Type something...'"
+    ng-model = "autocompleteSourceQuery"
+  ></mac-autocomplete>
+</example>
+<mac-autocomplete
+  mac-autocomplete-source = "['hello', 'world']"
+  mac-placeholder = "'Type something...'"
+  ng-model = "autocompleteSourceQuery"
+></mac-autocomplete>
+ *
  */
 
 angular.module('Mac')

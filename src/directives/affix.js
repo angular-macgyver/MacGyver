@@ -1,6 +1,8 @@
 /**
- * @chalk overview
- * @name mac-affix
+ * @ngdoc directive
+ * @name macAffix
+ *
+ * @restrict EAC
  *
  * @description
  * Fix the component at a certain position
@@ -9,6 +11,9 @@
  * @param {Expr} mac-affix-top      Top offset (default 0)
  * @param {Expr} mac-affix-bottom   Bottom offset (default 0)
  * @param {Event} refresh-mac-affix To update the position of affixed element
+ *
+ * @example
+<div mac-affix>Nav content</div>
  */
 
 angular.module('Mac').directive('macAffix', ['$window', function($window) {

@@ -1,7 +1,6 @@
 /**
- * @chalk overview
- * @name Tooltip
- *
+ * @ngdoc directive
+ * @name macTooltip
  * @description
  * Tooltip directive
  *
@@ -10,6 +9,17 @@
  * @param {String}  mac-tooltip-trigger   How tooltip is triggered (default 'hover')
  * @param {Boolean} mac-tooltip-inside    Should the tooltip be appended inside element (default false)
  * @param {Expr}    mac-tooltip-disabled  Disable and enable tooltip
+ *
+ * @example
+<example>
+  <ul class="nav nav-pills">
+    <li><a mac-tooltip="Tooltip on top">Tooltip on top</a></li>
+    <li><a mac-tooltip="Tooltip on bottom" mac-tooltip-direction="bottom">Tooltip on bottom</a></li>
+    <li><a mac-tooltip="Tooltip on left" mac-tooltip-direction="left">Tooltip on left</a></li>
+    <li><a mac-tooltip="Tooltip on right" mac-tooltip-direction="right">Tooltip on right</a></li>
+  </ul>
+</example>
+<a href="#" mac-tooltip="Tooltip on bottom" mac-tooltip-direction="bottom">Tooltip on bottom</a>
  */
 
 /**

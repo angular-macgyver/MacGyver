@@ -1,6 +1,12 @@
 /* jshint multistr: true */
 
 angular.module('Mac').
+/**
+ * @ngdoc constant
+ * @name macTooltipDefaults
+ * @description
+ * Default values for mac-tooltip
+ */
 constant('macTooltipDefaults', {
   direction: 'top',
   trigger: 'hover',
@@ -8,16 +14,34 @@ constant('macTooltipDefaults', {
   class: 'visible'
 }).
 
+/**
+ * @ngdoc constant
+ * @name macTimeDefaults
+ * @description
+ * Default values for mac-time
+ */
 constant('macTimeDefaults', {
   default: '12:00 AM',
   placeholder: '--:--'
 }).
 
+/**
+ * @ngdoc constant
+ * @name scrollSpyDefaults
+ * @description
+ * Default values for mac-scroll-spy
+ */
 constant('scrollSpyDefaults', {
   offset: 0,
   highlightClass: 'active'
 }).
 
+/**
+ * @ngdoc constant
+ * @name macPopoverDefaults
+ * @description
+ * Default values for mac-popover
+ */
 constant('macPopoverDefaults', {
   trigger: {
     offsetY: 0,
@@ -40,6 +64,12 @@ constant('macPopoverDefaults', {
   </div>"
 }).
 
+/**
+ * @ngdoc constant
+ * @name macModalDefaults
+ * @description
+ * Default values for mac-modal
+ */
 constant('macModalDefaults', {
   keyboard: false,
   overlayClose: false,
@@ -60,6 +90,12 @@ constant('macModalDefaults', {
   </div>"
 }).
 
+/**
+ * @ngdoc constant
+ * @name macAffixDefaults
+ * @description
+ * Default values for mac-affix
+ */
 constant('macAffixDefaults', {
   top: 0,
   bottom: 0,

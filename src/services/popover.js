@@ -1,50 +1,6 @@
 /**
- * @chalk overview
- * @name Popover
- */
-
-/**
- * @chalk provider
- * @name Popover Provider
- *
- * @description
- * Configurate popover options in config block.
- * @param {Object} defaults Popover defaults
- *
- * ```js
- * {
- *   offsetY: 0,
- *   offsetX: 0,
- *   trigger: "click"
- * }
- * ```
- *
- * @param {Object} popoverDefaults Popover trigger defaults
- * ```js
- * {
- *   footer: false,
- *   header: false,
- *   title: "",
- *   direction: "above left"
- * }
- * ```
- *
- * @param {String} template Popover template
- * ```js
- * "<div class=\"mac-popover\" ng-class=\"macPopoverClasses\">
- *   <div class=\"tip\"></div>
- *     <div class=\"popover-header\">
- *       <div class=\"title\">{{macPopoverTitle}}</div>
- *     </div>
- *   <div mac-popover-fill-content></div>
- * </div>";
- * ```
- */
-
-/**
- * @chalk service
- * @name Popover Service
- *
+ * @ngdoc service
+ * @name popover
  * @description
  * Popover service to keep state of opened popover. Allowing user to hide certain
  * or all popovers
@@ -58,7 +14,7 @@
  *
  * @param {Function} register Register a popover with an id and an element
  * - {String} id Popover id
- * - {DOM Element} element Popover element
+ * - {Element} element Popover element
  * - Returns {Bool} If the id already existed
  *
  * @param {Function} unregister Remove id and element from registered list of popover
@@ -67,8 +23,8 @@
  *
  * @param {Function} add Add a new popover to opened list
  * - {String} id Popover id
- * - {DOM Element} popover Popover DOM element
- * - {DOM Element} element Trigger DOM element
+ * - {Element} popover Popover DOM element
+ * - {Element} element Trigger DOM element
  * - {Object} options Additional options
  * - Returns {Object} The new popover object
  *
@@ -77,7 +33,7 @@
  *
  * @param {Function} show Show and position a registered popover
  * - {String} id Popover id
- * - {DOM Element} element Element that trigger the popover
+ * - {Element} element Element that trigger the popover
  * - {Object} options Additional options for popover
  * - Returns {Promise.<Boolean>}
  *
@@ -165,14 +121,12 @@ angular.module('Mac').provider('popover', function () {
         },
 
         /**
-         * @name _compilePopover
-         * @private
-         * @description
          * Compile template with proper settings
          * @param {string} id
          * @param {string} template
          * @param {object} options
          * @returns {Promise}
+         * @private
          */
         _compilePopover: function (id, template, options) {
           var viewScope, popover, self = this;
@@ -231,12 +185,10 @@ angular.module('Mac').provider('popover', function () {
         },
 
         /**
-         * @name _getTemplate
-         * @private
-         * @description
          * Return template from either options, template cache or fetch from url
          * @param {Object} options
          * @returns {Promise}
+         * @private
          */
         _getTemplate: function (options) {
           if (options.template) {
@@ -262,17 +214,15 @@ angular.module('Mac').provider('popover', function () {
         },
 
         /**
-         * @name _getContainer
-         * @private
-         * @description
          * Get popover container based on options
          * - null: Use document.body
          * - true: Use parent of element
          * - string: Check scope for the variable
          * - DOM Element: Use the element
-         * @param {DOM Element} element Trigger DOM element
+         * @param {Element} element Trigger DOM element
          * @param {Object} options
-         * @returns {DOM Element}
+         * @returns {Element}
+         * @private
          */
         _getContainer: function (element, options) {
           if (options.container === true) {

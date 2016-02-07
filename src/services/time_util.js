@@ -1,9 +1,9 @@
 /**
- * @name MacTime Util
+ * @ngdoc service
+ * @name timeUtil
  * @description
  * All utility functions for MacTime
  */
-
 angular.module('Mac').factory('macTimeUtil', [
   '$filter',
   '$timeout',
@@ -11,6 +11,8 @@ angular.module('Mac').factory('macTimeUtil', [
   'util',
   function($filter, $timeout, defaults, util) {
     /**
+     * @ngdoc method
+     * @name timeUtil#initializeTime
      * @description
      * Generate Date object based on options
      * @param {Object} options
@@ -29,6 +31,8 @@ angular.module('Mac').factory('macTimeUtil', [
     }
 
     /**
+     * @ngdoc method
+     * @name timeUtil#getSelection
      * @description
      * Get element cursor section
      * @param {Element} element
@@ -47,7 +51,6 @@ angular.module('Mac').factory('macTimeUtil', [
     }
 
     /**
-     * @description
      * A wrapper for setSelectionRange with a timeout 0
      * @param {Element} element
      * @param {Number} start
@@ -60,7 +63,6 @@ angular.module('Mac').factory('macTimeUtil', [
     }
 
     /**
-     * @description
      * Select hour block
      * @param {Element} element
      */
@@ -69,7 +71,6 @@ angular.module('Mac').factory('macTimeUtil', [
     }
 
     /**
-     * @description
      * Select minute block
      * @param {Element} element
      */
@@ -78,7 +79,6 @@ angular.module('Mac').factory('macTimeUtil', [
     }
 
     /**
-     * @description
      * Select meridian block (AM/PM)
      * @param {Element} element
      */
@@ -87,7 +87,6 @@ angular.module('Mac').factory('macTimeUtil', [
     }
 
     /**
-     * @description
      * Select/highlight next block
      * hour -> minute
      * minute -> meridian
@@ -107,7 +106,6 @@ angular.module('Mac').factory('macTimeUtil', [
     }
 
     /**
-     * @description
      * Select/highlight previous block
      * hour -> hour (no previous block)
      * minute -> hour
@@ -127,7 +125,6 @@ angular.module('Mac').factory('macTimeUtil', [
     }
 
     /**
-     * @description
      * Toggle time hour based on meridian value
      * @param {Date} time
      * @param {String} meridian
@@ -145,7 +142,6 @@ angular.module('Mac').factory('macTimeUtil', [
     }
 
     /**
-     * @description
      * Toggle time hour
      * @param {Date} time
      */
@@ -155,7 +151,6 @@ angular.module('Mac').factory('macTimeUtil', [
     }
 
     /**
-     * @description
      * Change hour, wrapper for setHours
      * @param {Date} time
      * @param {Number} change
@@ -165,7 +160,6 @@ angular.module('Mac').factory('macTimeUtil', [
     }
 
     /**
-     * @description
      * Change minute, wrapper for setMinutes
      * @param {Date} time
      * @param {Number} change
@@ -175,7 +169,6 @@ angular.module('Mac').factory('macTimeUtil', [
     }
 
     /**
-     * @description
      * Update input view value with ngModelController
      * @param {Date} time
      * @param {ngController} controller
@@ -190,7 +183,6 @@ angular.module('Mac').factory('macTimeUtil', [
     }
 
     /**
-     * @description
      * Update time with ngModelController model value
      * @param {Date} time
      * @param {ngController} controller

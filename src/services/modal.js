@@ -1,38 +1,8 @@
 /**
- * @chalk overview
- * @name Modal
- */
-
-/**
- * @chalk provider
- * @name Modal Provider
- *
+ * @ngdoc service
+ * @name modal
  * @description
- * Configure modal options in config block
  *
- * @param {Object} defaults Modal default
- * ```js
- * {
- *   keyboard: false,
- *   overlayClose: false,
- *   resize: false,
- *   position: true,
- *   open: angular.noop,
- *   topOffset: 20,
- *   attributes: {},
- *   beforeShow: angular.noop,
- *   afterShow: angular.noop,
- *   beforeHide: angular.noop,
- *   afterHide: angular.noop
- * }
- * ```
- */
-
-/**
- * @chalk service
- * @name Modal Service
- *
- * @description
  * There are multiple components used by modal.
  * - A modal service is used to keep state of modal opened in the applications.
  * - A modal element directive to define the modal dialog box
@@ -43,7 +13,7 @@
  * - {Object} triggerOptions Additional options to open modal
  *
  * @param {Function} resize Update the position and also the size of the modal
- * - {Modal Object} modalObject The modal to reposition and resize (default opened modal)
+ * - {Object} modalObject The modal to reposition and resize (default opened modal)
  *
  * @param {Function} hide Hide currently opened modal
  * - {Function} callback Callback after modal has been hidden
@@ -53,7 +23,7 @@
  *
  * @param {Function} register Registering modal with the service
  * - {String} id ID of the modal
- * - {DOM element} element The modal element
+ * - {Element} element The modal element
  * - {Object} options Additional options for the modal
  *
  * @param {Function} unregister Remove modal from modal service
@@ -127,10 +97,8 @@ angular.module('Mac').provider('modal', function () {
         },
 
         /**
-         * @name resize
-         * @description
          * Update the position and also the size of the modal
-         * @param {Modal Object} modalObject The modal to reposition and resize (default opened modal)
+         * @param {Object} modalObject The modal to reposition and resize (default opened modal)
          */
         resize: function (modalObject) {
           modalObject = modalObject || this.opened;
@@ -164,8 +132,6 @@ angular.module('Mac').provider('modal', function () {
         },
 
         /**
-         * @name hide
-         * @description
          * Hide currently opened modal
          * @returns {Promise} Remove visible class promise
          */
@@ -201,7 +167,6 @@ angular.module('Mac').provider('modal', function () {
         },
 
         /**
-         * @description
          * Bind events to document and window
          *
          * @param {String} action (on|off)
@@ -226,11 +191,9 @@ angular.module('Mac').provider('modal', function () {
         },
 
         /**
-         * @name register
-         * @description
          * Registering modal with the service
          * @param {String} id ID of the modal
-         * @param {DOM element} element The modal element
+         * @param {Element} element The modal element
          * @param {Object} options Additional options for the modal
          */
         register: function (id, element, options) {
@@ -253,8 +216,6 @@ angular.module('Mac').provider('modal', function () {
         },
 
         /**
-         * @name unregister
-         * @description
          * Remove modal from modal service
          * @param {String} id ID of the modal to unregister
          */
@@ -273,8 +234,6 @@ angular.module('Mac').provider('modal', function () {
         },
 
         /**
-         * @name clearWaiting
-         * @description
          * Remove certain modal id from waiting list
          * @param {String} id ID of the modal
          */

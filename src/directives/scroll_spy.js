@@ -1,11 +1,12 @@
 /**
- * @chalk overview
- * @name mac-scroll-spy
- *
+ * @ngdoc directive
+ * @name macScrollSpy
  * @description
  * Element to spy scroll event on
  *
  * @param {Integer} mac-scroll-spy-offset Top offset when calculating scroll position
+ * @example
+<body mac-scroll-spy mac-scroll-spy-offset="10"></body>
  */
 angular.module('Mac').directive('macScrollSpy', [
   '$window',
@@ -55,13 +56,15 @@ angular.module('Mac').directive('macScrollSpy', [
 }]).
 
 /**
- * @chalk overview
- * @name mac-scroll-spy-anchor
+ * @ngdoc directive
+ * @name macScrollSpyAnchor
  * @description
  * Section in the spied element
  * @param {String} id Id to identify anchor
  * @param {String} mac-scroll-spy-anchor ID to identify anchor (use either element or this attribute)
  * @param {Event} refresh-scroll-spy To refresh the top offset of all scroll anchors
+ * @example
+<section id="modal" mac-scroll-spy-anchor></section>
  */
 directive('macScrollSpyAnchor', ['scrollSpy', function (scrollSpy) {
   return {
@@ -89,12 +92,18 @@ directive('macScrollSpyAnchor', ['scrollSpy', function (scrollSpy) {
 }]).
 
 /**
- * @chalk overview
- * @name mac-scroll-spy-target
+ * @ngdoc directive
+ * @name macScrollSpyTarget
  * @description
  * Element to highlight when anchor scroll into view
  * @param {String} mac-scroll-spy-target Name of the anchor
  * @param {String} mac-scroll-spy-target-class Class to apply for highlighting (default active)
+ *
+ * @example
+<ul class="nav nav-list">
+  <li mac-scroll-spy-target="modal"><a href="#modal">Modal</a></li>
+  <li mac-scroll-spy-target="scrollspy"><a href="#scrollspy">Scroll Spy</a></li>
+</ul>
  */
 directive('macScrollSpyTarget', ['scrollSpy', 'scrollSpyDefaults', function (scrollSpy, defaults) {
   return {

@@ -1,7 +1,6 @@
 /**
- * @chalk overview
- * @name Menu
- *
+ * @ngdoc directive
+ * @name macMenu
  * @description
  * A directive for creating a menu with multiple items
  *
@@ -20,7 +19,7 @@
  * | `item`    | Object  | item object                                                                 |
  *
  * To use custom templating
- * ```
+ * ```html
  * <mac-menu>
  *   <span> {{item.label}} </span>
  * </mac-menu>
@@ -34,6 +33,13 @@
  * - `index` - {Integer} Item index
  * @param {Object} mac-menu-style Styles apply to the menu
  * @param {Expression} mac-menu-index Index of selected item
+ *
+ * @example
+<example>
+  <mac-menu mac-menu-items="menuItems" mac-menu-select="selectingMenuItem(index)"></mac-menu>
+  <div>Current selected item: {{selectedItem}}</div>
+</example>
+<mac-menu mac-menu-items="menuItems" mac-menu-select="selectingMenuItem(index)"></mac-menu>
  */
 
 angular.module('Mac').directive('macMenu', function () {

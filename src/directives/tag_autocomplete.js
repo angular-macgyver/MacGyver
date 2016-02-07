@@ -1,14 +1,9 @@
 /**
- * @chalk overview
- * @name Tag Autocomplete
- *
+ * @ngdoc directive
+ * @name macTagAutocomplete
  * @description
  * A directive for generating tag input with autocomplete support on text input.
  * Tag autocomplete has priority 800
- *
- * @dependencies
- * - mac-autocomplete
- * - mac-menu
  *
  * @param {String}  mac-tag-autocomplete-source      Data to use.
  * Source support multiple types:
@@ -31,6 +26,48 @@
  * @param {Expr}    mac-tag-autocomplete-on-enter    When autocomplete is disabled, this function is called on enter, Should return either string, object or boolean. If false, item is not added
  * - `item` - {String} User input
  * @param {Event} mac-tag-autocomplete-clear-input $broadcast message; clears text input when received
+ *
+ * @example
+<caption>Basic example</caption>
+<example>
+  <mac-tag-autocomplete
+    mac-tag-autocomplete-source = "autocompleteUrl"
+    mac-tag-autocomplete-query = "q"
+    mac-tag-autocomplete-selected = "tagAutocompleteSelected"
+    mac-tag-autocomplete-value = "id"
+    mac-tag-autocomplete-label = "name"
+    mac-tag-autocomplete-placeholder = "tagAutocompletePlaceholder"
+    mac-tag-autocomplete-model = "tagAutocompleteModel"
+  />
+</example>
+<mac-tag-autocomplete
+  mac-tag-autocomplete-source = "autocompleteUrl"
+  mac-tag-autocomplete-query = "q"
+  mac-tag-autocomplete-selected = "tagAutocompleteSelected"
+  mac-tag-autocomplete-value = "id"
+  mac-tag-autocomplete-label = "name"
+  mac-tag-autocomplete-placeholder = "tagAutocompletePlaceholder"
+  mac-tag-autocomplete-model = "tagAutocompleteModel"
+/>
+ *
+ * @example
+<caption>Example with autocomplete disabled</caption>
+<example>
+  <mac-tag-autocomplete
+    mac-tag-autocomplete-selected = "tagAutocompleteDisabledSelected"
+    mac-tag-autocomplete-placeholder = "tagAutocompletePlaceholder"
+    mac-tag-autocomplete-value = ""
+    mac-tag-autocomplete-label = ""
+    mac-tag-autocomplete-disabled = "true"
+  />
+</example>
+<mac-tag-autocomplete
+  mac-tag-autocomplete-selected = "tagAutocompleteDisabledSelected"
+  mac-tag-autocomplete-placeholder = "tagAutocompletePlaceholder"
+  mac-tag-autocomplete-value = ""
+  mac-tag-autocomplete-label = ""
+  mac-tag-autocomplete-disabled = "true"
+/>
  */
 
 angular.module('Mac').directive('macTagAutocomplete', [

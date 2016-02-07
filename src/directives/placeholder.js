@@ -1,11 +1,16 @@
 /**
- * @chalk overview
- * @name Placeholder
- *
+ * @ngdoc directive
+ * @name macPlaceholder
  * @description
  * Dynamically fill out the placeholder text of input
  *
- * @param {String} mac-placehodler Variable that contains the placeholder text
+ * @param {String} mac-placeholder Variable that contains the placeholder text
+ *
+ * @example
+<example>
+  <input type="text" mac-placeholder="tagAutocompletePlaceholder" />
+</example>
+<input type="text" mac-placeholder="tagAutocompletePlaceholder" />
  */
 
  angular.module('Mac').directive('macPlaceholder', function() {

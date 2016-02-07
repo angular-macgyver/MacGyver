@@ -1,7 +1,6 @@
 /**
- * @chalk overview
- * @name Scroll Spy Service
- *
+ * @ngdoc service
+ * @name scrollSpy
  * @description
  * There are multiple components used by scrollspy
  * - Scrollspy service is used to keep track of all and active anchors
@@ -10,12 +9,9 @@
  * - mac-scroll-spy-anchor - Section in element spying on
  * - mac-scroll-spy-target - Element to highlight, most likely a nav item
  *
- * Scrollspy defaults:
- * offset - 0
- *
  * @param {Function} register Register an anchor with the service
  * - {String} id ID of the anchor
- * - {DOM Element} element Element to spy on
+ * - {Element} element Element to spy on
  *
  * @param {Function} unregister Remove anchor from service
  * - {String} id ID of the anchor

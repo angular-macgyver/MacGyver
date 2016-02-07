@@ -1,10 +1,14 @@
 /**
- * @name MacAffixController
- *
- * @description
  * Controller for affix directive
  */
 
+/**
+ * @param {Element} $element Affix directive element
+ * @param {$document} $document
+ * @param {$window} $window
+ * @param {Object} defaults Affix default values
+ * @constructor
+ */
 function MacAffixController ($element, $document, $window, defaults) {
   this.$document = $document;
   this.defaults = defaults;
@@ -26,8 +30,6 @@ function MacAffixController ($element, $document, $window, defaults) {
 }
 
 /**
- * @name updateOffset
- * @description
  * Update to or bottom offset. This function make sure the value is an integer
  * or use default values
  * @param {String} key Offset key

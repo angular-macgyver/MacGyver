@@ -1,9 +1,9 @@
 /**
- * @name Util module
+ * @ngdoc service
+ * @name util
  * @description
- * Contains various miscellaneous utility functions and extensions
+ * A bunch of utility functions
  */
-
 angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
   var inflectionConstants = {
     "uncountables": ["sheep", "fish", "moose", "series", "species", "money", "rice", "information", "info", "equipment", "min"],
@@ -38,9 +38,10 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
   var cssPrefixes = ['webkit', 'Moz', 'ms', 'O'];
 
   /**
-   * @name timeRegex
+   * @constant {string} timeRegexStr
    * @example
    * 01:30 PM or 9:45 AM
+   * @private
    */
   var timeRegexStr = '^' +
     '(0?[1-9]|1[0-2])' +  // hours (starting zero optional)
@@ -51,7 +52,11 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
     '$';
   var timeRegex = new RegExp(timeRegexStr);
 
-  // http://tools.ietf.org/html/rfc3986#section-2.2
+  /**
+    * @constant {string} urlRegexStr
+    * @see {@link http://tools.ietf.org/html/rfc3986#section-2.2}
+    * @private
+    */
   var urlRegexStr = '(?:' +
       '(http[s]?):\\/\\/' +     // protocol (optional)
     ')?' +
@@ -73,7 +78,8 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
 
   return {
     /**
-     * @name pluralize
+     * @ngdoc method
+     * @name util#pluralize
      * @description
      * Pluralize string based on the count
      *
@@ -82,6 +88,12 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
      * @param {Boolean} includeCount Include the number or not (default false)
      *
      * @returns {String} Pluralized string based on the count
+     *
+     * @example
+util.pluralize("apple", 5)
+=> "apples"
+util.pluralize("apple", 10, true)
+=> "10 apples"
      */
     pluralize: function(string, count, includeCount) {
       var irregulars, isUppercase, lowercaseWord, pluralizedString, pluralizedWord, pluralizer, pluralizers, uncountables, word, i;
@@ -134,7 +146,8 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
     },
 
     /**
-     * @name trim
+     * @ngdoc method
+     * @name util#trim
      * @description
      * Trimming whitespaces on strings
      * @param {String} string input
@@ -151,11 +164,16 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
     },
 
     /**
-     * @name capitalize
+     * @ngdoc method
+     * @name util#capitalize
      * @description
      * Capitalize string
      * @param {String} string
      * @returns {String}
+     *
+     * @example
+util.capitalize('lowercase')
+=> "Lowercase"
      */
     capitalize: function(string) {
       var str;
@@ -164,11 +182,16 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
     },
 
     /**
-     * @name uncapitalize
+     * @ngdoc method
+     * @name util#uncapitalize
      * @description
      * Convert the first character to lowercase
      * @param {String} string
      * @returns {String}
+     *
+     * @example
+util.uncapitalize('UPPERCASE')
+=> "uPPERCASE"
      */
     uncapitalize: function(string) {
       var str;
@@ -177,17 +200,18 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
     },
 
     /**
-     * @name toCamelCase
+     * @ngdoc method
+     * @name util#toCamelCase
      * @description
      * Convert string with dashes, underscores and spaces to camel case
-     * ```
-     * this-is-a-test => thisIsATest
-     * another_test => anotherTest
-     * hello world again => helloWorldAgain
-     * a mix_of-everything => aMixOfEverything
-     * ```
      * @param {String} string
      * @returns {String}
+     *
+     * @example
+this-is-a-test => thisIsATest
+another_test => anotherTest
+hello world again => helloWorldAgain
+a mix_of-everything => aMixOfEverything
      */
     toCamelCase: function(string) {
       string = string || '';
@@ -197,11 +221,16 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
     },
 
     /**
-     * @name toSnakeCase
+     * @ngdoc method
+     * @name util#toSnakeCase
      * @description
      * Convert other cases into snake case (separated by underscores)
      * @param {String} string
      * @returns {String}
+     *
+     * @example
+util.toSnakeCase("just another string")
+=> "just_another_string"
      */
     toSnakeCase: function(string) {
       string = string || '';
@@ -209,11 +238,16 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
     },
 
     /**
-     * @name convertKeysToCamelCase
+     * @ngdoc method
+     * @name util#convertKeysToCamelCase
      * @description
      * Convert object keys to camel case
      * @param {Object} object
      * @returns {Object}
+     *
+     * @example
+util.toSnakeCase({'hello-world': 'test'})
+=> {'helloWorld': 'test'}
      */
     convertKeysToCamelCase: function(object) {
       var key, result = {}, value;
@@ -231,11 +265,16 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
     },
 
     /**
-     * @name convertKeysToSnakeCase
+     * @ngdoc method
+     * @name util#convertKeysToSnakeCase
      * @description
      * Convert object keys to snake case
      * @param {Object} object
      * @returns {Object}
+     *
+     * @example
+util.toSnakeCase({'helloWorld': 'test'})
+=> {'hello_world': 'test'}
      */
     convertKeysToSnakeCase: function(object) {
       var key, result = {}, value;
@@ -253,7 +292,8 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
     },
 
     /**
-     * @name pyth
+     * @ngdoc method
+     * @name util#pyth
      * @description
      * pythagoras theorem
      * @param {Integer} a
@@ -265,7 +305,8 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
     },
 
     /**
-     * @name degrees
+     * @ngdoc method
+     * @name util#degrees
      * @description
      * Convert from radian to degrees
      * @param {Number} radian
@@ -276,7 +317,8 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
     },
 
     /**
-     * @name radian
+     * @ngdoc method
+     * @name util#radian
      * @description
      * Convert degree to radian
      * @param {Number} degrees
@@ -287,7 +329,8 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
     },
 
     /**
-     * @name hex2rgb
+     * @ngdoc method
+     * @name util#hex2rgb
      * @description
      * Convert hex color value to rgb
      * @param {String} hex
@@ -317,23 +360,24 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
     },
 
     /**
-     * @name validateUrl
+     * @ngdoc method
+     * @name util#validateUrl
      * @description
      * Parse url
      * @param {String} url
      * @returns {Object} Object with url sections parsed out
-     * ```
-     * input: www.example.com:9000/testing
-     * output: {
-     *   url: 'www.example.com:9000/testing',
-     *   protocol: 'http',
-     *   subdomain: 'www',
-     *   name: 'example',
-     *   domain: 'com',
-     *   port: '9000',
-     *   path: '/testing'
-     * }
-     * ```
+     *
+     * @example
+ input: www.example.com:9000/testing
+ output: {
+   url: 'www.example.com:9000/testing',
+   protocol: 'http',
+   subdomain: 'www',
+   name: 'example',
+   domain: 'com',
+   port: '9000',
+   path: '/testing'
+ }
      */
     validateUrl: function(url) {
       var match = urlRegex.exec(url);
@@ -352,7 +396,8 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
     },
 
     /**
-     * @name validateEmail
+     * @ngdoc method
+     * @name util#validateEmail
      * @description
      * Check if input string is a valid email address
      * @param {String} email
@@ -363,7 +408,8 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
     },
 
     /**
-     * @name validateTime
+     * @ngdoc method
+     * @name util#validateTime
      * @description
      * Check if time input match time regex
      * @param {String} time
@@ -374,13 +420,18 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
     },
 
     /**
-     * @name getQueryString
+     * @ngdoc method
+     * @name util#getQueryString
      * @description
      * Return param value in querystring
-     * credits: http://www.netlobo.com/url_query_string_javascript.html
+     * @see {@link http://www.netlobo.com/url_query_string_javascript.html}
      * @param {String} url
      * @param {String} name
      * @returns {String}
+     *
+     * @example
+util.getQueryString('http://www.example.com/macgyver?season=1&episode=3&time=12:23', 'episode')
+=> 3
      */
     getQueryString: function(url, name) {
       var regex, regexS, results;
@@ -394,9 +445,26 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
     },
 
     /**
-     * @name parseUrlPath
+     * @ngdoc method
+     * @name util#parseUrlPath
      * @param {String} fullPath
      * @returns {Object}
+     *
+     * @example
+util.parseUrlPath('http://www.example.com/macgyver?season=1&episode=3&time=12:23')
+=> {
+  fullPath: 'http://www.example.com/macgyver?season=1&episode=3&time=12:23',
+  path: 'http://www.example.com',
+  pathComponents: [
+    'http:', '', 'www.example.com', 'macgyver'
+  ],
+  verb: 'macgyver',
+  queryies: {
+    season: '1',
+    episode: '3',
+    time: '12:23'
+  }
+}
      */
     parseUrlPath: function(fullPath) {
       var path, pathComponents, queries, queryString, queryStrings, urlComponents, values, verb, _i, _len, _ref;
@@ -424,7 +492,8 @@ angular.module('Mac.Util', []).factory('util', ['$filter', function($filter) {
     },
 
     /**
-     * @name extendAttributes
+     * @ngdoc method
+     * @name util#extendAttributes
      * @description
      * Extend default values with attribute
      * @param {String} prefix Prefix of all attributes

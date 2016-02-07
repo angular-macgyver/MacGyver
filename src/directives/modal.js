@@ -1,6 +1,6 @@
 /**
- * @chalk overview
- * @name mac-modal (element)
+ * @ngdoc directive
+ * @name macModal
  * @description
  * Element directive to define the modal dialog. Modal content is transcluded into a
  * modal template
@@ -15,6 +15,22 @@
  * @param {Expr}    mac-modal-before-hide   Callback before hiding the modal
  * @param {Expr}    mac-modal-after-hide    Callback when modal is hidden from the user with CSS transitions completed
  * @param {Boolean} mac-modal-position      Calculate size and position with JS (default true)
+ *
+ * @example
+<example>
+  <mac-modal id="test-modal" mac-modal-keyboard ng-cloak>
+   <div class="mac-modal-content" ng-controller="modalController">
+     <h1>Just another modal</h1>
+   </div>
+  </mac-modal>
+  <button mac-modal="test-modal">Show Modal</button>
+</example>
+<mac-modal id="test-modal" mac-modal-keyboard ng-cloak>
+  <div class="mac-modal-content" ng-controller="modalController">
+    <h1>Just another modal</h1>
+  </div>
+</mac-modal>
+<button mac-modal="test-modal">Show Modal</button>
  */
 angular.module('Mac').directive('macModal', [
   '$parse',
