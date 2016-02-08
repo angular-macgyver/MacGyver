@@ -8,7 +8,6 @@ describe("Mac autocomplete", function() {
   };
 
   beforeEach(module("Mac"));
-  beforeEach(module("template/autocomplete.html"));
   beforeEach(module("template/menu.html"));
 
   describe('MacAutocompleteController', function () {

@@ -96,7 +96,7 @@ angular.module('Mac')
   function () {
     return {
       restrict: 'EA',
-      templateUrl: 'template/autocomplete.html',
+      template: '<input type="text">',
       transclude: true,
       replace: true,
       require: ['ngModel', 'macAutocomplete'],

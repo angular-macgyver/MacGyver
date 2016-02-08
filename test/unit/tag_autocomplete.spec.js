@@ -7,7 +7,6 @@ describe("Mac tag autocomplete", function() {
 
   beforeEach(module("Mac"));
   beforeEach(module("template/tag_autocomplete.html"));
-  beforeEach(module("template/autocomplete.html"));
   beforeEach(module("template/menu.html"));
 
   beforeEach(inject(function(_$compile_, _$rootScope_, _$timeout_, _keys_) {
