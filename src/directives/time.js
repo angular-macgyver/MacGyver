@@ -37,7 +37,7 @@ angular.module('Mac').directive('macTime', [
       restrict: 'E',
       require: 'ngModel',
       replace: true,
-      templateUrl: 'template/time.html',
+      template: '<input class="mac-date-time" type="text" maxlength="8">',
       link: function ($scope, element, attrs, ngModelCtrl) {
         var opts, time, timeValidator, whitelistKeys;
 

@@ -1,6 +1,5 @@
 describe("Mac Time input", function() {
   beforeEach(module("Mac"));
-  beforeEach(module("template/time.html"));
 
   var $compile, $rootScope, timeUtil;
 
