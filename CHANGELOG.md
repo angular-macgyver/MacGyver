@@ -1,3 +1,65 @@
+# 1.0.0-rc.0 (2016/2/10)
+## Bug Fixes
+- **macAffix:** Fix referencing incorrect variable due to JS conversion (7d95b2a7)
+- **macModal:** Fix not closing modal with escape (ac70db5c)
+- **macPopover:**
+  - Fix always switching to aligning right (34d94c5e)
+  - Fix not extending proper popover default values (bf03f6b3)
+- **macTagAutocomplete:** Fix bugs introduced in refactor (c55011d1)
+- **macTooltip:** Fix appending tooltip inside does not calculate offset correctly (19cbb097, #31)
+- **main:** Update height and width calculation to prevent NaN (d77e40db)
+
+## Breaking Changes
+- **macAutocomplete:**
+  - macAutocomplete is now isolated scope
+  - mac-autocomplete-url has been removed in favor of mac-autocomplete-source (438e8fe6)
+- **macCSpinner:**  Canvas spinner has been removed. Use macSpinner instead. (f6d04ce3)
+- **macFocusOnEvent:**  mac-focus-on-event directive has been removed
+from MacGyver. The directive was never documented and should not be
+used. (f0e12ecd)
+- **macPopover:**
+  - mac-popover-fixed option has been removed (7ef8a197)
+  - macPopover service `resize` renamed to `reposition`
+  - mac-popover-child-popover attr has been removed
+  - mac-popover-exclude attr has been removed (2b3c91e6)
+- **macTagAutocomplete:**
+  - mac-tag-autocomplete-url has been removed (fa4bab82)
+- **underscoreStringFilter:**  Underscore string filter has been completely removed (c9ec969a)
+
+## Optimizations
+- **booleanFilter:** Converted to Javascript (8a7d3149)
+- **constants:** Move component default values to constants file (7222c105)
+- **keys:** Converted keys to Javascript Switched from factory to constants (7467e789)
+- **listFilter:** Converted to Javascript (89423980)
+- **macAffix:**
+  - Clean up affix directive Move logic to macAffixController Fix some bus causing display issues (48b774e8)
+  - Add macAffixDefaults (4f94a667)
+  - Converted to Javascript (6b106c94)
+- **macAutocomplete:** Embed template into directive js (29463577)
+- **macKeydown:** Converted to Javascript (c7f7b509)
+- **macMenu:** Converted to Javascript (91cf2c95)
+- **macModal:**
+  - Clean up mac-modal trigger (451c2a0a)
+  - Convert macModal to JS - Move macModal defaults to constants - Clean up template, render and display modal logic - Add unit tests for modal service (673e1b86)
+- **macPauseTyping:** Converted to Javascript (73ce8384)
+- **macPlaceholder:** Converted to Javascript (4ee11131)
+- **macScrollSpy:**
+  - Clean up observe logic on anchor and target (873240c7)
+  - Converted to Javascript Minor performance improvements (5bbbab09)
+- **macSpinner:** Converted to Javascript (6dcfa1c0)
+- **macTime:**
+  - Embed template into directive js (621d371d)
+  - Convert to Javascript Move time utility function to a separate service for better testing Add tests for time utility function (bd96c7d4)
+- **macTooltip:** Convert to Javascript (95287ace)
+- **macUtil:**
+  - Cleaned up JS code (18298981)
+  - Converted to Javascript Added `validateTime` function urlRegex, emailRegex and timeRegex are switched to local variables Updated macTime using `validateTime` (04c0ba3d)
+- **macWindowResize:** Minor performance tweak and code cleanup Converted to Javascript and rewrote part of the directive (bba5ebc7)
+- **main:** Converted to Javascript Removed ngAnimate dependencies for Mac Updated karma config (86933886)
+- **pluralizeFilter:** Converted to Javascript (c3b5cf78)
+- **timestampFilter:** Converted to Javascript Cleaned up time calculation (c6d9adf3)
+
+
 # v0.6.1 (2015/2/6)
 ## Bug Fixes
 - **macAutocomplete:** Fixed dropdown placement issues

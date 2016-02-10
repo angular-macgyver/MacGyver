@@ -1,6 +1,6 @@
 {
   "name": "MacGyver",
-  "version": "0.6.1",
+  "version": "1.0.0-rc.0",
   "main": ["lib/macgyver.css", "lib/macgyver.js"],
   "ignore": [
     "misc",
