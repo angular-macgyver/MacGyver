@@ -1,4 +1,3 @@
-// Path variables
 var child = require("child_process");
 
 var GIT_TAG = "git describe --tags --abbrev=0";
@@ -53,29 +52,6 @@ module.exports = function(grunt) {
 
       grunt.file.write(file.dest, src);
       grunt.log.writeln("Replace placeholder with contents in '" + file.dest + "' successfully");
-    });
-  });
-
-  /**
-   * @name tag
-   * @description
-   * Create a new commit and tag the commit with a version number
-   */
-  grunt.registerTask("tag", "Tag latest commit", function() {
-    var done = this.async();
-    var version = grunt.config.get("pkg").version;
-
-    var CMD = [
-      "git commit -am 'chore(build): Build v" + version + "'",
-      "git tag v" + version
-    ].join("&&");
-
-    child.exec(CMD, function(error, stdout, stderr) {
-      if (error != null) {
-        grunt.fail.fatal("Failed to tag");
-      }
-      grunt.log.writeln(stdout);
-      done();
     });
   });
 

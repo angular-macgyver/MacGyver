@@ -21,8 +21,7 @@ module.exports = function(grunt) {
     "compile",
     "karma:build",
     "uglify:dist",
-    "doc",
-    "tag"
+    "doc"
   ]);
 
   grunt.registerTask("run", "Watch src and run test server", [
