@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>MacGyver</title>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/prettify/r298/lang-css.js"></script>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,300" rel="stylesheet" type="text/css">
+    <link href="styles/macgyver.css" rel="stylesheet" type="text/css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+    <link type="text/css" rel="stylesheet" href="styles/vendor.css">
+</head>
+
+<body ng-app="MacDemo">
+
+<div id="main" ng-controller="ExampleController">
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>macModal</h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+
+
+<div class="description">
+    <p>Element directive to define the modal dialog. Modal content is transcluded into a
+modal template</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>mac-modal-keyboard</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Allow closing modal with keyboard (default false)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>mac-modal-overlay-close</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Allow closing modal when clicking on overlay (default false)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>mac-modal-resize</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Allow modal to resize on window resize event (default false)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>mac-modal-topOffset</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Integer</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Top offset when the modal is larger than window height (default 20)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>mac-modal-open</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Expr</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Callback when the modal is opened</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>mac-modal-before-show</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Expr</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Callback before showing the modal</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>mac-modal-after-show</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Expr</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Callback when modal is visible with CSS transitions completed</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>mac-modal-before-hide</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Expr</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Callback before hiding the modal</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>mac-modal-after-hide</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Expr</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Callback when modal is hidden from the user with CSS transitions completed</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>mac-modal-position</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Calculate size and position with JS (default true)</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+
+    
+      <div class="docs-example">
+        
+  <mac-modal id="test-modal" mac-modal-keyboard ng-cloak>
+   <div class="mac-modal-content" ng-controller="modalController">
+     <h1>Just another modal</h1>
+   </div>
+  </mac-modal>
+  <button mac-modal="test-modal">Show Modal</button>
+
+      </div>
+    
+
+    <pre class="prettyprint"><code>&lt;mac-modal id="test-modal" mac-modal-keyboard ng-cloak>
+  &lt;div class="mac-modal-content" ng-controller="modalController">
+    &lt;h1>Just another modal&lt;/h1>
+  &lt;/div>
+&lt;/mac-modal>
+&lt;button mac-modal="test-modal">Show Modal&lt;/button></code></pre>
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Mac</h3><ul><li><a href="global.html#ng">ng</a></li></ul><h3>Directives</h3><ul><li><a href="macAffix.html">macAffix</a></li><li><a href="macAutocomplete.html">macAutocomplete</a></li><li><a href="macKeydownDown.html">macKeydownDown</a></li><li><a href="macKeydownEnter.html">macKeydownEnter</a></li><li><a href="macKeydownEscape.html">macKeydownEscape</a></li><li><a href="macKeydownLeft.html">macKeydownLeft</a></li><li><a href="macKeydownRight.html">macKeydownRight</a></li><li><a href="macKeydownSpace.html">macKeydownSpace</a></li><li><a href="macKeydownUp.html">macKeydownUp</a></li><li><a href="macMenu.html">macMenu</a></li><li><a href="macModal.html">macModal</a></li><li><a href="macPauseTyping.html">macPauseTyping</a></li><li><a href="macPlaceholder.html">macPlaceholder</a></li><li><a href="macPopover%2520Element.html">macPopover Element</a></li><li><a href="macPopover%2520Trigger.html">macPopover Trigger</a></li><li><a href="macScrollSpy.html">macScrollSpy</a></li><li><a href="macScrollSpyAnchor.html">macScrollSpyAnchor</a></li><li><a href="macScrollSpyTarget.html">macScrollSpyTarget</a></li><li><a href="macSpinner.html">macSpinner</a></li><li><a href="macTagAutocomplete.html">macTagAutocomplete</a></li><li><a href="macTime.html">macTime</a></li><li><a href="macTooltip.html">macTooltip</a></li><li><a href="macWindowResize.html">macWindowResize</a></li></ul><h3>Services</h3><ul><li><a href="modal.html">modal</a></li><li><a href="popover.html">popover</a></li><li><a href="scrollSpy.html">scrollSpy</a></li><li><a href="timeUtil.html">timeUtil</a></li><li><a href="util.html">util</a></li></ul><h3>Filters</h3><ul><li><a href="boolean.html">boolean</a></li><li><a href="false.html">false</a></li><li><a href="list.html">list</a></li><li><a href="pluralize.html">pluralize</a></li><li><a href="timestamp.html">timestamp</a></li><li><a href="true.html">true</a></li></ul><h3>Constants</h3><ul><li><a href="keys.html">keys</a></li><li><a href="macAffixDefaults.html">macAffixDefaults</a></li><li><a href="macModalDefaults.html">macModalDefaults</a></li><li><a href="macPopoverDefaults.html">macPopoverDefaults</a></li><li><a href="macTimeDefaults.html">macTimeDefaults</a></li><li><a href="macTooltipDefaults.html">macTooltipDefaults</a></li><li><a href="scrollSpyDefaults.html">scrollSpyDefaults</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    <ul class="list-inline">
+      <li><a href="https://github.com/angular-macgyver/MacGyver">Github</a></li>
+      <li>&middot;</li>
+      <li><a href="https://github.com/angular-macgyver/MacGyver/issues">Issues</a></li>
+      <li>&middot;</li>
+      <li><a href="https://github.com/angular-macgyver/MacGyver/blob/master/CHANGELOG.md">Changelog</a></li>
+      <li>&middot;</li>
+      <li><a href="https://github.com/angular-macgyver/MacGyver/blob/master/README.md">README</a></li>
+    </ul>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Feb 10 2016 00:46:41 GMT-0800 (PST)
+</footer>
+
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<script src="//code.angularjs.org/1.4.8/angular-animate.js"></script>
+<script src="scripts/macgyver.js"></script>
+<script src="scripts/doc.js"></script>
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-43909345-2', 'auto');
+ga('send', 'pageview');
+</script>
+</body>
+</html>
