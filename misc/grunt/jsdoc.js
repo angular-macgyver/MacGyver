@@ -5,6 +5,7 @@ module.exports = function(grunt) {
       options: {
         destination: 'out',
         configure: 'jsdoc.json',
+        private: false,
         template: "node_modules/macgyver-jsdoc/template"
       }
     }
