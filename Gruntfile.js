@@ -18,6 +18,7 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask("deploy", "Build and copy to lib/", [
+    // bump, generate changelog 
     "compile",
     "karma:build",
     "uglify:dist",
