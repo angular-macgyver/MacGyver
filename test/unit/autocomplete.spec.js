@@ -841,21 +841,6 @@ describe("Mac autocomplete", function() {
         expect(menuEl.className.indexOf("test")).not.toBe(-1);
         expect(menuEl.className.indexOf("hello")).toBe(-1);
       });
-
-      it("should not set classes", function() {
-        $rootScope.source = data;
-
-        var element = $compile("<mac-autocomplete ng-model='test' mac-autocomplete-source='source'></mac-autocomplete>")($rootScope);
-        $rootScope.$digest();
-
-        changeInputValue(element, "f");
-        $rootScope.$digest();
-
-        $timeout.flush();
-
-        var menuEl = document.querySelector(".mac-menu");
-        expect(menuEl.className).toBe("mac-menu ng-isolate-scope visible");
-      });
     });
   });
 });
