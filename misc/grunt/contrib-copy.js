@@ -3,15 +3,19 @@ module.exports = function(grunt) {
    * Copy section
    */
   grunt.config("copy", {
+    css: {
+      files: [
+        {
+          src: "lib/macgyver.css",
+          dest: "out/styles/macgyver.css"
+        }
+      ]
+    },
     doc: {
       files: [
         {
           src: "lib/macgyver.js",
           dest: "out/scripts/macgyver.js"
-        },
-        {
-          src: "lib/macgyver.css",
-          dest: "out/styles/macgyver.css"
         },
         {
           src: "docs/doc.js",

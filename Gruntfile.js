@@ -18,7 +18,7 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask("deploy", "Build and copy to lib/", [
-    // bump, generate changelog 
+    // bump, generate changelog
     "compile",
     "karma:build",
     "uglify:dist",
@@ -48,6 +48,6 @@ module.exports = function(grunt) {
 
   grunt.registerTask('doc', [
     'jsdoc:doc',
-    'copy:doc'
+    'copy'
   ])
 };

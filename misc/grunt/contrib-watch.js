@@ -24,7 +24,7 @@ module.exports = function(grunt) {
     },
     css: {
       files: ["src/css/*.styl"],
-      tasks: ["stylus"]
+      tasks: ["stylus", "copy:css"]
     }
   });
 };
