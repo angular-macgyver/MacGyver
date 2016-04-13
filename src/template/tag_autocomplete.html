@@ -1,17 +1,17 @@
 <div class="mac-tag-autocomplete">
   <ul class="mac-tag-list">
-    <li ng-repeat="tag in selected" class="mac-tag mac-label">
+    <li ng-repeat="tag in selected" class="mac-tag">
       <div ng-click="selected.splice($index, 1)" class="mac-tag-close">&times;</div>
-      <span class="tag-label">{{getTagLabel(tag)}}</span>
+      <div class="tag-label">{{getTagLabel(tag)}}</div>
     </li>
-    <li ng-class="{'fullwidth': !selected.length}" class="mac-tag mac-input-tag">
-      <mac-autocomplete class="text-input mac-autocomplete"
-                        ng-keydown="onKeyDown($event)"
-                        ng-model="textInput"
-                        mac-autocomplete-disabled="disabled"
-                        mac-autocomplete-on-select="onSelect(selected)"
-                        mac-autocomplete-on-success="onSuccess(data)"
-                        mac-placeholder="autocompletePlaceholder"></mac-autocomplete>
+    <li class="mac-tag">
+      <mac-autocomplete class="mac-tag-input mac-autocomplete"
+        ng-keydown="onKeyDown($event)"
+        ng-model="textInput"
+        mac-autocomplete-disabled="disabled"
+        mac-autocomplete-on-select="onSelect(selected)"
+        mac-autocomplete-on-success="onSuccess(data)"
+        mac-placeholder="autocompletePlaceholder"></mac-autocomplete>
     </li>
   </ul>
 </div>

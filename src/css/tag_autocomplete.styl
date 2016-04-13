@@ -1,53 +1,36 @@
 .mac-tag-autocomplete
-  position   relative
-  display    inline-block
   border     1px solid #aaaaaa
   background #ffffff
-  margin     0
-  padding    0
 
-  .mac-tag-list
-    margin       0px
-    padding-left 0px
+.mac-tag-list
+  margin       0px
+  padding-left 0px
 
-    .mac-tag
-      padding       3px 20px 3px 5px
-      margin        3px
-      position      relative
-      display       inline-block
-      list-style    none
-      font-size     13px
-      line-height   13px
-      border-radius 3px
+.mac-tag
+  margin        3px
+  position      relative
+  display       inline-block
+  list-style    none
+  font-size     13px
+  border        1px solid #bfc9e1
+  border-radius 3px
+  color         #000
 
-      &.mac-label
-        background  linear-gradient(top,#eaf0ff,#dee8ff)
-        border      1px solid #bfc9e1
-        text-shadow none
-        color       #000
-        font-weight normal
-        box-shadow  0px 0px 2px #ffffff inset, 0 1px 0 rgba(0,0,0,0.05)
+  .tag-label
+    padding 3px 20px 3px 5px
 
-      .mac-tag-close
-        position absolute
-        right    6px
-        color    #9da6b7
-        cursor   pointer
+  .mac-tag-close
+    position   absolute
+    right      6px
+    color      #9da6b7
+    cursor     pointer
+    top        50%
+    margin-top -9.5px
 
-      &.mac-input-tag
-        white-space nowrap
-        padding     0
-
-        .text-input
-          color      #666
-          background transparent
-          padding    5px
-          margin     0px
-          border     none !important
-          box-shadow none
-
-        &.fullwidth
-          width 100%
-
-          .text-input
-            width 90%
+  .mac-tag-input
+    padding       3px
+    margin        0px
+    border        none
+    box-shadow    none
+    width         100%
+    border-radius 3px
