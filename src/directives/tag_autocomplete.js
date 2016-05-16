@@ -31,6 +31,27 @@
  * - `item` - {String} User input
  * @param {Event} mac-tag-autocomplete-clear-input $broadcast message; clears text input when received
  *
+ * @param {expression} mac-tag-autocomplete-blur Callback function on blur
+ * - `$event` - {Event} Event object
+ * - `ctrl` - {MacTagAutocompleteController} Tag autocomplete element controller
+ * - `value` - {String} Text input
+ * @param {expression} mac-tag-autocomplete-focus Callback function on focus
+ * - `$event` - {Event} Event object
+ * - `ctrl` - {MacTagAutocompleteController} Tag autocomplete element controller
+ * - `value` - {String} Text input
+ * @param {expression} mac-tag-autocomplete-keyup Callback function on keyup
+ * - `$event` - {Event} Event object
+ * - `ctrl` - {MacTagAutocompleteController} Tag autocomplete element controller
+ * - `value` - {String} Text input
+ * @param {expression} mac-tag-autocomplete-keydown Callback function on keydown
+ * - `$event` - {Event} Event object
+ * - `ctrl` - {MacTagAutocompleteController} Tag autocomplete element controller
+ * - `value` - {String} Text input
+ * @param {expression} mac-tag-autocomplete-keypress Callback function on keypress
+ * - `$event` - {Event} Event object
+ * - `ctrl` - {MacTagAutocompleteController} Tag autocomplete element controller
+ * - `value` - {String} Text input
+ *
  * @example
 <caption>Basic example</caption>
 <example>
@@ -131,3 +152,38 @@ angular.module('Mac').directive('macTagAutocomplete', [
     }
   }
 ]);
+
+function macAutocompleteEventFactory (key) {
+  var name = 'macTagAutocomplete' + key;
+  var eventName = key.toLowerCase();
+
+  angular.module('Mac').directive(name, [
+    '$parse',
+    function ($parse) {
+      return {
+        restrict: 'A',
+        priority: 700,
+        require: 'macTagAutocomplete',
+        link: function ($scope, element, attrs, ctrl) {
+          var input = angular.element(element[0].querySelector('.mac-autocomplete'));
+          var expr = $parse(attrs[name]);
+
+          if (!input) return;
+
+          input.bind(eventName, function($event) {
+            $scope.$apply(function() {
+              expr($scope, {
+                $event: $event,
+                ctrl: ctrl,
+                value: ctrl.textInput
+              });
+            });
+          });
+        }
+      }
+    }
+  ]);
+}
+
+var macAutocompleteEvents = ['blur', 'focus', 'keyup', 'keydown', 'keypress'];
+macAutocompleteEvents.forEach(macAutocompleteEventFactory);
