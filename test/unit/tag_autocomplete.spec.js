@@ -82,15 +82,16 @@ describe("Mac tag autocomplete", function() {
       $rootScope.$digest();
       textInput = element[0].querySelector(".mac-autocomplete");
 
-      expect(textInput.getAttribute("mac-autocomplete-source")).toBe("autocompleteSource");
+      expect(textInput.getAttribute("mac-autocomplete-source")).toBe("macTagAutocomplete.source");
     });
 
     it("should have the same source function as the parent scope", function() {
       $rootScope.source = jasmine.createSpy("source");
-      $compile("<mac-tag-autocomplete mac-tag-autocomplete-source='source'></mac-tag-autocomplete>")($rootScope);
+      var element = $compile("<mac-tag-autocomplete mac-tag-autocomplete-source='source'></mac-tag-autocomplete>")($rootScope);
 
       $rootScope.$digest();
-      $rootScope.$$childHead.autocompleteSource();
+      var elementScope = element.isolateScope();
+      elementScope.macTagAutocomplete.source();
 
       expect($rootScope.source).toHaveBeenCalled();
     });
@@ -125,60 +126,14 @@ describe("Mac tag autocomplete", function() {
   });
 
   describe("selected variable", function() {
-    it("should filter out used tags", function() {
-      var tag1 = {id: 'tag1'};
-      var tag2 = {id: 'tag2'};
-      var tag3 = {id: 'tag3'};
-      $rootScope.source = [tag1, tag2, tag3];
-      $rootScope.selected = [tag1];
-      $compile("<mac-tag-autocomplete mac-tag-autocomplete-source='source' mac-tag-autocomplete-selected='selected'></mac-tag-autocomplete>")($rootScope);
-      $rootScope.$digest();
-
-      var textInputScope = $rootScope.$$childHead;
-      expect(textInputScope.autocompleteSource.length).toBe(2);
-    });
-
-    it("should update autocompleteSource when source changes", function() {
-      var tag1 = {id: 'tag1'};
-      var tag2 = {id: 'tag2'};
-      var tag3 = {id: 'tag3'};
-      var tag4 = {id: 'tag4'};
-      $rootScope.source = [tag1, tag2, tag3];
-      $rootScope.selected = [tag1];
-
-      $compile("<mac-tag-autocomplete\n  mac-tag-autocomplete-source='source'\n  mac-tag-autocomplete-selected='selected'>\n</mac-tag-autocomplete>")($rootScope);
-
-      $rootScope.$digest();
-      var textInputScope = $rootScope.$$childHead;
-
-      $rootScope.source.push(tag4);
-      $rootScope.$digest();
-
-      expect(textInputScope.autocompleteSource.length).toBe(3);
-    });
-
     it("should have a placeholder", function() {
       $rootScope.selected = [];
-      $compile("<mac-tag-autocomplete\n  mac-tag-autocomplete-placeholder = \"'Testing'\"\n  mac-tag-autocomplete-selected='selected'>\n</mac-tag-autocomplete>")($rootScope);
+      var element = $compile("<mac-tag-autocomplete\n  mac-tag-autocomplete-placeholder = \"'Testing'\"\n  mac-tag-autocomplete-selected='selected'>\n</mac-tag-autocomplete>")($rootScope);
 
       $rootScope.$digest();
-      var textInputScope = $rootScope.$$childHead;
 
-      expect(textInputScope.autocompletePlaceholder).toBe("Testing");
-    });
-
-    it("should not have a placeholder when there is selcted tag", function() {
-      $rootScope.selected = [
-        {
-          id: "tag123"
-        }
-      ];
-      $compile("<mac-tag-autocomplete\n  mac-tag-autocomplete-placeholder = \"'Testing'\"\n  mac-tag-autocomplete-selected='selected'>\n</mac-tag-autocomplete>")($rootScope);
-      $rootScope.$digest();
-
-      var textInputScope = $rootScope.$$childHead;
-
-      expect(textInputScope.autocompletePlaceholder).toBe("");
+      var textInputScope = element.isolateScope();
+      expect(textInputScope.macTagAutocomplete.placeholder).toBe("Testing");
     });
   });
 
@@ -224,10 +179,11 @@ describe("Mac tag autocomplete", function() {
       element = $compile("<mac-tag-autocomplete mac-tag-autocomplete-selected='selected' mac-tag-autocomplete-on-keydown='keydown()' mac-tag-autocomplete-disabled='true'></mac-tag-autocomplete>")($rootScope);
 
       $rootScope.$digest();
-      textInput = element[0].querySelector(".mac-autocomplete");
+      textInput = angular.element(element[0].querySelector(".mac-autocomplete"));
 
-      $rootScope.$$childHead.textInput = "Testing";
-      angular.element(textInput).triggerHandler({
+      var elementScope = element.isolateScope();
+      elementScope.macTagAutocomplete.textInput = "Testing";
+      textInput.triggerHandler({
         type: "keydown",
         which: keys.ENTER
       });
@@ -246,7 +202,8 @@ describe("Mac tag autocomplete", function() {
       $rootScope.$digest();
 
       textInput = element[0].querySelector(".mac-autocomplete");
-      $rootScope.$$childHead.textInput = "Testing";
+      var elementScope = element.isolateScope();
+      elementScope.macTagAutocomplete.textInput = "Testing";
 
       angular.element(textInput).triggerHandler({
         type: "keydown",
