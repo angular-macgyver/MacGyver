@@ -125,6 +125,19 @@ describe("Mac tag autocomplete", function() {
     });
   });
 
+  it('should clear the text on event', function () {
+    var element = $compile("<mac-tag-autocomplete></mac-tag-autocomplete>")($rootScope);
+    $rootScope.$digest();
+
+    var elementScope = element.isolateScope();
+    elementScope.macTagAutocomplete.textInput = 'testing';
+
+    $rootScope.$broadcast('mac-tag-autocomplete-clear-input');
+    $rootScope.$digest();
+
+    expect(elementScope.macTagAutocomplete.textInput).toBe('');
+  });
+
   describe("selected variable", function() {
     it("should have a placeholder", function() {
       $rootScope.selected = [];
