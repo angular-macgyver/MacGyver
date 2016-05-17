@@ -214,4 +214,92 @@ describe("Mac tag autocomplete", function() {
       expect($rootScope.onEnter).toHaveBeenCalled();
     });
   });
+
+  describe('event callback', function() {
+    it('should fire blur callback with parameters', function() {
+      $rootScope.onBlurFn = function($event, ctrl, value) {
+        expect($event).toBeDefined();
+        expect(ctrl).toBeDefined();
+        expect(value).toBe('');
+      };
+      var element = $compile('<mac-tag-autocomplete mac-tag-autocomplete-selected="selected" mac-tag-autocomplete-blur="onBlurFn($event, ctrl, value)"></mac-tag-autocomplete>')($rootScope);
+
+      $rootScope.$digest();
+
+      var textInput = element[0].querySelector('.mac-autocomplete');
+      angular.element(textInput).triggerHandler('blur');
+
+      $rootScope.$digest();
+    });
+
+    it('should fire blur callback', function() {
+      $rootScope.onBlurFn = jasmine.createSpy('onBlurFn');
+      var element = $compile('<mac-tag-autocomplete mac-tag-autocomplete-selected="selected" mac-tag-autocomplete-blur="onBlurFn()"></mac-tag-autocomplete>')($rootScope);
+
+      $rootScope.$digest();
+
+      var textInput = element[0].querySelector('.mac-autocomplete');
+      angular.element(textInput).triggerHandler('blur');
+
+      $rootScope.$digest();
+
+      expect($rootScope.onBlurFn).toHaveBeenCalled();
+    });
+
+    it('should fire focus callback', function() {
+      $rootScope.onFocusFn = jasmine.createSpy('onFocusFn');
+      var element = $compile('<mac-tag-autocomplete mac-tag-autocomplete-selected="selected" mac-tag-autocomplete-focus="onFocusFn()"></mac-tag-autocomplete>')($rootScope);
+
+      $rootScope.$digest();
+
+      var textInput = element[0].querySelector('.mac-autocomplete');
+      angular.element(textInput).triggerHandler('focus');
+
+      $rootScope.$digest();
+
+      expect($rootScope.onFocusFn).toHaveBeenCalled();
+    });
+
+    it('should fire keyup callback', function() {
+      $rootScope.onKeyupFn = jasmine.createSpy('onKeyupFn');
+      var element = $compile('<mac-tag-autocomplete mac-tag-autocomplete-selected="selected" mac-tag-autocomplete-keyup="onKeyupFn()"></mac-tag-autocomplete>')($rootScope);
+
+      $rootScope.$digest();
+
+      var textInput = element[0].querySelector('.mac-autocomplete');
+      angular.element(textInput).triggerHandler('keyup');
+
+      $rootScope.$digest();
+
+      expect($rootScope.onKeyupFn).toHaveBeenCalled();
+    });
+
+    it('should fire keydown callback', function() {
+      $rootScope.onKeydownFn = jasmine.createSpy('onKeydownFn');
+      var element = $compile('<mac-tag-autocomplete mac-tag-autocomplete-selected="selected" mac-tag-autocomplete-keydown="onKeydownFn()"></mac-tag-autocomplete>')($rootScope);
+
+      $rootScope.$digest();
+
+      var textInput = element[0].querySelector('.mac-autocomplete');
+      angular.element(textInput).triggerHandler('keydown');
+
+      $rootScope.$digest();
+
+      expect($rootScope.onKeydownFn).toHaveBeenCalled();
+    });
+
+    it('should fire keypress callback', function() {
+      $rootScope.onKeypressFn = jasmine.createSpy('onKeypressFn');
+      var element = $compile('<mac-tag-autocomplete mac-tag-autocomplete-selected="selected" mac-tag-autocomplete-keypress="onKeypressFn()"></mac-tag-autocomplete>')($rootScope);
+
+      $rootScope.$digest();
+
+      var textInput = element[0].querySelector('.mac-autocomplete');
+      angular.element(textInput).triggerHandler('keypress');
+
+      $rootScope.$digest();
+
+      expect($rootScope.onKeypressFn).toHaveBeenCalled();
+    });
+  });
 });
