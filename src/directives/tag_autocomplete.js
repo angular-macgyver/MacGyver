@@ -185,5 +185,5 @@ function macAutocompleteEventFactory (key) {
   ]);
 }
 
-var macAutocompleteEvents = ['blur', 'focus', 'keyup', 'keydown', 'keypress'];
+var macAutocompleteEvents = ['Blur', 'Focus', 'Keyup', 'Keydown', 'Keypress'];
 macAutocompleteEvents.forEach(macAutocompleteEventFactory);
