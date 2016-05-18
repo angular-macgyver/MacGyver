@@ -1,5 +1,5 @@
 describe("Mac tag autocomplete", function() {
-  var $compile, $rootScope, $timeout, keys;
+  var $compile, $httpBackend, $rootScope, $timeout, keys;
 
   function hasClass(element, className) {
     return element[0].className.indexOf(className) > -1;
@@ -9,8 +9,9 @@ describe("Mac tag autocomplete", function() {
   beforeEach(module("template/tag_autocomplete.html"));
   beforeEach(module("template/menu.html"));
 
-  beforeEach(inject(function(_$compile_, _$rootScope_, _$timeout_, _keys_) {
+  beforeEach(inject(function(_$compile_, _$httpBackend_, _$rootScope_, _$timeout_, _keys_) {
     $compile = _$compile_;
+    $httpBackend = _$httpBackend_;
     $rootScope = _$rootScope_;
     $timeout = _$timeout_;
     keys = _keys_;
@@ -122,6 +123,40 @@ describe("Mac tag autocomplete", function() {
       textInput = element[0].querySelector(".mac-autocomplete");
 
       expect(angular.element(textInput).val()).toBe("Here");
+    });
+
+    it('should invoke onSuccess function', function() {
+      $rootScope.source = "/test";
+      $rootScope.onSuccessFn = function(data, status, headers) {
+        expect(data).toBeDefined();
+        expect(status).toBeDefined();
+        expect(headers).toBeDefined();
+
+        return data.data;
+      }
+
+      var element = $compile('<mac-tag-autocomplete mac-tag-autocomplete-model="model" mac-tag-autocomplete-source="source" mac-tag-autocomplete-on-success="onSuccessFn(data, status, headers)"></mac-tag-autocomplete>')($rootScope);
+      $rootScope.$digest();
+
+      var textInput = angular.element(element[0].querySelector('.mac-autocomplete'));
+      var textInputScope = textInput.isolateScope();
+
+      var autocompleteCtrl = textInputScope.macAutocomplete;
+      spyOn(autocompleteCtrl, 'updateItem');
+
+      $httpBackend.whenGET('/test?q=test').respond({data: [
+        {name: 'test'}
+      ]});
+
+      autocompleteCtrl.getData('/test', 'test');
+
+      $httpBackend.flush();
+
+      expect(autocompleteCtrl.updateItem).toHaveBeenCalled();
+
+      var args = autocompleteCtrl.updateItem.calls.argsFor(0)[0];
+      expect(args.length).toBe(1);
+      expect(args[0].name).toBe('test');
     });
   });
 
