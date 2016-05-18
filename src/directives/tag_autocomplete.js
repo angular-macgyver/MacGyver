@@ -108,7 +108,7 @@ angular.module('Mac').directive('macTagAutocomplete', [
         selected: '=macTagAutocompleteSelected',
         disabled: '=macTagAutocompleteDisabled',
         model: '=macTagAutocompleteModel',
-        onSuccessFn: '=macTagAutocompleteOnSuccess',
+        onSuccessFn: '&macTagAutocompleteOnSuccess',
         onEnterFn: '&macTagAutocompleteOnEnter',
         onKeydownFn: '&macTagAutocompleteOnKeydown',
         labelKey: '@macTagAutocompleteLabel'
