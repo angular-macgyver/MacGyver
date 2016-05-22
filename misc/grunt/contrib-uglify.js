@@ -8,7 +8,7 @@ module.exports = function(grunt) {
       files: [
         {
           src: "lib/<%= pkg.name.toLowerCase() %>.js",
-          dest: "lib/<%= pkg.name.toLowerCase() %>.min.js"
+          dest: "dist/<%= pkg.name.toLowerCase() %>.min.js"
         }
       ]
     }

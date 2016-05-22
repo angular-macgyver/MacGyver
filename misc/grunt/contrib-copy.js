@@ -30,6 +30,16 @@ module.exports = function(grunt) {
           dest: "out/data.json"
         }
       ]
+    },
+    dist: {
+      files: [
+        {
+          expand: true,
+          cwd: "lib/",
+          src: ["*"],
+          dest: "dist/"
+        }
+      ]
     }
   });
 };

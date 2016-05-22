@@ -12,7 +12,7 @@ module.exports = function(grunt) {
     dev: {
       files: [
         {
-          "lib/macgyver.css": "<%= buildConf.css.core %>",
+          "lib/macgyver.css": "<%= buildConf.css.core %>"
         }
       ]
     }

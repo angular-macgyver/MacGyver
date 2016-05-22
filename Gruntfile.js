@@ -21,6 +21,7 @@ module.exports = function(grunt) {
     // bump, generate changelog
     "compile",
     "karma:build",
+    "copy:dist",
     "uglify:dist",
     "doc"
   ]);
@@ -48,6 +49,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('doc', [
     'jsdoc:doc',
-    'copy'
+    'copy:css',
+    'copy:doc'
   ])
 };

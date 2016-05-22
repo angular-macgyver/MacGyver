@@ -10,6 +10,7 @@ build/
 .grunt/
 coverage/
 out/
+lib/
 
 # Logs
 npm-debug.log
