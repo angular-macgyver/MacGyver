@@ -1,5 +1,5 @@
 /**
- * MacGyver v1.0.0-rc.0
+ * MacGyver v1.0.0-rc.1
  * @link http://angular-macgyver.github.io/MacGyver
  * @license 
  */
@@ -917,6 +917,130 @@ angular.module('Mac')
   '$compile',
   '$http',
   MacAutocompleteController]);
+
+/**
+ * Controller for tag autocomplete directive
+ */
+
+/**
+ * @param {$scope} $scope
+ * @constructor
+ */
+function MacTagAutocompleteController ($scope, $element, $attrs, $parse, $timeout, keys) {
+  this.$scope = $scope;
+  this.$element = $element;
+  this.$attrs = $attrs;
+
+  this.$parse = $parse;
+  this.$timeout = $timeout;
+  this.keys = keys;
+
+  this.textInput = '';
+
+  this.labelKey = this.labelKey != undefined ? this.labelKey : 'name';
+  this.labelGetter = $parse(this.labelKey);
+}
+
+/**
+ * Callback function on autocomplete keydown. The function especially
+ * handles 2 cases,
+ * - pressing BACKSPACE: Remove the last selected item
+ * - pressing ENTER: If autocomplete is disabled, take the current input
+ *                   and tokenify the value
+ * Invoke macAutocompleteOnKeydown afterwards
+ *
+ * @param {Event} $event
+ * @return {boolean} true
+ */
+MacTagAutocompleteController.prototype.onKeyDown = function ($event) {
+  var stroke = $event.which || $event.keyCode;
+  switch(stroke) {
+    case this.keys.BACKSPACE:
+      if (!this.$scope.textInput && angular.isArray(this.selected)) {
+        this.selected.pop();
+      }
+      break;
+    case this.keys.ENTER:
+      // Used when autocomplete is not needed
+      if (this.textInput && this.disabled) {
+        this.onSelect(this.textInput);
+      }
+      break;
+  }
+
+  this.onKeydownFn({
+    $event: $event,
+    value: this.textInput
+  });
+
+  return true;
+}
+
+/**
+ * Callback function when macAutocomplete made a successful xhr request
+ * Default to `data.data` if function doesn't exist
+ *
+ * @param {Object} data
+ * @return {Object}
+ */
+MacTagAutocompleteController.prototype.onSuccess = function (data, status, headers) {
+  var result = data.data;
+
+  if (this.$attrs['macTagAutocompleteOnSuccess']) {
+    result = this.onSuccessFn({
+      data: data,
+      status: status,
+      headers: headers
+    });
+  }
+  return result;
+}
+
+/**
+ * Callback function when user select an item from menu or pressed enter
+ * User can specify macTagAutocompleteOnEnter function to modify item before
+ * pushing into `selected` array
+ * This function will also clear the text in autocomplete
+ *
+ * @param {Object} item
+ */
+MacTagAutocompleteController.prototype.onSelect = function (item) {
+  if (this.$attrs['macTagAutocompleteOnEnter']) {
+    item = this.onEnterFn({item: item});
+  }
+
+  if (item && angular.isArray(this.selected)) {
+    this.selected.push(item);
+  }
+
+  // NOTE: $timeout is added to allow user to access the model before
+  // clearing value in autocomplete
+  var ctrl = this;
+  this.$timeout(function () {
+    ctrl.textInput = '';
+  }, 0);
+}
+
+/**
+ * If a label attr is specified, convert the tag object into string
+ * for display
+ *
+ * @param {Object} tag
+ * @return {string}
+ */
+MacTagAutocompleteController.prototype.getTagLabel = function (tag) {
+  return this.labelKey ? this.labelGetter(tag) : tag;
+};
+
+angular.module('Mac')
+.controller('MacTagAutocompleteController', [
+  '$scope',
+  '$element',
+  '$attrs',
+  '$parse',
+  '$timeout',
+  'keys',
+  MacTagAutocompleteController]);
 
 /**
  * @ngdoc directive
@@ -2288,9 +2412,34 @@ angular.module('Mac').directive('macSpinner', ['util', function (util) {
  * @param {Integer} mac-tag-autocomplete-delay       Time delayed on fetching autocomplete data after keyup  (default 800)
  * @param {String}  mac-tag-autocomplete-placeholder Placeholder text of the text input (default "")
  * @param {Boolean} mac-tag-autocomplete-disabled    If autocomplete is enabled or disabled (default false)
+ * @param {Function} mac-tag-autocomplete-on-success Function called on successful ajax request (Proxy attribute for macAutocomplete)
+ * - `data` - {Object} Data returned from the request
+ * - `status` - {Number} The status code of the response
+ * - `header` - {Object} Header of the response
  * @param {Expr}    mac-tag-autocomplete-on-enter    When autocomplete is disabled, this function is called on enter, Should return either string, object or boolean. If false, item is not added
  * - `item` - {String} User input
  * @param {Event} mac-tag-autocomplete-clear-input $broadcast message; clears text input when received
+ *
+ * @param {expression} mac-tag-autocomplete-blur Callback function on blur
+ * - `$event` - {Event} Event object
+ * - `ctrl` - {MacTagAutocompleteController} Tag autocomplete element controller
+ * - `value` - {String} Text input
+ * @param {expression} mac-tag-autocomplete-focus Callback function on focus
+ * - `$event` - {Event} Event object
+ * - `ctrl` - {MacTagAutocompleteController} Tag autocomplete element controller
+ * - `value` - {String} Text input
+ * @param {expression} mac-tag-autocomplete-keyup Callback function on keyup
+ * - `$event` - {Event} Event object
+ * - `ctrl` - {MacTagAutocompleteController} Tag autocomplete element controller
+ * - `value` - {String} Text input
+ * @param {expression} mac-tag-autocomplete-keydown Callback function on keydown
+ * - `$event` - {Event} Event object
+ * - `ctrl` - {MacTagAutocompleteController} Tag autocomplete element controller
+ * - `value` - {String} Text input
+ * @param {expression} mac-tag-autocomplete-keypress Callback function on keypress
+ * - `$event` - {Event} Event object
+ * - `ctrl` - {MacTagAutocompleteController} Tag autocomplete element controller
+ * - `value` - {String} Text input
  *
  * @example
 <caption>Basic example</caption>
@@ -2336,13 +2485,10 @@ angular.module('Mac').directive('macSpinner', ['util', function (util) {
  */
 
 angular.module('Mac').directive('macTagAutocomplete', [
-  '$parse',
-  '$timeout',
-  'keys',
-  function ($parse, $timeout, keys) {
+  function () {
     return {
       restrict: 'E',
-      template: "<div class=\"mac-tag-autocomplete\">  <ul class=\"mac-tag-list\">    <li ng-repeat=\"tag in selected\" class=\"mac-tag mac-label\">      <div ng-click=\"selected.splice($index, 1)\" class=\"mac-tag-close\">&times;</div>      <span class=\"tag-label\">{{getTagLabel(tag)}}</span>    </li>    <li ng-class=\"{'fullwidth': !selected.length}\" class=\"mac-tag mac-input-tag\">      <mac-autocomplete class=\"text-input mac-autocomplete\"                        ng-keydown=\"onKeyDown($event)\"                        ng-model=\"textInput\"                        mac-autocomplete-disabled=\"disabled\"                        mac-autocomplete-on-select=\"onSelect(selected)\"                        mac-autocomplete-on-success=\"onSuccess(data)\"                        mac-placeholder=\"autocompletePlaceholder\"></mac-autocomplete>    </li>  </ul></div>",
+      template: "<div class=\"mac-tag-autocomplete\">  <ul class=\"mac-tag-list\">    <li ng-repeat=\"tag in macTagAutocomplete.selected\" class=\"mac-tag\">      <div ng-click=\"macTagAutocomplete.selected.splice($index, 1)\" class=\"mac-tag-close\">&times;</div>      <div class=\"tag-label\">{{macTagAutocomplete.getTagLabel(tag)}}</div>    </li>    <li class=\"mac-tag\">      <mac-autocomplete class=\"mac-tag-input mac-autocomplete\"        ng-keydown=\"macTagAutocomplete.onKeyDown($event)\"        ng-model=\"macTagAutocomplete.textInput\"        mac-autocomplete-disabled=\"disabled\"        mac-autocomplete-on-select=\"macTagAutocomplete.onSelect(selected)\"        mac-autocomplete-on-success=\"macTagAutocomplete.onSuccess(data, status, headers)\"        mac-autocomplete-source=\"macTagAutocomplete.source\"        mac-placeholder=\"macTagAutocomplete.placeholder\"></mac-autocomplete>    </li>  </ul></div>",
       replace: true,
       priority: 800,
       scope: {
@@ -2351,37 +2497,35 @@ angular.module('Mac').directive('macTagAutocomplete', [
         selected: '=macTagAutocompleteSelected',
         disabled: '=macTagAutocompleteDisabled',
         model: '=macTagAutocompleteModel',
-        onEnter: '&macTagAutocompleteOnEnter',
-        onKeydown: '&macTagAutocompleteOnKeydown'
+        onSuccessFn: '&macTagAutocompleteOnSuccess',
+        onEnterFn: '&macTagAutocompleteOnEnter',
+        onKeydownFn: '&macTagAutocompleteOnKeydown',
+        labelKey: '@macTagAutocompleteLabel'
       },
+      controller: 'MacTagAutocompleteController',
+      controllerAs: 'macTagAutocomplete',
+      bindToController: true,
 
       compile: function (element, attrs) {
         var labelKey = attrs.macTagAutocompleteLabel != undefined ?
           attrs.macTagAutocompleteLabel : 'name';
-        var labelGetter = $parse(labelKey);
 
-        var queryKey = attrs.macTagAutocompleteQuery || 'q';
-
-        var delay = +attrs.macTagAutocompleteDelay
+        var delay = +attrs.macTagAutocompleteDelay;
         delay = isNaN(delay) ? 800 : delay;
 
-        var textInput = angular.element(element[0].getElementsByClassName('mac-autocomplete'));
+        var textInput = angular.element(element[0].querySelector('.mac-autocomplete'));
         textInput.attr({
           'mac-autocomplete-label': labelKey,
-          'mac-autocomplete-query': queryKey,
-          'mac-autocomplete-delay': delay,
-          'mac-autocomplete-source': 'autocompleteSource'
+          'mac-autocomplete-query': attrs.macTagAutocompleteQuery || 'q',
+          'mac-autocomplete-delay': delay
         });
 
-        return function ($scope, element, attrs) {
-          // Variable for input element
-          $scope.textInput = '';
-
+        return function ($scope, element, attrs, ctrl) {
           // NOTE: Proxy is created to prevent tag autocomplete from breaking
           // when user did not specify model
           if (attrs.macTagAutocompleteModel) {
-            $scope.$watch('textInput', function (value) { $scope.model = value;});
-            $scope.$watch('model', function (value) { $scope.textInput = value;});
+            $scope.$watch('macTagAutocomplete.textInput', function (value) { $scope.model = value;});
+            $scope.$watch('macTagAutocomplete.model', function (value) { ctrl.textInput = value;});
           }
 
           element.bind('click', function () {
@@ -2389,85 +2533,49 @@ angular.module('Mac').directive('macTagAutocomplete', [
             textInputDOM.focus();
           });
 
-          $scope.getTagLabel = function (tag) {
-            return labelKey ? labelGetter(tag) : tag;
-          };
-
-          // TODO (adrian): Look into removing this
-          var updateAutocompleteSource = function () {
-            $scope.autocompletePlaceholder = $scope.selected && $scope.selected.length ? '' : $scope.placeholder;
-
-            if (!angular.isArray($scope.source) || !$scope.selected) {
-              $scope.autocompleteSource = $scope.source;
-              return;
-            }
-
-            $scope.autocompleteSource = $scope.source.filter(function (item) {
-              return $scope.selected.indexOf(item) < 0;
-            })
-          }
-
-          // NOTE: Watcher on source is added for string and function type to make sure
-          // scope value is copied correctly into this scope
-          if (angular.isArray($scope.source)) {
-            $scope.$watchCollection('source', updateAutocompleteSource);
-          } else {
-            $scope.$watch('source', updateAutocompleteSource);
-          }
-
-          $scope.onKeyDown = function ($event) {
-            var stroke = $event.which || $event.keyCode;
-            switch(stroke) {
-              case keys.BACKSPACE:
-                if (!$scope.textInput && angular.isArray($scope.selected)) {
-                  $scope.selected.pop();
-                }
-                break;
-              case keys.ENTER:
-                // Used when autocomplete is not needed
-                if ($scope.textInput && $scope.disabled) {
-                  $scope.onSelect($scope.textInput);
-                }
-                break;
-            }
-
-            $scope.onKeydown({
-              $event: $event,
-              value: $scope.textInput
-            });
-
-            return true;
-          };
-
-          $scope.onSuccess = function (data) {
-            // TODO (adrian): Filter out selected items
-            return data.data;
-          };
-
-          $scope.onSelect = function (item) {
-            if (attrs.macTagAutocompleteOnEnter) {
-              item = $scope.onEnter({item: item});
-            }
-
-            if (item && angular.isArray($scope.selected)) {
-              $scope.selected.push(item);
-            }
-
-            // NOTE: $timeout is added to allow user to access the model before
-            // clearing value in autocomplete
-            $timeout(function () {
-              $scope.textInput = ''
-            }, 0);
-          };
-
           $scope.$on('mac-tag-autocomplete-clear-input', function () {
-            $scope.textInput = '';
+            ctrl.textInput = '';
           });
         };
       }
     }
   }
-])
+]);
+
+function macAutocompleteEventFactory (key) {
+  var name = 'macTagAutocomplete' + key;
+  var eventName = key.toLowerCase();
+
+  angular.module('Mac').directive(name, [
+    '$parse',
+    function ($parse) {
+      return {
+        restrict: 'A',
+        priority: 700,
+        require: 'macTagAutocomplete',
+        link: function ($scope, element, attrs, ctrl) {
+          var input = angular.element(element[0].querySelector('.mac-autocomplete'));
+          var expr = $parse(attrs[name]);
+
+          if (!input) return;
+
+          input.bind(eventName, function($event) {
+            $scope.$apply(function() {
+              expr($scope, {
+                $event: $event,
+                ctrl: ctrl,
+                value: ctrl.textInput
+              });
+            });
+          });
+        }
+      }
+    }
+  ]);
+}
+
+var macAutocompleteEvents = ['Blur', 'Focus', 'Keyup', 'Keydown', 'Keypress'];
+macAutocompleteEvents.forEach(macAutocompleteEventFactory);
 
 /**
  * @ngdoc directive

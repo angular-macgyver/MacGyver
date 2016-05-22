@@ -1,3 +1,21 @@
+# 1.0.0-rc.1 (2016/5/22)
+## Bug Fixes
+- **macTagAutocomplete:**
+  - Fix macTagAutocompleteOnSuccess not using '&'
+  (50edb3a7)
+  - Fix not creating event directives
+  (f13e6bb0)
+
+## Optimizations
+- **macTagAutocomplete:**
+  - Switch to use macTagAutocompleteController (9e83d0e1)
+  - Add mac-tag-autocomplete-on-success attribute for callback on a successful xhr request. This will allow users to modify the data pass back to mac-autocomplete before rendering (9e83d0e1)
+
+## Breaking Changes
+- **macTagAutocomplete:**
+  - Directly populate item from source without filtering (9e83d0e1)
+
+
 # 1.0.0-rc.0 (2016/2/10)
 ## Bug Fixes
 - **macAffix:** Fix referencing incorrect variable due to JS conversion (7d95b2a7)
