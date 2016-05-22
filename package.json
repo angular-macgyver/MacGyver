@@ -23,7 +23,7 @@
     "grunt-contrib-stylus": "^1.2.0",
     "grunt-contrib-uglify": "^1.0.1",
     "grunt-contrib-watch": "^1.0.0",
-    "^grunt-coveralls": "1.0.0",
+    "grunt-coveralls": "^1.0.0",
     "grunt-eslint": "^18.0.0",
     "grunt-jsdoc": "^2.0.0",
     "grunt-karma": "^1.0.0",
