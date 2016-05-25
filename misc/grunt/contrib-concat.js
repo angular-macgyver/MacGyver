@@ -9,7 +9,7 @@ module.exports = function(grunt) {
       footer: "\n})(window, window.angular);"
     },
     lib: {
-      dest: "lib/<%= pkg.name.toLowerCase() %>.js",
+      dest: "lib/macgyver.js",
       src: "<%= buildConf.full %>"
     }
   });

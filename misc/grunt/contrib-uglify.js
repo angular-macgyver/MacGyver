@@ -7,8 +7,8 @@ module.exports = function(grunt) {
     dist: {
       files: [
         {
-          src: "lib/<%= pkg.name.toLowerCase() %>.js",
-          dest: "dist/<%= pkg.name.toLowerCase() %>.min.js"
+          src: "lib/macgyver.js",
+          dest: "dist/macgyver.min.js"
         }
       ]
     }
