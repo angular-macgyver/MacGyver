@@ -12,8 +12,7 @@ describe("Popover directive", function() {
     var element;
 
     beforeEach(function () {
-      var template;
-      template = "<div><mac-popover id='testPopover'>Test</mac-popover></div>";
+      var template = "<div><mac-popover id='testPopover'>Test</mac-popover></div>";
       element = $compile(template)($rootScope);
       $rootScope.$digest();
     });
@@ -46,6 +45,18 @@ describe("Popover directive", function() {
       element = $compile(template)($rootScope);
       $rootScope.$digest();
       expect(popover.registered.testPopover12345).toBeDefined();
+    });
+  });
+
+  describe("popover element register", function() {
+    it('should register with refreshOn options', function() {
+      var template = "<div><mac-popover id='testPopover' mac-popover-refresh-on='testEvent'>Test</mac-popover></div>";
+      $compile(template)($rootScope);
+      $rootScope.$digest();
+
+      var testPopoverOptions = popover.registered.testPopover
+      expect(testPopoverOptions).toBeDefined();
+      expect(testPopoverOptions.refreshOn).toBe('testEvent');
     });
   });
 

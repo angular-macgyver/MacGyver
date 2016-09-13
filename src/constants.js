@@ -53,7 +53,8 @@ constant('macPopoverDefaults', {
     footer: false,
     header: false,
     title: '',
-    direction: 'above left'
+    direction: 'above left',
+    refreshOn: ''
   },
   template: "<div class='mac-popover' ng-class='macPopoverClasses'>\
     <div class='tip'></div>\
