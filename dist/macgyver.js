@@ -1,5 +1,5 @@
 /**
- * MacGyver v1.0.0-rc.1
+ * MacGyver v1.0.0
  * @link http://angular-macgyver.github.io/MacGyver
  * @license 
  */
@@ -306,7 +306,8 @@ constant('macPopoverDefaults', {
     footer: false,
     header: false,
     title: '',
-    direction: 'above left'
+    direction: 'above left',
+    refreshOn: ''
   },
   template: "<div class='mac-popover' ng-class='macPopoverClasses'>\
     <div class='tip'></div>\

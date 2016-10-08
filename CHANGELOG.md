@@ -1,3 +1,7 @@
+# v1.0.0 (2016/10/8)
+## Bug Fixes
+- **macPopover:** Fix mac-popover-refresh-on not registering properly (ec9e4ff4, #38)
+
 # 1.0.0-rc.1 (2016/5/22)
 ## Bug Fixes
 - **macTagAutocomplete:**
