@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>MacGyver</title>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/prettify/r298/lang-css.js"></script>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,300" rel="stylesheet" type="text/css">
+    <link href="styles/macgyver.css" rel="stylesheet" type="text/css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+    <link type="text/css" rel="stylesheet" href="styles/vendor.css">
+</head>
+
+<body ng-app="MacDemo">
+
+<div id="main" ng-controller="ExampleController">
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>keys</h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+
+
+<div class="description">
+    <p>MacGyver comes with character code enum for easy reference and better
+readability.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>CANCEL</strong> - 3</td>
+<td><strong>FOUR</strong> - 52</td>
+<td><strong>U</strong> - 85</td>
+<td><strong>F7</strong> - 118</td>
+</tr>
+<tr>
+<td><strong>HELP</strong> - 6</td>
+<td><strong>FIVE</strong> - 53</td>
+<td><strong>V</strong> - 86</td>
+<td><strong>F8</strong> - 119</td>
+</tr>
+<tr>
+<td><strong>BACKSPACE</strong> - 8</td>
+<td><strong>SIX</strong> - 54</td>
+<td><strong>W</strong> - 87</td>
+<td><strong>F9</strong> - 120</td>
+</tr>
+<tr>
+<td><strong>TAB</strong> - 9</td>
+<td><strong>SEVEN</strong> - 55</td>
+<td><strong>X</strong> - 88</td>
+<td><strong>F10</strong> - 121</td>
+</tr>
+<tr>
+<td><strong>CLEAR</strong> - 12</td>
+<td><strong>EIGHT</strong> - 56</td>
+<td><strong>Y</strong> - 89</td>
+<td><strong>F11</strong> - 122</td>
+</tr>
+<tr>
+<td><strong>ENTER</strong> - 13</td>
+<td><strong>NINE</strong> - 57</td>
+<td><strong>Z</strong> - 90</td>
+<td><strong>F12</strong> - 123</td>
+</tr>
+<tr>
+<td><strong>RETURN</strong> - 13</td>
+<td><strong>SEMICOLON</strong> - 59</td>
+<td><strong>CONTEXT_MENU</strong> - 93</td>
+<td><strong>F13</strong> - 124</td>
+</tr>
+<tr>
+<td><strong>SHIFT</strong> - 16</td>
+<td><strong>EQUALS</strong> - 61</td>
+<td><strong>NUMPAD0</strong> - 96</td>
+<td><strong>F14</strong> - 125</td>
+</tr>
+<tr>
+<td><strong>CONTROL</strong> - 17</td>
+<td><strong>COMMAND</strong> - 91</td>
+<td><strong>NUMPAD1</strong> - 97</td>
+<td><strong>F15</strong> - 126</td>
+</tr>
+<tr>
+<td><strong>ALT</strong> - 18</td>
+<td><strong>A</strong> - 65</td>
+<td><strong>NUMPAD2</strong> - 98</td>
+<td><strong>F16</strong> - 127</td>
+</tr>
+<tr>
+<td><strong>PAUSE</strong> - 19</td>
+<td><strong>B</strong> - 66</td>
+<td><strong>NUMPAD3</strong> - 99</td>
+<td><strong>F17</strong> - 128</td>
+</tr>
+<tr>
+<td><strong>CAPS_LOCK</strong> - 20</td>
+<td><strong>C</strong> - 67</td>
+<td><strong>NUMPAD4</strong> - 100</td>
+<td><strong>F18</strong> - 129</td>
+</tr>
+<tr>
+<td><strong>ESCAPE</strong> - 27</td>
+<td><strong>D</strong> - 68</td>
+<td><strong>NUMPAD5</strong> - 101</td>
+<td><strong>F19</strong> - 130</td>
+</tr>
+<tr>
+<td><strong>SPACE</strong> - 32</td>
+<td><strong>E</strong> - 69</td>
+<td><strong>NUMPAD6</strong> - 102</td>
+<td><strong>F20</strong> - 131</td>
+</tr>
+<tr>
+<td><strong>PAGE_UP</strong> - 33</td>
+<td><strong>F</strong> - 70</td>
+<td><strong>NUMPAD7</strong> - 103</td>
+<td><strong>F21</strong> - 132</td>
+</tr>
+<tr>
+<td><strong>PAGE_DOWN</strong> - 34</td>
+<td><strong>G</strong> - 71</td>
+<td><strong>NUMPAD8</strong> - 104</td>
+<td><strong>F22</strong> - 133</td>
+</tr>
+<tr>
+<td><strong>END</strong> - 35</td>
+<td><strong>H</strong> - 72</td>
+<td><strong>NUMPAD9</strong> - 105</td>
+<td><strong>F23</strong> - 134</td>
+</tr>
+<tr>
+<td><strong>HOME</strong> - 36</td>
+<td><strong>I</strong> - 73</td>
+<td><strong>MULTIPLY</strong> - 106</td>
+<td><strong>F24</strong> - 135</td>
+</tr>
+<tr>
+<td><strong>LEFT</strong> - 37</td>
+<td><strong>J</strong> - 74</td>
+<td><strong>ADD</strong> - 107</td>
+<td><strong>NUM_LOCK</strong> - 144</td>
+</tr>
+<tr>
+<td><strong>UP</strong> - 38</td>
+<td><strong>K</strong> - 75</td>
+<td><strong>SEPARATOR</strong> - 108</td>
+<td><strong>SCROLL_LOCK</strong> - 145</td>
+</tr>
+<tr>
+<td><strong>RIGHT</strong> - 39</td>
+<td><strong>L</strong> - 76</td>
+<td><strong>SUBTRACT</strong> - 109</td>
+<td><strong>COMMA</strong> - 188</td>
+</tr>
+<tr>
+<td><strong>DOWN</strong> - 40</td>
+<td><strong>M</strong> - 77</td>
+<td><strong>DECIMAL</strong> - 110</td>
+<td><strong>PERIOD</strong> - 190</td>
+</tr>
+<tr>
+<td><strong>PRINT_SCREEN</strong> - 44</td>
+<td><strong>N</strong> - 78</td>
+<td><strong>DIVIDE</strong> - 111</td>
+<td><strong>SLASH</strong> - 191</td>
+</tr>
+<tr>
+<td><strong>INSERT</strong> - 45</td>
+<td><strong>O</strong> - 79</td>
+<td><strong>F1</strong> - 112</td>
+<td><strong>BACK_QUOTE</strong> - 192</td>
+</tr>
+<tr>
+<td><strong>DELETE</strong> - 46</td>
+<td><strong>P</strong> - 80</td>
+<td><strong>F2</strong> - 113</td>
+<td><strong>OPEN_BRACKET</strong> - 219</td>
+</tr>
+<tr>
+<td><strong>ZERO</strong> - 48</td>
+<td><strong>Q</strong> - 81</td>
+<td><strong>F3</strong> - 114</td>
+<td><strong>BACK_SLASH</strong> - 220</td>
+</tr>
+<tr>
+<td><strong>ONE</strong> - 49</td>
+<td><strong>R</strong> - 82</td>
+<td><strong>F4</strong> - 115</td>
+<td><strong>CLOSE_BRACKET</strong> - 221</td>
+</tr>
+<tr>
+<td><strong>TWO</strong> - 50</td>
+<td><strong>S</strong> - 83</td>
+<td><strong>F5</strong> - 116</td>
+<td><strong>QUOTE</strong> - 222</td>
+</tr>
+<tr>
+<td><strong>THREE</strong> - 51</td>
+<td><strong>T</strong> - 84</td>
+<td><strong>F6</strong> - 117</td>
+<td><strong>META</strong> - 224</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Mac</h3><ul><li><a href="global.html#ng">ng</a></li></ul><h3>Directives</h3><ul><li><a href="macAffix.html">macAffix</a></li><li><a href="macAutocomplete.html">macAutocomplete</a></li><li><a href="macKeydownDown.html">macKeydownDown</a></li><li><a href="macKeydownEnter.html">macKeydownEnter</a></li><li><a href="macKeydownEscape.html">macKeydownEscape</a></li><li><a href="macKeydownLeft.html">macKeydownLeft</a></li><li><a href="macKeydownRight.html">macKeydownRight</a></li><li><a href="macKeydownSpace.html">macKeydownSpace</a></li><li><a href="macKeydownUp.html">macKeydownUp</a></li><li><a href="macMenu.html">macMenu</a></li><li><a href="macModal.html">macModal</a></li><li><a href="macPauseTyping.html">macPauseTyping</a></li><li><a href="macPlaceholder.html">macPlaceholder</a></li><li><a href="macPopover%2520Element.html">macPopover Element</a></li><li><a href="macPopover%2520Trigger.html">macPopover Trigger</a></li><li><a href="macScrollSpy.html">macScrollSpy</a></li><li><a href="macScrollSpyAnchor.html">macScrollSpyAnchor</a></li><li><a href="macScrollSpyTarget.html">macScrollSpyTarget</a></li><li><a href="macSpinner.html">macSpinner</a></li><li><a href="macTagAutocomplete.html">macTagAutocomplete</a></li><li><a href="macTime.html">macTime</a></li><li><a href="macTooltip.html">macTooltip</a></li><li><a href="macWindowResize.html">macWindowResize</a></li></ul><h3>Services</h3><ul><li><a href="modal.html">modal</a></li><li><a href="popover.html">popover</a></li><li><a href="scrollSpy.html">scrollSpy</a></li><li><a href="timeUtil.html">timeUtil</a></li><li><a href="util.html">util</a></li></ul><h3>Filters</h3><ul><li><a href="boolean.html">boolean</a></li><li><a href="false.html">false</a></li><li><a href="list.html">list</a></li><li><a href="pluralize.html">pluralize</a></li><li><a href="timestamp.html">timestamp</a></li><li><a href="true.html">true</a></li></ul><h3>Constants</h3><ul><li><a href="keys.html">keys</a></li><li><a href="macAffixDefaults.html">macAffixDefaults</a></li><li><a href="macModalDefaults.html">macModalDefaults</a></li><li><a href="macPopoverDefaults.html">macPopoverDefaults</a></li><li><a href="macTimeDefaults.html">macTimeDefaults</a></li><li><a href="macTooltipDefaults.html">macTooltipDefaults</a></li><li><a href="scrollSpyDefaults.html">scrollSpyDefaults</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    <ul class="list-inline">
+      <li><a href="https://github.com/angular-macgyver/MacGyver">Github</a></li>
+      <li>&middot;</li>
+      <li><a href="https://github.com/angular-macgyver/MacGyver/issues">Issues</a></li>
+      <li>&middot;</li>
+      <li><a href="https://github.com/angular-macgyver/MacGyver/blob/master/CHANGELOG.md">Changelog</a></li>
+      <li>&middot;</li>
+      <li><a href="https://github.com/angular-macgyver/MacGyver/blob/master/README.md">README</a></li>
+    </ul>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.1</a> on Sat Oct 08 2016 16:39:00 GMT-0700 (PDT)
+</footer>
+
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<script src="//code.angularjs.org/1.4.8/angular-animate.js"></script>
+<script src="scripts/macgyver.js"></script>
+<script src="scripts/doc.js"></script>
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-43909345-2', 'auto');
+ga('send', 'pageview');
+</script>
+</body>
+</html>
