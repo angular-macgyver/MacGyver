@@ -16,13 +16,11 @@ env:
   - LOGS_DIR: /tmp/sauce-build/logs
   - SAUCE_USERNAME: macgyver-ci
   - SAUCE_ACCESS_KEY: 5aa3c19a-1374-439d-8777-cfd7521eb740
-addons:
-  sauce_connect:
-    username: macgyver-ci
-    access_key: 5aa3c19a-1374-439d-8777-cfd7521eb740
+  - BROWSER_PROVIDER_READY_FILE: /tmp/browsersprovider-tunnel-ready
 before_script:
   - ./misc/travis/before_build.sh
 script:
   - ./misc/travis/run.sh
 after_script:
+  - ./misc/saucelabs/teardown_tunnel.sh
   - ./misc/travis/print_logs.sh
