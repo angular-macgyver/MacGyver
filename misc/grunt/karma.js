@@ -31,10 +31,10 @@ module.exports = function(grunt) {
       singleRun: true,
       options: {
         files: [
-          "bower_components/angular/angular.js",
+          "node_modules/angular/angular.js",
           "src/template/*.html",
           "lib/macgyver.js",
-          "bower_components/angular-mocks/angular-mocks.js",
+          "node_modules/angular-mocks/angular-mocks.js",
           "test/vendor/browserTrigger.js",
           "test/unit/*.spec.js"
         ]
