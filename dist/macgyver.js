@@ -2813,7 +2813,7 @@ angular.module('Mac').directive('macTooltip', [
           removeTip(0);
 
           messageEl = angular.element('<div class="tooltip-message"></div>');
-          messageEl.text(text);
+          messageEl.html(text);
 
           tooltip = angular.element('<div />').addClass('mac-tooltip ' + opts.direction);
           tooltip.append(messageEl);
