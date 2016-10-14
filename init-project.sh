@@ -10,22 +10,13 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-npm=`which npm 2>&1`
+npm=`which yarn 2>&1`
 if [ $? -ne 0 ]; then
-  echo "Please install NPM."
+  echo "Please install Yarn."
   exit 1
 fi
 
-bower=`which bower 2>&1`
-if [ $? -ne 0 ]; then
-  "Installing bower..."
-  npm install -g bower
-fi
-
 echo "Installing required npm packages..."
-npm install
-
-echo "Installing Bower dependencies..."
-bower install
+yarn
 
 echo "Initialized MacGyver dev environment successfully"
