@@ -1,16 +1,6 @@
 var child = require("child_process");
 
-var GIT_TAG = "git describe --tags --abbrev=0";
-
-function getLastVersion(callback) {
-  child.exec(GIT_TAG, function(error, stdout, stderr) {
-    var data = error != null ? "" : stdout.replace("\n", "");
-    callback(error, data);
-  });
-};
-
 module.exports = function(grunt) {
-
   /**
    * @name replace
    * @description
