@@ -12,8 +12,12 @@
     "node": ">=5.3.0"
   },
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "angular": "~1.4.0",
+    "angular-animate": "~1.4.0"
+  },
   "devDependencies": {
+    "angular-mocks": "~1.4.0",
     "electron-prebuilt": "^1.1.1",
     "grunt": "^1.0.1",
     "grunt-bump": "^0.8.0",

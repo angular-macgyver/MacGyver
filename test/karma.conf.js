@@ -28,7 +28,7 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       // 3rd party libraries
-      "bower_components/angular/angular.js",
+      "node_modules/angular/angular.js",
 
       // Template
       "src/template/*.html",
@@ -36,7 +36,7 @@ module.exports = function(config) {
       // Test Code
       "src/main.js",
       "src/**/*.js",
-      "bower_components/angular-mocks/angular-mocks.js",
+      "node_modules/angular-mocks/angular-mocks.js",
       "test/vendor/browserTrigger.js",
       "test/unit/**/*.spec.js"
     ],
