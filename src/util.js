@@ -511,7 +511,17 @@ util.parseUrlPath('http://www.example.com/macgyver?season=1&episode=3&time=12:23
         value = defaults[key];
         altKey = prefix ? this.capitalize(key) : key;
         macKey = "" + prefix + altKey;
-        outputValue = attributes[macKey] != null ? attributes[macKey] || true : value;
+
+        if (attributes.hasOwnProperty(macKey)) {
+          // Value can be empty when only setting the attribute
+          if (attributes[macKey] === '') {
+            outputValue = true;
+          } else {
+            outputValue = attributes[macKey];
+          }
+        } else {
+          outputValue = value;
+        }
 
         // Convert to true boolean if passing in boolean string
         if (outputValue === "true" || outputValue === "false") {

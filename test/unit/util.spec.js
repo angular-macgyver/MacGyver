@@ -244,6 +244,16 @@ describe('Mac Util', function() {
       });
     });
 
+    it('should not replace fasly values', function() {
+      expect(util.extendAttributes(null, defaults, {isEnabled: '', isShown: false})).toEqual({
+        width: 10,
+        height: 20,
+        isEnabled: true,
+        isShown: false,
+        someValue: 10
+      });
+    });
+
     it('should extend default attributes when there is a prefix', function() {
       expect(util.extendAttributes('macGyver', defaults, attrsWithPrefix)).toEqual({
         width: 30,
