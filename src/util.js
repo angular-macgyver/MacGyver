@@ -446,53 +446,6 @@ util.getQueryString('http://www.example.com/macgyver?season=1&episode=3&time=12:
 
     /**
      * @ngdoc method
-     * @name util#parseUrlPath
-     * @param {String} fullPath
-     * @returns {Object}
-     *
-     * @example
-util.parseUrlPath('http://www.example.com/macgyver?season=1&episode=3&time=12:23')
-=> {
-  fullPath: 'http://www.example.com/macgyver?season=1&episode=3&time=12:23',
-  path: 'http://www.example.com',
-  pathComponents: [
-    'http:', '', 'www.example.com', 'macgyver'
-  ],
-  verb: 'macgyver',
-  queryies: {
-    season: '1',
-    episode: '3',
-    time: '12:23'
-  }
-}
-     */
-    parseUrlPath: function(fullPath) {
-      var path, pathComponents, queries, queryString, queryStrings, urlComponents, values, verb, _i, _len, _ref;
-      urlComponents = fullPath.split("?");
-      pathComponents = urlComponents[0].split("/");
-      path = pathComponents.slice(0, pathComponents.length - 1).join("/");
-      verb = pathComponents[pathComponents.length - 1];
-      queries = {};
-      if (urlComponents.length > 1) {
-        queryStrings = urlComponents[urlComponents.length - 1];
-        _ref = queryStrings.split("&");
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          queryString = _ref[_i];
-          values = queryString.split("=");
-          queries[values[0]] = values[1] != null ? values[1] : "";
-        }
-      }
-      return {
-        fullPath: fullPath,
-        path: path,
-        pathComponents: pathComponents,
-        verb: verb,
-        queries: queries
-      };
-    },
-
-    /**
-     * @ngdoc method
      * @name util#extendAttributes
      * @description
      * Extend default values with attribute

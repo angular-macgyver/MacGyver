@@ -321,24 +321,6 @@ describe('Mac Util', function() {
     });
   });
 
-  describe('parseUrlPath', function () {
-    it('should parse all components', function () {
-      var object = util.parseUrlPath('http://www.example.com/macgyver?season=1&episode=3&time=12:23');
-
-      expect(object.fullPath).toBe('http://www.example.com/macgyver?season=1&episode=3&time=12:23');
-      expect(object.path).toBe('http://www.example.com');
-      expect(object.pathComponents.length).toBe(4);
-      expect(object.pathComponents[0]).toBe('http:');
-      expect(object.pathComponents[1]).toBe('');
-      expect(object.pathComponents[2]).toBe('www.example.com');
-      expect(object.pathComponents[3]).toBe('macgyver');
-      expect(object.verb).toBe('macgyver');
-      expect(object.queries.season).toBe('1');
-      expect(object.queries.episode).toBe('3');
-      expect(object.queries.time).toBe('12:23');
-    })
-  });
-
   describe('getCssVendorName', function () {
     var testEl = angular.element('<div />')[0];
 
