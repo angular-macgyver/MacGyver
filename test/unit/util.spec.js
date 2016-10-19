@@ -291,36 +291,6 @@ describe('Mac Util', function() {
     });
   });
 
-  describe('hex to rgb', function() {
-    it('should convert 3D9AEB', function () {
-      var testRGB = util.hex2rgb('3D9AEB');
-      expect(testRGB.r).toBe(61);
-      expect(testRGB.g).toBe(154);
-      expect(testRGB.b).toBe(235);
-    });
-
-    it('should convert #3D9AEB', function () {
-      var testRGB = util.hex2rgb('#3D9AEB');
-      expect(testRGB.r).toBe(61);
-      expect(testRGB.g).toBe(154);
-      expect(testRGB.b).toBe(235);
-    });
-
-    it('should convert BAC', function () {
-      var testRGB = util.hex2rgb('BAC');
-      expect(testRGB.r).toBe(187);
-      expect(testRGB.g).toBe(170);
-      expect(testRGB.b).toBe(204);
-    });
-
-    it('should convert #BAC', function () {
-      var testRGB = util.hex2rgb('#BAC');
-      expect(testRGB.r).toBe(187);
-      expect(testRGB.g).toBe(170);
-      expect(testRGB.b).toBe(204);
-    });
-  });
-
   describe('getCssVendorName', function () {
     var testEl = angular.element('<div />')[0];
 

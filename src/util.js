@@ -330,37 +330,6 @@ util.toSnakeCase({'helloWorld': 'test'})
 
     /**
      * @ngdoc method
-     * @name util#hex2rgb
-     * @description
-     * Convert hex color value to rgb
-     * @param {String} hex
-     * @returns {Object} Object with r, g, and b values
-     */
-    hex2rgb: function(hex) {
-      var color, rgb, value;
-      if (hex.indexOf('#') === 0) {
-        hex = hex.substring(1);
-      }
-      hex = hex.toLowerCase();
-      rgb = {};
-      if (hex.length === 3) {
-        rgb.r = hex.charAt(0) + hex.charAt(0);
-        rgb.g = hex.charAt(1) + hex.charAt(1);
-        rgb.b = hex.charAt(2) + hex.charAt(2);
-      } else {
-        rgb.r = hex.substring(0, 2);
-        rgb.g = hex.substring(2, 4);
-        rgb.b = hex.substring(4);
-      }
-      for (color in rgb) {
-        value = rgb[color];
-        rgb[color] = parseInt(value, 16);
-      }
-      return rgb;
-    },
-
-    /**
-     * @ngdoc method
      * @name util#validateUrl
      * @description
      * Parse url
