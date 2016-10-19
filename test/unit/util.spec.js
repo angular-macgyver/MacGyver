@@ -273,24 +273,6 @@ describe('Mac Util', function() {
     });
   });
 
-  describe('pythagoras function', function() {
-    it('should calculate value correctly', function() {
-      expect(util.pyth(3, 4)).toBe(5);
-    });
-  });
-
-  describe('radian to degree', function() {
-    it('should convert radian to degree correctly', function() {
-      expect(util.degrees(Math.PI)).toBe(180);
-    });
-  });
-
-  describe('degree to radian', function() {
-    it('should convert degree to radian correctly', function() {
-      expect(util.radian(180)).toBe(Math.PI);
-    });
-  });
-
   describe('getCssVendorName', function () {
     var testEl = angular.element('<div />')[0];
 

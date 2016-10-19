@@ -293,43 +293,6 @@ util.toSnakeCase({'helloWorld': 'test'})
 
     /**
      * @ngdoc method
-     * @name util#pyth
-     * @description
-     * pythagoras theorem
-     * @param {Integer} a
-     * @param {Integer} b
-     * @returns {Integer}
-     */
-    pyth: function(a, b) {
-      return Math.sqrt(a * a + b * b);
-    },
-
-    /**
-     * @ngdoc method
-     * @name util#degrees
-     * @description
-     * Convert from radian to degrees
-     * @param {Number} radian
-     * @returns {Number}
-     */
-    degrees: function(radian) {
-      return (radian * 180) / Math.PI;
-    },
-
-    /**
-     * @ngdoc method
-     * @name util#radian
-     * @description
-     * Convert degree to radian
-     * @param {Number} degrees
-     * @returns {Number}
-     */
-    radian: function(degrees) {
-      return (degrees * Math.PI) / 180;
-    },
-
-    /**
-     * @ngdoc method
      * @name util#validateUrl
      * @description
      * Parse url
