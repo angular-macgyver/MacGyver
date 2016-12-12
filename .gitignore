@@ -18,3 +18,4 @@ npm-debug.log
 # System file types
 .DS_Store
 .c9
+yarn.lock
