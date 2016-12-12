@@ -3,14 +3,18 @@
   "version": "1.0.0",
   "main": ["dist/macgyver.css", "dist/macgyver.js"],
   "ignore": [
+    "build",
+    "lib",
     "misc",
+    "out",
     "src",
     "test",
-    ".gitignore",
     ".travis.yml",
     "build.json",
+    "eslint.json",
+    "Gruntfile.js",
     "init-project.sh",
-    "package.json"
+    "jsdoc.json"
   ],
   "devDependencies": {
     "angular-mocks": "~1.4.0"
