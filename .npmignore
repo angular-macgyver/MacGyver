@@ -1,0 +1,12 @@
+build/
+lib/
+misc/
+out/
+src/
+test/
+.travis.yml
+build.json
+eslint.json
+Gruntfile.js
+init-project.sh
+jsdoc.json
