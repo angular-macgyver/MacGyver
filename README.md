@@ -34,20 +34,11 @@ Duct Tape and a Swiss Army Knife. Angular helpers for all your friends!
 ## 3rd party libraries dependencies ##
  - AngularJS (1.2.x+)
 
-## Using MacGyver ##
-You can install via [Bower](http://www.bower.io) or download from [Github](https://github.com/angular-macgyver/MacGyver/archive/master.zip)
-
-To install via bower, make sure you have bower installed and then run:
-
-```
-bower install angular-macgyver
-```
-
-To install via NPM, you can run:
-
-```
-npm install angular-macgyver
-```
+## Getting started
+- NPM: `npm install angular-macgyver --save`
+- Bower: `bower install angular-macgyver`
+- Yarn: `yarn add angular-macgyver`
+- Download from [Github](https://github.com/angular-macgyver/MacGyver/archive/master.zip)
 
 Once you have MacGyver in your project, just include "Mac" as a dependency in your Angular application and you’re good to go.
 
