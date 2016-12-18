@@ -141,7 +141,7 @@ angular.module('Mac').provider('popover', function () {
 
           // Use the scope passed in
           if (options.scope && angular.isScope(options.scope)) {
-            viewScope = options.scope.$new();
+            viewScope = options.scope.$new(false, options.scope);
 
           // Create an isolated scope and extend scope with value passed in
           } else {
