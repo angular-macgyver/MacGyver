@@ -154,7 +154,7 @@ MacAutocompleteController.prototype.reset = function () {
  * @private
  */
 MacAutocompleteController.prototype._createMenuScope = function (ngModelCtrl) {
-  this.$menuScope = this.$scope.$new();
+  this.$menuScope = this.$scope.$new(false, this.$scope);
   this.$menuScope.items = [];
   this.$menuScope.index = 0;
   this.$menuScope.class = this.class;
@@ -180,10 +180,6 @@ MacAutocompleteController.prototype._createMenuScope = function (ngModelCtrl) {
 
     this.$macAutocompleteCtrl.reset();
   }
-
-  this.$scope.$on("$destroy", function (scope) {
-    scope.macAutocomplete.$menuScope.$destroy();
-  });
 
   return this.$menuScope;
 }
