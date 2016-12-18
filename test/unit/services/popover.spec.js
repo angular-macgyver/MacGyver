@@ -535,8 +535,7 @@ describe("Popover service", function() {
   });
 
   describe("hide popover", function() {
-    var callback, destroy, trigger;
-    destroy = jasmine.createSpy("destroy");
+    var callback, trigger;
 
     beforeEach(function() {
       trigger = angular.element("<a>Click me</a>");
@@ -549,7 +548,6 @@ describe("Popover service", function() {
       callback = jasmine.createSpy("event");
 
       $rootScope.$on("popoverBeforeHide", callback);
-      $rootScope.$on("$destroy", destroy);
 
       popover.show("test", trigger, {
         scope: $rootScope
@@ -608,6 +606,9 @@ describe("Popover service", function() {
     });
 
     it("should not destroy original scope", function() {
+      var destroy = jasmine.createSpy("destroy");
+      $rootScope.$on("$destroy", destroy);
+
       popover.hide("test");
       $rootScope.$digest();
       $animate.flush();
